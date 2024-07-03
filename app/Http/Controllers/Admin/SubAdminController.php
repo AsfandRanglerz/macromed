@@ -4,8 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Mail\userBlocked;
+use App\Mail\userUnBlocked;
+use ModelNotFoundException;
 use Illuminate\Http\Request;
+use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 
@@ -54,10 +59,10 @@ class SubAdminController extends Controller
             }
             $subadmin = User::create($data);
             if ($subadmin) {
-                // $data['subadminname'] = $subadmin->name;
-                // $data['subadminemail'] = $subadmin->email;
-                // $data['password'] = $request->password;
-                // Mail::to($subadmin->email)->send(new subAdminRegistration($data));
+                $data['subadminname'] = $subadmin->name;
+                $data['subadminemail'] = $subadmin->email;
+                $data['password'] = $request->password;
+                Mail::to($subadmin->email)->send(new subAdminRegistration($data));
                 return response()->json(['alert' => 'success', 'message' => 'SubAdmin Created Successfully!']);
             }
             return response()->json(['alert' => 'error', 'message' => 'SubAdmin Not Created!']);
@@ -140,24 +145,22 @@ class SubAdminController extends Controller
             $user = User::findOrFail($id);
             if ($user->status == '0') {
                 $user->status = '1';
-                // $data['username'] =  $user->fname . ' ' .  $user->lname;
-                // $data['useremail'] =  $user->email;
-                // Mail::to($user->email)->send(new userBlocked($data));
+                $data['username'] =  $user->name;
+                $data['useremail'] =  $user->email;
+                Mail::to($user->email)->send(new userBlocked($data));
                 $message = 'Sub Admin Active Successfully';
             } else if ($user->status == '1') {
                 $user->status = '0';
-                // $data['username'] =  $user->fname . ' ' .  $user->lname;
-                // $data['useremail'] =  $user->email;
-                // Mail::to($user->email)->send(new userUnBlocked($data));
+                $data['username'] =  $user->name;
+                $data['useremail'] =  $user->email;
+                Mail::to($user->email)->send(new userUnBlocked($data));
                 $message = 'Sub Admin In Active Successfully';
             } else {
                 return response()->json(['alert' => 'info', 'message' => 'User status is already updated or cannot be updated.']);
             }
             $user->save();
             return response()->json(['alert' => 'success', 'message' => $message]);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['alert' => 'error', 'message' => 'User not found.']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating user status.']);
         }
     }
