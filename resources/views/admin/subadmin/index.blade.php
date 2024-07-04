@@ -252,7 +252,7 @@
                                     Create Sub Admins
                                 </a>
                                 <table class="responsive table table-striped table-bordered">
-                                    <thead>
+                                    <thead class="text-center">
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
@@ -262,7 +262,7 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="text-center">
                                     </tbody>
                                 </table>
                             </div>
@@ -326,10 +326,10 @@
                             return '<a href="' +
                                 "{{ route('subadmin.profile', ['id' => ':id']) }}"
                                 .replace(':id', row.id) +
-                                '" class="btn btn-primary mb-0 mr-3 text-white"><i class="fas fa-eye"></i></a>' +
-                                '<button class="btn btn-success mb-0 mr-3 text-white editSubadminBtn btn-sm" data-id="' +
+                                '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
+                                '<button class="btn btn-success mb-0 mr-2 text-white editSubadminBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger mb-0 mr-3 text-white deleteSubadminBtn btn-sm" data-id="' +
+                                '<button class="btn btn-danger mb-0 mr-2 text-white deleteSubadminBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
                         }
                     }
@@ -350,8 +350,7 @@
                 openUpdatePermissionSubadminModal(subadminId);
             });
         });
-    </script>
-    <script>
+
         // ##############Create Sub admin################
         $(document).ready(function() {
             $('#createSubadminForm input, #createSubadminForm select, #createSubadminForm textarea').on(
