@@ -29,7 +29,7 @@ class subAdminRegistration extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.subAdminRegistration')->subject('SubAdmin Registration Successfully')
+        return $this->markdown('emails.subAdminRegistration')->subject('Registration Mail')
             ->with(['data' => $this->data]);
     }
 }
