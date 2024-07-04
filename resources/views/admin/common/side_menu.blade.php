@@ -15,16 +15,13 @@
             {{-- User Managment --}}
             @if (
                 (auth()->guard('web')->check() &&
-                    (auth()->guard('web')->user()->can('Sub Admins') ||
-                        auth()->guard('web')->user()->can('users') ||
-                        auth()->guard('web')->user()->can('Teams') ||
-                        auth()->guard('web')->user()->can('Users Coupon Code'))) ||
+                    (auth()->guard('web')->user()->can('Sub Admins') || auth()->guard('web')->user()->can('users'))) ||
                     auth()->guard('admin')->check())
                 <li class="dropdown">
                     <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="users"></i><span>User
                             Managment</span></a>
                     <ul
-                        class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/teams*') || request()->is('admin/couponCode*') ? 'show' : '' }}">
+                        class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/salesagent*') ? 'show' : '' }}">
                         {{-- Roles & Permissions --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admins'))
                             <li class="{{ request()->is('admin/subadmin') ? 'active' : '' }}">
@@ -41,7 +38,11 @@
                                         Admins</span></a>
                             </li>
                         @endif
-
+                        <li class="{{ request()->is('admin/salesagent*') ? 'active' : '' }}">
+                            <a href="{{ route('salesagent.index') }}"
+                                class="nav-link {{ request()->is('admin/salesagent*') ? 'text-white' : '' }}"><i
+                                    data-feather="user"></i><span>Sales Managers</span></a>
+                        </li>
                     </ul>
                 </li>
             @endif

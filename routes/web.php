@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\PolicyController;
 use App\Http\Controllers\Admin\AboutusController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\TermConditionController;
 
@@ -56,6 +57,17 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/update-permissions/{user}',  'updatePermissions')->name('update.user.permissions')->middleware('permission:Sub Admins');
         Route::post('/update-user-status/{id}',  'updateBlockStatus')->name('userBlock.update')->middleware('permission:Sub Admins');
         Route::get('/subadmin-profile/{id}',  'subAdminProfile')->name('subadmin.profile')->middleware('permission:Sub Admins');
+    });
+    // ############## Sales Agent ############
+    Route::controller(SalesAgentController::class)->group(function () {
+        Route::get('/salesagent',  'salesagentIndex')->name('salesagent.index')->middleware('permission:Sales Managers');
+        Route::post('/salesagent-create',  'salesagentCreate')->name('salesagent.create')->middleware('permission:Sales Managers');
+        Route::get('/salesagentData',  'salesagentData')->name('salesagent.get')->middleware('permission:Sales Managers');
+        Route::get('/salesagent/{id}',  'showSalesAgent')->name('salesagent.show')->middleware('permission:Sales Managers');
+        Route::post('/salesagentUpdate/{id}',  'updateSalesAgent')->name('salesagent.update')->middleware('permission:Sales Managers');
+        Route::get('/salesagent/delete/{id}',  'deletesalesagent')->name('salesagent.delete')->middleware('permission:Sales Managers');
+        Route::post('/update-salesagent-status/{id}',  'updateAgentBlockStatus')->name('agentBlock.update')->middleware('permission:Sales Managers');
+        Route::get('/salesagent-profile/{id}',  'salesagentProfile')->name('salesagent.profile')->middleware('permission:Sales Managers');
     });
     // ############## Category ############
     Route::controller(CategoryController::class)->group(function () {
