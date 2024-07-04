@@ -59,10 +59,10 @@ class SubAdminController extends Controller
             }
             $subadmin = User::create($data);
             if ($subadmin) {
-                // $data['subadminname'] = $subadmin->name;
-                // $data['subadminemail'] = $subadmin->email;
-                // $data['password'] = $request->password;
-                // Mail::to($subadmin->email)->send(new subAdminRegistration($data));
+                $data['subadminname'] = $subadmin->name;
+                $data['subadminemail'] = $subadmin->email;
+                $data['password'] = $request->password;
+                Mail::to($subadmin->email)->send(new subAdminRegistration($data));
                 return response()->json(['alert' => 'success', 'message' => 'SubAdmin Created Successfully!']);
             }
             return response()->json(['alert' => 'error', 'message' => 'SubAdmin Not Created!']);
