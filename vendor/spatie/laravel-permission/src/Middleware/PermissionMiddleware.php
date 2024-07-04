@@ -11,46 +11,28 @@ class PermissionMiddleware
 {
     public function handle($request, Closure $next, $permission, $guard = null)
     {
-        $authGuard = Auth::guard($guard);
+        $authGuard = app('auth')->guard($guard);
+        if (auth()->guard('admin')->check() || auth()->guard('web')->check()) {
+            $type = auth()->user()->user_type ?? ' ';
+            if ($type == 'subadmin') {
+                $permissions = is_array($permission)
+                    ? $permission
+                    : explode('|', $permission);
 
-        $user = $authGuard->user();
+                foreach ($permissions as $permission) {
+                    if ($authGuard->user()->can($permission)) {
+                        return $next($request);
+                    }
+                }
 
-        // For machine-to-machine Passport clients
-        if (! $user && $request->bearerToken() && config('permission.use_passport_client_credentials')) {
-            $user = Guard::getPassportClient($guard);
+                throw UnauthorizedException::forPermissions($permissions);
+            } else {
+                return $next($request);
+            }
         }
 
-        if (! $user) {
+        if ($authGuard->guest()) {
             throw UnauthorizedException::notLoggedIn();
         }
-
-        if (! method_exists($user, 'hasAnyPermission')) {
-            throw UnauthorizedException::missingTraitHasRoles($user);
-        }
-
-        $permissions = is_array($permission)
-            ? $permission
-            : explode('|', $permission);
-
-        if (! $user->canAny($permissions)) {
-            throw UnauthorizedException::forPermissions($permissions);
-        }
-
-        return $next($request);
-    }
-
-    /**
-     * Specify the permission and guard for the middleware.
-     *
-     * @param  array|string  $permission
-     * @param  string|null  $guard
-     * @return string
-     */
-    public static function using($permission, $guard = null)
-    {
-        $permissionString = is_string($permission) ? $permission : implode('|', $permission);
-        $args = is_null($guard) ? $permissionString : "$permissionString,$guard";
-
-        return static::class.':'.$args;
     }
 }

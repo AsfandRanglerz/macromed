@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuthController;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class admin
 {
     /**
@@ -18,15 +19,10 @@ class admin
     public function handle(Request $request, Closure $next)
     {
 
-        if(auth::guard('admin')->check()){
-
+        if (auth()->guard('admin')->check() || auth()->guard('web')->check()) {
             return $next($request);
-        }else{
-
-        return redirect('admin');
-     }
-
-
-
+        } else {
+            return redirect('admin');
+        }
     }
 }

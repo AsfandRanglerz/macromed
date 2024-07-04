@@ -547,18 +547,12 @@
                     permissions: permissions
                 },
                 success: function(response) {
-                    Toast.fire({
-                        icon: response.alert,
-                        title: response.message
-                    });
+                    toastr.success('Permissions Assign Successfully!');
                     $('#updatePermissionSubadminModal').modal('hide');
                     reloadDataTable();
                 },
                 error: function(xhr, status, error) {
-                    Toast.fire({
-                        icon: response.alert,
-                        title: response.message
-                    });
+                    toastr.error('Error In Permissions Assigning!');
                     console.error(xhr.responseText);
 
                 }
