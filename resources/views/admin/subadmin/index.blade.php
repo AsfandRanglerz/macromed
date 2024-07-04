@@ -637,6 +637,7 @@
                         reloadDataTable();
                     },
                     error: function(xhr, status, error) {
+                        toastr.success(response.error);
                         console.error(xhr.responseText);
                     },
                     complete: function() {
