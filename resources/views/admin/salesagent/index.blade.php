@@ -385,10 +385,9 @@
             $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
         });
         // ######Get & Update Sales Manager#########
-        var salesAgentShowRoute = '{{ route('salesagent.show', ':id') }}';
-        var salesAgentUpdateRoute = '{{ route('salesagent.update', ':id') }}';
 
         function openEditSalesAgentModal(salesAgentId) {
+            var salesAgentShowRoute = '{{ route('salesagent.show', ':id') }}';
             $.ajax({
                 url: salesAgentShowRoute.replace(':id', salesAgentId),
                 type: 'GET',
@@ -426,7 +425,9 @@
                     $(this).removeClass('is-invalid');
                 });
         });
+
         function submitEditSalesAgentForm() {
+            var salesAgentUpdateRoute = '{{ route('salesagent.update', ':id') }}';
             var salesAgentId = $('#editSalesAgentModal').data('salesAgentId');
             var formData = new FormData($('#editSalesAgentForm')[0]);
             $.ajax({
