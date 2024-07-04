@@ -106,7 +106,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="account_number">Account Number</label>
-                                    <input type="number" class="form-control" name="account_number">
+                                    <input type="text" class="form-control" name="account_number">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>

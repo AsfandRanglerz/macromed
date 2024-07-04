@@ -8,6 +8,7 @@ use App\Mail\userUnBlocked;
 use Illuminate\Http\Request;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
+use App\Models\UserAccount;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -35,11 +36,14 @@ class SalesAgentController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users|max:255',
+                'account_number' => 'required|numeric|unique:user_accounts|min:11',
                 'password' => 'required|string|min:8|max:255',
                 'phone' => 'required|unique:users|min:11',
                 'confirmpassword' => 'required|same:password',
                 'user_type' => 'required|string',
-                'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
+                'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
+                'account_name' => 'required|string|max:255',
+                'account_holder_name' => 'required|string|max:255'
             ]);
 
             if ($validator->fails()) {
@@ -55,6 +59,13 @@ class SalesAgentController extends Controller
             }
             $salesManager = User::create($data);
             if ($salesManager) {
+                //#########Create Account ###########
+                $account = new UserAccount();
+                $account->user_id = $$salesManager->id;
+                $account->account_name = $request->account_name;
+                $account->account_holder_name = $request->account_holder_name;
+                $account->account_number = $request->account_number;
+                $account->save();
                 // $data['subadminname'] = $salesManager->name;
                 // $data['subadminemail'] = $salesManager->email;
                 // $data['password'] = $request->password;

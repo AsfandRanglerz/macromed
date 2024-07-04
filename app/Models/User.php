@@ -27,4 +27,8 @@ class User extends Authenticatable implements AuthenticatableContract
         'status',
         'user_type'
     ];
+    public function bankAccounts()
+    {
+        return $this->hasMany(UserAccount::class);
+    }
 }
