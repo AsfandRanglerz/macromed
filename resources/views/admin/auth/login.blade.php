@@ -7,7 +7,7 @@
                 <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
                     <div class="card card-primary">
                         <div class="text-center mt-1">
-                            <img alt="image" src="{{ asset('public/admin/assets/images/logo-macromed.png') }}" style="width: 50%" />
+                            <img alt="image" src="{{ asset('public/admin/assets/images/logo-macromed.png') }}" style="width: 40%" />
                         </div>
                         <div class="card-body">
                             <form method="POST" action="{{url('admin/login')}}" class="needs-validation" novalidate="">

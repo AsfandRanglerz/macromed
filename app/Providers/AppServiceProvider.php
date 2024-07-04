@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
     }
 
     /**
@@ -23,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-       // view()->share('ASSET',asset('public'));
+        Validator::extend('exists_in_users_or_admins', function ($attribute, $value, $parameters, $validator) {
+            // Check if the email exists in either users or admins table
+            $userExists = DB::table('users')->where('email', $value)->exists();
+            $adminExists = DB::table('admins')->where('email', $value)->exists();
+            return $userExists || $adminExists;
+        });
     }
 }

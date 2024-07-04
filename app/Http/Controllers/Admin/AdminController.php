@@ -2,105 +2,155 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Http\Controllers\Controller;
-use App\Mail\ResetPasswordMail;
+use App\Models\User;
 use App\Models\admin;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
     //
-    public function getdashboard(){
+    public function getdashboard()
+    {
 
         return view('admin.index');
     }
-    public function getProfile(){
-        $data=Admin::find(Auth::guard('admin')->id());
-        return view('admin.auth.profile',compact('data'));
+    public function getProfile()
+    {
+        if (Auth::guard('web')->check()) {
+            $data = User::find(Auth::guard('web')->id());
+        } elseif (Auth::guard('admin')->check()) {
+            $data = Admin::find(Auth::guard('admin')->id());
+        } else {
+            return redirect('/admin')->with(['alert' => 'error', 'error' => 'You Are Unable For Login!']);
+        }
+        return view('admin.auth.profile', compact('data'));
     }
 
-    public function update_profile(Request $request){
+    public function update_profile(Request $request)
+    {
         $request->validate([
-            'name'=>'required',
-            'email'=>'required',
-            'phone'=>'required'
+            'name' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
         ]);
-        $data = $request->only(['name','email','phone']);
-        if ($request->hasfile('image'))
-        {
-            $file =$request->file('image');
-            $extension = $file->getClientOriginalExtension(); // getting image extension
-            $filename = time().'.' . $extension;
-            $file->move(public_path('/admin/assets/images/users/'),$filename);
-            $data['image']='public/admin/assets/images/users/'.$filename;
+        $data = $request->only(['name', 'email', 'phone']);
+        if (auth()->guard('web')->check()) {
+            $user = User::find(auth()->guard('web')->id());
+            if (!$user) {
+                return back()->with(['alert' => 'error', 'message' => 'User not found.']);
+            }
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extension;
+                $file->move(public_path('admin/assets/images/users/'), $filename);
+                $data['image'] = 'public/admin/assets/images/users/' . $filename; // Removed 'public/' prefix
+            }
+
+            $user->update($data);
+        } elseif (auth()->guard('admin')->check()) {
+            $admin = Admin::find(auth()->guard('admin')->id());
+            if (!$admin) {
+                return back()->with(['alert' => 'error', 'message' => 'Admin not found.']);
+            }
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . '.' . $extension;
+                $file->move(public_path('admin/assets/images/users/'), $filename);
+                $data['image'] = 'public/admin/assets/images/users/' . $filename; // Removed 'public/' prefix
+            }
+            $admin->update($data);
+        } else {
+            return back()->with(['alert' => 'error', 'error' => 'Not authorized.']);
         }
-        Admin::find(Auth::guard('admin')->id())->update($data);
-        return back()->with(['status'=>true, 'message' => 'Profile Updated Successfully']);
+        return back()->with(['alert' => 'success', 'message' => 'Profile Updated Successfully!']);
     }
-    public function forgetPassword(){
+
+
+    public function forgetPassword()
+    {
         return view('admin.auth.forgetPassword');
     }
-    public function adminResetPasswordLink(Request $request){
-        $request->validate([
-            'email'=>'required|exists:admins,email',
+    public function adminResetPasswordLink(Request $request)
+    {
+        // Validate the email
+        $validator = Validator::make($request->all(), [
+            'email' => [
+                'required',
+                'email',
+                'exists_in_users_or_admins' // Custom validation rule
+            ],
+        ], [
+            'email.exists_in_users_or_admins' => 'This email does not exist.',
         ]);
-        $exists = DB::table('password_resets')->where('email',$request->email)->first();
-        if ($exists){
-            return back()->with('message','Reset Password link has been already sent');
-        }else{
-            $token = Str::random(30);
-            DB::table('password_resets')->insert([
-                'email'=>$request->email,
-                'token'=>$token,
-            ]);
 
-            $data['url'] = url('change_password',$token);
-            Mail::to($request->email)->send(new ResetPasswordMail($data));
-            return back()->with('message','Reset Password Link Send Successfully');
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        // If validation passes, continue with sending the reset link
+        $token = Str::random(30);
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => $token,
+        ]);
+        if ($token) {
+            $data['url'] = url('change_password', $token);
+            // Mail::to($request->email)->send(new PasswordResetMail($data));
+            return back()->with(['alert' => 'success', 'message' => 'Reset Password Link Sent Successfully']);
+        } else {
+            return back()->with(['alert' => 'error', 'message' => 'Reset Password Link Not Sent']);
         }
     }
     public function change_password($id)
     {
+        $user = DB::table('password_resets')->where('token', $id)->first();
 
-        $user = DB::table('password_resets')->where('token',$id)->first();
-
-        if(isset($user))
-        {
-            return view('admin.auth.chnagePassword',compact('user'));
+        if (isset($user)) {
+            return view('admin.auth.chnagePassword', compact('user'));
         }
     }
-
-    public function resetPassword (Request $request)
+    public function resetPassword(Request $request)
     {
-
-       $request->validate([
+        $request->validate([
             'password' => 'required|min:8',
-            'confirmed' => 'required',
-
+            'confirmed' => 'required|same:password',
         ]);
-       if ($request->password !=$request->confirmed)
-       {
 
-           return back()->with(['error_message' => 'Password not matched']);
-       }
-        $password=bcrypt($request->password);
-        $tags_data = [
-            'password' => bcrypt($request->password)
-        ];
-        if (Admin::where('email',$request->email)->update($tags_data)){
-            DB::table('password_resets')->where('email',$request->email)->delete();
-            return redirect('admin');
+        $password = bcrypt($request->password);
+
+        $user = User::where('email', $request->email)->first();
+        $admin = Admin::where('email', $request->email)->first();
+        if ($user) {
+            $user->update(['password' => $password]);
+            DB::table('password_resets')->where('email', $request->email)->delete();
+            return redirect('admin')->with(['alert' => 'success', 'message' => 'Password reset successfully']);
+        } elseif ($admin) {
+            $admin->update(['password' => $password]);
+            DB::table('password_resets')->where('email', $request->email)->delete();
+            return redirect('admin')->with(['alert' => 'success', 'message' => 'Password reset successfully']);
         }
 
-
-    }
-    public function logout(){
-        Auth::guard('admin')->logout();
-        return redirect('admin')->with('message','Logout Successfully!');
+        return back()->with(['alert' => 'error', 'error' => 'Invalid email or user not found']);
     }
 
+    public function logout()
+    {
+        if (auth()->guard('web')->check()) {
+            auth()->guard('web')->logout();
+            return redirect('/admin')->with(['alert' => 'success', 'message' => 'You Are Logout Successfully!']);
+        }
+        if (auth()->guard('admin')->check()) {
+            auth()->guard('admin')->logout();
+            return redirect('/admin')->with(['alert' => 'success', 'message' => 'You Are Logout Successfully!']);
+        }
+    }
 }
