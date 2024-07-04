@@ -2,14 +2,29 @@
 
 namespace App\Models;
 
-use Faker\Provider\ar_EG\Company;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Model
+class User extends Authenticatable implements AuthenticatableContract
 {
     use HasFactory, HasRoles;
 
-    protected $fillable = ['name', 'email', 'image', 'password','phone', 'status','user_type'];
+    // Define hidden attributes
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    // Define fillable attributes
+    protected $fillable = [
+        'name',
+        'email',
+        'image',
+        'password',
+        'phone',
+        'status',
+        'user_type'
+    ];
 }
