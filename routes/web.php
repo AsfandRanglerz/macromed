@@ -46,16 +46,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::resource('faq', FaqController::class);
     // ############## SubAdmin ############
     Route::controller(SubAdminController::class)->group(function () {
-        Route::get('/subadmin',  'subadminIndex')->name('subadmin.index');
-        Route::post('/subadmin-create',  'subadminCreate')->name('subadmin.create');
-        Route::get('/subadminData',  'subadminData')->name('subadmin.get');
-        Route::get('/subadmin/{id}',  'showSubAdmin')->name('subadmin.show');
-        Route::post('/subadminUpdate/{id}',  'updateAdmin')->name('subadmin.update');
-        Route::get('/subadmin/delete/{id}',  'deleteSubadmin')->name('subadmin.delete');
-        Route::get('/get-permissions/{user}',  'fetchUserPermissions')->name('get.permissions');
-        Route::post('/update-permissions/{user}',  'updatePermissions')->name('update.user.permissions');
-        Route::post('/update-user-status/{id}',  'updateBlockStatus')->name('userBlock.update');
-        Route::get('/subadmin-profile/{id}',  'subAdminProfile')->name('subadmin.profile');
+        Route::get('/subadmin',  'subadminIndex')->name('subadmin.index')->middleware('permission:Sub Admins');
+        Route::post('/subadmin-create',  'subadminCreate')->name('subadmin.create')->middleware('permission:Sub Admins');
+        Route::get('/subadminData',  'subadminData')->name('subadmin.get')->middleware('permission:Sub Admins');
+        Route::get('/subadmin/{id}',  'showSubAdmin')->name('subadmin.show')->middleware('permission:Sub Admins');
+        Route::post('/subadminUpdate/{id}',  'updateAdmin')->name('subadmin.update')->middleware('permission:Sub Admins');
+        Route::get('/subadmin/delete/{id}',  'deleteSubadmin')->name('subadmin.delete')->middleware('permission:Sub Admins');
+        Route::get('/get-permissions/{user}',  'fetchUserPermissions')->name('get.permissions')->middleware('permission:Sub Admins');
+        Route::post('/update-permissions/{user}',  'updatePermissions')->name('update.user.permissions')->middleware('permission:Sub Admins');
+        Route::post('/update-user-status/{id}',  'updateBlockStatus')->name('userBlock.update')->middleware('permission:Sub Admins');
+        Route::get('/subadmin-profile/{id}',  'subAdminProfile')->name('subadmin.profile')->middleware('permission:Sub Admins');
     });
     // ############## Category ############
     Route::controller(CategoryController::class)->group(function () {

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\admin;
 
 use App\Models\User;
-use App\Models\admin;
+use App\Models\Admin;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\PasswordResetMail;
 use App\Mail\ResetPasswordMail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -51,7 +52,7 @@ class AdminController extends Controller
                 $extension = $file->getClientOriginalExtension();
                 $filename = time() . '.' . $extension;
                 $file->move(public_path('admin/assets/images/users/'), $filename);
-                $data['image'] = 'public/admin/assets/images/users/' . $filename; // Removed 'public/' prefix
+                $data['image'] = 'public/admin/assets/images/users/' . $filename;
             }
 
             $user->update($data);
@@ -65,7 +66,7 @@ class AdminController extends Controller
                 $extension = $file->getClientOriginalExtension();
                 $filename = time() . '.' . $extension;
                 $file->move(public_path('admin/assets/images/users/'), $filename);
-                $data['image'] = 'public/admin/assets/images/users/' . $filename; // Removed 'public/' prefix
+                $data['image'] = 'public/admin/assets/images/users/' . $filename;
             }
             $admin->update($data);
         } else {
@@ -104,7 +105,7 @@ class AdminController extends Controller
         ]);
         if ($token) {
             $data['url'] = url('change_password', $token);
-            // Mail::to($request->email)->send(new PasswordResetMail($data));
+            Mail::to($request->email)->send(new PasswordResetMail($data));
             return back()->with(['alert' => 'success', 'message' => 'Reset Password Link Sent Successfully']);
         } else {
             return back()->with(['alert' => 'error', 'message' => 'Reset Password Link Not Sent']);

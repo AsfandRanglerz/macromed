@@ -1,7 +1,8 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="index.html"> <img alt="image" src="{{ asset('public/admin/assets/images/logo-macromed.png') }}" style="width: 40%" />
+            <a href="index.html"> <img alt="image" src="{{ asset('public/admin/assets/images/logo-macromed.png') }}"
+                    style="width: 40%" />
             </a>
         </div>
         <ul class="sidebar-menu">
@@ -14,7 +15,7 @@
             {{-- User Managment --}}
             @if (
                 (auth()->guard('web')->check() &&
-                    (auth()->guard('web')->user()->can('subadmins') ||
+                    (auth()->guard('web')->user()->can('Sub Admins') ||
                         auth()->guard('web')->user()->can('users') ||
                         auth()->guard('web')->user()->can('Teams') ||
                         auth()->guard('web')->user()->can('Users Coupon Code'))) ||
@@ -25,21 +26,21 @@
                     <ul
                         class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/teams*') || request()->is('admin/couponCode*') ? 'show' : '' }}">
                         {{-- Roles & Permissions --}}
-                        {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subadmins'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admins'))
                             <li class="{{ request()->is('admin/subadmin') ? 'active' : '' }}">
                                 <a href="{{ route('subadmin.index') }}"
                                     class="nav-link {{ request()->is('admin/subadmin') ? 'text-white' : '' }}"><i
                                         data-feather="user"></i><span>Sub
                                         Admins</span></a>
                             </li>
-                        @elseif (auth()->guard('admin')->check()) --}}
-                        <li class="{{ request()->is('admin/subadmin*') ? 'active' : '' }}">
-                            <a href="{{ route('subadmin.index') }}"
-                                class="nav-link {{ request()->is('admin/subadmin*') ? 'text-white' : '' }}"><i
-                                    data-feather="user"></i><span>Sub
-                                    Admins</span></a>
-                        </li>
-                        {{-- @endif --}}
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="{{ request()->is('admin/subadmin*') ? 'active' : '' }}">
+                                <a href="{{ route('subadmin.index') }}"
+                                    class="nav-link {{ request()->is('admin/subadmin*') ? 'text-white' : '' }}"><i
+                                        data-feather="user"></i><span>Sub
+                                        Admins</span></a>
+                            </li>
+                        @endif
 
                     </ul>
                 </li>
