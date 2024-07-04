@@ -234,6 +234,31 @@
             </div>
         </div>
     </div>
+    {{-- Reason Modal --}}
+    <div class="modal fade" id="reasonModal" tabindex="-1" role="dialog" aria-labelledby="reasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reasonModalLabel">Reason for Deactivation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="reasonForm">
+                        <div class="form-group">
+                            <textarea class="form-control" id="reason" rows="3" name="reason" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-success" id="submitReason">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="main-content" style="min-height: 562px;">
         <section class="section">
@@ -305,8 +330,8 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == 1 ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == 1 ? 'Active' : 'In Active';
+                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
                             return '<button id="update-status" class="btn ' + buttonClass +
                                 '" data-userid="' + row
                                 .id + '">' + buttonText + '</button>';
@@ -558,48 +583,68 @@
                 }
             });
         }
-        $('.table').on('click', '#update-status', function() {
-            var button = $(this);
-            var userId = button.data('userid');
-            var currentStatus = button.text().trim().toLowerCase();
-            var newStatus = currentStatus === 'Active' ? 1 : 0;
-            button.prop('disabled', true);
+        // ################ Active and Inactive code ############
+        $(document).ready(function() {
+            var userId;
+            var button;
 
-            $.ajax({
-                url: '{{ route('userBlock.update', ['id' => ':userId']) }}'.replace(':userId',
-                    userId),
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    status: newStatus
-                },
-                success: function(response) {
-                    toastr.success(response.message);
-                    // Update button text and class
-                    var buttonText = newStatus === 1 ? 'Active' : 'In Active';
-                    var buttonClass = newStatus === 1 ? 'btn-success' : 'btn-danger';
-                    button.text(buttonText).removeClass('btn-success btn-danger').addClass(buttonClass);
-                    // Update status cell content
-                    var statusCell = button.closest('tr').find('td:eq(6)');
-                    var statusText, statusClass;
-                    if (newStatus == 0) {
-                        statusText = "In Active";
-                        statusClass = "text-danger";
-                    } else {
-                        statusText = "Active";
-                        statusClass = "text-success";
-                    }
-                    statusCell.html('<span class="' + statusClass + '">' + statusText + '</span>');
-                    reloadDataTable();
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                },
-                complete: function() {
-                    // Enable the button again
-                    button.prop('disabled', false);
+            $('.table').on('click', '#update-status', function() {
+                button = $(this);
+                userId = button.data('userid');
+                var currentStatus = button.text().trim().toLowerCase();
+                var newStatus = currentStatus === 'active' ? '0' : '1'; // Toggle the status
+
+                if (newStatus === '0') {
+                    $('#reasonModal').modal('show');
+                } else {
+                    updateUserStatus(userId, newStatus, ""); // Directly update status without modal
                 }
             });
+
+            $('#submitReason').on('click', function() {
+                var reason = $('#reason').val().trim();
+                if (reason === "") {
+                    alert("Please provide a reason for deactivation.");
+                    return;
+                }
+                $('#reasonModal').modal('hide');
+                updateUserStatus(userId, '0', reason);
+            });
+
+            function updateUserStatus(userId, newStatus, reason) {
+                button.prop('disabled', true);
+
+                $.ajax({
+                    url: '{{ route('userBlock.update', ['id' => ':userId']) }}'.replace(':userId', userId),
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        status: newStatus,
+                        reason: reason
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        // Update button text and class
+                        var buttonText = newStatus === '1' ? 'Active' : 'In Active';
+                        var buttonClass = newStatus === '1' ? 'btn-success' : 'btn-danger';
+                        button.text(buttonText).removeClass('btn-success btn-danger').addClass(
+                            buttonClass);
+                        // Update status cell content
+                        var statusCell = button.closest('tr').find('td:eq(6)');
+                        var statusText = newStatus === '1' ? 'Active' : 'In Active';
+                        var statusClass = newStatus === '1' ? 'text-success' : 'text-danger';
+                        statusCell.html('<span class="' + statusClass + '">' + statusText + '</span>');
+                        reloadDataTable();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    },
+                    complete: function() {
+                        // Enable the button again
+                        button.prop('disabled', false);
+                    }
+                });
+            }
         });
     </script>
 @endsection

@@ -139,29 +139,30 @@ class SubAdminController extends Controller
         }
     }
     // ################ Block Sub Admin########
-    public function updateBlockStatus($id)
+    public function updateBlockStatus(Request $request, $id)
     {
         try {
             $user = User::findOrFail($id);
             if ($user->status == '0') {
                 $user->status = '1';
-                // $data['username'] =  $user->name;
-                // $data['useremail'] =  $user->email;
-                // Mail::to($user->email)->send(new userBlocked($data));
+                $data['username'] =  $user->name;
+                $data['useremail'] =  $user->email;
+                Mail::to($user->email)->send(new userUnBlocked($data));
                 $message = 'Sub Admin Active Successfully';
             } else if ($user->status == '1') {
                 $user->status = '0';
-                // $data['username'] =  $user->name;
-                // $data['useremail'] =  $user->email;
-                // Mail::to($user->email)->send(new userUnBlocked($data));
+                $data['username'] =  $user->name;
+                $data['useremail'] =  $user->email;
+                $data['reason'] = $request->reason;
+                Mail::to($user->email)->send(new userBlocked($data));
                 $message = 'Sub Admin In Active Successfully';
             } else {
-                return response()->json(['alert' => 'info', 'message' => 'User status is already updated or cannot be updated.']);
+                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
             }
             $user->save();
             return response()->json(['alert' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating user status.']);
+            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
         }
     }
 }
