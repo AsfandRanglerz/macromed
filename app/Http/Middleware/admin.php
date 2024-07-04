@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Controllers\Admin\AuthController;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\AuthController;
 
 class admin
 {
