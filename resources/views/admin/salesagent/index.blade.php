@@ -87,6 +87,30 @@
                                 </div>
                             </div>
                         </div>
+                        <h4>Add Accounts Information:</h4>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="account_name">Account Name</label>
+                                    <input type="text" class="form-control" name="account_name">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="account_holder_name">Account Holder Name</label>
+                                    <input type="text" class="form-control" name="account_holder_name">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="account_number">Account Number</label>
+                                    <input type="number" class="form-control" name="account_number">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
