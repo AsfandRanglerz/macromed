@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\PolicyController;
 use App\Http\Controllers\Admin\AboutusController;
+use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SubAdminController;
@@ -92,13 +93,13 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/update-subcategory-status/{id}',  'updateSubCategoryStatus')->name('subcategoryBlock.update');
     });
      // ############## Brands ############
-     Route::controller(SubCategoryController::class)->group(function () {
-        Route::get('/subCategory',  'subCategoryIndex')->name('subCategory.index');
-        Route::post('/subCategory-create',  'subCategoryCreate')->name('subCategory.create');
-        Route::get('/subCategoryData',  'subCategoryData')->name('subCategory.get');
-        Route::get('/subCategory/{id}',  'showSubCategory')->name('subCategory.show');
-        Route::post('/subCategoryUpdate/{id}',  'updateSubCategory')->name('subCategory.update');
-        Route::get('/subCategory/delete/{id}',  'deleteSubCategory')->name('subCategory.delete');
-        Route::post('/update-subcategory-status/{id}',  'updateSubCategoryStatus')->name('subcategoryBlock.update');
+     Route::controller(BrandsController::class)->group(function () {
+        Route::get('/brands',  'brandsIndex')->name('brands.index');
+        Route::post('/brands-create',  'brandsCreate')->name('brands.create');
+        Route::get('/brandsData',  'brandsData')->name('brands.get');
+        Route::get('/brands/{id}',  'showBrands')->name('brands.show');
+        Route::post('/brandsUpdate/{id}',  'updateBrands')->name('brands.update');
+        Route::get('/brands/delete/{id}',  'deleteBrands')->name('brands.delete');
+        Route::post('/update-brands-status/{id}',  'updateBrandsStatus')->name('brandsBlock.update');
     });
 });
