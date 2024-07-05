@@ -29,6 +29,6 @@ class User extends Authenticatable implements AuthenticatableContract
     ];
     public function bankAccounts()
     {
-        return $this->hasMany(UserAccount::class);
+        return $this->hasOne(UserAccount::class);
     }
 }

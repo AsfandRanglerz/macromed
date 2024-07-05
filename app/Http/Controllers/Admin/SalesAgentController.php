@@ -16,13 +16,14 @@ class SalesAgentController extends Controller
 {
     public function salesagentData()
     {
-        $salesManagers = User::where('user_type', 'salesmanager')->latest()->get();
+        $salesManagers = User::where('user_type', 'salesmanager')->with('bankAccounts')->latest()->get();
         $json_data["data"] = $salesManagers;
         return json_encode($json_data);
     }
     public function salesagentIndex()
     {
-        $salesManagers = User::where('user_type', 'salesmanager')->latest()->get();
+        $salesManagers = User::where('user_type', 'salesmanager')->with('bankAccounts')->latest()->get();
+        // return $salesManagers;
         return view('admin.salesagent.index', compact('salesManagers'));
     }
     // public function Sales ManagersProfile($id)
@@ -36,7 +37,7 @@ class SalesAgentController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users|max:255',
-                'account_number' => 'required|numeric|unique:user_accounts|min:11',
+                'account_number' => 'required|numeric|unique:user_accounts|min:16',
                 'password' => 'required|string|min:8|max:255',
                 'phone' => 'required|unique:users|min:11',
                 'confirmpassword' => 'required|same:password',
@@ -61,7 +62,7 @@ class SalesAgentController extends Controller
             if ($salesManager) {
                 //#########Create Account ###########
                 $account = new UserAccount();
-                $account->user_id = $$salesManager->id;
+                $account->user_id = $salesManager->id;
                 $account->account_name = $request->account_name;
                 $account->account_holder_name = $request->account_holder_name;
                 $account->account_number = $request->account_number;
@@ -79,7 +80,7 @@ class SalesAgentController extends Controller
     }
     public function showSalesAgent($id)
     {
-        $salesManager = User::find($id);
+        $salesManager = User::with('bankAccounts')->find($id);
         if (!$salesManager) {
             return response()->json(['alert' => 'error', 'message' => 'Sales Manager Not Found'], 500);
         }
@@ -91,7 +92,10 @@ class SalesAgentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'phone' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
+            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
+            'account_number' => 'required|numeric|unique:user_accounts|min:16,' . $id,
+            'account_name' => 'required|string|max:255',
+            'account_holder_name' => 'required|string|max:255'
         ]);
 
         if ($validator->fails()) {
