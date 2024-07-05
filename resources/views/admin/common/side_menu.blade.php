@@ -49,14 +49,14 @@
                             <li class="dropdown {{ request()->is('admin/subCategory*') ? 'active' : '' }}">
                                 <a href="{{ route('subCategory.index') }}"
                                     class="nav-link {{ request()->is('admin/subCategory*') ? 'text-white' : '' }}">
-                                    <i data-feather="folder"></i><span>Sub Category</span>
+                                    <i data-feather="layers"></i><span>Sub Category</span>
                                 </a>
                             </li>
                         @elseif (auth()->guard('admin')->check())
                             <li class="dropdown {{ request()->is('admin/subCategory*') ? 'active' : '' }}">
                                 <a href="{{ route('subCategory.index') }}"
                                     class="nav-link {{ request()->is('admin/subCategory*') ? 'text-white' : '' }}">
-                                    <i data-feather="folder"></i><span>Sub Category</span>
+                                    <i data-feather="layers"></i><span>Sub Category</span>
                                 </a>
                             </li>
                         @endif
@@ -65,14 +65,14 @@
                             <li class="dropdown {{ request()->is('admin/brands*') ? 'active' : '' }}">
                                 <a href="{{ route('brands.index') }}"
                                     class="nav-link {{ request()->is('admin/brands*') ? 'text-white' : '' }}">
-                                    <i data-feather="folder"></i><span>Brands</span>
+                                    <i data-feather="layers"></i><span>Brands</span>
                                 </a>
                             </li>
                         @elseif (auth()->guard('admin')->check())
                             <li class="dropdown {{ request()->is('admin/brands*') ? 'active' : '' }}">
                                 <a href="{{ route('brands.index') }}"
                                     class="nav-link {{ request()->is('admin/brands*') ? 'text-white' : '' }}">
-                                    <i data-feather="box"></i><span>Brands</span>
+                                    <i data-feather="layers"></i><span>Brands</span>
                                 </a>
                             </li>
                         @endif
@@ -96,17 +96,16 @@
                 </li>
             @endif
             {{-- User Managment --}}
-            @if (
+            {{-- @if (
                 (auth()->guard('web')->check() &&
                     (auth()->guard('web')->user()->can('Sub Admins') || auth()->guard('web')->user()->can('users'))) ||
-                    auth()->guard('admin')->check())
-                <li class="dropdown">
+                    auth()->guard('admin')->check()) --}}
+                {{-- <li class="dropdown">
                     <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="users"></i><span>User
-                            Managment</span></a>
-                    <ul
-                        class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/salesagent*') ? 'show' : '' }}">
-                        {{-- Roles & Permissions --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admins'))
+                            Managment</span></a> --}}
+                {{-- <ul class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/salesagent*') ? 'show' : '' }}"> --}}
+                {{-- Roles & Permissions --}}
+                {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admins'))
                             <li class="{{ request()->is('admin/subadmin') ? 'active' : '' }}">
                                 <a href="{{ route('subadmin.index') }}"
                                     class="nav-link {{ request()->is('admin/subadmin') ? 'text-white' : '' }}"><i
@@ -125,22 +124,22 @@
                             <a href="{{ route('salesagent.index') }}"
                                 class="nav-link {{ request()->is('admin/salesagent*') ? 'text-white' : '' }}"><i
                                     data-feather="user"></i><span>Sales Managers</span></a>
-                        </li>
-                    </ul>
+                        </li> --}}
+                {{-- </ul>
                 </li>
-            @endif
-            {{-- About Us --}}
-            {{-- <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
+            @endif --}}
+                {{-- About Us --}}
+                {{-- <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
                 <a href="{{ route('about.index') }}" class="nav-link"><i data-feather="monitor"></i><span>About
                         Us</span></a>
             </li> --}}
-            {{-- Privacy Policy --}}
-            {{-- <li class="dropdown {{ request()->is('admin/policy*') ? 'active' : '' }}">
+                {{-- Privacy Policy --}}
+                {{-- <li class="dropdown {{ request()->is('admin/policy*') ? 'active' : '' }}">
                 <a href="{{ route('policy.index') }}" class="nav-link"><i data-feather="monitor"></i><span>Privacy
                         Policy</span></a>
             </li> --}}
-            {{-- Terms & Cond --}}
-            {{-- <li class="dropdown {{ request()->is('admin/terms*') ? 'active' : '' }}">
+                {{-- Terms & Cond --}}
+                {{-- <li class="dropdown {{ request()->is('admin/terms*') ? 'active' : '' }}">
                 <a href="{{ route('terms.index') }}" class="nav-link"><i
                         data-feather="monitor"></i><span>Term&Condition</span></a>
 

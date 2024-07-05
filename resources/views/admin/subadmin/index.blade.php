@@ -548,10 +548,6 @@
                     $('#updatePermissionSubadminModal').modal('show'); // Open the modal
                 },
                 error: function(xhr, status, error) {
-                    Toast.fire({
-                        icon: response.alert,
-                        title: response.message
-                    });
                     console.error(xhr.responseText);
                 }
             });

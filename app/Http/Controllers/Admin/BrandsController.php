@@ -20,9 +20,9 @@ class BrandsController extends Controller
     public function brandsIndex()
     {
         $brands = Brands::all();
-        return view('admin.Brands.index', compact('brands'));
+        return view('admin.brands.index', compact('brands'));
     }
-    public function BrandsCreate(Request $request)
+    public function brandsCreate(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -30,9 +30,10 @@ class BrandsController extends Controller
                     'required',
                     'string',
                     'max:255',
-                    Rule::unique('categories')
+                    Rule::unique('brands')
                 ],
-                'slug' => 'required'
+                'slug' => 'required',
+                'image' => 'required|image|mimes:jpeg,jpg,png|max:1048'
             ]);
 
             if ($validator->fails()) {
@@ -68,8 +69,10 @@ class BrandsController extends Controller
                 'string',
                 'max:255',
                 Rule::unique('brands')->ignore($id),
-                'slug' => 'required'
+
             ],
+            'slug' => 'required',
+
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -101,7 +104,7 @@ class BrandsController extends Controller
         $brand->delete();
         return response()->json(['alert' => 'success', 'message' => 'Brands Deleted SuccessFully!']);
     }
-    public function updateBrandsStatus(Request $request, $id)
+    public function updateBrandsStatus($id)
     {
         try {
             $brand = Brands::findOrFail($id);

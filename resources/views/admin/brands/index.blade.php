@@ -90,6 +90,15 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="image">Image</label>
+                                <input type="file" class="form-control image" name="image">
+                                <img id="imagePreview" src="" alt="Image Preview"
+                                    style="display: none; max-width: 100px; margin-top: 10px;">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -141,6 +150,7 @@
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
+                                            <th>Image</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -203,6 +213,17 @@
                         "data": "name"
                     },
                     {
+                        "data": "image",
+                        "render": function(data, type, row) {
+                            if (data) {
+                                return '<img src="https://ranglerzclients.pw/macromed/' + data +
+                                    '" alt="Image" style="width: 50px; height: 50px;">';
+                            } else {
+                                return '<img src="https://ranglerzclients.pw/macromed/public/admin/assets/images/users/admin.png" alt="Image" style="width: 50px; height: 50px;">';
+                            }
+                        }
+                    },
+                    {
                         "data": null,
                         "render": function(data, type, row) {
                             var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
@@ -233,12 +254,10 @@
                 deleteBrandsModal(id);
             });
         });
-    </script>
 
-    <script>
         // ##############Create Sub admin################
         $(document).ready(function() {
-            $('#createSubadminForm input, #createSubadminForm select, #createSubadminForm textarea').on(
+            $('#createBrandsForm input, #createBrandsForm select, #createBrandsForm textarea').on(
                 'input change',
                 function() {
                     $(this).siblings('.invalid-feedback').text('');
@@ -302,6 +321,14 @@
                     $('#editBrands .name').val(response.name);
                     $('#editBrands .slug').val(response.slug);
                     $('#editBrands .status').val(response.status);
+                    var imageUrl = response.image;
+                    var baseUrl = 'https://ranglerzclients.pw/macromed/';
+                    var responseImage = baseUrl + response.image;
+                    if (imageUrl) {
+                        $('#imagePreview').attr('src', responseImage).show();
+                    } else {
+                        $('#imagePreview').hide();
+                    }
                     $('#editBrandsModal').modal('show');
                     $('#editBrandsModal').data('id', id);
                 },
