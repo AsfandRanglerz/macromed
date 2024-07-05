@@ -12,6 +12,73 @@
                 <a href="{{ url('/admin/dashboard') }}" class="nav-link"><i
                         data-feather="home"></i><span>Dashboard</span></a>
             </li>
+            {{-- Inventory Managment --}}
+            @if (
+                (auth()->guard('web')->check() &&
+                    (auth()->guard('web')->user()->can('category') ||
+                        auth()->guard('web')->user()->can('subcategory') ||
+                        auth()->guard('web')->user()->can('products') ||
+                        auth()->guard('web')->user()->can('Cash Back Per Order') ||
+                        auth()->guard('web')->user()->can('Bucket Commission') ||
+                        auth()->guard('web')->user()->can('productsize'))) ||
+                    auth()->guard('admin')->check())
+                <li class="dropdown">
+                    <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                            data-feather="layout"></i><span>Inventory
+                            Managment</span></a>
+                    <ul
+                        class="dropdown-menu {{ request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/size*') || request()->is('admin/product*') || request()->is('admin/cashBack*') || request()->is('admin/bucketCommission*') ? 'show' : '' }}">
+                        {{-- Category --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('category'))
+                            <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
+                                <a href="{{ route('category.index') }}"
+                                    class="nav-link {{ request()->is('admin/category') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Category</span>
+                                </a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
+                                <a href="{{ route('category.index') }}"
+                                    class="nav-link {{ request()->is('admin/category') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Category</span>
+                                </a>
+                            </li>
+                        @endif
+                        {{-- Sub Category --}}
+                        {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                                <li class="dropdown {{ request()->is('admin/subCategory') ? 'active' : '' }}">
+                                    <a href="{{ route('subCategory.index') }}"
+                                        class="nav-link {{ request()->is('admin/subCategory') ? 'text-white' : '' }}">
+                                        <i data-feather="folder"></i><span>Sub Category</span>
+                                    </a>
+                                </li>
+                            @elseif (auth()->guard('admin')->check())
+                                <li class="dropdown {{ request()->is('admin/subCategory') ? 'active' : '' }}">
+                                    <a href="{{ route('subCategory.index') }}"
+                                        class="nav-link {{ request()->is('admin/subCategory') ? 'text-white' : '' }}">
+                                        <i data-feather="folder"></i><span>Sub Category</span>
+                                    </a>
+                                </li>
+                            @endif --}}
+                        {{-- Products --}}
+                        {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('products'))
+                                <li class="dropdown {{ request()->is('admin/product*') ? 'active' : '' }}">
+                                    <a href="{{ route('product.index') }}"
+                                        class="nav-link {{ request()->is('admin/product*') ? 'text-white' : '' }}">
+                                        <i data-feather="box"></i><span>Products</span>
+                                    </a>
+                                </li>
+                            @elseif (auth()->guard('admin')->check())
+                                <li class="dropdown {{ request()->is('admin/product*') ? 'active' : '' }}">
+                                    <a href="{{ route('product.index') }}"
+                                        class="nav-link {{ request()->is('admin/product*') ? 'text-white' : '' }}">
+                                        <i data-feather="box"></i><span>Products</span>
+                                    </a>
+                                </li>
+                            @endif --}}
+                    </ul>
+                </li>
+            @endif
             {{-- User Managment --}}
             @if (
                 (auth()->guard('web')->check() &&

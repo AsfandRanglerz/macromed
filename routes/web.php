@@ -71,11 +71,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     });
     // ############## Category ############
     Route::controller(CategoryController::class)->group(function () {
-        // Route::get('/category', 'categoryIndex')->name('category.index')->middleware('permission:category');
-        // Route::post('/category-create', 'categoryCreate')->name('category.create')->middleware('permission:category');
-        // Route::get('/categoryData', 'categoryData')->name('category.get')->middleware('permission:category');
-        // Route::get('/category/{id}', 'showCategory')->name('category.show')->middleware('permission:category');
-        // Route::post('/categoryUpdate/{id}', 'updateCategory')->name('category.update')->middleware('permission:category');
-        // Route::get('/category/delete/{id}', 'deleteCategory')->name('category.delete')->middleware('permission:category');
+        Route::get('/category', 'categoryIndex')->name('category.index');
+        Route::post('/category-create', 'categoryCreate')->name('category.create');
+        Route::get('/categoryData', 'categoryData')->name('category.get');
+        Route::get('/category/{id}', 'showCategory')->name('category.show');
+        Route::post('/categoryUpdate/{id}', 'updateCategory')->name('category.update');
+        Route::get('/category/delete/{id}', 'deleteCategory')->name('category.delete');
+        Route::post('/update-category-status/{id}',  'updateCategoryStatus')->name('categoryBlock.update');
     });
 });
