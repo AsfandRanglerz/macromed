@@ -65,7 +65,7 @@
                             <li class="dropdown {{ request()->is('admin/brands*') ? 'active' : '' }}">
                                 <a href="{{ route('brands.index') }}"
                                     class="nav-link {{ request()->is('admin/brands*') ? 'text-white' : '' }}">
-                                    <i data-feather="folder"></i><span>Sub Category</span>
+                                    <i data-feather="folder"></i><span>Brands</span>
                                 </a>
                             </li>
                         @elseif (auth()->guard('admin')->check())
