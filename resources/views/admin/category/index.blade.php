@@ -130,7 +130,7 @@
                                     Create Category
                                 </a>
                                 <table class="responsive table table-striped table-bordered" id="example">
-                                    <thead>
+                                    <thead class="text-center">
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
@@ -138,7 +138,7 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="text-center">
                                     </tbody>
                                 </table>
                             </div>
@@ -209,9 +209,9 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success mb-3 mr-3 text-white editSubadminBtn" data-id="' +
+                            return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger mb-3 mr-3 text-white deleteSubadminBtn" data-id="' +
+                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
                         }
                     }
