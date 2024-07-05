@@ -121,10 +121,10 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/models',  'modelsIndex')->name('models.index');
         Route::post('/models-create',  'modelsCreate')->name('models.create');
         Route::get('/modelsData',  'modelsData')->name('models.get');
-        Route::get('/models/{id}',  'showmodels')->name('models.show');
-        Route::post('/modelsUpdate/{id}',  'updatemodels')->name('models.update');
-        Route::get('/models/delete/{id}',  'deletemodels')->name('models.delete');
-        Route::post('/update-models-status/{id}',  'updatemodelsStatus')->name('modelsBlock.update');
+        Route::get('/models/{id}',  'showModels')->name('models.show');
+        Route::post('/modelsUpdate/{id}',  'updateModels')->name('models.update');
+        Route::get('/models/delete/{id}',  'deleteModels')->name('models.delete');
+        Route::post('/update-models-status/{id}',  'updateModelsStatus')->name('modelsBlock.update');
     });
 
     // ############## Certifications ############
