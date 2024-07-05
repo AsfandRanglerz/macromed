@@ -91,4 +91,14 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/subCategory/delete/{id}',  'deleteSubCategory')->name('subCategory.delete');
         Route::post('/update-subcategory-status/{id}',  'updateSubCategoryStatus')->name('subcategoryBlock.update');
     });
+     // ############## Brands ############
+     Route::controller(SubCategoryController::class)->group(function () {
+        Route::get('/subCategory',  'subCategoryIndex')->name('subCategory.index');
+        Route::post('/subCategory-create',  'subCategoryCreate')->name('subCategory.create');
+        Route::get('/subCategoryData',  'subCategoryData')->name('subCategory.get');
+        Route::get('/subCategory/{id}',  'showSubCategory')->name('subCategory.show');
+        Route::post('/subCategoryUpdate/{id}',  'updateSubCategory')->name('subCategory.update');
+        Route::get('/subCategory/delete/{id}',  'deleteSubCategory')->name('subCategory.delete');
+        Route::post('/update-subcategory-status/{id}',  'updateSubCategoryStatus')->name('subcategoryBlock.update');
+    });
 });
