@@ -94,6 +94,7 @@
                             <div class="form-group">
                                 <label for="image">Image</label>
                                 <input type="file" class="form-control image" name="image">
+                                <label for="imagePreview">Pervious Image:</label>
                                 <img id="imagePreview" src="" alt="Image Preview"
                                     style="display: none; max-width: 100px; margin-top: 10px;">
                                 <div class="invalid-feedback"></div>
