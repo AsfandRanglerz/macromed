@@ -8,6 +8,9 @@ use App\Http\Controllers\Admin\PolicyController;
 use App\Http\Controllers\Admin\AboutusController;
 use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CertificationController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\ModalsController;
 use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\SubCategoryController;
@@ -92,8 +95,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/subCategory/delete/{id}',  'deleteSubCategory')->name('subCategory.delete');
         Route::post('/update-subcategory-status/{id}',  'updateSubCategoryStatus')->name('subcategoryBlock.update');
     });
-     // ############## Brands ############
-     Route::controller(BrandsController::class)->group(function () {
+    // ############## Brands ############
+    Route::controller(BrandsController::class)->group(function () {
         Route::get('/brands',  'brandsIndex')->name('brands.index');
         Route::post('/brands-create',  'brandsCreate')->name('brands.create');
         Route::get('/brandsData',  'brandsData')->name('brands.get');
@@ -101,5 +104,37 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/brandsUpdate/{id}',  'updateBrands')->name('brands.update');
         Route::get('/brands/delete/{id}',  'deleteBrands')->name('brands.delete');
         Route::post('/update-brands-status/{id}',  'updateBrandsStatus')->name('brandsBlock.update');
+    });
+    // ############## Comapny ############
+    Route::controller(CompanyController::class)->group(function () {
+        Route::get('/company',  'companyIndex')->name('company.index');
+        Route::post('/company-create',  'companyCreate')->name('company.create');
+        Route::get('/companyData',  'companyData')->name('company.get');
+        Route::get('/company/{id}',  'showCompany')->name('company.show');
+        Route::post('/companyUpdate/{id}',  'updateCompany')->name('company.update');
+        Route::get('/company/delete/{id}',  'deleteCompany')->name('company.delete');
+        Route::post('/update-company-status/{id}',  'updateCompanyStatus')->name('companyBlock.update');
+    });
+
+    // ############## Model ############
+    Route::controller(ModalsController::class)->group(function () {
+        Route::get('/models',  'modelsIndex')->name('models.index');
+        Route::post('/models-create',  'modelsCreate')->name('models.create');
+        Route::get('/modelsData',  'modelsData')->name('models.get');
+        Route::get('/models/{id}',  'showmodels')->name('models.show');
+        Route::post('/modelsUpdate/{id}',  'updatemodels')->name('models.update');
+        Route::get('/models/delete/{id}',  'deletemodels')->name('models.delete');
+        Route::post('/update-models-status/{id}',  'updatemodelsStatus')->name('modelsBlock.update');
+    });
+
+    // ############## Certifications ############
+    Route::controller(CertificationController::class)->group(function () {
+        Route::get('/certification',  'certificationIndex')->name('certification.index');
+        Route::post('/certification-create',  'certificationCreate')->name('certification.create');
+        Route::get('/certificationData',  'certificationData')->name('certification.get');
+        Route::get('/certification/{id}',  'showcertification')->name('certification.show');
+        Route::post('/certificationUpdate/{id}',  'updatecertification')->name('certification.update');
+        Route::get('/certification/delete/{id}',  'deletecertification')->name('certification.delete');
+        Route::post('/update-certification-status/{id}',  'updatecertificationStatus')->name('certificationBlock.update');
     });
 });
