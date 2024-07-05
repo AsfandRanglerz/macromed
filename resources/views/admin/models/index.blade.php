@@ -16,7 +16,7 @@
                     <form id="createModelsForm" enctype="multipart/form-data">
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
-                                <label for="name">Name</label>
+                                <label for="name">Model Number</label>
                                 <input type="text" class="form-control name" name="name" required>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -55,7 +55,7 @@
                     <form id="editModels" enctype="multipart/form-data">
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
-                                <label for="name">Name</label>
+                                <label for="name">Model Number</label>
                                 <input type="text" class="form-control name" name="name" required>
                                 <div class="invalid-feedback"></div>
                             </div>

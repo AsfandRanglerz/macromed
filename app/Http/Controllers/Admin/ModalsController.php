@@ -28,8 +28,8 @@ class ModalsController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => [
                     'required',
-                    'string',
-                    'max:255',
+                    'numeric',
+                    'min:1',
                     Rule::unique('models')
                 ],
             ]);
@@ -58,8 +58,8 @@ class ModalsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => [
                 'required',
-                'string',
-                'max:255',
+                'numeric',
+                'min:1',
                 Rule::unique('models')->ignore($id),
 
             ],

@@ -132,9 +132,9 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/certification',  'certificationIndex')->name('certification.index');
         Route::post('/certification-create',  'certificationCreate')->name('certification.create');
         Route::get('/certificationData',  'certificationData')->name('certification.get');
-        Route::get('/certification/{id}',  'showcertification')->name('certification.show');
-        Route::post('/certificationUpdate/{id}',  'updatecertification')->name('certification.update');
-        Route::get('/certification/delete/{id}',  'deletecertification')->name('certification.delete');
-        Route::post('/update-certification-status/{id}',  'updatecertificationStatus')->name('certificationBlock.update');
+        Route::get('/certification/{id}',  'showCertification')->name('certification.show');
+        Route::post('/certificationUpdate/{id}',  'updateCertification')->name('certification.update');
+        Route::get('/certification/delete/{id}',  'deleteCertification')->name('certification.delete');
+        Route::post('/update-certification-status/{id}',  'updateCertificationStatus')->name('certificationBlock.update');
     });
 });
