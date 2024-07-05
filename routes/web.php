@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AboutusController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SubAdminController;
+use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\TermConditionController;
 
 /*
@@ -78,5 +79,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/categoryUpdate/{id}', 'updateCategory')->name('category.update');
         Route::get('/category/delete/{id}', 'deleteCategory')->name('category.delete');
         Route::post('/update-category-status/{id}',  'updateCategoryStatus')->name('categoryBlock.update');
+    });
+
+    // ############## Sub Category ############
+    Route::controller(SubCategoryController::class)->group(function () {
+        Route::get('/subCategory',  'subCategoryIndex')->name('subCategory.index');
+        Route::post('/subCategory-create',  'subCategoryCreate')->name('subCategory.create');
+        Route::get('/subCategoryData',  'subCategoryData')->name('subCategory.get');
+        Route::get('/subCategory/{id}',  'showSubCategory')->name('subCategory.show');
+        Route::post('/subCategoryUpdate/{id}',  'updateSubCategory')->name('subCategory.update');
+        Route::get('/subCategory/delete/{id}',  'deleteSubCategory')->name('subCategory.delete');
+        Route::post('/update-subcategory-status/{id}',  'updateSubCategoryStatus')->name('subcategoryBlock.update');
     });
 });

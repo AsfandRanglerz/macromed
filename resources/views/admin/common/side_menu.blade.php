@@ -45,21 +45,21 @@
                             </li>
                         @endif
                         {{-- Sub Category --}}
-                        {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
-                                <li class="dropdown {{ request()->is('admin/subCategory') ? 'active' : '' }}">
-                                    <a href="{{ route('subCategory.index') }}"
-                                        class="nav-link {{ request()->is('admin/subCategory') ? 'text-white' : '' }}">
-                                        <i data-feather="folder"></i><span>Sub Category</span>
-                                    </a>
-                                </li>
-                            @elseif (auth()->guard('admin')->check())
-                                <li class="dropdown {{ request()->is('admin/subCategory') ? 'active' : '' }}">
-                                    <a href="{{ route('subCategory.index') }}"
-                                        class="nav-link {{ request()->is('admin/subCategory') ? 'text-white' : '' }}">
-                                        <i data-feather="folder"></i><span>Sub Category</span>
-                                    </a>
-                                </li>
-                            @endif --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                            <li class="dropdown {{ request()->is('admin/subCategory') ? 'active' : '' }}">
+                                <a href="{{ route('subCategory.index') }}"
+                                    class="nav-link {{ request()->is('admin/subCategory') ? 'text-white' : '' }}">
+                                    <i data-feather="folder"></i><span>Sub Category</span>
+                                </a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="dropdown {{ request()->is('admin/subCategory') ? 'active' : '' }}">
+                                <a href="{{ route('subCategory.index') }}"
+                                    class="nav-link {{ request()->is('admin/subCategory') ? 'text-white' : '' }}">
+                                    <i data-feather="folder"></i><span>Sub Category</span>
+                                </a>
+                            </li>
+                        @endif
                         {{-- Products --}}
                         {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('products'))
                                 <li class="dropdown {{ request()->is('admin/product*') ? 'active' : '' }}">

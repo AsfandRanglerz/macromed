@@ -17,8 +17,11 @@
     <link rel='shortcut icon' type='image/x-icon' href='{{ asset('public/admin/assets/images/logo1.png') }}' />
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('public/admin/toastr/toastr.css') }}">
-
-
+    {{-- <link rel="stylesheet"
+        href="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+        <link rel="stylesheet"
+        href="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/css/responsive.bootstrap4.css') }}">
+<link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/datatables/datatables.min.css') }}"> --}}
 </head>
 
 <body>
@@ -32,6 +35,16 @@
             @include('admin.common.footer')
         </div>
     </div>
+    {{-- <script src="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/js/dataTables.responsive.min.js') }}">
+    </script>
+    <script src="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/js/dataTables.responsive.js') }}">
+    </script>
+     <script src="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/js/responsive.bootstrap4.min.js') }}">
+    </script>
+      <script src="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/js/responsive.bootstrap4.js') }}">
+    </script>
+      <script src="{{ asset('public/admin/assets/bundles/datatables/datatables.min.js') }}">
+    </script> --}}
     <!-- General JS Scripts -->
     <script src="{{ asset('public/admin/assets/js/app.min.js') }}"></script>
     <!-- JS Libraies -->
