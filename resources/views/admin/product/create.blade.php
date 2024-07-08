@@ -26,236 +26,205 @@
                                     </div>
                                     <div class="form-group col-12">
                                         <label>Thumnail Image <span class="text-danger">*</span></label>
-                                        <input type="file" class="form-control-file" name="thumb_image"
+                                        <input type="file" class="form-control-file" name="thumbnail_image"
                                             onchange="previewThumnailImage(event)">
+                                        @error('thumbnail_image')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
-
                                     <div class="form-group col-12">
                                         <label>Banner Image<span class="text-danger">*</span></label>
                                         <input type="file" class="form-control-file" name="banner_image">
+                                        @error('banner_image')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="row col-12">
                                         <div class="form-group col-4">
-                                            <label>Short Name<span class="text-danger">*</span></label>
+                                            <label>Product Short Name<span class="text-danger">*</span></label>
                                             <input type="text" id="short_name" class="form-control" name="short_name"
                                                 value="{{ old('short_name') }}">
+                                            @error('short_name')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
-                                            <label>Name<span class="text-danger">*</span></label>
-                                            <input type="text" id="name" class="form-control" name="name"
-                                                value="{{ old('name') }}">
+                                            <label>Product Name<span class="text-danger">*</span></label>
+                                            <input type="text" id="product_name" class="form-control name"
+                                                name="product_name" value="{{ old('product_name') }}">
+                                            @error('product_name')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Slug<span class="text-danger">*</span></label>
-                                            <input type="text" id="slug" class="form-control" name="slug"
+                                            <input type="text" id="slug" class="form-control slug" name="slug"
                                                 value="{{ old('slug') }}">
+                                            @error('slug')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
-
                                     <div class="row col-12">
                                         <div class="form-group col-4">
                                             <label>Category <span class="text-danger">*</span></label>
-                                            <select name="category[]" class="form-control select2" id="category" multiple>
+                                            <select name="category_id[]" class="form-control select2" id="category"
+                                                multiple>
                                                 @foreach ($categories as $category)
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                 @endforeach
                                             </select>
+                                            @error('category_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Sub Category</label>
-                                            <select name="sub_category[]" class="form-control select2" id="sub_category"
-                                                multiple disabled>
+                                            <select name="sub_category_id[]" class="form-control select2" id="sub_category"
+                                                multiple>
                                                 <option value="">Select Sub Category</option>
                                             </select>
+                                            @error('sub_category_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
-
                                         <div class="form-group col-4">
                                             <label>Brand <span class="text-danger">*</span></label>
-                                            <select name="brand" class="form-control select2" id="brand" multiple>
+                                            <select name="brand_id[]" class="form-control select2" id="brand" multiple>
                                                 @foreach ($brands as $brand)
                                                     <option {{ old('brand') == $brand->id ? 'selected' : '' }}
                                                         value="{{ $brand->id }}">{{ $brand->name }}</option>
                                                 @endforeach
                                             </select>
+                                            @error('brand_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
-                                    {{-- ########### Certification & Models & Company ############ --}}
                                     <div class="row col-12">
                                         <div class="form-group col-4">
-                                            <label>Certications <span class="text-danger">*</span></label>
-                                            <select name="certification" class="form-control select2" id="certification"
-                                                multiple>
+                                            <label>Certifications <span class="text-danger">*</span></label>
+                                            <select name="certification_id[]" class="form-control select2"
+                                                id="certification" multiple>
                                                 @foreach ($certifications as $certification)
-                                                    <option value="{{ $certification->id }}">
-                                                        {{ $certification->name }}</option>
+                                                    <option value="{{ $certification->id }}">{{ $certification->name }}
+                                                    </option>
                                                 @endforeach
-
+                                            </select>
+                                            @error('certification_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
+                                        <div class="form-group col-4">
+                                            <label>Company</label>
+                                            <select name="company" class="form-control" id="company">
+                                                <option value="" disabled selected>Select Company</option>
+                                                @foreach ($companies as $company)
+                                                    <option {{ old('company') == $company->id ? 'selected' : '' }}
+                                                        value="{{ $company->name }}">{{ $company->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('company')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-4">
+                                            <label>Models <span class="text-danger">*</span></label>
+                                            <select name="models" class="form-control" id="models">
+                                                <option value="" disabled selected>Select Models</option>
+                                                @foreach ($models as $model)
+                                                    <option {{ old('models') == $model->id ? 'selected' : '' }}
+                                                        value="{{ $model->name }}">{{ $model->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('models')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row col-12">
+                                        <div class="form-group col-4">
+                                            <label>Country</label>
+                                            <select name="country" class="form-control select2" id="country">
+                                                <option value="">Select Country</option>
+                                                @foreach ($countries as $country)
+                                                    <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('country')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-4">
+                                            <label>Product Commission</label>
+                                            <input type="text" class="form-control" name="product_commission"
+                                                value="{{ old('product_commission') }}">
+                                            @error('product_commission')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-4">
+                                            <label>Video Link</label>
+                                            <input type="text" class="form-control" name="video_link"
+                                                value="{{ old('video_link') }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label>Short Description <span class="text-danger">*</span></label>
+                                        <textarea name="short_description" cols="30" rows="10" class="form-control text-area-5">{{ old('short_description') }}</textarea>
+                                        @error('short_description')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label>Long Description <span class="text-danger">*</span></label>
+                                        <textarea name="long_description" cols="30" rows="10" class="long_description">{{ old('long_description') }}</textarea>
+                                        @error('long_description')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label>Status <span class="text-danger">*</span></label>
+                                        <select name="status" class="form-control">
+                                            <option value="1">Active</option>
+                                            <option value="0">Inactive</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-4">
-                                        <label>Company</label>
-                                        <select name="company" class="form-control" id="company">
-                                            <option value="" disabled selected>Select Company</option>
-                                            @foreach ($companies as $company)
-                                                <option value="{{ $company->id }}">
-                                                    {{ $company->name }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <button class="btn btn-success">Save</button>
+                                        </div>
                                     </div>
-                                    <div class="form-group col-4">
-                                        <label>Models <span class="text-danger">*</span></label>
-                                        <select name="model" class="form-control" id="models">
-                                            <option value="" disabled selected>Select Models</option>
-                                            @foreach ($models as $model)
-                                                <option {{ old('brand') == $model->id ? 'selected' : '' }}
-                                                    value="{{ $model->id }}">{{ $model->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                            </div>
-                            {{-- ########### Actual Price & Selling Price & Country ############ --}}
-                            <div class="row col-12">
-                                <div class="form-group col-4">
-                                    <label>Country</label>
-                                    <select name="sub_category" class="form-control select2" id="sub_category">
-                                        <option value="">Select Country</option>
-                                        @foreach ($countries as $country)
-                                            <option value="{{ $country->iso2 . ',' . $country->name }}">
-                                                {{ $country->name }}</option>
-                                        @endforeach
-                                        @if ($countries == null)
-                                            <div class="internet-error text-danger">Please Check Your Internet
-                                                Connection
-                                            </div>
-                                        @endif
-                                    </select>
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Stock Quantity <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" name="quantity"
-                                        value="{{ old('quantity') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Video Link</label>
-                                    <input type="text" class="form-control" name="video_link"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                            </div>
-                            {{-- ########### Stock Quantity & Video Link & Country ############ --}}
-                            <div class="row col-12">
-                                <div class="form-group col-6">
-                                    <label>Product Commission</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-6">
-                                    <label>Status <span class="text-danger">*</span></label>
-                                    <select name="status" class="form-control">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                </div>
-                            </div>
+                                </form>
 
-                            <div class="form-group col-12">
-                                <label>Short Description <span class="text-danger">*</span></label>
-                                <textarea name="short_description" id="" cols="30" rows="10" class="form-control text-area-5">{{ old('short_description') }}</textarea>
                             </div>
-
-                            <div class="form-group col-12">
-                                <label>Long Description <span class="text-danger">*</span></label>
-                                <textarea name="long_description" id="" cols="30" rows="10" class="long_description">{{ old('long_description') }}</textarea>
-                            </div>
-                            {{-- ############ Variants Sections ############## --}}
-                            <div class="form-group col-12">
-                                <h4>Variants <span class="text-danger">*</span></h4>
-                            </div>
-                            <div class="row col-12">
-                                <div class="form-group col-4">
-                                    <label>SKU</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Packing</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Unit</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                            </div>
-                            <div class="row col-12">
-                                <div class="form-group col-4">
-                                    <label>Quantity</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Actuall Price/Unit</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Selling Price/Unit</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                            </div>
-                            <div class="row col-12">
-                                <div class="form-group col-4">
-                                    <label>Actuall Weight</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Shipping Weight</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Shipping Chargeable Weight</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <label>Description <span class="text-danger">*</span></label>
-                                <textarea name="long_description" id="" cols="30" rows="10" class="long_description">{{ old('long_description') }}</textarea>
-                            </div>
-                            {{-- Append Button & Feilds --}}
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <button type="button" class="btn btn-success" id="addFieldsBtn">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="additionalFields">
-                            </div>
-                            {{-- ############ Variants Sections ############## --}}
-
-                            <div class="row">
-                                <div class="col-12 text-center">
-                                    <button class="btn btn-success">Save</button>
-                                </div>
-                            </div>
-                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-    </div>
-    </section>
+        </section>
     </div>
 
 @endsection
 
 @section('js')
     <script>
+        // Slug code
+        (function($) {
+            "use strict";
+            $(document).ready(function() {
+                $(".name").on("focusout", function(e) {
+                    $(".slug").val(convertToSlug($(this).val()));
+                })
+            });
+        })(jQuery);
+
+        function convertToSlug(Text) {
+            return Text
+                .toLowerCase()
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
+        }
         // Image perview code
         function previewThumnailImage(event) {
             var reader = new FileReader();
@@ -312,79 +281,6 @@
                     $('#sub_category').prop('disabled', true);
                 }
             });
-        });
-        // Appended fields code
-        function addAdditionalFields() {
-            var additionalFieldsHTML = `
-            <div class="row col-12">
-                                <div class="form-group col-4">
-                                    <label>SKU</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Packing</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Unit</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                            </div>
-                            <div class="row col-12">
-                                <div class="form-group col-4">
-                                    <label>Quantity</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Actuall Price/Unit</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Selling Price/Unit</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                            </div>
-                            <div class="row col-12">
-                                <div class="form-group col-4">
-                                    <label>Actuall Weight</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Shipping Weight</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                                <div class="form-group col-4">
-                                    <label>Shipping Chargeable Weight</label>
-                                    <input type="text" class="form-control" name="product_commission"
-                                        value="{{ old('video_link') }}">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <label>Description <span class="text-danger">*</span></label>
-                                <textarea name="long_description" id="" cols="30" rows="10" class="long_description">{{ old('long_description') }}</textarea>
-                            </div>
-            <div class="col-md-3 col-sm-3 col-lg-3">
-                <div class="form-group" style="margin-top: 29px">
-                    <button type="button" class="btn btn-danger removeField" ><i class="fa fa-trash"></i></button>
-                </div>
-            </div>
-    `;
-            $('#additionalFields').append(additionalFieldsHTML);
-        }
-        $(document).on('click', '.removeField', function() {
-            $(this).closest('.row').remove();
-        });
-        // Event listener for the Add button
-        $('#addFieldsBtn').click(function() {
-            addAdditionalFields();
         });
     </script>
 
