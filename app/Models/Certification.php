@@ -12,4 +12,9 @@ class Certification extends Model
         'name',
         'status'
     ];
+
+    public function productVaraint()
+    {
+        return $this->hasMany(ProductVaraint::class, 'certification_id');
+    }
 }

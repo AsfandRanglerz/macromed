@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\ModalsController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\SubCategoryController;
@@ -136,5 +137,13 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/certificationUpdate/{id}',  'updateCertification')->name('certification.update');
         Route::get('/certification/delete/{id}',  'deleteCertification')->name('certification.delete');
         Route::post('/update-certification-status/{id}',  'updateCertificationStatus')->name('certificationBlock.update');
+    });
+
+    // ############## Product ############
+    Route::controller(ProductController::class)->group(function () {
+        Route::get('/product',  'productIndex')->name('product.index');
+        Route::get('/product-create',  'productCreateIndex')->name('product.create');
+        Route::post('/product-store', 'productStore')->name('product.store');
+        Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories');
     });
 });

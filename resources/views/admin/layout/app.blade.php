@@ -22,6 +22,10 @@
         <link rel="stylesheet"
         href="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/css/responsive.bootstrap4.css') }}">
 <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/datatables/datatables.min.css') }}"> --}}
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+    <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/select2/dist/css/select2.min.css') }}">
+
+
 </head>
 
 <body>
@@ -59,6 +63,8 @@
     <script src="{{ asset('public/admin/assets/js/datatables.js') }}"></script>
 
     <script src="{{ asset('public/admin/toastr/toastr.js') }}"></script>
+    <script src="{{ asset('public/admin/assets/bundles/select2/dist/js/select2.full.min.js') }}"></script>
+
 
     @yield('js')
     <script>

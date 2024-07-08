@@ -125,7 +125,7 @@
                             </li>
                         @endif
                         {{-- Products --}}
-                        {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('products'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('products'))
                             <li class="dropdown {{ request()->is('admin/product*') ? 'active' : '' }}">
                                 <a href="{{ route('product.index') }}"
                                     class="nav-link {{ request()->is('admin/product*') ? 'text-white' : '' }}">
@@ -139,7 +139,7 @@
                                     <i data-feather="box"></i><span>Products</span>
                                 </a>
                             </li>
-                        @endif --}}
+                        @endif
                     </ul>
                 </li>
             @endif

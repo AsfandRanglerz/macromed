@@ -14,4 +14,9 @@ class Brands extends Model
         'slug',
         'status'
     ];
+
+    public function productVaraint()
+    {
+        return $this->hasMany(ProductVaraint::class, 'brand_id');
+    }
 }

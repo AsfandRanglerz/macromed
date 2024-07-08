@@ -17,4 +17,10 @@ class Category extends Model
     {
         return $this->hasMany(SubCategory::class);
     }
+
+    public function productVaraint()
+    {
+        return $this->hasMany(ProductVaraint::class,'category_id');
+    }
+
 }
