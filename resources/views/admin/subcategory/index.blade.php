@@ -17,7 +17,7 @@
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="category">Category</label>
-                                <select class="form-control category_id" name="category_id" required>
+                                <select class="form-control" id="category_id" name="category_id" required>
                                     <option value="">Select Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -29,21 +29,21 @@
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control name" name="name" required>
+                                <input type="text" class="form-control name" id="name" name="name" required>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="slug">Slug</label>
-                                <input type="text" class="form-control slug" name="slug">
+                                <input type="text" class="form-control slug" id="slug" name="slug">
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="status">Active Status</label>
-                                <select name="status" class="form-control status">
+                                <select name="status" class="form-control" id="status">
                                     <option value="1">Active</option>
                                     <option value="0">In Active</option>
                                 </select>
@@ -293,9 +293,9 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('[name="' + key + '"]').addClass('is-invalid').siblings(
-                                '.invalid-feedback').text(value);
-
+                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
+                                value[
+                                    0]);
                         });
                     } else {
                         console.log("Error:", xhr);
@@ -365,9 +365,9 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('[name="' + key + '"]').addClass('is-invalid').siblings(
-                                '.invalid-feedback').text(value);
-
+                            $('.' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
+                                value[
+                                    0]);
                         });
                     } else {
                         console.log("Error:", xhr);
