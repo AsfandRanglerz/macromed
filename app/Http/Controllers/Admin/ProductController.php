@@ -18,11 +18,23 @@ use App\Models\ProductVaraint;
 
 class ProductController extends Controller
 {
+
+    public function productData()
+    {
+        $products = Product::with('brands', 'certifications', 'categories')->latest()->get();
+        $json_data["data"] = $products;
+        return json_encode($json_data);
+    }
     public function productIndex()
     {
         // $categories = Category::all()->where('status', '1');
         $products = Product::with('brands', 'certifications', 'categories')->where('status', '1')->latest()->get();
         return view('admin.product.index', compact('products'));
+    }
+    public function productVariantIndex($id)
+    {
+        $data = Product::where('status', '1')->find($id);
+        return view('admin.product.product_variant', compact('data'));
     }
     public function productCreateIndex()
     {
@@ -130,6 +142,26 @@ class ProductController extends Controller
             return redirect()->route('product.index')->with('message', 'Product Created Successfully!');
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function updateProductStatus($id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+            if ($product->status == '0') {
+                $product->status = '1';
+                $message = 'Product Active Successfully';
+            } else if ($product->status == '1') {
+                $product->status = '0';
+                $message = 'Product In Active Successfully';
+            } else {
+                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
+            }
+            $product->save();
+            return response()->json(['alert' => 'success', 'message' => $message]);
+        } catch (\Exception $e) {
+            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
         }
     }
 }

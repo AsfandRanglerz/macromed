@@ -141,9 +141,13 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
+        Route::get('/productData',  'productData')->name('products.get');
         Route::get('/product',  'productIndex')->name('product.index');
         Route::get('/product-create',  'productCreateIndex')->name('product.create');
         Route::post('/product-store', 'productStore')->name('product.store');
         Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories');
+        Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index');
+        Route::get('/products/{product}/variants', 'productVariantStore')->name('product-variant.store');
+        Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update');
     });
 });
