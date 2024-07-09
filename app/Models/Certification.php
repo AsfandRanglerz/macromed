@@ -13,8 +13,8 @@ class Certification extends Model
         'status'
     ];
 
-    public function productVaraint()
+    public function products()
     {
-        return $this->hasMany(ProductVaraint::class, 'certification_id');
+        return $this->belongsTo(Product::class);
     }
 }

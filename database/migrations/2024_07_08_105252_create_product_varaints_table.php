@@ -17,14 +17,6 @@ class CreateProductVaraintsTable extends Migration
             $table->id();
             $table->bigInteger('product_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->bigInteger('category_id')->unsigned();
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->bigInteger('sub_category_id')->unsigned();
-            $table->foreign('sub_category_id')->references('id')->on('sub_categories')->onDelete('cascade');
-            $table->bigInteger('brand_id')->unsigned();
-            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
-            $table->bigInteger('certification_id')->unsigned();
-            $table->foreign('certification_id')->references('id')->on('certifications')->onDelete('cascade');
             $table->string('s_k_u')->nullable();
             $table->string('packing')->nullable();
             $table->string('unit')->nullable();
@@ -36,8 +28,6 @@ class CreateProductVaraintsTable extends Migration
             $table->string('shipping_chargeable_weight')->nullable();
             $table->longText('description')->nullable();
             $table->enum('stock_status', [0, 1])->default(0);
-
-
             $table->timestamps();
         });
     }

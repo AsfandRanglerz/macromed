@@ -14,24 +14,4 @@ class ProductVaraint extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    public function subCategory()
-    {
-        return $this->belongsTo(SubCategory::class);
-    }
-
-    public function brand()
-    {
-        return $this->belongsTo(Brands::class);
-    }
-
-    public function certification()
-    {
-        return $this->belongsTo(Certification::class);
-    }
 }

@@ -11,14 +11,18 @@ use App\Models\Certification;
 use App\Models\Company;
 use App\Models\Models;
 use App\Models\Product;
+use App\Models\ProductBrands;
+use App\Models\ProductCategorySubCategory;
+use App\Models\ProductCertifcation;
 use App\Models\ProductVaraint;
 
 class ProductController extends Controller
 {
     public function productIndex()
     {
-        $categories = Category::all()->where('status', '1');
-        return view('admin.product.index', compact('categories'));
+        // $categories = Category::all()->where('status', '1');
+        $products = Product::with('brands', 'certifications', 'categories')->where('status', '1')->latest()->get();
+        return view('admin.product.index', compact('products'));
     }
     public function productCreateIndex()
     {
@@ -61,6 +65,8 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'category_id' => 'required|array',
             'category_id.*' => 'exists:categories,id',
+            'sub_category_id' => 'required|array',
+            'sub_category_id.*' => 'exists:sub_categories,id',
             'brand_id' => 'required|array',
             'brand_id.*' => 'exists:brands,id',
             'certification_id' => 'required|array',
@@ -95,20 +101,33 @@ class ProductController extends Controller
                 $banner_image->move(public_path('admin/assets/images/products'), $banner_name);
                 $product->banner_image = $banner_path;
             }
-
             $product->save();
-
-            foreach ($product->id as $productId) {
-                $productVariant = new ProductVaraint();
-                $productVariant->product_id = $productId;
-                $productVariant->category_id = $request->input('category_id');
-                $productVariant->sub_category_id = $request->input('sub_category_id');
-                $productVariant->brand_id = $request->input('brand_id');
-                $productVariant->certification_id = $request->input('certification_id');
+            // Save product variants
+            $category_ids = $request->input('category_id');
+            $sub_category_ids = $request->input('sub_category_id');
+            $brand_ids = $request->input('brand_id');
+            $certification_ids = $request->input('certification_id');
+            foreach ($category_ids as $key => $categoryId) {
+                $productVariant = new ProductCategorySubCategory();
+                $productVariant->product_id = $product->id;
+                $productVariant->category_id = $categoryId;
+                $productVariant->sub_category_id = $sub_category_ids[$key] ?? null;
+                $productVariant->save();
+            }
+            foreach ($brand_ids as $brandId) {
+                $productVariant = new ProductBrands();
+                $productVariant->product_id = $product->id;
+                $productVariant->brand_id = $brandId;
+                $productVariant->save();
+            }
+            foreach ($certification_ids as $certificationIds) {
+                $productVariant = new ProductCertifcation();
+                $productVariant->product_id = $product->id;
+                $productVariant->certification_id = $certificationIds;
                 $productVariant->save();
             }
 
-            return redirect()->route('product.index')->with('message', 'Product created successfully.');
+            return redirect()->route('product.index')->with('message', 'Product Created Successfully!');
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['error' => $e->getMessage()]);
         }

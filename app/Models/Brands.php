@@ -15,8 +15,5 @@ class Brands extends Model
         'status'
     ];
 
-    public function productVaraint()
-    {
-        return $this->hasMany(ProductVaraint::class, 'brand_id');
-    }
+   
 }

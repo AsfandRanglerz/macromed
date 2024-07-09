@@ -19,8 +19,8 @@ class SubCategory extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function productVaraint()
+    public function products()
     {
-        return $this->hasMany(ProductVaraint::class, 'sub_category_id');
+        return $this->belongsTo(Product::class);
     }
 }
