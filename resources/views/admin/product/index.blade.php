@@ -21,7 +21,6 @@
                                     <thead class="text-center">
                                         <tr>
                                             <th>Sr.</th>
-                                            <th>Variants</th>
                                             <th>Product Name</th>
                                             <th>Brands</th>
                                             <th>Certifications</th>
@@ -30,6 +29,7 @@
                                             <th>Company</th>
                                             <th>Models</th>
                                             <th>Status</th>
+                                            <th>Variants</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -68,14 +68,7 @@
                             return meta.row + 1;
                         }
                     },
-                    {
-                        "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('product_variant.index', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-primary text-white"><i class="fas fa-store"></i></a>';
-                        },
-                    },
+
                     {
                         "data": "product_name",
                         "render": function(data, type, row) {
@@ -155,11 +148,28 @@
 
                     },
                     {
+                        "render": function(data, type, row) {
+                            return `
+                    <div class="dropdown d-inline">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton${row.id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton${row.id}">
+                            <a class="dropdown-item has-icon" href="{{ route('product_variant.index', ':id') }}"><i class="fas fa-plus"></i>Add</a>
+                            <a class="dropdown-item has-icon" href="{{ route('product_variant.index', ':id') }}"><i class="fas fa-edit"></i>Update</a>
+                        </div>
+                    </div>
+                `.replace(/:id/g, row.id);
+                        }
+                    },
+                    {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success mb-1 mr-2 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger mb-1 mr-2 text-white deleteSubadminBtn" data-id="' +
+                            return '<a href="' +
+                                "{{ route('product.edit', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-success mb-1 mr-1  text-white"><i class="fas fa-edit"></i></a>' +
+                                '<button class="btn btn-danger mb-1 mr-1 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
                         }
                     }

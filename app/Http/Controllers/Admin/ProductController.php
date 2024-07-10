@@ -153,6 +153,28 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Failed to save Product. Please try again later.');
         }
     }
+    public function productEdit($id)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => array(
+                'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $countries = json_decode($response);
+
+        // Decode the JSON response
+        if ($countries == NULL) {
+            $countries = [];
+        }
+        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategorySubCategory.categories.subcategories')->where('status', '1')->find($id);
+        //    return $products;
+        return view('admin.product.edit', compact('products','countries'));
+    }
     // Store and updtae Product Varaints
     public function productVariantStore(Request $request, $productId)
     {
@@ -202,7 +224,7 @@ class ProductController extends Controller
 
 
             foreach ($request->variants as $variant) {
-                ProductVaraint::updateOrCreate(
+                ProductVaraint::create(
                     ['id' => $variant['id'] ?? null],
                     [
                         'product_id' => $productId,

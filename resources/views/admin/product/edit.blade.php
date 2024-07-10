@@ -10,18 +10,21 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="col-md-12">
-                                    <h4>Create Product</h4>
+                                    <h4>Edit & Update Product</h4>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
+
+                                <form action="{{ route('product.update', $products->id) }}" method="POST"
+                                    enctype="multipart/form-data">
                                     @csrf
+                                    @method('PUT')
                                     <div class="form-group col-md-12">
                                         <label>Thumbnail Image Preview</label>
                                         <div>
                                             <img id="preview-img" class="admin-img"
                                                 src="{{ asset('public/admin/assets/images/preview.png') }}"
-                                                style="width: 15%" alt="">
+                                                style="width: 15%" alt="" value="{{ $products->thumbnail_image }}">
                                         </div>
                                     </div>
                                     <div class="form-group col-md-12">
@@ -31,23 +34,24 @@
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Banner Image<span class="text-danger">*</span></label>
-                                        <input type="file" class="form-control-file" name="banner_image">
+                                        <input type="file" class="form-control-file" name="banner_image"
+                                            value="{{ $products->banner_image }}">
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
                                             <label>Product Short Name<span class="text-danger">*</span></label>
                                             <input type="text" id="short_name" class="form-control" name="short_name"
-                                                value="{{ old('short_name') }}">
+                                                value="{{ $products->short_name }}">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Product Name<span class="text-danger">*</span></label>
                                             <input type="text" id="product_name" class="form-control name"
-                                                name="product_name" value="{{ old('product_name') }}">
+                                                name="product_name" value="{{ $products->product_name }}">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Slug<span class="text-danger">*</span></label>
                                             <input type="text" id="slug" class="form-control slug" name="slug"
-                                                value="{{ old('slug') }}">
+                                                value="{{ $products->slug }}">
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
@@ -55,8 +59,9 @@
                                             <label>Category <span class="text-danger">*</span></label>
                                             <select name="category_id[]" class="form-control select2" id="category"
                                                 multiple>
-                                                @foreach ($categories as $category)
-                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @foreach ($products->productCategorySubCategory as $item)
+                                                    <option value="{{ $item->categories->id }}">
+                                                        {{ $item->categories->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -64,15 +69,21 @@
                                             <label>Sub Category</label>
                                             <select name="sub_category_id[]" class="form-control select2" id="sub_category"
                                                 multiple>
-                                                <option value="">Select Sub Category</option>
+                                                @foreach ($products->productCategorySubCategory as $item)
+                                                    @foreach ($item->categories->subcategories as $subcategory)
+                                                        <option value="{{ $subcategory->id }}">{{ $subcategory->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endforeach
                                             </select>
                                         </div>
+
                                         <div class="form-group col-md-4">
                                             <label>Brand <span class="text-danger">*</span></label>
                                             <select name="brand_id[]" class="form-control select2" id="brand" multiple>
-                                                @foreach ($brands as $brand)
-                                                    <option {{ old('brand') == $brand->id ? 'selected' : '' }}
-                                                        value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                @foreach ($products->productBrands as $item)
+                                                    <option value="{{ $item->brands->id }}">
+                                                        {{ $item->brands->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -82,13 +93,13 @@
                                             <label>Certifications <span class="text-danger">*</span></label>
                                             <select name="certification_id[]" class="form-control select2"
                                                 id="certification" multiple>
-                                                @foreach ($certifications as $certification)
-                                                    <option value="{{ $certification->id }}">{{ $certification->name }}
-                                                    </option>
+                                                @foreach ($products->productCertifications as $item)
+                                                    <option value="{{ $item->certification->id }}">
+                                                        {{ $item->certification->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        {{-- <div class="form-group col-md-4">
                                             <label>Company</label>
                                             <select name="company" class="form-control" id="company">
                                                 <option value="" disabled selected>Select Company</option>
@@ -107,7 +118,7 @@
                                                         value="{{ $model->name }}">{{ $model->name }}</option>
                                                 @endforeach
                                             </select>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
@@ -115,31 +126,28 @@
                                             <select name="country" class="form-control select2" id="country">
                                                 <option value="">Select Country</option>
                                                 @foreach ($countries as $country)
-                                                    <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                                    <option value="{{ $country->name }}">{{ $products->country }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Product Commission</label>
                                             <input type="text" class="form-control" name="product_commission"
-                                                value="{{ old('product_commission') }}">
-
-
-
+                                                value="{{ $products->product_commission }}">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Video Link</label>
                                             <input type="text" class="form-control" name="video_link"
-                                                value="{{ old('video_link') }}">
+                                                value="{{ $products->video_link }}">
                                         </div>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Short Description <span class="text-danger">*</span></label>
-                                        <textarea name="short_description" cols="30" rows="10" class="form-control text-area-5">{{ old('short_description') }}</textarea>
+                                        <textarea name="short_description" cols="30" rows="10" class="form-control text-area-5">{{ $products->short_description }}</textarea>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Long Description <span class="text-danger">*</span></label>
-                                        <textarea name="long_description" cols="20" rows="50" class="long_description">{{ old('long_description') }}</textarea>
+                                        <textarea name="long_description" cols="20" rows="50" class="long_description">{{ $products->long_description }}</textarea>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label>Status <span class="text-danger">*</span></label>
