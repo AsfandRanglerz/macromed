@@ -28,41 +28,26 @@
                                         <label>Thumnail Image <span class="text-danger">*</span></label>
                                         <input type="file" class="form-control-file" name="thumbnail_image"
                                             onchange="previewThumnailImage(event)">
-                                        @error('thumbnail_image')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
                                     </div>
                                     <div class="form-group col-12">
                                         <label>Banner Image<span class="text-danger">*</span></label>
                                         <input type="file" class="form-control-file" name="banner_image">
-                                        @error('banner_image')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
                                     </div>
                                     <div class="row col-12">
                                         <div class="form-group col-4">
                                             <label>Product Short Name<span class="text-danger">*</span></label>
                                             <input type="text" id="short_name" class="form-control" name="short_name"
                                                 value="{{ old('short_name') }}">
-                                            @error('short_name')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Product Name<span class="text-danger">*</span></label>
                                             <input type="text" id="product_name" class="form-control name"
                                                 name="product_name" value="{{ old('product_name') }}">
-                                            @error('product_name')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Slug<span class="text-danger">*</span></label>
                                             <input type="text" id="slug" class="form-control slug" name="slug"
                                                 value="{{ old('slug') }}">
-                                            @error('slug')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row col-12">
@@ -74,9 +59,6 @@
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('category_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Sub Category</label>
@@ -84,9 +66,6 @@
                                                 multiple>
                                                 <option value="">Select Sub Category</option>
                                             </select>
-                                            @error('sub_category_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Brand <span class="text-danger">*</span></label>
@@ -96,9 +75,6 @@
                                                         value="{{ $brand->id }}">{{ $brand->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('brand_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row col-12">
@@ -111,9 +87,6 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            @error('certification_id')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Company</label>
@@ -124,9 +97,6 @@
                                                         value="{{ $company->name }}">{{ $company->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('company')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Models <span class="text-danger">*</span></label>
@@ -137,9 +107,6 @@
                                                         value="{{ $model->name }}">{{ $model->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('models')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="row col-12">
@@ -151,17 +118,14 @@
                                                     <option value="{{ $country->name }}">{{ $country->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('country')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Product Commission</label>
                                             <input type="text" class="form-control" name="product_commission"
                                                 value="{{ old('product_commission') }}">
-                                            @error('product_commission')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
+
+
+
                                         </div>
                                         <div class="form-group col-4">
                                             <label>Video Link</label>
@@ -172,16 +136,10 @@
                                     <div class="form-group col-12">
                                         <label>Short Description <span class="text-danger">*</span></label>
                                         <textarea name="short_description" cols="30" rows="10" class="form-control text-area-5">{{ old('short_description') }}</textarea>
-                                        @error('short_description')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
                                     </div>
                                     <div class="form-group col-12">
                                         <label>Long Description <span class="text-danger">*</span></label>
                                         <textarea name="long_description" cols="30" rows="10" class="long_description">{{ old('long_description') }}</textarea>
-                                        @error('long_description')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
                                     </div>
                                     <div class="form-group col-12">
                                         <label>Status <span class="text-danger">*</span></label>
@@ -282,6 +240,13 @@
                 }
             });
         });
+
+        //#### Torster Message##########
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error('{{ $error }}');
+            @endforeach
+        @endif
     </script>
 
 @endsection

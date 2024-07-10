@@ -9,10 +9,13 @@ class ProductBrands extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    
+
     public function products()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
-
+    public function brands()
+    {
+        return $this->belongsTo(Brands::class, 'brand_id', 'id');
+    }
 }

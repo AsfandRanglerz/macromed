@@ -15,5 +15,8 @@ class Brands extends Model
         'status'
     ];
 
-   
+    public function product()
+    {
+        $this->hasMany(ProductBrands::class, 'brand_id');
+    }
 }

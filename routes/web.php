@@ -147,7 +147,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/product-store', 'productStore')->name('product.store');
         Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories');
         Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index');
-        Route::get('/products/{product}/variants', 'productVariantStore')->name('product-variant.store');
+        Route::post('/products/{product}/variants', 'productVariantStore')->name('product-variant.store');
         Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update');
     });
 });

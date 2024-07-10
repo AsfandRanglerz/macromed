@@ -14,18 +14,16 @@ class Product extends Model
     {
         return $this->hasMany(ProductVaraint::class, 'product_id');
     }
-    public function brands()
+    public function productBrands()
     {
-        return $this->hasMany(ProductBrands::class);
+        return $this->hasMany(ProductBrands::class, 'product_id');
     }
-
-    public function certifications()
+    public function productCertifications()
     {
-        return $this->hasMany(ProductCertifcation::class);
+        return $this->hasMany(ProductCertifcation::class, 'product_id');
     }
-    public function categories()
+    public function productCategorySubCategory()
     {
-        return $this->hasMany(ProductCategorySubCategory::class);
+        return $this->hasMany(ProductCategorySubCategory::class, 'product_id');
     }
-
 }

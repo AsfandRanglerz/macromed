@@ -129,14 +129,14 @@
                             <li class="dropdown {{ request()->is('admin/product*') ? 'active' : '' }}">
                                 <a href="{{ route('product.index') }}"
                                     class="nav-link {{ request()->is('admin/product*') ? 'text-white' : '' }}">
-                                    <i data-feather="box"></i><span>Products</span>
+                                    <i data-feather="layers"></i><span>Products</span>
                                 </a>
                             </li>
                         @elseif (auth()->guard('admin')->check())
                             <li class="dropdown {{ request()->is('admin/product*') ? 'active' : '' }}">
                                 <a href="{{ route('product.index') }}"
                                     class="nav-link {{ request()->is('admin/product*') ? 'text-white' : '' }}">
-                                    <i data-feather="box"></i><span>Products</span>
+                                    <i data-feather="layers"></i><span>Products</span>
                                 </a>
                             </li>
                         @endif

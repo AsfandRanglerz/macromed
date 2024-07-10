@@ -17,4 +17,8 @@ class Certification extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public function product()
+    {
+        $this->hasMany(ProductCertifcation::class, 'certification_id');
+    }
 }

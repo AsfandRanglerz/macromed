@@ -21,12 +21,14 @@
                                     <thead class="text-center">
                                         <tr>
                                             <th>Sr.</th>
+                                            <th>Variants</th>
                                             <th>Product Name</th>
+                                            <th>Brands</th>
+                                            <th>Certifications</th>
+                                            <th>Category</th>
+                                            <th>Sub Category</th>
                                             <th>Company</th>
                                             <th>Models</th>
-                                            <th>Variants</th>
-                                            {{-- <th>Category</th>
-                                            <th>Sub Category</th> --}}
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -67,7 +69,72 @@
                         }
                     },
                     {
-                        "data": "product_name"
+                        "render": function(data, type, row) {
+                            return '<a href="' +
+                                "{{ route('product_variant.index', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-primary text-white"><i class="fas fa-store"></i></a>';
+                        },
+                    },
+                    {
+                        "data": "product_name",
+                        "render": function(data, type, row) {
+                            function truncateText(text, wordLimit) {
+                                var words = text.split(' ');
+                                if (words.length > wordLimit) {
+                                    return words.slice(0, wordLimit).join(' ') + '...';
+                                }
+                                return text;
+                            }
+                            return truncateText(data, 4);
+                        }
+                    },
+                    {
+                        "data": "product_brands",
+                        "render": function(data, type, row) {
+                            if (data.length === 0) {
+                                return 'No data found!';
+                            }
+                            return data.map(productBrand => productBrand.brands.name).join(', ');
+                        }
+                    },
+                    {
+                        "data": "product_certifications",
+                        "render": function(data, type, row) {
+                            if (data.length === 0) {
+                                return 'No data found!';
+                            }
+                            return data.map(certification => certification.certification.name).join(
+                                ', ');
+                        }
+                    },
+                    {
+                        "data": "product_category_sub_category",
+                        "render": function(data, type, row) {
+                            if (data.length === 0) {
+                                return 'No data found!';
+                            }
+                            return data.map(productCategory => productCategory.categories.name)
+                                .join(', ');
+                        }
+                    },
+                    {
+                        "data": "product_category_sub_category",
+                        "render": function(data, type, row) {
+                            if (data.length === 0) {
+                                return 'No data found!';
+                            }
+                            let subcategories = [];
+                            data.forEach(item => {
+                                if (item.categories && item.categories.subcategories) {
+                                    item.categories.subcategories.forEach(subcategory => {
+                                        subcategories.push(subcategory.name);
+                                    });
+                                }
+                            });
+                            return subcategories.length ? subcategories.join(', ') :
+                                'No subcategories found!';
+                        }
                     },
                     {
                         "data": "company"
@@ -75,14 +142,7 @@
                     {
                         "data": "models"
                     },
-                    {
-                        "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('product_variant.index', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-danger mb-3 text-white"><i class="fas fa-image"></i></a>';
-                        },
-                    },
+
                     {
                         "data": null,
                         "render": function(data, type, row) {
@@ -97,9 +157,9 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
+                            return '<button class="btn btn-success mb-1 mr-2 text-white editSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
+                                '<button class="btn btn-danger mb-1 mr-2 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
                         }
                     }
