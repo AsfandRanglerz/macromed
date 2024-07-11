@@ -123,7 +123,7 @@
                         }
                     },
                     {
-                        "data": "product_category_sub_category",
+                        "data": "product_category",
                         "render": function(data, type, row) {
                             if (data.length === 0) {
                                 return 'No data found!';
@@ -133,21 +133,14 @@
                         }
                     },
                     {
-                        "data": "product_category_sub_category",
+                        "data": "product_sub_category",
                         "render": function(data, type, row) {
                             if (data.length === 0) {
                                 return 'No data found!';
                             }
-                            let subcategories = [];
-                            data.forEach(item => {
-                                if (item.categories && item.categories.subcategories) {
-                                    item.categories.subcategories.forEach(subcategory => {
-                                        subcategories.push(subcategory.name);
-                                    });
-                                }
-                            });
-                            return subcategories.length ? subcategories.join(', ') :
-                                'No subcategories found!';
+                            return data.map(productSubCategory => productSubCategory.sub_categories
+                                    .name)
+                                .join(', ');
                         }
                     },
                     {

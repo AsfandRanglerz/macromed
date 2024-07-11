@@ -22,8 +22,12 @@ class Product extends Model
     {
         return $this->hasMany(ProductCertifcation::class, 'product_id');
     }
-    public function productCategorySubCategory()
+    public function productCategory()
     {
-        return $this->hasMany(ProductCategorySubCategory::class, 'product_id');
+        return $this->hasMany(ProductCatgeory::class, 'product_id');
+    }
+    public function productSubCategory()
+    {
+        return $this->hasMany(ProductSubCatgeory::class, 'product_id');
     }
 }
