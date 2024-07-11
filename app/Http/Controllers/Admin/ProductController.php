@@ -89,7 +89,7 @@ class ProductController extends Controller
             'certification_id.*' => 'exists:certifications,id',
             'company' => 'required',
             'models' => 'required',
-            // 'country' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
             'product_commission' => 'required|string|max:255',
             'video_link' => 'nullable|string|max:255',
             'short_description' => 'required|string',

@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\ModalsController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SalesAgentController;
+use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\TermConditionController;
@@ -146,11 +147,21 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/units-create',  'unitsCreate')->name('units.create');
         Route::get('/unitsData',  'unitsData')->name('units.get');
         Route::get('/units/{id}',  'showunits')->name('units.show');
-        Route::post('/unitsUpdate/{id}',  'updateunits')->name('units.update');
-        Route::get('/units/delete/{id}',  'deleteunits')->name('units.delete');
-        Route::post('/update-units-status/{id}',  'updateunitsStatus')->name('unitsBlock.update');
+        Route::post('/unitsUpdate/{id}',  'updateUnits')->name('units.update');
+        Route::get('/units/delete/{id}',  'deleteUnits')->name('units.delete');
+        Route::post('/update-units-status/{id}',  'updateUnitsStatus')->name('unitsBlock.update');
     });
 
+    // ############## Units ############
+    Route::controller(SterilizationController::class)->group(function () {
+        Route::get('/sterilization',  'sterilizationIndex')->name('sterilization.index');
+        Route::post('/sterilization-create',  'sterilizationCreate')->name('sterilization.create');
+        Route::get('/sterilizationData',  'sterilizationData')->name('sterilization.get');
+        Route::get('/sterilization/{id}',  'showSterilization')->name('sterilization.show');
+        Route::post('/sterilizationUpdate/{id}',  'updateSterilization')->name('sterilization.update');
+        Route::get('/sterilization/delete/{id}',  'deleteSterilization')->name('sterilization.delete');
+        Route::post('/update-sterilization-status/{id}',  'updateSterilizationStatus')->name('sterilizationBlock.update');
+    });
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
         Route::get('/productData',  'productData')->name('products.get');
