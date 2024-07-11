@@ -19,7 +19,6 @@ use App\Models\ProductSubCatgeory;
 use App\Models\ProductCertifcation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Models\ProductCategorySubCategory;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
