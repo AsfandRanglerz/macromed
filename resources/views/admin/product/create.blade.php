@@ -133,6 +133,35 @@
                                                 value="{{ old('video_link') }}">
                                         </div>
                                     </div>
+                                    <div class="row col-12">
+                                        <div class="form-group col-md-4">
+                                            <label>Product Status <span class="text-danger">*</span></label>
+                                            <select name="status" class="form-control">
+                                                <option value="" disabled selected>Select Product Status</option>
+                                                <option value="1">Disposable</option>
+                                                <option value="0">Multiple Use</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Sterilizations <span class="text-danger">*</span></label>
+                                            <select name="sterilizations" class="form-control" id="sterilizations">
+                                                <option value="" disabled selected>Select Sterilizations</option>
+                                                @foreach ($sterilizations as $sterilization)
+                                                    <option
+                                                        {{ old('sterilizations') == $sterilization->id ? 'selected' : '' }}
+                                                        value="{{ $sterilization->name }}">{{ $sterilization->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Status <span class="text-danger">*</span></label>
+                                            <select name="status" class="form-control">
+                                                <option value="1">Active</option>
+                                                <option value="0">Inactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="form-group col-md-12">
                                         <label>Short Description <span class="text-danger">*</span></label>
                                         <textarea name="short_description" cols="30" rows="10" class="form-control text-area-5">{{ old('short_description') }}</textarea>
@@ -140,13 +169,6 @@
                                     <div class="form-group col-md-12">
                                         <label>Long Description <span class="text-danger">*</span></label>
                                         <textarea name="long_description" cols="20" rows="50" class="long_description">{{ old('long_description') }}</textarea>
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <label>Status <span class="text-danger">*</span></label>
-                                        <select name="status" class="form-control">
-                                            <option value="1">Active</option>
-                                            <option value="0">Inactive</option>
-                                        </select>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 text-center">

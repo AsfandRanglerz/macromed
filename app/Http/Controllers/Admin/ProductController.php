@@ -17,6 +17,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductCategorySubCategory;
 use App\Models\ProductCatgeory;
 use App\Models\ProductSubCatgeory;
+use App\Models\Sterilization;
 use App\Models\Unit;
 use Illuminate\Validation\ValidationException;
 
@@ -65,7 +66,8 @@ class ProductController extends Controller
         $models = Models::where('status', '1')->get();
         $certifications = Certification::where('status', '1')->get();
         $companies = Company::where('status', '1')->get();
-        return view('admin.product.create', compact('countries', 'categories', 'brands', 'models', 'certifications', 'companies'));
+        $sterilizations = Sterilization::where('status', '1')->get();
+        return view('admin.product.create', compact('countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
     }
 
     public function getSubCategories(Request $request)
