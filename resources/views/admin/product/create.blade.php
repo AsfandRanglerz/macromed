@@ -136,7 +136,7 @@
                                     <div class="row col-12">
                                         <div class="form-group col-md-4">
                                             <label>Product Status <span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
+                                            <select name="product_use_status" class="form-control">
                                                 <option value="" disabled selected>Select Product Status</option>
                                                 <option value="1">Disposable</option>
                                                 <option value="0">Multiple Use</option>

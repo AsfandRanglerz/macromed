@@ -92,6 +92,8 @@ class ProductController extends Controller
             'company' => 'required',
             'models' => 'required',
             'country' => 'required|string|max:255',
+            'sterilizations' => 'required|string|max:255',
+            'product_use_status' => 'required|string|max:255',
             'product_commission' => 'required|string|max:255',
             'video_link' => 'nullable|string|max:255',
             'short_description' => 'required|string',
@@ -108,7 +110,7 @@ class ProductController extends Controller
             $product = new Product($request->only([
                 'product_name', 'short_name', 'slug', 'company', 'country',
                 'models', 'product_commission', 'video_link',
-                'short_description', 'long_description', 'status'
+                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status'
             ]));
             if ($request->hasFile('thumbnail_image')) {
                 $thumbnail_image = $request->file('thumbnail_image');
