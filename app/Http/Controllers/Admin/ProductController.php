@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Unit;
 use App\Models\Brands;
 use App\Models\Models;
 use App\Models\Company;
@@ -11,14 +12,14 @@ use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use App\Models\Certification;
 use App\Models\ProductBrands;
+use App\Models\Sterilization;
 use App\Models\ProductVaraint;
-use App\Models\ProductCertifcation;
-use App\Http\Controllers\Controller;
-use App\Models\ProductCategorySubCategory;
 use App\Models\ProductCatgeory;
 use App\Models\ProductSubCatgeory;
-use App\Models\Sterilization;
-use App\Models\Unit;
+use App\Models\ProductCertifcation;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use App\Models\ProductCategorySubCategory;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
@@ -35,12 +36,6 @@ class ProductController extends Controller
     {
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->latest()->get();
         return view('admin.product.index', compact('products'));
-    }
-    public function productVariantIndex($id)
-    {
-        $units = Unit::all();
-        $data = Product::where('status', '1')->with('productVaraint')->find($id);
-        return view('admin.product.product_variant', compact('data', 'units'));
     }
 
     public function productCreateIndex()
@@ -229,8 +224,15 @@ class ProductController extends Controller
     }
     public function productVariantViewIndex($id)
     {
+        $units = Unit::all();
         $productVariant = ProductVaraint::where('product_id', $id)->get();
-        return view('admin.product.product_variants_index', compact('productVariant', 'id'));
+        return view('admin.product.product_variants_index', compact('productVariant', 'id', 'units'));
+    }
+    public function productVariantIndex($id)
+    {
+        $units = Unit::all();
+        $data = Product::where('status', '1')->with('productVaraint')->find($id);
+        return view('admin.product.product_variant', compact('data', 'units'));
     }
     public function productVariantStore(Request $request, $productId)
     {
@@ -306,20 +308,51 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Failed to save product variants. Please try again later.');
         }
     }
+    public function showVariants($id)
+    {
+        $productVariant  = ProductVaraint::find($id);
+        if (!$productVariant) {
+            return response()->json(['alert' => 'error', 'message' => 'Models Not Found'], 500);
+        }
+        return response()->json($productVariant);
+    }
+
+    public function updateVariant(Request $request, $id)
+    {
+        try {
+            // $validator = Validator::make($request->all(), [
+            //     'category_id' => 'exists:categories,id',
+            //     'subcategory_id' => 'exists:sub_categories,id',
+            //     'name' => 'required',
+            //     'commision' => 'required|numeric',
+            // ]);
+
+            // if ($validator->fails()) {
+            //     return response()->json(['errors' => $validator->errors()], 422);
+            // }
+
+            $product = ProductVaraint::findOrFail($id);
+            $product->fill($request->only(['s_k_u', 'packing', 'unit', 'quantity', 'price_per_unit', 'selling_price_per_unit', 'actual_weight', 'shipping_weight', 'shipping_chargeable_weight', 'status', 'description']));
+            $product->save();
+            return response()->json(['alert' => 'success', 'message' => 'Product Variant Updated Successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['alert' => 'error', 'message' => 'An error occurred while Updating Product Variant!' . $e->getMessage()], 500);
+        }
+    }
     public function updateVariantsStatus($id)
     {
         try {
-            $product = ProductVaraint::findOrFail($id);
-            if ($product->status == '0') {
-                $product->status = '1';
+            $productVariant = ProductVaraint::findOrFail($id);
+            if ($productVariant->status == '0') {
+                $productVariant->status = '1';
                 $message = 'Product Variant Active Successfully';
-            } else if ($product->status == '1') {
-                $product->status = '0';
+            } else if ($productVariant->status == '1') {
+                $productVariant->status = '0';
                 $message = 'Product Variant In Active Successfully';
             } else {
                 return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
             }
-            $product->save();
+            $productVariant->save();
             return response()->json(['alert' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);

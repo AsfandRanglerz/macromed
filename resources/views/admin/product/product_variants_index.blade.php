@@ -22,6 +22,91 @@
             </div>
         </div>
     </div>
+    <!-- Edit Variants Modal -->
+    <div class="modal fade" id="editVariantsModal" tabindex="-1" role="dialog" aria-labelledby="editVariantsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editVariantsModalLabel">Edit Variants</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editVariants" enctype="multipart/form-data">
+                        <div class="row col-12">
+                            <div class="form-group col-md-4">
+                                <label>SKU</label>
+                                <input type="text" class="form-control s_k_u" name="s_k_u">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Packing</label>
+                                <input type="text" class="form-control packing" name="packing">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Unit</label>
+                                <select class="form-control unit" name="unit">
+                                    <option value="" disabled selected>Select Units</option>
+                                    @foreach ($units as $unit)
+                                        <option value="{{ $unit->name }}">
+                                            {{ ucfirst($unit->name) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row col-12">
+                            <div class="form-group col-md-4">
+                                <label>Quantity</label>
+                                <input type="text" class="form-control quantity" name="quantity">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Actual Price/Unit</label>
+                                <input type="text" class="form-control price_per_unit" name="price_per_unit">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Selling Price/Unit</label>
+                                <input type="text" class="form-control selling_price_per_unit"
+                                    name="selling_price_per_unit">
+                            </div>
+                        </div>
+                        <div class="row col-12">
+                            <div class="form-group col-md-4">
+                                <label>Actual Weight</label>
+                                <input type="text" class="form-control actual_weight" name="actual_weight">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Shipping Weight</label>
+                                <input type="text" class="form-control shipping_weight" name="shipping_weight">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Shipping Chargeable Weight</label>
+                                <input type="text" class="form-control shipping_chargeable_weight"
+                                    name="shipping_chargeable_weight">
+                            </div>
+                            <div class="form-group col-12">
+                                <label>Status <span class="text-danger">*</span></label>
+                                <select name="status" class="form-control status">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-12">
+                            <label>Description <span class="text-danger">*</span></label>
+                            <textarea name="description" id="description" cols="30" rows="5" class="form-control description"></textarea>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-center mb-0">
+                    <button type="button" class="btn btn-success" onclick="updateVariants()">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- #############Main Content Body#################  --}}
     <div class="main-content" style="min-height: 562px;">
         <section class="section">
@@ -130,20 +215,102 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-danger mb-1 mr-1 text-white deleteSubadminBtn" data-id="' +
+                            return '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
+                                row.id + '"><i class="fas fa-edit"></i></button>' +
+                                '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
                         }
                     }
                     // { "data": "description" }
                 ]
             });
-
-            // Event listener for delete button
+            $('#example').on('click', '.editSubadminBtn', function() {
+                var id = $(this).data('id');
+                editVariantsModal(id);
+            });
             $('#example').on('click', '.deleteSubadminBtn', function() {
                 var subadminId = $(this).data('id');
                 deleteSubadminModal(subadminId);
             });
 
+            // ######Get & Update Variants#########
+
+            function editVariantsModal(id) {
+                var showVariants = '{{ route('variants.show', ':id') }}';
+                $.ajax({
+                    url: showVariants.replace(':id', id),
+                    type: 'GET',
+                    success: function(response) {
+                        $('#editVariants .s_k_u').val(response.s_k_u);
+                        $('#editVariants .packing').val(response.packing);
+                        $('#editVariants .unit').val(response.unit);
+                        $('#editVariants .quantity').val(response.quantity);
+                        $('#editVariants .price_per_unit').val(response.price_per_unit);
+                        $('#editVariants .selling_price_per_unit').val(response.selling_price_per_unit);
+                        $('#editVariants .actual_weight').val(response.actual_weight);
+                        $('#editVariants .shipping_weight').val(response.shipping_weight);
+                        $('#editVariants .shipping_chargeable_weight').val(response
+                            .shipping_chargeable_weight);
+                        $('#editVariants .status').val(response.status);
+                        if (response.description !== null) {
+                            geteditor.setData(response.description);
+                        } else {
+                            geteditor.setData(''); // Or set it to an empty string
+                        }
+                        $('#editVariantsModal').modal('show');
+                        $('#editVariantsModal').data('id', id);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+            // #############Update subAdmin#############
+            $(document).ready(function() {
+                $('#editVariants input, #editVariants select, #editVariants textarea').on(
+                    'input change',
+                    function() {
+                        $(this).siblings('.invalid-feedback').text('');
+                        $(this).removeClass('is-invalid');
+                    });
+            });
+            function updateVariants() {
+                var updateVariants = '{{ route('variants.update', ':id') }}';
+                var id = $('#editVariantsModal').data('id');
+                var formData = new FormData($('#editVariants')[0]);
+                // console.log('formData', formData);
+                $.ajax({
+                    url: updateVariants.replace(':id', id),
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        toastr.success('Variants Updated Successfully!');
+                        $('#editVariantsModal').modal('hide');
+                        reloadDataTable();
+                        $('#editVariantsModal form')[0].reset();
+
+                    },
+                    error: function(xhr, status, error) {
+                        if (xhr.status === 422) { // If validation errors
+                            var errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                $('.' + key).addClass('is-invalid').siblings(
+                                    '.invalid-feedback').html(
+                                    value[
+                                        0]);
+                            });
+                        } else {
+                            console.log("Error:", xhr);
+                        }
+                    }
+                });
+            }
             // Update status event listener
             $('#example').on('click', '#update-status', function() {
                 var button = $(this);
@@ -211,6 +378,16 @@
                 });
             }
         });
+
+        let geteditor;
+        ClassicEditor
+            .create(document.querySelector('.description'))
+            .then(newGetEditor => {
+                geteditor = newGetEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
     </script>
 
 @endsection
