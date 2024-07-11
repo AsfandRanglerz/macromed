@@ -15,6 +15,7 @@ use App\Models\ProductVaraint;
 use App\Models\ProductCertifcation;
 use App\Http\Controllers\Controller;
 use App\Models\ProductCategorySubCategory;
+use App\Models\Unit;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
@@ -34,8 +35,9 @@ class ProductController extends Controller
     }
     public function productVariantIndex($id)
     {
+        $units = Unit::all();
         $data = Product::where('status', '1')->with('productVaraint')->find($id);
-        return view('admin.product.product_variant', compact('data'));
+        return view('admin.product.product_variant', compact('data', 'units'));
     }
     public function productCreateIndex()
     {
@@ -171,9 +173,10 @@ class ProductController extends Controller
         if ($countries == NULL) {
             $countries = [];
         }
+
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategorySubCategory.categories.subcategories')->where('status', '1')->find($id);
         //    return $products;
-        return view('admin.product.edit', compact('products','countries'));
+        return view('admin.product.edit', compact('products', 'countries'));
     }
     // Store and updtae Product Varaints
     public function productVariantStore(Request $request, $productId)
@@ -224,7 +227,7 @@ class ProductController extends Controller
 
 
             foreach ($request->variants as $variant) {
-                ProductVaraint::create(
+                ProductVaraint::updateOrCreate(
                     ['id' => $variant['id'] ?? null],
                     [
                         'product_id' => $productId,
@@ -270,5 +273,12 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
         }
+    }
+
+    public function deleteProduct($id)
+    {
+        $subadmin = Product::findOrFail($id);
+        $subadmin->delete();
+        return response()->json(['alert' => 'success', 'message' => 'Product Deleted SuccessFully!']);
     }
 }

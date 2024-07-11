@@ -1,6 +1,27 @@
 @extends('admin.layout.app')
 @section('title', 'Product')
 @section('content')
+    <!-- Delete Subadmin Modal -->
+    <div class="modal fade" id="deleteSubadminModal" tabindex="-1" role="dialog" aria-labelledby="deleteSubadminModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteSubadminModalLabel">Delete Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5>Are you sure you want to delete this product?</h5>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-danger col-md-4 col-sm-4 col-lg-4"
+                        id="confirmDeleteSubadmin">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- #############Main Content Body#################  --}}
     <div class="main-content" style="min-height: 562px;">
         <section class="section">
@@ -175,13 +196,9 @@
                     }
                 ]
             });
-            $('#example').on('click', '.editSubadminBtn', function() {
-                var id = $(this).data('id');
-                editModelsModal(id);
-            });
-            $('#example').on('click', '.deleteSubadminBtn', function() {
-                var id = $(this).data('id');
-                deleteModelsModal(id);
+            $('.table').on('click', '.deleteSubadminBtn', function() {
+                var subadminId = $(this).data('id');
+                deleteSubadminModal(subadminId);
             });
         });
 
@@ -223,6 +240,34 @@
                 }
             });
         });
+
+        // ############# Delete Subadmin Data###########
+        function deleteSubadminModal(subadminId) {
+            $('#confirmDeleteSubadmin').data('subadmin-id', subadminId);
+            $('#deleteSubadminModal').modal('show');
+        }
+        $(document).ready(function() {
+            $('#confirmDeleteSubadmin').click(function() {
+                var subadminId = $(this).data('subadmin-id');
+                deleteSubadmin(subadminId);
+            });
+        });
+
+        function deleteSubadmin(subadminId) {
+            $.ajax({
+                url: "{{ route('product.delete', ['id' => ':subadminId']) }}".replace(':subadminId',
+                    subadminId),
+                type: 'GET',
+                success: function(response) {
+                    toastr.success('Product Deleted Successfully!');
+                    $('#deleteSubadminModal').modal('hide');
+                    reloadDataTable();
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
     </script>
 
 @endsection

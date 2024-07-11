@@ -37,9 +37,17 @@
                                                     </div>
                                                     <div class="form-group col-md-4">
                                                         <label>Unit</label>
-                                                        <input type="text" class="form-control" name="variants[0][unit]"
-                                                            value="{{ old('variants.0.unit') }}">
+                                                        <select class="form-control" name="variants[0][unit]">
+                                                            <option value="" disabled selected>Select Units</option>
+                                                            @foreach ($units as $unit)
+                                                                <option value="{{ $unit->name }}"
+                                                                    {{ old('variants.0.unit') == $unit->name ? 'selected' : '' }}>
+                                                                    {{ ucfirst($unit->name) }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
+
                                                 </div>
                                                 <div class="row col-12">
                                                     <div class="form-group col-md-4">
@@ -146,6 +154,12 @@
 
         function addVariantFields() {
             let variantCount = $('.variant-field').length;
+            let unitsOptions = `
+            <option value="" disabled selected>Select Units</option>
+            @foreach ($units as $unit)
+                <option value="{{ $unit->name }}">{{ ucfirst($unit->name) }}</option>
+            @endforeach
+        `;
             let variantFieldHTML = `
         <div class="variant-field border border-1 mt-2">
              <div class="col-md-12 col-sm-12 col-lg-12 mt-2 mb-0 d-flex justify-content-end">
@@ -164,11 +178,13 @@
                     <input type="text" class="form-control" name="variants[${variantCount}][packing]"
                         value="{{ old('variants.${variantCount}.packing') }}">
                 </div>
-                <div class="form-group col-md-4">
+ <div class="form-group col-md-4">
                     <label>Unit</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][unit]"
-                        value="{{ old('variants.${variantCount}.unit') }}">
+                    <select class="form-control" name="variants[${variantCount}][unit]">
+                        ${unitsOptions}
+                    </select>
                 </div>
+
             </div>
             <div class="row col-12">
                 <div class="form-group col-md-4">

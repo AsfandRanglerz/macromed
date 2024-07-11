@@ -161,6 +161,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::put('/product-update/{id}', 'productUpdate')->name('product.update');
         Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories');
         Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update');
+        Route::get('/product/delete/{id}',  'deleteProduct')->name('product.delete');
         // Product Variants Routes
         Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index');
         Route::post('/products/{product}/variants', 'productVariantStore')->name('product-variant.store');
