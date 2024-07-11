@@ -153,11 +153,11 @@
 
 @section('js')
     <script>
+        function reloadDataTable() {
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.reload();
+        }
         $(document).ready(function() {
-            function reloadDataTable() {
-                var dataTable = $('#example').DataTable();
-                dataTable.ajax.reload();
-            }
 
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
@@ -232,152 +232,154 @@
                 var subadminId = $(this).data('id');
                 deleteSubadminModal(subadminId);
             });
-
-            // ######Get & Update Variants#########
-
-            function editVariantsModal(id) {
-                var showVariants = '{{ route('variants.show', ':id') }}';
-                $.ajax({
-                    url: showVariants.replace(':id', id),
-                    type: 'GET',
-                    success: function(response) {
-                        $('#editVariants .s_k_u').val(response.s_k_u);
-                        $('#editVariants .packing').val(response.packing);
-                        $('#editVariants .unit').val(response.unit);
-                        $('#editVariants .quantity').val(response.quantity);
-                        $('#editVariants .price_per_unit').val(response.price_per_unit);
-                        $('#editVariants .selling_price_per_unit').val(response.selling_price_per_unit);
-                        $('#editVariants .actual_weight').val(response.actual_weight);
-                        $('#editVariants .shipping_weight').val(response.shipping_weight);
-                        $('#editVariants .shipping_chargeable_weight').val(response
-                            .shipping_chargeable_weight);
-                        $('#editVariants .status').val(response.status);
-                        if (response.description !== null) {
-                            geteditor.setData(response.description);
-                        } else {
-                            geteditor.setData(''); // Or set it to an empty string
-                        }
-                        $('#editVariantsModal').modal('show');
-                        $('#editVariantsModal').data('id', id);
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.log(xhr.responseText);
-                    }
-                });
-            }
-            // #############Update subAdmin#############
-            $(document).ready(function() {
-                $('#editVariants input, #editVariants select, #editVariants textarea').on(
-                    'input change',
-                    function() {
-                        $(this).siblings('.invalid-feedback').text('');
-                        $(this).removeClass('is-invalid');
-                    });
-            });
-            function updateVariants() {
-                var updateVariants = '{{ route('variants.update', ':id') }}';
-                var id = $('#editVariantsModal').data('id');
-                var formData = new FormData($('#editVariants')[0]);
-                // console.log('formData', formData);
-                $.ajax({
-                    url: updateVariants.replace(':id', id),
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        toastr.success('Variants Updated Successfully!');
-                        $('#editVariantsModal').modal('hide');
-                        reloadDataTable();
-                        $('#editVariantsModal form')[0].reset();
-
-                    },
-                    error: function(xhr, status, error) {
-                        if (xhr.status === 422) { // If validation errors
-                            var errors = xhr.responseJSON.errors;
-                            $.each(errors, function(key, value) {
-                                $('.' + key).addClass('is-invalid').siblings(
-                                    '.invalid-feedback').html(
-                                    value[
-                                        0]);
-                            });
-                        } else {
-                            console.log("Error:", xhr);
-                        }
-                    }
-                });
-            }
-            // Update status event listener
-            $('#example').on('click', '#update-status', function() {
-                var button = $(this);
-                var userId = button.data('userid');
-                var currentStatus = button.text().trim().toLowerCase();
-                var newStatus = currentStatus === 'active' ? '1' : '0';
-                button.prop('disabled', true);
-
-                $.ajax({
-                    url: '{{ route('variantsBlock.update', ['id' => ':userId']) }}'.replace(
-                        ':userId', userId),
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        status: newStatus
-                    },
-                    success: function(response) {
-                        toastr.success(response.message);
-                        // Update button text and class
-                        var buttonText = newStatus === '1' ? 'Active' : 'Inactive';
-                        var buttonClass = newStatus === '1' ? 'btn-success' : 'btn-danger';
-                        button.text(buttonText).removeClass('btn-success btn-danger').addClass(
-                            buttonClass);
-                        // Update status cell content
-                        var statusCell = button.closest('tr').find('td:eq(6)');
-                        var statusText, statusClass;
-                        statusCell.html('<span class="' + statusClass + '">' + statusText +
-                            '</span>');
-                        reloadDataTable();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    },
-                    complete: function() {
-                        // Enable the button again
-                        button.prop('disabled', false);
-                    }
-                });
-            });
-
-            // Delete Subadmin function
-            function deleteSubadminModal(subadminId) {
-                $('#confirmDeleteSubadmin').data('subadmin-id', subadminId);
-                $('#deleteSubadminModal').modal('show');
-            }
-
-            $('#confirmDeleteSubadmin').click(function() {
-                var subadminId = $(this).data('subadmin-id');
-                deleteSubadmin(subadminId);
-            });
-
-            function deleteSubadmin(subadminId) {
-                $.ajax({
-                    url: "{{ route('variant.delete', ['id' => ':subadminId']) }}".replace(':subadminId',
-                        subadminId),
-                    type: 'GET',
-                    success: function(response) {
-                        toastr.success('Product Variant Deleted Successfully!');
-                        $('#deleteSubadminModal').modal('hide');
-                        reloadDataTable();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });
-            }
         });
+
+
+        // ######Get & Update Variants#########
+
+        function editVariantsModal(id) {
+            var showVariants = '{{ route('variants.show', ':id') }}';
+            $.ajax({
+                url: showVariants.replace(':id', id),
+                type: 'GET',
+                success: function(response) {
+                    $('#editVariants .s_k_u').val(response.s_k_u);
+                    $('#editVariants .packing').val(response.packing);
+                    $('#editVariants .unit').val(response.unit);
+                    $('#editVariants .quantity').val(response.quantity);
+                    $('#editVariants .price_per_unit').val(response.price_per_unit);
+                    $('#editVariants .selling_price_per_unit').val(response.selling_price_per_unit);
+                    $('#editVariants .actual_weight').val(response.actual_weight);
+                    $('#editVariants .shipping_weight').val(response.shipping_weight);
+                    $('#editVariants .shipping_chargeable_weight').val(response
+                        .shipping_chargeable_weight);
+                    $('#editVariants .status').val(response.status);
+                    if (response.description !== null) {
+                        geteditor.setData(response.description);
+                    } else {
+                        geteditor.setData(''); // Or set it to an empty string
+                    }
+                    $('#editVariantsModal').modal('show');
+                    $('#editVariantsModal').data('id', id);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+        // #############Update subAdmin#############
+        $(document).ready(function() {
+            $('#editVariants input, #editVariants select, #editVariants textarea').on(
+                'input change',
+                function() {
+                    $(this).siblings('.invalid-feedback').text('');
+                    $(this).removeClass('is-invalid');
+                });
+        });
+
+        function updateVariants() {
+            var updateVariants = '{{ route('variants.update', ':id') }}';
+            var id = $('#editVariantsModal').data('id');
+            var formData = new FormData($('#editVariants')[0]);
+            // console.log('formData', formData);
+            $.ajax({
+                url: updateVariants.replace(':id', id),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    toastr.success('Variants Updated Successfully!');
+                    $('#editVariantsModal').modal('hide');
+                    reloadDataTable();
+                    $('#editVariantsModal form')[0].reset();
+
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 422) { // If validation errors
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $('.' + key).addClass('is-invalid').siblings(
+                                '.invalid-feedback').html(
+                                value[
+                                    0]);
+                        });
+                    } else {
+                        console.log("Error:", xhr);
+                    }
+                }
+            });
+        }
+        // Update status event listener
+        $('#example').on('click', '#update-status', function() {
+            var button = $(this);
+            var userId = button.data('userid');
+            var currentStatus = button.text().trim().toLowerCase();
+            var newStatus = currentStatus === 'active' ? '1' : '0';
+            button.prop('disabled', true);
+            $.ajax({
+                url: '{{ route('variantsBlock.update', ['id' => ':userId']) }}'.replace(
+                    ':userId', userId),
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    status: newStatus
+                },
+                success: function(response) {
+                    toastr.success(response.message);
+                    // Update button text and class
+                    var buttonText = newStatus === '1' ? 'Active' : 'Inactive';
+                    var buttonClass = newStatus === '1' ? 'btn-success' : 'btn-danger';
+                    button.text(buttonText).removeClass('btn-success btn-danger').addClass(
+                        buttonClass);
+                    // Update status cell content
+                    var statusCell = button.closest('tr').find('td:eq(6)');
+                    var statusText, statusClass;
+                    statusCell.html('<span class="' + statusClass + '">' + statusText +
+                        '</span>');
+                    reloadDataTable();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                },
+                complete: function() {
+                    // Enable the button again
+                    button.prop('disabled', false);
+                }
+            });
+        });
+
+        // Delete Subadmin function
+        function deleteSubadminModal(subadminId) {
+            $('#confirmDeleteSubadmin').data('subadmin-id', subadminId);
+            $('#deleteSubadminModal').modal('show');
+        }
+
+        $('#confirmDeleteSubadmin').click(function() {
+            var subadminId = $(this).data('subadmin-id');
+            deleteSubadmin(subadminId);
+        });
+
+        function deleteSubadmin(subadminId) {
+            $.ajax({
+                url: "{{ route('variant.delete', ['id' => ':subadminId']) }}".replace(':subadminId',
+                    subadminId),
+                type: 'GET',
+                success: function(response) {
+                    toastr.success('Product Variant Deleted Successfully!');
+                    $('#deleteSubadminModal').modal('hide');
+                    reloadDataTable();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
 
         let geteditor;
         ClassicEditor
