@@ -281,8 +281,32 @@
         function updateVariants() {
             var updateVariants = '{{ route('variants.update', ':id') }}';
             var id = $('#editVariantsModal').data('id');
-            var formData = new FormData($('#editVariants')[0]);
-            // console.log('formData', formData);
+            var form = document.getElementById("editVariants");
+            var s_k_u = form["s_k_u"].value;
+            var packing = form["packing"].value;
+            var unit = form["unit"].value;
+            var quantity = form["quantity"].value;
+            var price_per_unit = form["price_per_unit"].value;
+            var selling_price_per_unit = form["selling_price_per_unit"].value;
+            var actual_weight = form["actual_weight"].value;
+            var shipping_weight = form["shipping_weight"].value;
+            var shipping_chargeable_weight = form["shipping_chargeable_weight"].value;
+            var status = form["status"].value;
+            var description = geteditor.getData();
+            // ########### Form Data ###########
+            var formData = new FormData();
+            formData.append('s_k_u', s_k_u);
+            formData.append('packing', packing);
+            formData.append('unit', unit);
+            formData.append('quantity', quantity);
+            formData.append('price_per_unit', price_per_unit);
+            formData.append('selling_price_per_unit', selling_price_per_unit);
+            formData.append('actual_weight', actual_weight);
+            formData.append('shipping_chargeable_weight', shipping_chargeable_weight);
+            formData.append('shipping_weight', shipping_weight);
+            formData.append('status', status);
+            formData.append('description', description);
+
             $.ajax({
                 url: updateVariants.replace(':id', id),
                 type: 'POST',
