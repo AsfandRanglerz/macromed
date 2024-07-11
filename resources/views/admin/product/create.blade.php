@@ -118,14 +118,14 @@
                                                     <option value="{{ $country->name }}">{{ $country->name }}</option>
                                                 @endforeach
                                             </select>
+                                            @if ($countries == null)
+                                                <div class="internet-error">No Internet Connection Found!</div>
+                                            @endif
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Product Commission</label>
                                             <input type="text" class="form-control" name="product_commission"
                                                 value="{{ old('product_commission') }}">
-
-
-
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Video Link</label>

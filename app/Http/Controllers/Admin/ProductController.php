@@ -25,13 +25,13 @@ class ProductController extends Controller
 
     public function productData()
     {
-        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories','productSubCategory.subCategories')->latest()->get();
+        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->latest()->get();
         $json_data["data"] = $products;
         return json_encode($json_data);
     }
     public function productIndex()
     {
-        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories','productSubCategory.subCategories')->where('status', '1')->latest()->get();
+        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->latest()->get();
         // return $products;
         return view('admin.product.index', compact('products'));
     }
