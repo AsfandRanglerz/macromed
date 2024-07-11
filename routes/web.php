@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\TermConditionController;
+use App\Http\Controllers\Admin\UnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -137,6 +138,17 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/certificationUpdate/{id}',  'updateCertification')->name('certification.update');
         Route::get('/certification/delete/{id}',  'deleteCertification')->name('certification.delete');
         Route::post('/update-certification-status/{id}',  'updateCertificationStatus')->name('certificationBlock.update');
+    });
+
+    // ############## Units ############
+    Route::controller(UnitController::class)->group(function () {
+        Route::get('/units',  'unitsIndex')->name('units.index');
+        Route::post('/units-create',  'unitsCreate')->name('units.create');
+        Route::get('/unitsData',  'unitsData')->name('units.get');
+        Route::get('/units/{id}',  'showunits')->name('units.show');
+        Route::post('/unitsUpdate/{id}',  'updateunits')->name('units.update');
+        Route::get('/units/delete/{id}',  'deleteunits')->name('units.delete');
+        Route::post('/update-units-status/{id}',  'updateunitsStatus')->name('unitsBlock.update');
     });
 
     // ############## Product ############

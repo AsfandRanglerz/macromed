@@ -27,7 +27,7 @@
                             data-feather="layout"></i><span>Inventory
                             Managment</span></a>
                     <ul
-                        class="dropdown-menu {{ request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') ? 'show' : '' }}">
+                        class="dropdown-menu {{ request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') ? 'show' : '' }}">
                         {{-- Category --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('category'))
                             <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
@@ -121,6 +121,22 @@
                                 <a href="{{ route('certification.index') }}"
                                     class="nav-link {{ request()->is('admin/certification*') ? 'text-white' : '' }}">
                                     <i data-feather="layers"></i><span>Certifications</span>
+                                </a>
+                            </li>
+                        @endif
+                        {{-- Units --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                            <li class="dropdown {{ request()->is('admin/units*') ? 'active' : '' }}">
+                                <a href="{{ route('units.index') }}"
+                                    class="nav-link {{ request()->is('admin/units*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Units</span>
+                                </a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="dropdown {{ request()->is('admin/units*') ? 'active' : '' }}">
+                                <a href="{{ route('units.index') }}"
+                                    class="nav-link {{ request()->is('admin/units*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Units</span>
                                 </a>
                             </li>
                         @endif
