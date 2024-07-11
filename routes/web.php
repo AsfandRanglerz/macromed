@@ -174,7 +174,11 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update');
         Route::get('/product/delete/{id}',  'deleteProduct')->name('product.delete');
         // Product Variants Routes
+        Route::get('/product-variants-index/{id}', 'productVariantViewIndex')->name('product_variant_index.index');
+        Route::get('/product-variant/{id}', 'getProductVariants')->name('product.variants');
         Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index');
         Route::post('/products/{product}/variants', 'productVariantStore')->name('product-variant.store');
+        Route::post('/update-variants-status/{id}',  'updateVariantsStatus')->name('variantsBlock.update');
+        Route::get('/variants/delete/{id}',  'deleteProductVariant')->name('variant.delete');
     });
 });

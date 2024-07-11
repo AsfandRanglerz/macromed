@@ -30,10 +30,10 @@ class ProductController extends Controller
         $json_data["data"] = $products;
         return json_encode($json_data);
     }
+
     public function productIndex()
     {
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->latest()->get();
-        // return $products;
         return view('admin.product.index', compact('products'));
     }
     public function productVariantIndex($id)
@@ -42,6 +42,7 @@ class ProductController extends Controller
         $data = Product::where('status', '1')->with('productVaraint')->find($id);
         return view('admin.product.product_variant', compact('data', 'units'));
     }
+
     public function productCreateIndex()
     {
         $curl = curl_init();
@@ -192,7 +193,45 @@ class ProductController extends Controller
         //    return $products;
         return view('admin.product.edit', compact('products', 'countries'));
     }
-    // Store and updtae Product Varaints
+
+    public function updateProductStatus($id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+            if ($product->status == '0') {
+                $product->status = '1';
+                $message = 'Product Active Successfully';
+            } else if ($product->status == '1') {
+                $product->status = '0';
+                $message = 'Product In Active Successfully';
+            } else {
+                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
+            }
+            $product->save();
+            return response()->json(['alert' => 'success', 'message' => $message]);
+        } catch (\Exception $e) {
+            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
+        }
+    }
+
+    public function deleteProduct($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return response()->json(['alert' => 'success', 'message' => 'Product Deleted SuccessFully!']);
+    }
+    // ################## Store and updtae Product Varaints ########################
+    public function getProductVariants($id)
+    {
+        $variants = ProductVaraint::where('product_id', $id)->get();
+        $json_data["data"] = $variants;
+        return json_encode($json_data);
+    }
+    public function productVariantViewIndex($id)
+    {
+        $productVariant = ProductVaraint::where('product_id', $id)->get();
+        return view('admin.product.product_variants_index', compact('productVariant', 'id'));
+    }
     public function productVariantStore(Request $request, $productId)
     {
         try {
@@ -259,7 +298,6 @@ class ProductController extends Controller
                     ]
                 );
             }
-
             return  redirect()->route('product.index')->with('message', 'Product variants saved successfully!');
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
@@ -268,17 +306,16 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Failed to save product variants. Please try again later.');
         }
     }
-
-    public function updateProductStatus($id)
+    public function updateVariantsStatus($id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = ProductVaraint::findOrFail($id);
             if ($product->status == '0') {
                 $product->status = '1';
-                $message = 'Product Active Successfully';
+                $message = 'Product Variant Active Successfully';
             } else if ($product->status == '1') {
                 $product->status = '0';
-                $message = 'Product In Active Successfully';
+                $message = 'Product Variant In Active Successfully';
             } else {
                 return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
             }
@@ -288,11 +325,10 @@ class ProductController extends Controller
             return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
         }
     }
-
-    public function deleteProduct($id)
+    public function deleteProductVariant($id)
     {
-        $subadmin = Product::findOrFail($id);
-        $subadmin->delete();
-        return response()->json(['alert' => 'success', 'message' => 'Product Deleted SuccessFully!']);
+        $productVariant = ProductVaraint::findOrFail($id);
+        $productVariant->delete();
+        return response()->json(['alert' => 'success', 'message' => 'Product Variant Deleted SuccessFully!']);
     }
 }

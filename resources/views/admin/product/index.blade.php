@@ -169,8 +169,8 @@
                             <i class="fas fa-cog"></i>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton${row.id}">
+                            <a class="dropdown-item has-icon" href="{{ route('product_variant_index.index', ':id') }}"><i class="fas fa-eye"></i>View</a>
                             <a class="dropdown-item has-icon" href="{{ route('product_variant.index', ':id') }}"><i class="fas fa-plus"></i>Add</a>
-                            <a class="dropdown-item has-icon" href="{{ route('product_variant.index', ':id') }}"><i class="fas fa-edit"></i>Update</a>
                         </div>
                     </div>
                 `.replace(/:id/g, row.id);
