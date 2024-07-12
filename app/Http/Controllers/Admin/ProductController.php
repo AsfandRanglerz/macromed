@@ -33,8 +33,31 @@ class ProductController extends Controller
 
     public function productIndex()
     {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => array(
+                'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $countries = json_decode($response);
+
+        // Decode the JSON response
+        if ($countries == NULL) {
+            $countries = [];
+        }
+        // return $countries;
+        $categories = Category::where('status', '1')->get();
+        $brands = Brands::where('status', '1')->get();
+        $models = Models::where('status', '1')->get();
+        $certifications = Certification::where('status', '1')->get();
+        $companies = Company::where('status', '1')->get();
+        $sterilizations = Sterilization::where('status', '1')->get();
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->latest()->get();
-        return view('admin.product.index', compact('products'));
+        return view('admin.product.index', compact('countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
     public function productCreateIndex()
@@ -166,26 +189,119 @@ class ProductController extends Controller
     }
     public function productEdit($id)
     {
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => array(
-                'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $countries = json_decode($response);
-
-        // Decode the JSON response
-        if ($countries == NULL) {
-            $countries = [];
+        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->find($id);
+        if (!$products) {
+            return response()->json(['alert' => 'error', 'message' => 'Models Not Found'], 500);
         }
+        return response()->json($products);
+    }
 
-        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategorySubCategory.categories.subcategories')->where('status', '1')->find($id);
-        //    return $products;
-        return view('admin.product.edit', compact('products', 'countries'));
+    public function productUpdate(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'short_name' => 'required|string|max:255',
+            'product_name' => 'required|string|max:255',
+            'category_id' => 'required|array',
+            'category_id.*' => 'exists:categories,id',
+            'brand_id' => 'required|array',
+            'brand_id.*' => 'exists:brands,id',
+            'certification_id' => 'required|array',
+            'certification_id.*' => 'exists:certifications,id',
+            'company' => 'required',
+            'models' => 'required',
+            'country' => 'required|string|max:255',
+            'sterilizations' => 'required|string|max:255',
+            'product_use_status' => 'required|string|max:255',
+            'product_commission' => 'required|string|max:255',
+            'video_link' => 'nullable|string|max:255',
+            'short_description' => 'required|string',
+            'long_description' => 'required|string',
+        ], [
+            'category_id' => 'Category is required.',
+            'category_id.*' => 'Category is required.',
+            'brand_id' => 'Brand is required.',
+            'brand_id.*' => 'Brand is required.',
+            'certification_id' => 'Certification is required',
+            'certification_id.*' => 'Certification is required'
+        ]);
+
+        try {
+            $product = Product::findOrFail($id);
+
+            $product->fill($request->only([
+                'product_name', 'short_name', 'slug', 'company', 'country',
+                'models', 'product_commission', 'video_link',
+                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status'
+            ]));
+
+            if ($request->hasFile('thumbnail_image')) {
+                $thumbnail_image = $request->file('thumbnail_image');
+                $thumbnail_name = time() . '.' . $thumbnail_image->getClientOriginalExtension();
+                $thumbnail_path = 'admin/assets/images/products/' . $thumbnail_name;
+                $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
+                $product->thumbnail_image = $thumbnail_path;
+            }
+
+            if ($request->hasFile('banner_image')) {
+                $banner_image = $request->file('banner_image');
+                $banner_name = time() . '.' . $banner_image->getClientOriginalExtension();
+                $banner_path = 'admin/assets/images/products/' . $banner_name;
+                $banner_image->move(public_path('admin/assets/images/products'), $banner_name);
+                $product->banner_image = $banner_path;
+            }
+
+            $product->save();
+
+            // Update product variants
+            $category_ids = $request->input('category_id');
+            $sub_category_ids = $request->input('sub_category_id');
+            $brand_ids = $request->input('brand_id');
+            $certification_ids = $request->input('certification_id');
+
+            // Delete old variants
+            ProductCatgeory::where('product_id', $product->id)->delete();
+            ProductSubCatgeory::where('product_id', $product->id)->delete();
+            ProductBrands::where('product_id', $product->id)->delete();
+            ProductCertifcation::where('product_id', $product->id)->delete();
+
+            foreach ($category_ids as $categoryId) {
+                $productVariant = new ProductCatgeory();
+                $productVariant->product_id = $product->id;
+                $productVariant->category_id = $categoryId;
+                $productVariant->save();
+            }
+
+            if ($sub_category_ids) {
+                foreach ($sub_category_ids as $key => $subCategoryId) {
+                    $productVariant = new ProductSubCatgeory();
+                    $productVariant->product_id = $product->id;
+                    $productVariant->sub_category_id = $subCategoryId;
+                    $productVariant->save();
+                }
+            }
+
+            foreach ($brand_ids as $brandId) {
+                $productVariant = new ProductBrands();
+                $productVariant->product_id = $product->id;
+                $productVariant->brand_id = $brandId;
+                $productVariant->save();
+            }
+
+            foreach ($certification_ids as $certificationId) {
+                $productVariant = new ProductCertifcation();
+                $productVariant->product_id = $product->id;
+                $productVariant->certification_id = $certificationId;
+                $productVariant->save();
+            }
+
+            return response()->json('message', 'Product Updated Successfully!');
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json('error', 'Failed to update Product. Please try again later.');
+        }
     }
 
     public function updateProductStatus($id)

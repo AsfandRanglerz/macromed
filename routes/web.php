@@ -168,7 +168,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/product',  'productIndex')->name('product.index');
         Route::get('/product-create',  'productCreateIndex')->name('product.create');
         Route::post('/product-store', 'productStore')->name('product.store');
-        Route::get('/product-edit/{id}', 'productEdit')->name('product.edit');
+        Route::get('/product-edit/{id}', 'productEdit')->name('product.show');
         Route::put('/product-update/{id}', 'productUpdate')->name('product.update');
         Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories');
         Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update');

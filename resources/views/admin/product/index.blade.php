@@ -22,6 +22,183 @@
             </div>
         </div>
     </div>
+    {{-- Edit product --}}
+    <div class="modal fade" id="editModelsModal" tabindex="-1" role="dialog" aria-labelledby="editModelsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModelsModalLabel">Edit Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="editModels" enctype="multipart/form-data">
+                        <div class="form-group col-md-12">
+                            <label>Thumbnail Image Preview</label>
+                            <div>
+                                <img id="preview-img" class="admin-img"
+                                    src="{{ asset('public/admin/assets/images/preview.png') }}" style="width: 15%"
+                                    alt="">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Thumnail Image <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control-file" name="thumbnail_image"
+                                onchange="previewThumnailImage(event)">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Banner Image<span class="text-danger">*</span></label>
+                            <input type="file" class="form-control-file" name="banner_image">
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-4">
+                                <label>Product Short Name<span class="text-danger">*</span></label>
+                                <input type="text" id="short_name" class="form-control short_name" name="short_name"
+                                    value="{{ old('short_name') }}">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Product Name<span class="text-danger">*</span></label>
+                                <input type="text" id="product_name" class="form-control name product_name"
+                                    name="product_name" value="{{ old('product_name') }}">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Slug<span class="text-danger">*</span></label>
+                                <input type="text" id="slug" class="form-control slug" name="slug"
+                                    value="{{ old('slug') }}">
+                            </div>
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-4">
+                                <label>Category <span class="text-danger">*</span></label>
+                                <select name="category_id[]" class="form-control select2 category" id="category"
+                                    style="width: 100%" multiple>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Sub Category</label>
+                                <select name="sub_category_id[]" class="form-control select2 sub_category" id="sub_category"
+                                    style="width: 100%" multiple>
+                                    <option value="">Select Sub Category</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Brand <span class="text-danger">*</span></label>
+                                <select name="brand_id[]" class="form-control select2 brand" id="brand"
+                                    style="width: 100%" multiple>
+                                    @foreach ($brands as $brand)
+                                        <option {{ old('brand') == $brand->id ? 'selected' : '' }}
+                                            value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-4">
+                                <label>Certifications <span class="text-danger">*</span></label>
+                                <select name="certification_id[]" class="form-control select2 certification"
+                                    style="width: 100%" id="certification" multiple>
+                                    @foreach ($certifications as $certification)
+                                        <option value="{{ $certification->id }}">{{ $certification->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Company</label>
+                                <select name="company" class="form-control company" style="width: 100%" id="company">
+                                    <option value="" disabled selected>Select Company</option>
+                                    @foreach ($companies as $company)
+                                        <option {{ old('company') == $company->id ? 'selected' : '' }}
+                                            value="{{ $company->name }}">{{ $company->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Models <span class="text-danger">*</span></label>
+                                <select name="models" class="form-control models" style="width: 100%" id="models">
+                                    <option value="" disabled selected>Select Models</option>
+                                    @foreach ($models as $model)
+                                        <option {{ old('models') == $model->id ? 'selected' : '' }}
+                                            value="{{ $model->name }}">{{ $model->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-4">
+                                <label>Country</label>
+                                <select name="country" class="form-control select2 country" style="width: 100%"
+                                    id="country">
+                                    <option value="">Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($countries == null)
+                                    <div class="internet-error">No Internet Connection Found!</div>
+                                @endif
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Product Commission</label>
+                                <input type="text" class="form-control product_commission" name="product_commission"
+                                    value="{{ old('product_commission') }}">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Video Link</label>
+                                <input type="text" class="form-control video_link" name="video_link"
+                                    value="{{ old('video_link') }}">
+                            </div>
+                        </div>
+                        <div class="row col-12">
+                            <div class="form-group col-md-4">
+                                <label>Product Status <span class="text-danger">*</span></label>
+                                <select name="product_use_status" class="form-control product_use_status">
+                                    <option value="" disabled selected>Select Product Status</option>
+                                    <option value="1">Disposable</option>
+                                    <option value="0">Multiple Use</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Sterilizations <span class="text-danger">*</span></label>
+                                <select name="sterilizations sterilizations" class="form-control" id="sterilizations">
+                                    <option value="" disabled selected>Select Sterilizations</option>
+                                    @foreach ($sterilizations as $sterilization)
+                                        <option {{ old('sterilizations') == $sterilization->id ? 'selected' : '' }}
+                                            value="{{ $sterilization->name }}">{{ $sterilization->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Status <span class="text-danger">*</span></label>
+                                <select name="status" class="form-control status">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Short Description <span class="text-danger">*</span></label>
+                            <textarea name="short_description" cols="30" rows="10" class="form-control text-area-5 short_description">{{ old('short_description') }}</textarea>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Long Description <span class="text-danger">*</span></label>
+                            <textarea name="long_description" cols="20" rows="50" class="long_description text-area-5">{{ old('long_description') }}</textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-success" onclick="updateModels()">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- #############Main Content Body#################  --}}
     <div class="main-content" style="min-height: 562px;">
         <section class="section">
@@ -39,7 +216,7 @@
                                     Create Product
                                 </a>
                                 <table class="responsive table table-striped table-bordered" id="example">
-                                    <thead class="text-center">
+                                    <thead>
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Product Name</th>
@@ -54,7 +231,7 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="text-center">
+                                    <tbody>
                                     </tbody>
                                 </table>
                             </div>
@@ -179,23 +356,123 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('product.edit', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-success mb-1 mr-1  text-white"><i class="fas fa-edit"></i></a>' +
+                            return '<button class="btn btn-success  mr-1 text-white editSubadminBtn" data-id="' +
+                                row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger mb-1 mr-1 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
                         }
                     }
                 ]
             });
-            $('.table').on('click', '.deleteSubadminBtn', function() {
+            $('#example').on('click', '.editSubadminBtn', function() {
+                var id = $(this).data('id');
+                editModelsModal(id);
+            });
+            $('#example').on('click', '.deleteSubadminBtn', function() {
                 var subadminId = $(this).data('id');
                 deleteSubadminModal(subadminId);
             });
         });
 
+        // ######Get & Update Models#########
 
+        function editModelsModal(id) {
+            var showModels = '{{ route('product.show', ':id') }}';
+            $.ajax({
+                url: showModels.replace(':id', id),
+                type: 'GET',
+                success: function(response) {
+                    $('#editModels .short_name').val(response.short_name);
+                    $('#editModels .product_name').val(response.product_name);
+                    $('#editModels .slug').val(response.slug);
+                    $('#editModels .company').val(response.company);
+                    $('#editModels .models').val(response.models);
+                    $('#editModels .video_link').val(response.video_link);
+                    $('#editModels .product_commission').val(response.product_commission);
+                    $('#editModels .status').val(response.status);
+                    $('#editModels .short_description').val(response.short_description);
+                    $('#editModels .sterilizations').val(response.sterilizations);
+                    $('#editModels .product_use_status').val(response.product_use_status);
+                    // Assuming response.image contains the URL of the existing image
+                    var imageUrl = response.thumbnail_image;
+                    var baseUrl = 'http://localhost/macromed/';
+                    var responseImage = baseUrl + response.thumbnail_image;
+                    if (imageUrl) {
+                        $('#preview-img').attr('src', responseImage).show();
+                    } else {
+                        $('#preview-img').hide();
+                    }
+                    if (response.long_description !== null) {
+                        geteditor.setData(response.long_description);
+                    } else {
+                        geteditor.setData(''); // Or set it to an empty string
+                    }
+                    if (response.product_category) {
+                        let categoryIds = response.product_category.map(category => category.categories.id);
+                        $('#editModels .category').val(categoryIds).trigger('change');
+                    }
+                    if (response.product_brands) {
+                        let brands = response.product_brands.map(brands => brands
+                            .brands.id);
+                        $('#editModels .brand').val(brands).trigger('change');
+                    }
+                    if (response.product_certifications) {
+                        let certification = response.product_certifications.map(certification => certification
+                            .certification.id);
+                        $('#editModels .certification').val(certification).trigger('change');
+                    }
+                    $('#editModelsModal').modal('show');
+                    $('#editModelsModal').data('id', id);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+        // #############Update subAdmin#############
+        $(document).ready(function() {
+            $('#editModels input, #editModels select, #editModels textarea').on(
+                'input change',
+                function() {
+                    $(this).siblings('.invalid-feedback').text('');
+                    $(this).removeClass('is-invalid');
+                });
+        });
+
+        function updateModels() {
+            var updateModels = '{{ route('product.update', ':id') }}';
+            var id = $('#editModelsModal').data('id');
+            var formData = new FormData($('#editModels')[0]);
+            // console.log('formData', formData);
+            $.ajax({
+                url: updateModels.replace(':id', id),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    toastr.success('Models Updated Successfully!');
+                    $('#editModelsModal').modal('hide');
+                    reloadDataTable();
+                    $('#editModelsModal form')[0].reset();
+
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 422) { // If validation errors
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            toastr.error(key);
+                        });
+                    } else {
+                        toastr.error(error);
+                    }
+                }
+            });
+        }
         // ################ Active and Inactive code ############
 
         $('#example').on('click', '#update-status', function() {
@@ -261,6 +538,25 @@
                 }
             });
         }
+
+        let geteditor;
+        ClassicEditor
+            .create(document.querySelector('.long_description'))
+            .then(newGetEditor => {
+                geteditor = newGetEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        function previewThumnailImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('preview-img');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        };
     </script>
 
 @endsection
