@@ -22,7 +22,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group mb-0">
-                                    <button type="submit" class="btn btn-success btn-lg btn-block" tabindex="4">
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
                                         Forgot Password
                                     </button>
                                 </div>
