@@ -84,7 +84,9 @@
                                 <label>Sub Category</label>
                                 <select name="sub_category_id[]" class="form-control select2 sub_category" id="sub_category"
                                     style="width: 100%" multiple>
-                                    <option value="">Select Sub Category</option>
+                                    @foreach ($subCategories as $subCategory)
+                                        <option value="{{ $subCategory->id }}">{{ $subCategory->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
@@ -166,7 +168,7 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Sterilizations <span class="text-danger">*</span></label>
-                                <select name="sterilizations sterilizations" class="form-control" id="sterilizations">
+                                <select name="sterilizations" class="form-control sterilizations" id="sterilizations">
                                     <option value="" disabled selected>Select Sterilizations</option>
                                     @foreach ($sterilizations as $sterilization)
                                         <option {{ old('sterilizations') == $sterilization->id ? 'selected' : '' }}
@@ -356,7 +358,7 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success  mr-1 text-white editSubadminBtn" data-id="' +
+                            return '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger mb-1 mr-1 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
@@ -383,9 +385,12 @@
                 type: 'GET',
                 success: function(response) {
                     $('#editModels .short_name').val(response.short_name);
+                    $('#editModels .thumbnail_image').val(response.thumbnail_image);
+                    $('#editModels .banner_image').val(response.banner_image);
                     $('#editModels .product_name').val(response.product_name);
                     $('#editModels .slug').val(response.slug);
                     $('#editModels .company').val(response.company);
+                    $('#editModels .country').val(response.country);
                     $('#editModels .models').val(response.models);
                     $('#editModels .video_link').val(response.video_link);
                     $('#editModels .product_commission').val(response.product_commission);
@@ -393,34 +398,37 @@
                     $('#editModels .short_description').val(response.short_description);
                     $('#editModels .sterilizations').val(response.sterilizations);
                     $('#editModels .product_use_status').val(response.product_use_status);
-                    // Assuming response.image contains the URL of the existing image
-                    var imageUrl = response.thumbnail_image;
-                    var baseUrl = 'http://localhost/macromed/';
-                    var responseImage = baseUrl + response.thumbnail_image;
-                    if (imageUrl) {
-                        $('#preview-img').attr('src', responseImage).show();
-                    } else {
-                        $('#preview-img').hide();
-                    }
                     if (response.long_description !== null) {
                         geteditor.setData(response.long_description);
                     } else {
                         geteditor.setData(''); // Or set it to an empty string
                     }
+                    let categoryIds = [];
+                    let brands = [];
+                    let certification = [];
+                    let subCategoryId = [];
+
                     if (response.product_category) {
-                        let categoryIds = response.product_category.map(category => category.categories.id);
-                        $('#editModels .category').val(categoryIds).trigger('change');
+                        categoryIds = response.product_category.map(category => category.categories.id);
                     }
+                    $('#editModels .category').val(categoryIds).trigger('change');
+
+                    if (response.product_sub_category) {
+                        subCategoryId = response.product_sub_category.map(subCategory => subCategory
+                            .sub_categories.id);
+                    }
+                    $('#editModels .sub_category').val(subCategoryId).trigger('change');
+
                     if (response.product_brands) {
-                        let brands = response.product_brands.map(brands => brands
-                            .brands.id);
-                        $('#editModels .brand').val(brands).trigger('change');
+                        brands = response.product_brands.map(brands => brands.brands.id);
                     }
+                    $('#editModels .brand').val(brands).trigger('change');
+
                     if (response.product_certifications) {
-                        let certification = response.product_certifications.map(certification => certification
+                        certification = response.product_certifications.map(certification => certification
                             .certification.id);
-                        $('#editModels .certification').val(certification).trigger('change');
                     }
+                    $('#editModels .certification').val(certification).trigger('change');
                     $('#editModelsModal').modal('show');
                     $('#editModelsModal').data('id', id);
                 },
@@ -431,20 +439,65 @@
             });
         }
         // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editModels input, #editModels select, #editModels textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
-
         function updateModels() {
             var updateModels = '{{ route('product.update', ':id') }}';
             var id = $('#editModelsModal').data('id');
-            var formData = new FormData($('#editModels')[0]);
-            // console.log('formData', formData);
+            var form = document.getElementById("editModels");
+            var short_name = form["short_name"].value;
+            var product_name = form["product_name"].value;
+            var slug = form["slug"].value;
+            var company = form["company"].value;
+            var models = form["models"].value;
+            var country = form["country"].value;
+            var video_link = form["video_link"].value;
+            var product_commission = form["product_commission"].value; // Fixed typo here
+            var short_description = form["short_description"].value;
+            var status = form["status"].value;
+            var product_use_status = form["product_use_status"].value;
+            var sterilizations = form["sterilizations"].value;
+            var long_description = geteditor.getData();
+
+            var category_id = [];
+            $('select[name="category_id[]"] option:selected').each(function(index, element) {
+                category_id.push($(element).val());
+            });
+
+            var sub_category_id = [];
+            $('select[name="sub_category_id[]"] option:selected').each(function(index, element) {
+                sub_category_id.push($(element).val());
+            });
+
+            var brand_id = [];
+            $('select[name="brand_id[]"] option:selected').each(function(index, element) {
+                brand_id.push($(element).val());
+            });
+
+            var certification_id = [];
+            $('select[name="certification_id[]"] option:selected').each(function(index, element) {
+                certification_id.push($(element).val());
+            });
+
+            // Form Data
+            var formData = new FormData();
+            formData.append('short_name', short_name);
+            formData.append('product_name', product_name);
+            formData.append('slug', slug);
+            formData.append('company', company);
+            formData.append('models', models);
+            formData.append('video_link', video_link);
+            formData.append('product_commission', product_commission);
+            formData.append('short_description', short_description);
+            formData.append('status', status);
+            formData.append('country', country);
+            formData.append('product_use_status', product_use_status);
+            formData.append('sterilizations', sterilizations);
+            formData.append('long_description', long_description);
+            formData.append('category_id', JSON.stringify(category_id));
+            formData.append('sub_category_id', JSON.stringify(sub_category_id));
+            formData.append('brand_id', JSON.stringify(brand_id));
+            formData.append('certification_id', JSON.stringify(certification_id));
+            // console.log('data',JSON.stringify(Object.fromEntries(formData)));
+            // return ;
             $.ajax({
                 url: updateModels.replace(':id', id),
                 type: 'POST',
@@ -455,17 +508,16 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    toastr.success('Models Updated Successfully!');
+                    toastr.success('Product Updated Successfully!');
                     $('#editModelsModal').modal('hide');
                     reloadDataTable();
                     $('#editModelsModal form')[0].reset();
-
                 },
                 error: function(xhr, status, error) {
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(key);
+                            toastr.error(value[0]);
                         });
                     } else {
                         toastr.error(error);
@@ -473,6 +525,7 @@
                 }
             });
         }
+
         // ################ Active and Inactive code ############
 
         $('#example').on('click', '#update-status', function() {
@@ -557,6 +610,41 @@
             }
             reader.readAsDataURL(event.target.files[0]);
         };
+
+        // Show sub Categories against Category
+        // $(document).ready(function() {
+        //     $('#category').change(function() {
+        //         var selectedCategories = $(this).val();
+        //         if (selectedCategories.length > 0) {
+        //             $.ajax({
+        //                 url: '{{ route('category.subCategories') }}',
+        //                 type: 'GET',
+        //                 data: {
+        //                     category_ids: selectedCategories
+        //                 },
+        //                 success: function(response) {
+        //                     $('#sub_category').empty();
+        //                     if (response.length > 0) {
+        //                         response.forEach(function(subCategory) {
+        //                             $('#sub_category').append('<option value="' +
+        //                                 subCategory.id + '">' + subCategory.name +
+        //                                 '</option>');
+        //                         });
+        //                         $('#sub_category').prop('disabled', false);
+        //                     } else {
+        //                         $('#sub_category').append(
+        //                             '<option value="">No Sub Category Available</option>');
+        //                         $('#sub_category').prop('disabled', true);
+        //                     }
+        //                 }
+        //             });
+        //         } else {
+        //             $('#sub_category').empty();
+        //             $('#sub_category').append('<option value="">Select Sub Category</option>');
+        //             $('#sub_category').prop('disabled', true);
+        //         }
+        //     });
+        // });
     </script>
 
 @endsection

@@ -51,13 +51,14 @@ class ProductController extends Controller
         }
         // return $countries;
         $categories = Category::where('status', '1')->get();
+        $subCategories = SubCategory::where('status', '1')->get();
         $brands = Brands::where('status', '1')->get();
         $models = Models::where('status', '1')->get();
         $certifications = Certification::where('status', '1')->get();
         $companies = Company::where('status', '1')->get();
         $sterilizations = Sterilization::where('status', '1')->get();
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->latest()->get();
-        return view('admin.product.index', compact('countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
+        return view('admin.product.index', compact('subCategories','countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
     public function productCreateIndex()
@@ -203,12 +204,6 @@ class ProductController extends Controller
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_name' => 'required|string|max:255',
             'product_name' => 'required|string|max:255',
-            'category_id' => 'required|array',
-            'category_id.*' => 'exists:categories,id',
-            'brand_id' => 'required|array',
-            'brand_id.*' => 'exists:brands,id',
-            'certification_id' => 'required|array',
-            'certification_id.*' => 'exists:certifications,id',
             'company' => 'required',
             'models' => 'required',
             'country' => 'required|string|max:255',
@@ -218,13 +213,6 @@ class ProductController extends Controller
             'video_link' => 'nullable|string|max:255',
             'short_description' => 'required|string',
             'long_description' => 'required|string',
-        ], [
-            'category_id' => 'Category is required.',
-            'category_id.*' => 'Category is required.',
-            'brand_id' => 'Brand is required.',
-            'brand_id.*' => 'Brand is required.',
-            'certification_id' => 'Certification is required',
-            'certification_id.*' => 'Certification is required'
         ]);
 
         try {
@@ -255,10 +243,10 @@ class ProductController extends Controller
             $product->save();
 
             // Update product variants
-            $category_ids = $request->input('category_id');
-            $sub_category_ids = $request->input('sub_category_id');
-            $brand_ids = $request->input('brand_id');
-            $certification_ids = $request->input('certification_id');
+            $category_ids = json_decode($request->input('category_id'), true);
+            $sub_category_ids = json_decode($request->input('sub_category_id'), true);
+            $brand_ids = json_decode($request->input('brand_id'), true);
+            $certification_ids = json_decode($request->input('certification_id'), true);
 
             // Delete old variants
             ProductCatgeory::where('product_id', $product->id)->delete();
@@ -267,40 +255,40 @@ class ProductController extends Controller
             ProductCertifcation::where('product_id', $product->id)->delete();
 
             foreach ($category_ids as $categoryId) {
-                $productVariant = new ProductCatgeory();
-                $productVariant->product_id = $product->id;
-                $productVariant->category_id = $categoryId;
-                $productVariant->save();
+                $productCategory = new ProductCatgeory();
+                $productCategory->product_id = $product->id;
+                $productCategory->category_id = $categoryId;
+                $productCategory->save();
             }
 
             if ($sub_category_ids) {
-                foreach ($sub_category_ids as $key => $subCategoryId) {
-                    $productVariant = new ProductSubCatgeory();
-                    $productVariant->product_id = $product->id;
-                    $productVariant->sub_category_id = $subCategoryId;
-                    $productVariant->save();
+                foreach ($sub_category_ids as $subCategoryId) {
+                    $productSubCategory = new ProductSubCatgeory();
+                    $productSubCategory->product_id = $product->id;
+                    $productSubCategory->sub_category_id = $subCategoryId;
+                    $productSubCategory->save();
                 }
             }
 
             foreach ($brand_ids as $brandId) {
-                $productVariant = new ProductBrands();
-                $productVariant->product_id = $product->id;
-                $productVariant->brand_id = $brandId;
-                $productVariant->save();
+                $productBrand = new ProductBrands();
+                $productBrand->product_id = $product->id;
+                $productBrand->brand_id = $brandId;
+                $productBrand->save();
             }
 
             foreach ($certification_ids as $certificationId) {
-                $productVariant = new ProductCertifcation();
-                $productVariant->product_id = $product->id;
-                $productVariant->certification_id = $certificationId;
-                $productVariant->save();
+                $productCertification = new ProductCertifcation();
+                $productCertification->product_id = $product->id;
+                $productCertification->certification_id = $certificationId;
+                $productCertification->save();
             }
 
-            return response()->json('message', 'Product Updated Successfully!');
+            return response()->json(['message' => 'Product Updated Successfully!']);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json('error', 'Failed to update Product. Please try again later.');
+            return response()->json(['error' => 'Failed to update Product. Please try again later.']);
         }
     }
 
