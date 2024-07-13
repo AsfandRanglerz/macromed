@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\ModalsController;
+use App\Http\Controllers\Admin\NumberOfUseController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SterilizationController;
@@ -162,6 +163,18 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/sterilization/delete/{id}',  'deleteSterilization')->name('sterilization.delete');
         Route::post('/update-sterilization-status/{id}',  'updateSterilizationStatus')->name('sterilizationBlock.update');
     });
+
+    // ############## Units ############
+    Route::controller(NumberOfUseController::class)->group(function () {
+        Route::get('/number-of-use',  'numberOfUseIndex')->name('numberOfUse.index');
+        Route::post('/numberOfUse-create',  'numberOfUseCreate')->name('numberOfUse.create');
+        Route::get('/numberOfUseData',  'numberOfUseData')->name('numberOfUse.get');
+        Route::get('/numberOfUse/{id}',  'showNumberOfUse')->name('numberOfUse.show');
+        Route::post('/numberOfUseUpdate/{id}',  'updateNumberOfUse')->name('numberOfUse.update');
+        Route::get('/numberOfUse/delete/{id}',  'deleteNumberOfUse')->name('numberOfUse.delete');
+        Route::post('/update-numberOfUse-status/{id}',  'updateNumberOfUseStatus')->name('numberOfUseBlock.update');
+    });
+
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
         Route::get('/productData',  'productData')->name('products.get');

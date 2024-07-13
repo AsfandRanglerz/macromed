@@ -27,7 +27,7 @@
                             data-feather="layout"></i><span>Inventory
                             Managment</span></a>
                     <ul
-                        class="dropdown-menu {{ request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') ? 'show' : '' }}">
+                        class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') ? 'show' : '' }}">
                         {{-- Category --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('category'))
                             <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
@@ -153,6 +153,22 @@
                                 <a href="{{ route('sterilization.index') }}"
                                     class="nav-link {{ request()->is('admin/sterilization*') ? 'text-white' : '' }}">
                                     <i data-feather="layers"></i><span>Sterilization</span>
+                                </a>
+                            </li>
+                        @endif
+                        {{-- NUmber Of Use --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                            <li class="dropdown {{ request()->is('admin/number-of-use*') ? 'active' : '' }}">
+                                <a href="{{ route('numberOfUse.index') }}"
+                                    class="nav-link {{ request()->is('admin/number-of-use*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Number Of Use</span>
+                                </a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="dropdown {{ request()->is('admin/number-of-use*') ? 'active' : '' }}">
+                                <a href="{{ route('numberOfUse.index') }}"
+                                    class="nav-link {{ request()->is('admin/number-of-use*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Number Of Use</span>
                                 </a>
                             </li>
                         @endif
