@@ -18,6 +18,7 @@ use App\Models\ProductCatgeory;
 use App\Models\ProductSubCatgeory;
 use App\Models\ProductCertifcation;
 use App\Http\Controllers\Controller;
+use App\Models\NumberOfUse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -51,6 +52,7 @@ class ProductController extends Controller
         }
         // return $countries;
         $categories = Category::where('status', '1')->get();
+        $numberOfUses = NumberOfUse::where('status', '1')->get();
         $subCategories = SubCategory::where('status', '1')->get();
         $brands = Brands::where('status', '1')->get();
         $models = Models::where('status', '1')->get();
@@ -58,7 +60,7 @@ class ProductController extends Controller
         $companies = Company::where('status', '1')->get();
         $sterilizations = Sterilization::where('status', '1')->get();
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->latest()->get();
-        return view('admin.product.index', compact('subCategories','countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
+        return view('admin.product.index', compact('numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
     public function productCreateIndex()
@@ -86,7 +88,8 @@ class ProductController extends Controller
         $certifications = Certification::where('status', '1')->get();
         $companies = Company::where('status', '1')->get();
         $sterilizations = Sterilization::where('status', '1')->get();
-        return view('admin.product.create', compact('countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
+        $numberOfUses = NumberOfUse::where('status', '1')->get();
+        return view('admin.product.create', compact('numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
     }
 
     public function getSubCategories(Request $request)

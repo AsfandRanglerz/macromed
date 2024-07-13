@@ -133,9 +133,12 @@
                                         <div class="form-group col-md-4">
                                             <label>Number Of Use<span class="text-danger">*</span></label>
                                             <select name="product_use_status" class="form-control">
-                                                <option value="" disabled selected>Select Product Status</option>
-                                                <option value="1">Disposable</option>
-                                                <option value="0">Multiple Use</option>
+                                                <option value="" disabled selected>Select Number Of Use</option>
+                                                @foreach ($numberOfUses as $numberOfUse)
+                                                    <option {{ old('numberOfUses') == $numberOfUse->id ? 'selected' : '' }}
+                                                        value="{{ $numberOfUse->name }}">{{ $numberOfUse->name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
