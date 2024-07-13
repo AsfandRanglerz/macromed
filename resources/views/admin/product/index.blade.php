@@ -1,6 +1,34 @@
 @extends('admin.layout.app')
 @section('title', 'Product')
 @section('content')
+    {{-- <style>
+        .modal-fullscreen {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            top: 0;
+            left: 0;
+        }
+
+        .modal-dialog {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .modal-content {
+            height: 100%;
+            border: none;
+            border-radius: 0;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+        }
+    </style> --}}
     <!-- Delete Subadmin Modal -->
     <div class="modal fade" id="deleteSubadminModal" tabindex="-1" role="dialog" aria-labelledby="deleteSubadminModalLabel"
         aria-hidden="true">
