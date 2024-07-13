@@ -29,10 +29,6 @@
                                         <input type="file" class="form-control-file" name="thumbnail_image"
                                             onchange="previewThumnailImage(event)">
                                     </div>
-                                    <div class="form-group col-md-12">
-                                        <label>Banner Image<span class="text-danger">*</span></label>
-                                        <input type="file" class="form-control-file" name="banner_image">
-                                    </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
                                             <label>Product Short Name<span class="text-danger">*</span></label>
@@ -135,7 +131,7 @@
                                     </div>
                                     <div class="row col-12">
                                         <div class="form-group col-md-4">
-                                            <label>Product Status <span class="text-danger">*</span></label>
+                                            <label>Number Of Use<span class="text-danger">*</span></label>
                                             <select name="product_use_status" class="form-control">
                                                 <option value="" disabled selected>Select Product Status</option>
                                                 <option value="1">Disposable</option>

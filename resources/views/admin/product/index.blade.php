@@ -49,10 +49,7 @@
                             <input type="file" class="form-control-file" name="thumbnail_image"
                                 onchange="previewThumnailImage(event)">
                         </div>
-                        <div class="form-group col-md-12">
-                            <label>Banner Image<span class="text-danger">*</span></label>
-                            <input type="file" class="form-control-file" name="banner_image">
-                        </div>
+
                         <div class="row col-md-12">
                             <div class="form-group col-md-4">
                                 <label>Product Short Name<span class="text-danger">*</span></label>
@@ -83,10 +80,8 @@
                             <div class="form-group col-md-4">
                                 <label>Sub Category</label>
                                 <select name="sub_category_id[]" class="form-control select2 sub_category" id="sub_category"
-                                    style="width: 100%" multiple>
-                                    @foreach ($subCategories as $subCategory)
-                                        <option value="{{ $subCategory->id }}">{{ $subCategory->name }}</option>
-                                    @endforeach
+                                    multiple style="width: 100%">
+                                    <option value="">Select Sub Category</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
@@ -159,7 +154,7 @@
                         </div>
                         <div class="row col-12">
                             <div class="form-group col-md-4">
-                                <label>Product Status <span class="text-danger">*</span></label>
+                                <label>Number Of Use <span class="text-danger">*</span></label>
                                 <select name="product_use_status" class="form-control product_use_status">
                                     <option value="" disabled selected>Select Product Status</option>
                                     <option value="1">Disposable</option>
@@ -390,7 +385,7 @@
                     $('#editModels .product_name').val(response.product_name);
                     $('#editModels .slug').val(response.slug);
                     $('#editModels .company').val(response.company);
-                    $('#editModels .country').val(response.country);
+                    $('#editModels .country').val(response.country).trigger('change');
                     $('#editModels .models').val(response.models);
                     $('#editModels .video_link').val(response.video_link);
                     $('#editModels .product_commission').val(response.product_commission);
@@ -407,23 +402,30 @@
                     let brands = [];
                     let certification = [];
                     let subCategoryId = [];
-
+                    // Category
                     if (response.product_category) {
                         categoryIds = response.product_category.map(category => category.categories.id);
                     }
                     $('#editModels .category').val(categoryIds).trigger('change');
-
-                    if (response.product_sub_category) {
+                    // Sub Category
+                    if (response.product_sub_category && response.product_sub_category.length > 0) {
                         subCategoryId = response.product_sub_category.map(subCategory => subCategory
                             .sub_categories.id);
+                        response.product_sub_category.forEach(function(subCategory) {
+                            $('#sub_category').append('<option value="' + subCategory.sub_categories
+                                .id + '">' + subCategory.sub_categories.name + '</option>');
+                        });
+                        $('#sub_category').val(subCategoryId).trigger('change');
+                    } else {
+                        // Fetch subcategories based on category selection if no subcategory is found
+                        fetchSubcategoriesByCategory(categoryIds);
                     }
-                    $('#editModels .sub_category').val(subCategoryId).trigger('change');
-
+                    // Brands
                     if (response.product_brands) {
                         brands = response.product_brands.map(brands => brands.brands.id);
                     }
                     $('#editModels .brand').val(brands).trigger('change');
-
+                    // Certifications
                     if (response.product_certifications) {
                         certification = response.product_certifications.map(certification => certification
                             .certification.id);
@@ -610,41 +612,40 @@
             }
             reader.readAsDataURL(event.target.files[0]);
         };
-
         // Show sub Categories against Category
-        // $(document).ready(function() {
-        //     $('#category').change(function() {
-        //         var selectedCategories = $(this).val();
-        //         if (selectedCategories.length > 0) {
-        //             $.ajax({
-        //                 url: '{{ route('category.subCategories') }}',
-        //                 type: 'GET',
-        //                 data: {
-        //                     category_ids: selectedCategories
-        //                 },
-        //                 success: function(response) {
-        //                     $('#sub_category').empty();
-        //                     if (response.length > 0) {
-        //                         response.forEach(function(subCategory) {
-        //                             $('#sub_category').append('<option value="' +
-        //                                 subCategory.id + '">' + subCategory.name +
-        //                                 '</option>');
-        //                         });
-        //                         $('#sub_category').prop('disabled', false);
-        //                     } else {
-        //                         $('#sub_category').append(
-        //                             '<option value="">No Sub Category Available</option>');
-        //                         $('#sub_category').prop('disabled', true);
-        //                     }
-        //                 }
-        //             });
-        //         } else {
-        //             $('#sub_category').empty();
-        //             $('#sub_category').append('<option value="">Select Sub Category</option>');
-        //             $('#sub_category').prop('disabled', true);
-        //         }
-        //     });
-        // });
+        function fetchSubcategoriesByCategory(selectedCategories) {
+            if (selectedCategories.length > 0) {
+                $.ajax({
+                    url: '{{ route('category.subCategories') }}',
+                    type: 'GET',
+                    data: {
+                        category_ids: selectedCategories
+                    },
+                    success: function(response) {
+                        $('#sub_category').empty();
+                        if (response.length > 0) {
+                            response.forEach(function(subCategory) {
+                                $('#sub_category').append('<option value="' + subCategory.id + '">' +
+                                    subCategory.name + '</option>');
+                            });
+                            $('#sub_category').prop('disabled', false);
+                        } else {
+                            $('#sub_category').append('<option value="">No Sub Category Available</option>');
+                            $('#sub_category').prop('disabled', true);
+                        }
+                    }
+                });
+            } else {
+                $('#sub_category').empty();
+                $('#sub_category').append('<option value="">Select Sub Category</option>');
+                $('#sub_category').prop('disabled', true);
+            }
+        }
+
+        $('#category').change(function() {
+            var selectedCategories = $(this).val();
+            fetchSubcategoriesByCategory(selectedCategories);
+        });
     </script>
 
 @endsection
