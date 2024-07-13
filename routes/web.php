@@ -164,7 +164,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/update-sterilization-status/{id}',  'updateSterilizationStatus')->name('sterilizationBlock.update');
     });
 
-    // ############## Units ############
+    // ############## Number of Use ############
     Route::controller(NumberOfUseController::class)->group(function () {
         Route::get('/number-of-use',  'numberOfUseIndex')->name('numberOfUse.index');
         Route::post('/numberOfUse-create',  'numberOfUseCreate')->name('numberOfUse.create');
