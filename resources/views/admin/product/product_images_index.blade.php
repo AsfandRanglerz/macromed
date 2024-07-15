@@ -59,7 +59,7 @@
                                             <tr>
                                                 <th>Sr.</th>
                                                 <th>Images</th>
-                                                <th>Make Cover Image</th>
+                                                <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>

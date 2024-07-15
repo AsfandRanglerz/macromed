@@ -8,18 +8,19 @@ use App\Models\Models;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\NumberOfUse;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use App\Models\Certification;
 use App\Models\ProductBrands;
+use App\Models\ProductImages;
 use App\Models\Sterilization;
 use App\Models\ProductVaraint;
 use App\Models\ProductCatgeory;
 use App\Models\ProductSubCatgeory;
 use App\Models\ProductCertifcation;
 use App\Http\Controllers\Controller;
-use App\Models\NumberOfUse;
-use App\Models\ProductImages;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -375,6 +376,11 @@ class ProductController extends Controller
     {
         try {
             $image = ProductImages::findOrFail($id);
+            $imagePath = public_path('admin/assets/images/products'.$image->image);
+
+            if (File::exists($imagePath)) {
+                File::delete($imagePath);
+            }
             $image->delete();
             return redirect()->back()->with(['alert' => 'success', 'message' => 'Image Delete Successfully!']);
         } catch (\Exception $e) {
