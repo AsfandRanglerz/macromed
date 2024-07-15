@@ -121,7 +121,7 @@
                             </div>
                             <div class="card-body table-responsive">
                                 <table class="responsive table table-striped table-bordered" id="example">
-                                    <thead class="text-center">
+                                    <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>SKU</th>
@@ -138,7 +138,7 @@
                                             {{-- <th>Description</th> --}}
                                         </tr>
                                     </thead>
-                                    <tbody class="text-center">
+                                    <tbody>
                                     </tbody>
                                 </table>
                             </div>

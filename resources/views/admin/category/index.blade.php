@@ -130,7 +130,7 @@
                                     Create Category
                                 </a>
                                 <table class="responsive table table-striped table-bordered" id="example">
-                                    <thead class="text-center">
+                                    <thead>
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
@@ -138,7 +138,7 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="text-center">
+                                    <tbody>
                                     </tbody>
                                 </table>
                             </div>

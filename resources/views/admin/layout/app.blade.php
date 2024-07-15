@@ -7,24 +7,25 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <title>Admin Dashboard</title>
     <!-- General CSS Files -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/app.min.css') }}">
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/components.css') }}">
     <!-- Custom style CSS -->
+    {{-- <link rel="stylesheet" href="{{ asset('public/admin/assets/toastr/css/toastr.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/custom.css') }}">
-    <link rel='shortcut icon' type='image/x-icon' href='{{ asset('public/admin/assets/images/logo-macromed.png') }}' />
-    <link rel="stylesheet" href="{{ asset('public/admin/assets/css/datatables.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/admin/toastr/toastr.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/prism/prism.css') }}">
+    <link rel='shortcut icon' type='image/x-icon' href='{{ asset('public/admin/assets/Fav Icon 2.png') }}' />
     <link rel="stylesheet"
-        href="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-    <link rel="stylesheet"
-        href="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/css/responsive.bootstrap4.css') }}">
+        href="{{ asset('public/admin/assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/datatables/datatables.min.css') }}">
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
     <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/select2/dist/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/jquery-selectric/selectric.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="{{ asset('public/admin/assets/bundles/lightgallery/dist/css/lightgallery.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('public/admin/toastr/toastr.css') }}">
 
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
 
 </head>
 
@@ -39,13 +40,7 @@
             @include('admin.common.footer')
         </div>
     </div>
-    <script
-        src="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/js/dataTables.responsive.min.js') }}">
-    </script>
-    <script
-        src="{{ asset('public/admin/assets/bundles/datatables/datatables-responsive/js/responsive.bootstrap4.min.js') }}">
-    </script>
-    <script src="{{ asset('public/admin/assets/bundles/datatables/datatables.min.js') }}"></script>
+
     <!-- General JS Scripts -->
     <script src="{{ asset('public/admin/assets/js/app.min.js') }}"></script>
     <!-- JS Libraies -->
@@ -56,11 +51,18 @@
     <script src="{{ asset('public/admin/assets/js/scripts.js') }}"></script>
     <!-- Custom JS File -->
     <script src="{{ asset('public/admin/assets/js/custom.js') }}"></script>
-
-    <script src="{{ asset('public/admin/assets/js/datatables.js') }}"></script>
-
     <script src="{{ asset('public/admin/toastr/toastr.js') }}"></script>
+    {{-- DataTbales --}}
+    <script src="{{ asset('public/admin/assets/bundles/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('publicadmin/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}">
+    </script>
+    <script src="{{ asset('public/admin/assets/bundles/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('public/admin/assets/js/page/datatables.js') }}"></script>
+    <script src="{{ asset('public/admin/assets/bundles/prism/prism.js') }}"></script>
+    <script src="{{ asset('public/admin/assets/bundles/jquery-selectric/jquery.selectric.min.js') }}"></script>
     <script src="{{ asset('public/admin/assets/bundles/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('public/admin/assets/bundles/lightgallery/dist/js/lightgallery-all.js') }}"></script>
+    <script src="{{ asset('public/admin/assets/js/page/light-gallery.js') }}"></script>
 
 
     @yield('js')
