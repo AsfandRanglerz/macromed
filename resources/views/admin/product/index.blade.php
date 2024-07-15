@@ -256,6 +256,7 @@
                                             <th>Models</th>
                                             <th>Status</th>
                                             <th>Variants</th>
+                                            <th>Uploads Images</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -380,6 +381,14 @@
                     </div>
                 `.replace(/:id/g, row.id);
                         }
+                    },
+                    {
+                        "render": function(data, type, row) {
+                            return '<a href="' +
+                                "{{ route('product.image', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-image"></i></a>';
+                        },
                     },
                     {
                         "data": null,

@@ -19,8 +19,10 @@ use App\Models\ProductSubCatgeory;
 use App\Models\ProductCertifcation;
 use App\Http\Controllers\Controller;
 use App\Models\NumberOfUse;
+use App\Models\ProductImages;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+
 
 class ProductController extends Controller
 {
@@ -320,6 +322,64 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $product->delete();
         return response()->json(['alert' => 'success', 'message' => 'Product Deleted SuccessFully!']);
+    }
+    //  ################# Image Upload Code ####################
+    public function show($id)
+    {
+        $productImages = ProductImages::where('product_id', $id)->latest()->get();
+        $product = Product::findOrFail($id);
+        return view('admin.product.product_images_index', compact('product', 'productImages'));
+    }
+
+    public function uploadImages(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:1024', // Maximum file size in kilobytes
+            ], [
+                'image.*.image' => 'The file must be an image.',
+                'image.*.mimes' => 'Only JPEG, PNG, JPG, and GIF formats are allowed.',
+                'image.*.max' => 'Maximum file size allowed is 1MB.',
+            ]);
+            if ($request->hasFile('image')) {
+                foreach ($request->file('image') as $image) {
+                    $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('admin/assets/images/products'), $filename);
+                    ProductImages::create([
+                        'product_id' => $id,
+                        'image' => 'public/admin/assets/images/products/' . $filename,
+                    ]);
+                }
+            }
+            return redirect()->back()->with(['alert' => 'success', 'message' => 'Image Add Successfully!']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while uploading images.');
+        }
+    }
+    public function updateCoverStatus(Request $request, $productId, $imageId)
+    {
+        try {
+            $selectedImage = ProductImages::where('id', $imageId)->firstOrFail();
+            $selectedImage->status = '1';
+            $selectedImage->save();
+            ProductImages::where('product_id', $productId)
+                ->where('id', '!=', $imageId)
+                ->update(['status' => '0']);
+            return response()->json(['alert' => 'success', 'message' => 'The Selected Image Has Been Set As The Cover Image Successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update cover image']);
+        }
+    }
+
+    public function deleteImage($id)
+    {
+        try {
+            $image = ProductImages::findOrFail($id);
+            $image->delete();
+            return redirect()->back()->with(['alert' => 'success', 'message' => 'Image Delete Successfully!']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete image.');
+        }
     }
     // ################## Store and updtae Product Varaints ########################
     public function getProductVariants($id)

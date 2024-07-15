@@ -186,6 +186,11 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories');
         Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update');
         Route::get('/product/delete/{id}',  'deleteProduct')->name('product.delete');
+        // Products Images
+        Route::get('/product/Image/{id}',  'show')->name('product.image');
+        Route::post('/products/{id}/upload-images',  'uploadImages')->name('products.upload-images');
+        Route::put('/products/{productId}/images/{imageId}/update-cover-status',  'updateCoverStatus')->name('products.images.update-cover-status');
+        Route::delete('/image/delete/{id}',  'deleteImage')->name('image.delete');
         // Product Variants Routes
         Route::get('/product-variants-index/{id}', 'productVariantViewIndex')->name('product_variant_index.index');
         Route::get('/product-variant/{id}', 'getProductVariants')->name('product.variants');
