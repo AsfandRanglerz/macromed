@@ -313,7 +313,7 @@
                         "data": "product_brands",
                         "render": function(data, type, row) {
                             if (data.length === 0) {
-                                return 'No data found!';
+                                return '<span class="badge bg-danger text-white">No data found!</span>';
                             }
                             return data.map(productBrand => productBrand.brands.name).join(', ');
                         }
@@ -322,7 +322,7 @@
                         "data": "product_certifications",
                         "render": function(data, type, row) {
                             if (data.length === 0) {
-                                return 'No data found!';
+                                return '<span class="badge bg-danger text-white">No data found!</span>';
                             }
                             return data.map(certification => certification.certification.name).join(
                                 ', ');
@@ -332,7 +332,7 @@
                         "data": "product_category",
                         "render": function(data, type, row) {
                             if (data.length === 0) {
-                                return 'No data found!';
+                                return '<span class="badge bg-danger text-white">No data found!</span>';
                             }
                             return data.map(productCategory => productCategory.categories.name)
                                 .join(', ');
@@ -342,7 +342,7 @@
                         "data": "product_sub_category",
                         "render": function(data, type, row) {
                             if (data.length === 0) {
-                                return 'No data found!';
+                                return '<span class="badge bg-danger text-white">No data found!</span>';
                             }
                             return data.map(productSubCategory => productSubCategory.sub_categories
                                     .name)
