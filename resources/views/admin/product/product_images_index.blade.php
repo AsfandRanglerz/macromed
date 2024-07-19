@@ -121,8 +121,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    toastr.success(response.message);
                     // Reset all buttons to default (success)
+                    toastr.success(response.message);
                     $('.btn').removeClass('btn-danger').addClass('btn-success');
                     var button = $('#button-' + imageId);
                     var svgIcon = button.find('svg');

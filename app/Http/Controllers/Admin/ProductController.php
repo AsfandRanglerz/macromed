@@ -361,12 +361,17 @@ class ProductController extends Controller
     {
         try {
             $selectedImage = ProductImages::where('id', $imageId)->firstOrFail();
-            $selectedImage->status = '1';
+            if ($selectedImage->status == '0') {
+                $selectedImage->status = '1';
+                $message = 'Product Image In Active Successfully';
+            } else if ($selectedImage->status == '1') {
+                $selectedImage->status = '0';
+                $message = 'Product Image Active Successfully';
+            } else {
+                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
+            }
             $selectedImage->save();
-            ProductImages::where('product_id', $productId)
-                ->where('id', '!=', $imageId)
-                ->update(['status' => '0']);
-            return response()->json(['alert' => 'success', 'message' => 'The Selected Image Has Been Set As The Cover Image Successfully!']);
+            return response()->json(['alert' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to update cover image']);
         }
@@ -376,7 +381,7 @@ class ProductController extends Controller
     {
         try {
             $image = ProductImages::findOrFail($id);
-            $imagePath = public_path('admin/assets/images/products'.$image->image);
+            $imagePath = public_path('admin/assets/images/products' . $image->image);
 
             if (File::exists($imagePath)) {
                 File::delete($imagePath);
