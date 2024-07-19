@@ -409,7 +409,7 @@ class ProductController extends Controller
     {
         $units = Unit::all();
         $data = Product::where('status', '1')->with('productVaraint')->find($id);
-        return view('admin.product.product_variant', compact('data', 'units'));
+        return view('admin.product.product_variant_create', compact('data', 'units'));
     }
     public function productVariantStore(Request $request, $productId)
     {

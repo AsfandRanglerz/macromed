@@ -51,13 +51,13 @@
                                                 </div>
                                                 <div class="row col-12">
                                                     <div class="form-group col-md-4">
-                                                        <label>Quantity</label>
+                                                        <label>Quantity in Packing Unit</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[0][quantity]"
                                                             value="{{ old('variants.0.quantity') }}">
                                                     </div>
                                                     <div class="form-group col-md-4">
-                                                        <label>Actual Price/Unit</label>
+                                                        <label>Total Cost/Unit</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[0][price_per_unit]"
                                                             value="{{ old('variants.0.price_per_unit') }}">
@@ -188,12 +188,12 @@
             </div>
             <div class="row col-12">
                 <div class="form-group col-md-4">
-                    <label>Quantity</label>
+                    <label>Quantity in Packing Unit</label>
                     <input type="text" class="form-control" name="variants[${variantCount}][quantity]"
                         value="{{ old('variants.${variantCount}.quantity') }}">
                 </div>
                 <div class="form-group col-md-4">
-                    <label>Actual Price/Unit</label>
+                    <label>Total Cost/Unit</label>
                     <input type="text" class="form-control" name="variants[${variantCount}][price_per_unit]"
                         value="{{ old('variants.${variantCount}.price_per_unit') }}">
                 </div>
