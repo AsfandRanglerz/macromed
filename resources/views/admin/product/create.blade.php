@@ -154,11 +154,73 @@
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>Status <span class="text-danger">*</span></label>
+                                            <label>Buyer Type <span class="text-danger">*</span></label>
                                             <select name="status" class="form-control">
-                                                <option value="1">Active</option>
-                                                <option value="0">Inactive</option>
+                                                <option value="" disabled selected>Select Buyer Type</option>
+                                                <option value="1">Option 1</option>
+                                                <option value="1">Option 2</option>
+                                                <option value="1">Option 3</option>
+                                                <option value="1">Option 4</option>
+                                                <option value="0">Option 5</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="form-group col-md-4">
+                                            <label>Product Class <span class="text-danger">*</span></label>
+                                            <select name="status" class="form-control">
+                                                <option value="" disabled selected>Select Product Class</option>
+                                                <option value="1">Option 1</option>
+                                                <option value="1">Option 2</option>
+                                                <option value="1">Option 3</option>
+                                                <option value="1">Option 4</option>
+                                                <option value="0">Option 5</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Main Material <span class="text-danger">*</span></label>
+                                            <select name="status" class="form-control">
+                                                <option value="" disabled selected>Select Main Material</option>
+                                                <option value="1">Option 1</option>
+                                                <option value="1">Option 2</option>
+                                                <option value="1">Option 3</option>
+                                                <option value="1">Option 4</option>
+                                                <option value="0">Option 5</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Supplier Name <span class="text-danger">*</span></label>
+                                            <select name="status" class="form-control">
+                                                <option value="" disabled selected>Select Supplier Name</option>
+                                                <option value="1">Option 1</option>
+                                                <option value="1">Option 2</option>
+                                                <option value="1">Option 3</option>
+                                                <option value="1">Option 4</option>
+                                                <option value="0">Option 5</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="form-group col-md-4">
+                                            <label>Supplier Id <span class="text-danger">*</span></label>
+                                            <select name="status" class="form-control">
+                                                <option value="" disabled selected>Select Supplier Id</option>
+                                                <option value="1">Option 1</option>
+                                                <option value="1">Option 2</option>
+                                                <option value="1">Option 3</option>
+                                                <option value="1">Option 4</option>
+                                                <option value="0">Option 5</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Supplier Delivery Time <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="video_link"
+                                                value="{{ old('video_link') }}">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Delivery Period <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="video_link"
+                                                value="{{ old('video_link') }}">
                                         </div>
                                     </div>
                                     <div class="form-group col-md-12">
@@ -168,6 +230,42 @@
                                     <div class="form-group col-md-12">
                                         <label>Long Description <span class="text-danger">*</span></label>
                                         <textarea name="long_description" cols="20" rows="50" class="long_description">{{ old('long_description') }}</textarea>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>Status <span class="text-danger">*</span></label>
+                                        <select name="status" class="form-control">
+                                            <option value="1">Active</option>
+                                            <option value="0">Inactive</option>
+                                        </select>
+                                    </div>
+                                    <h4>Taxes:</h4>
+                                    <div class="row col-md-12">
+                                        <div class="form-group col-md-3">
+                                            <label>Federal Tax<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="video_link"
+                                                value="{{ old('video_link') }}">
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label>Provincial Tax <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="video_link"
+                                                value="{{ old('video_link') }}">
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label>Local Tax <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="video_link"
+                                                value="{{ old('video_link') }}">
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label>City<span class="text-danger">*</span></label>
+                                            <select name="status" class="form-control">
+                                                <option value="" disabled selected>Select City</option>
+                                                <option value="1">Option 1</option>
+                                                <option value="1">Option 2</option>
+                                                <option value="1">Option 3</option>
+                                                <option value="1">Option 4</option>
+                                                <option value="0">Option 5</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 text-center">
