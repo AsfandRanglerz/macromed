@@ -215,10 +215,10 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            return '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
+                            row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            // '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
+                            // row.id + '"><i class="fas fa-edit"></i></button>' +
                         }
                     }
                     // { "data": "description" }

@@ -256,7 +256,7 @@
                                             <th>Models</th>
                                             <th>Status</th>
                                             <th>Variants</th>
-                                            <th>Uploads Images</th>
+                                            {{-- <th>Uploads Images</th> --}}
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -382,21 +382,21 @@
                 `.replace(/:id/g, row.id);
                         }
                     },
-                    {
-                        "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('product.image', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-image"></i></a>';
-                        },
-                    },
+                    // {
+                    //     "render": function(data, type, row) {
+                    //         return '<a href="' +
+                    //             "{{ route('product.image', ['id' => ':id']) }}"
+                    //             .replace(':id', row.id) +
+                    //             '" class="btn btn-primary mb-0 text-white"><i class="fas fa-image"></i></a>';
+                    //     },
+                    // },
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger mb-1 mr-1 text-white deleteSubadminBtn" data-id="' +
+                            return '<button class="btn btn-danger mb-1 mr-1 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            // '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
+                            // row.id + '"><i class="fas fa-edit"></i></button>' +
                         }
                     }
                 ]
