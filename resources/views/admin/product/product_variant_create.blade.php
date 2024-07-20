@@ -23,19 +23,26 @@
                                         <div id="variantFields">
                                             <!-- Initial fields -->
                                             <div class="variant-field">
-                                                <div class="row col-12">
-                                                    <div class="form-group col-md-4">
+                                                <div class="row col-md-12">
+                                                    <div class="form-group col-md-6">
+                                                        <label>MPN</label>
+                                                        <input type="text" class="form-control" name="variants[0][m_p_n]"
+                                                            value="{{ old('variants.0.m_p_n') }}">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
                                                         <label>SKU</label>
                                                         <input type="text" class="form-control" name="variants[0][s_k_u]"
                                                             value="{{ old('variants.0.s_k_u') }}">
                                                     </div>
-                                                    <div class="form-group col-md-4">
+                                                </div>
+                                                <div class="row col-md-12">
+                                                    <div class="form-group col-md-6">
                                                         <label>Packing</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[0][packing]"
                                                             value="{{ old('variants.0.packing') }}">
                                                     </div>
-                                                    <div class="form-group col-md-4">
+                                                    <div class="form-group col-md-6">
                                                         <label>Unit</label>
                                                         <select class="form-control" name="variants[0][unit]">
                                                             <option value="" disabled selected>Select Units</option>
@@ -47,11 +54,42 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-
                                                 </div>
+
+                                                <div class="row col-md-12">
+                                                    <div class="form-group col-md-6">
+                                                        <label>Actual Weight</label>
+                                                        <input type="text" class="form-control"
+                                                            name="variants[0][actual_weight]"
+                                                            value="{{ old('variants.0.actual_weight') }}">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Shipping Weight</label>
+                                                        <input type="text" class="form-control"
+                                                            name="variants[0][shipping_weight]"
+                                                            value="{{ old('variants.0.shipping_weight') }}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="row col-md-12">
+                                                    <div class="form-group col-md-6">
+                                                        <label>Shipping Chargeable Weight</label>
+                                                        <input type="text" class="form-control"
+                                                            name="variants[0][shipping_chargeable_weight]"
+                                                            value="{{ old('variants.0.shipping_chargeable_weight') }}">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Status <span class="text-danger">*</span></label>
+                                                        <select name="variants[0][status]" class="form-control">
+                                                            <option value="1">Active</option>
+                                                            <option value="0">Inactive</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
                                                 <div class="row col-12">
                                                     <div class="form-group col-md-4">
-                                                        <label>Quantity in Packing Unit</label>
+                                                        <label>Quantity/Packing Unit</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[0][quantity]"
                                                             value="{{ old('variants.0.quantity') }}">
@@ -69,36 +107,10 @@
                                                             value="{{ old('variants.0.selling_price_per_unit') }}">
                                                     </div>
                                                 </div>
-                                                <div class="row col-12">
-                                                    <div class="form-group col-md-4">
-                                                        <label>Actual Weight</label>
-                                                        <input type="text" class="form-control"
-                                                            name="variants[0][actual_weight]"
-                                                            value="{{ old('variants.0.actual_weight') }}">
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        <label>Shipping Weight</label>
-                                                        <input type="text" class="form-control"
-                                                            name="variants[0][shipping_weight]"
-                                                            value="{{ old('variants.0.shipping_weight') }}">
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        <label>Shipping Chargeable Weight</label>
-                                                        <input type="text" class="form-control"
-                                                            name="variants[0][shipping_chargeable_weight]"
-                                                            value="{{ old('variants.0.shipping_chargeable_weight') }}">
-                                                    </div>
-                                                    <div class="form-group col-12">
-                                                        <label>Status <span class="text-danger">*</span></label>
-                                                        <select name="variants[0][status]" class="form-control">
-                                                            <option value="1">Active</option>
-                                                            <option value="0">Inactive</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+
                                                 <div class="form-group col-12">
                                                     <label>Description <span class="text-danger">*</span></label>
-                                                    <textarea name="variants[0][description]" id="description" cols="30" rows="5" class="form-control ">{{ old('variants.0.description') }}</textarea>
+                                                    <textarea name="variants[0][description]" id="description" cols="30" rows="5" class="form-control">{{ old('variants.0.description') }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -115,7 +127,7 @@
                                         {{-- Save Button --}}
                                         <div class="row">
                                             <div class="col-12 text-center">
-                                                <button class="btn btn-success">Save</button>
+                                                {{-- <button class="btn btn-success">Save</button> --}}
                                             </div>
                                         </div>
                                     </form>
@@ -149,6 +161,7 @@
                 console.error(error);
             });
     </script>
+
     <script>
         let editors = [];
 
@@ -162,64 +175,51 @@
         `;
             let variantFieldHTML = `
         <div class="variant-field border border-1 mt-2">
-             <div class="col-md-12 col-sm-12 col-lg-12 mt-2 mb-0 d-flex justify-content-end">
-    <div class="form-group">
-        <i class="fa fa-trash btn btn-danger btn-sm removeVariantBtn"></i>
-    </div>
-</div>
-            <div class="row col-12">
-                <div class="form-group col-md-4">
+            <div class="col-md-12 col-sm-12 col-lg-12 mt-2 mb-0 d-flex justify-content-end">
+                <div class="form-group">
+                    <i class="fa fa-trash btn btn-danger btn-sm removeVariantBtn"></i>
+                </div>
+            </div>
+            <div class="row col-md-12">
+                <div class="form-group col-md-6">
+                    <label>MPN</label>
+                    <input type="text" class="form-control" name="variants[${variantCount}][m_p_n]" value="{{ old('variants.${variantCount}.m_p_n') }}">
+                </div>
+                <div class="form-group col-md-6">
                     <label>SKU</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][s_k_u]"
-                        value="{{ old('variants.${variantCount}.s_k_u') }}">
+                    <input type="text" class="form-control" name="variants[${variantCount}][s_k_u]" value="{{ old('variants.${variantCount}.s_k_u') }}">
                 </div>
-                <div class="form-group col-md-4">
+            </div>
+            <div class="row col-md-12">
+                <div class="form-group col-md-6">
                     <label>Packing</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][packing]"
-                        value="{{ old('variants.${variantCount}.packing') }}">
+                    <input type="text" class="form-control" name="variants[${variantCount}][packing]" value="{{ old('variants.${variantCount}.packing') }}">
                 </div>
- <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                     <label>Unit</label>
                     <select class="form-control" name="variants[${variantCount}][unit]">
                         ${unitsOptions}
                     </select>
                 </div>
+            </div>
 
-            </div>
-            <div class="row col-12">
-                <div class="form-group col-md-4">
-                    <label>Quantity in Packing Unit</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][quantity]"
-                        value="{{ old('variants.${variantCount}.quantity') }}">
-                </div>
-                <div class="form-group col-md-4">
-                    <label>Total Cost/Unit</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][price_per_unit]"
-                        value="{{ old('variants.${variantCount}.price_per_unit') }}">
-                </div>
-                <div class="form-group col-md-4">
-                    <label>Selling Price/Unit</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][selling_price_per_unit]"
-                        value="{{ old('variants.${variantCount}.selling_price_per_unit') }}">
-                </div>
-            </div>
-            <div class="row col-12">
-                <div class="form-group col-md-4">
+            <div class="row col-md-12">
+                <div class="form-group col-md-6">
                     <label>Actual Weight</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][actual_weight]"
-                        value="{{ old('variants.${variantCount}.actual_weight') }}">
+                    <input type="text" class="form-control" name="variants[${variantCount}][actual_weight]" value="{{ old('variants.${variantCount}.actual_weight') }}">
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-6">
                     <label>Shipping Weight</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][shipping_weight]"
-                        value="{{ old('variants.${variantCount}.shipping_weight') }}">
+                    <input type="text" class="form-control" name="variants[${variantCount}][shipping_weight]" value="{{ old('variants.${variantCount}.shipping_weight') }}">
                 </div>
-                <div class="form-group col-md-4">
+            </div>
+
+            <div class="row col-md-12">
+                <div class="form-group col-md-6">
                     <label>Shipping Chargeable Weight</label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][shipping_chargeable_weight]"
-                        value="{{ old('variants.${variantCount}.shipping_chargeable_weight') }}">
+                    <input type="text" class="form-control" name="variants[${variantCount}][shipping_chargeable_weight]" value="{{ old('variants.${variantCount}.shipping_chargeable_weight') }}">
                 </div>
-                <div class="form-group col-12">
+                <div class="form-group col-md-6">
                     <label>Status <span class="text-danger">*</span></label>
                     <select name="variants[${variantCount}][status]" class="form-control">
                         <option value="1">Active</option>
@@ -227,8 +227,24 @@
                     </select>
                 </div>
             </div>
+
+            <div class="row col-12">
+                <div class="form-group col-md-4">
+                    <label>Quantity/Packing Unit</label>
+                    <input type="text" class="form-control" name="variants[${variantCount}][quantity]" value="{{ old('variants.${variantCount}.quantity') }}">
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Total Cost/Unit</label>
+                    <input type="text" class="form-control" name="variants[${variantCount}][price_per_unit]" value="{{ old('variants.${variantCount}.price_per_unit') }}">
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Selling Price/Unit</label>
+                    <input type="text" class="form-control" name="variants[${variantCount}][selling_price_per_unit]" value="{{ old('variants.${variantCount}.selling_price_per_unit') }}">
+                </div>
+            </div>
+
             <div class="form-group col-12">
-                <label>description <span class="text-danger">*</span></label>
+                <label>Description <span class="text-danger">*</span></label>
                 <textarea name="variants[${variantCount}][description]" class="form-control description" cols="30" rows="5">{{ old('variants.${variantCount}.description') }}</textarea>
             </div>
         </div>
@@ -268,7 +284,7 @@
                 console.error(error);
             });
 
-        //#### Torster Message##########
+        //#### Toaster Message ##########
         @if ($errors->any())
             @foreach ($errors->all() as $error)
                 toastr.error('{{ $error }}');
