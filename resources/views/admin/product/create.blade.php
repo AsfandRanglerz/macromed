@@ -235,8 +235,14 @@
                                             <textarea name="long_description" cols="20" rows="50" class="long_description">{{ old('long_description') }}</textarea>
                                         </div>
                                     </div>
+
                                     <div class="row col-md-12">
-                                        <div class="form-group col-md-12">
+                                        <div class="form-group col-md-6">
+                                            <label>Self Life<span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" name="video_link"
+                                                value="{{ old('video_link') }}">
+                                        </div>
+                                        <div class="form-group col-md-6">
                                             <label>Status <span class="text-danger">*</span></label>
                                             <select name="status" class="form-control">
                                                 <option value="1">Active</option>
