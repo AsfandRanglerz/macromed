@@ -202,3 +202,4 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/update-variants-status/{id}',  'updateVariantsStatus')->name('variantsBlock.update');
     });
 });
+//################################ Sales Agent Routes #############################

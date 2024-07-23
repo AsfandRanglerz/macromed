@@ -192,13 +192,17 @@
                 </li>
             @endif
             {{-- User Managment --}}
-            {{-- @if ((auth()->guard('web')->check() && (auth()->guard('web')->user()->can('Sub Admins') || auth()->guard('web')->user()->can('users'))) || auth()->guard('admin')->check()) --}}
-            {{-- <li class="dropdown">
+            @if (
+                (auth()->guard('web')->check() &&
+                    (auth()->guard('web')->user()->can('Sub Admins') || auth()->guard('web')->user()->can('users'))) ||
+                    auth()->guard('admin')->check())
+                <li class="dropdown">
                     <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="users"></i><span>User
-                            Managment</span></a> --}}
-            {{-- <ul class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/salesagent*') ? 'show' : '' }}"> --}}
-            {{-- Roles & Permissions --}}
-            {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admins'))
+                            Managment</span></a>
+                    <ul
+                        class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/salesagent*') ? 'show' : '' }}">
+                        {{-- Roles & Permissions --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admins'))
                             <li class="{{ request()->is('admin/subadmin') ? 'active' : '' }}">
                                 <a href="{{ route('subadmin.index') }}"
                                     class="nav-link {{ request()->is('admin/subadmin') ? 'text-white' : '' }}"><i
@@ -217,10 +221,10 @@
                             <a href="{{ route('salesagent.index') }}"
                                 class="nav-link {{ request()->is('admin/salesagent*') ? 'text-white' : '' }}"><i
                                     data-feather="user"></i><span>Sales Managers</span></a>
-                        </li> --}}
-            {{-- </ul>
+                        </li>
+                    </ul>
                 </li>
-            @endif --}}
+            @endif
             {{-- About Us --}}
             {{-- <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
                 <a href="{{ route('about.index') }}" class="nav-link"><i data-feather="monitor"></i><span>About

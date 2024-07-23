@@ -8,6 +8,7 @@ use App\Mail\userUnBlocked;
 use Illuminate\Http\Request;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
+use App\Models\SalesAgent;
 use App\Models\UserAccount;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -16,13 +17,13 @@ class SalesAgentController extends Controller
 {
     public function salesagentData()
     {
-        $salesManagers = User::where('user_type', 'salesmanager')->with('bankAccounts')->latest()->get();
+        $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('bankAccounts')->latest()->get();
         $json_data["data"] = $salesManagers;
         return json_encode($json_data);
     }
     public function salesagentIndex()
     {
-        $salesManagers = User::where('user_type', 'salesmanager')->with('bankAccounts')->latest()->get();
+        $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('bankAccounts')->latest()->get();
         // return $salesManagers;
         return view('admin.salesagent.index', compact('salesManagers'));
     }
@@ -58,7 +59,7 @@ class SalesAgentController extends Controller
                 $image->move(public_path('admin/assets/images/users'), $filename);
                 $data['image'] = 'public/admin/assets/images/users/' . $filename;
             }
-            $salesManager = User::create($data);
+            $salesManager = SalesAgent::create($data);
             if ($salesManager) {
                 //#########Create Account ###########
                 $account = new UserAccount();
@@ -80,7 +81,7 @@ class SalesAgentController extends Controller
     }
     public function showSalesAgent($id)
     {
-        $salesManager = User::with('bankAccounts')->find($id);
+        $salesManager = SalesAgent::with('bankAccounts')->find($id);
         if (!$salesManager) {
             return response()->json(['alert' => 'error', 'message' => 'Sales Manager Not Found'], 500);
         }
@@ -102,7 +103,7 @@ class SalesAgentController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         try {
-            $salesManager = User::findOrFail($id);
+            $salesManager = SalesAgent::findOrFail($id);
             $salesManager->fill($request->only(['name', 'email', 'phone', 'user_type', 'status']));
 
             if ($request->hasFile('image')) {
@@ -126,7 +127,7 @@ class SalesAgentController extends Controller
     }
     public function deleteSalesAgent($id)
     {
-        $salesManager = User::findOrFail($id);
+        $salesManager = SalesAgent::findOrFail($id);
         $salesManager->delete();
         return response()->json(['alert' => 'success', 'message' => 'Sales Managers Deleted SuccessFully!']);
     }
@@ -134,7 +135,7 @@ class SalesAgentController extends Controller
     public function updateAgentBlockStatus(Request $request, $id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = SalesAgent::findOrFail($id);
             if ($user->status == '0') {
                 $user->status = '1';
                 // $data['username'] =  $user->name;
