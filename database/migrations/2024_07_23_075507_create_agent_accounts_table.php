@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserAccountsTable extends Migration
+class CreateAgentAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateUserAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_accounts', function (Blueprint $table) {
+        Schema::create('agent_accounts', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->bigInteger('agent_id')->unsigned();
+            $table->foreign('agent_id')->references('id')->on('sales_agents')->onDelete('cascade');
             $table->string('account_name')->nullable();
             $table->string('account_holder_name')->nullable();
             $table->string('account_number')->unique();
@@ -31,6 +31,6 @@ class CreateUserAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_accounts');
+        Schema::dropIfExists('agent_accounts');
     }
 }

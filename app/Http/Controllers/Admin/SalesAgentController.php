@@ -8,6 +8,7 @@ use App\Mail\userUnBlocked;
 use Illuminate\Http\Request;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
+use App\Models\AgentAccount;
 use App\Models\SalesAgent;
 use App\Models\UserAccount;
 use Illuminate\Support\Facades\Mail;
@@ -17,13 +18,13 @@ class SalesAgentController extends Controller
 {
     public function salesagentData()
     {
-        $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('bankAccounts')->latest()->get();
+        $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('agentAccounts')->latest()->get();
         $json_data["data"] = $salesManagers;
         return json_encode($json_data);
     }
     public function salesagentIndex()
     {
-        $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('bankAccounts')->latest()->get();
+        $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('agentAccounts')->latest()->get();
         // return $salesManagers;
         return view('admin.salesagent.index', compact('salesManagers'));
     }
@@ -62,8 +63,8 @@ class SalesAgentController extends Controller
             $salesManager = SalesAgent::create($data);
             if ($salesManager) {
                 //#########Create Account ###########
-                $account = new UserAccount();
-                $account->user_id = $salesManager->id;
+                $account = new AgentAccount();
+                $account->agent_id = $salesManager->id;
                 $account->account_name = $request->account_name;
                 $account->account_holder_name = $request->account_holder_name;
                 $account->account_number = $request->account_number;
@@ -81,7 +82,7 @@ class SalesAgentController extends Controller
     }
     public function showSalesAgent($id)
     {
-        $salesManager = SalesAgent::with('bankAccounts')->find($id);
+        $salesManager = SalesAgent::with('agentAccounts')->find($id);
         if (!$salesManager) {
             return response()->json(['alert' => 'error', 'message' => 'Sales Manager Not Found'], 500);
         }
@@ -120,6 +121,12 @@ class SalesAgentController extends Controller
                 $salesManager->image = 'public/admin/assets/images/users/' . $filename;
             }
             $salesManager->save();
+            // Update Account Info
+            $accountData = $request->only(['account_number', 'account_name', 'account_holder_name']);
+            AgentAccount::updateOrCreate(
+                ['agent_id' => $id], 
+                $accountData
+            );
             return response()->json(['alert' => 'success', 'message' => 'Sales Managers Updated Successfully!']);
         } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating Sub Admin: ' . $e->getMessage()], 500);

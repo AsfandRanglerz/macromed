@@ -190,31 +190,31 @@
                                 </div>
                             </div>
                         </div>
-                            <h4>Update Accounts Information:</h4>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="account_name">Account Name</label>
-                                        <input type="text" class="form-control account_name" name="account_name">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="account_holder_name">Account Holder Name</label>
-                                        <input type="text" class="form-control account_holder_name"
-                                            name="account_holder_name">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="account_number">Account Number</label>
-                                        <input type="text" class="form-control account_number" name="account_number">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
+                        <h4>Update Accounts Information:</h4>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="account_name">Account Name</label>
+                                    <input type="text" class="form-control account_name" name="account_name">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="account_holder_name">Account Holder Name</label>
+                                    <input type="text" class="form-control account_holder_name"
+                                        name="account_holder_name">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="account_number">Account Number</label>
+                                    <input type="text" class="form-control account_number" name="account_number">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -433,6 +433,7 @@
                 url: salesAgentShowRoute.replace(':id', salesAgentId),
                 type: 'GET',
                 success: function(response) {
+                    console.log("data",response);
                     $('#editSalesAgentForm .name').val(response.name);
                     $('#editSalesAgentForm .email').val(response.email);
                     $('#editSalesAgentForm .phone').val(response.phone);
@@ -447,10 +448,10 @@
                     } else {
                         $('#imagePreview').hide();
                     }
-                    $('#editSalesAgentForm .account_number').val(response.bank_accounts.account_number);
-                    $('#editSalesAgentForm .account_name').val(response.bank_accounts.account_name);
-                    $('#editSalesAgentForm .account_holder_name').val(response.bank_accounts
-                    .account_holder_name);
+                    $('#editSalesAgentForm .account_number').val(response.agent_accounts.account_number);
+                    $('#editSalesAgentForm .account_name').val(response.agent_accounts.account_name);
+                    $('#editSalesAgentForm .account_holder_name').val(response.agent_accounts
+                        .account_holder_name);
                     $('#editSalesAgentModal').modal('show');
                     $('#editSalesAgentModal').data('salesAgentId', salesAgentId);
                 },

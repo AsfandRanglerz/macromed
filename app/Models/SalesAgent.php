@@ -9,4 +9,9 @@ class SalesAgent extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function agentAccounts()
+    {
+        return $this->hasOne(AgentAccount::class,'agent_id');
+    }
 }
