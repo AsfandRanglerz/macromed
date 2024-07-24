@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 
 class SalesAgentAuthController extends Controller
 {
-    public function getdashboard()
+    public function getSalesAgentdashboard()
     {
 
         return view('salesagent.index');
@@ -24,9 +24,9 @@ class SalesAgentAuthController extends Controller
         if (Auth::guard('sales_agent')->check()) {
             $data = SalesAgent::find(Auth::guard('sales_agent')->id());
         } else {
-            return redirect('/admin')->with(['alert' => 'error', 'error' => 'You Are Unable For Login!']);
+            return redirect('/sales-agent')->with(['alert' => 'error', 'error' => 'You Are Unable For Login!']);
         }
-        return view('admin.auth.profile', compact('data'));
+        return view('salesagent.auth.profile', compact('data'));
     }
 
     public function update_profile(Request $request)
@@ -40,7 +40,7 @@ class SalesAgentAuthController extends Controller
         if (auth()->guard('sales_agent')->check()) {
             $salesAgent = SalesAgent::find(auth()->guard('sales_agent')->id());
             if (!$salesAgent) {
-                return back()->with(['alert' => 'error', 'message' => 'User not found.']);
+                return back()->with(['alert' => 'error', 'error' => 'User not found.']);
             }
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
@@ -58,11 +58,11 @@ class SalesAgentAuthController extends Controller
     }
 
 
-    public function forgetPassword()
+    public function salesAgentforgetPassword()
     {
-        return view('admin.auth.forgetPassword');
+        return view('salesagent.auth.forgetPassword');
     }
-    public function adminResetPasswordLink(Request $request)
+    public function salesAgentResetPasswordLink(Request $request)
     {
         // Validate the email
         $validator = Validator::make($request->all(), [
@@ -93,15 +93,15 @@ class SalesAgentAuthController extends Controller
             return back()->with(['alert' => 'error', 'message' => 'Reset Password Link Not Sent']);
         }
     }
-    public function change_password($id)
+    public function salesAgentChange_password($id)
     {
         $salesAgent = DB::table('password_resets')->where('token', $id)->first();
 
         if (isset($salesAgent)) {
-            return view('admin.auth.chnagePassword', compact('user'));
+            return view('salesagent.auth.chnagePassword', compact('user'));
         }
     }
-    public function resetPassword(Request $request)
+    public function salesAgentResetPassword(Request $request)
     {
         $request->validate([
             'password' => 'required|min:8',
@@ -114,17 +114,17 @@ class SalesAgentAuthController extends Controller
         if ($salesAgent) {
             $salesAgent->update(['password' => $password]);
             DB::table('password_resets')->where('email', $request->email)->delete();
-            return redirect('admin')->with(['alert' => 'success', 'message' => 'Password reset successfully']);
+            return redirect('/sales-agent')->with(['alert' => 'success', 'message' => 'Password reset successfully']);
         } else {
             return back()->with(['alert' => 'error', 'error' => 'Invalid email or user not found']);
         }
     }
 
-    public function logout()
+    public function salesAgentlogout()
     {
         if (auth()->guard('sales_agent')->check()) {
             auth()->guard('sales_agent')->logout();
-            return redirect('/admin')->with(['alert' => 'success', 'message' => 'You Are Logout Successfully!']);
+            return redirect('/sales-agent')->with(['alert' => 'success', 'message' => 'You Are Logout Successfully!']);
         } else {
             return back()->with(['alert' => 'error', 'error' => 'An error accour during logout!']);
         }

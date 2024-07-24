@@ -20,7 +20,7 @@ class SalesAgentMiddleware
         if (auth()->guard('sales_agent')->check()) {
             return $next($request);
         } else {
-            return redirect('sales-agent');
+            return redirect('sales-agent')->with(['alert' => 'error', 'error' => 'Unauthorized access!']);
         }
     }
 }

@@ -1,5 +1,5 @@
 @extends('admin.auth.layout.app')
-@section('title', 'Change Password    ')
+@section('title', 'Change Password ')
 @section('content')
     <section class="section">
         <div class="container mt-5">
@@ -10,23 +10,29 @@
                             <h4>Reset Password</h4>
                         </div>
                         <div class="card-body">
-                            @if(session()->has('error_message'))
-                            <p class="text-danger">The password and confirmation password do not match</p>
+                            @if (session()->has('error_message'))
+                                <p class="text-danger">The password and confirmation password do not match</p>
                             @else
                                 <p class="text-muted">Enter Your New Password</p>
                             @endif
-                            <form method="POST" action="{{url('admin-reset-password')}}">
-                                 @csrf
-                                <input value="{{$user->email}}" type="hidden" name="email" >
+                            <form method="POST" action="{{ url('salesAgent-reset-password') }}">
+                                @csrf
+                                <input value="{{ $user->email }}" type="hidden" name="email">
                                 <div class="form-group">
                                     <label for="password">New Password</label>
-                                    <input id="password" type="password" class="form-control pwstrength" data-indicator="pwindicator" name="password" tabindex="2" >
-                                    @error('password') <span class="text-danger">{{$errors->first('password')}}</span> @enderror
+                                    <input id="password" type="password" class="form-control pwstrength"
+                                        data-indicator="pwindicator" name="password" tabindex="2">
+                                    @error('password')
+                                        <span class="text-danger">{{ $errors->first('password') }}</span>
+                                    @enderror
                                 </div>
                                 <div class="form-group">
                                     <label for="password-confirm">Confirm Password</label>
-                                    <input id="password-confirm" type="password" class="form-control" name="confirmed" tabindex="2" >
-                                    @error('confirmed') <span class="text-danger">{{$errors->first('confirmed')}}</span> @enderror
+                                    <input id="password-confirm" type="password" class="form-control" name="confirmed"
+                                        tabindex="2">
+                                    @error('confirmed')
+                                        <span class="text-danger">{{ $errors->first('confirmed') }}</span>
+                                    @enderror
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
@@ -42,9 +48,9 @@
     </section>
 @endsection
 @section('js')
-    @if(\Illuminate\Support\Facades\Session::has('message'))
+    @if (\Illuminate\Support\Facades\Session::has('message'))
         <script>
-            toastr.success('{{\Illuminate\Support\Facades\Session::get('message')}}');
+            toastr.success('{{ \Illuminate\Support\Facades\Session::get('message') }}');
         </script>
     @endif
 @endsection

@@ -81,15 +81,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-        'sales_agent' => [
+        'sales_agents' => [
             'driver' => 'eloquent',
             'model' => App\Models\SalesAgent::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
@@ -110,6 +105,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'sales_agents' => [
+            'provider' => 'sales_agents',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

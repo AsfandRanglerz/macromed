@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class SalesAgent extends Model
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class SalesAgent extends Authenticatable
 {
     use HasFactory;
     protected $guarded = [];
 
     public function agentAccounts()
     {
-        return $this->hasOne(AgentAccount::class,'agent_id');
+        return $this->hasOne(AgentAccount::class, 'agent_id');
     }
 }
