@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
+use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -203,3 +205,19 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     });
 });
 //################################ Sales Agent Routes #############################
+Route::get('/sales-agent', [SalesAgentLoginController::class, 'getAgentLoginPage']);
+Route::post('sales-agent/login', [SalesAgentLoginController::class, 'loginSalesAgent']);
+Route::get('/salesAgent-forgot-password', [SalesAgentAuthController::class, 'forgetPassword']);
+Route::post('/salesAgent-reset-password-link', [SalesAgentAuthController::class, 'salesAgentResetPasswordLink']);
+Route::get('/change_password/{id}', [SalesAgentAuthController::class, 'change_password']);
+Route::post('/salesAgent-reset-password', [SalesAgentAuthController::class, 'ResetPassword']);
+
+Route::prefix('sales-agent')->middleware('auth:sales_agent')->group(function () {
+    Route::controller(SalesAgentAuthController::class)->group(function () {
+        Route::get('dashboard', 'getdashboard');
+        Route::get('profile', 'getProfile');
+        Route::post('update-profile', 'update_profile');
+        Route::get('logout', 'logout');
+    });
+});
+

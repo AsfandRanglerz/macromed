@@ -81,6 +81,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
+        'sales_agent' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SalesAgent::class,
+        ],
 
         // 'users' => [
         //     'driver' => 'database',
