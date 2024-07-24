@@ -19,9 +19,7 @@ class SalesAgentLoginController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
         $credentials = $request->only('email', 'password');
-
         if (Auth::guard('sales_agent')->attempt($credentials)) {
             $salesAgent = Auth::guard('sales_agent')->user(); // Ensure you use the correct guard here
             if ($salesAgent->user_type === 'salesmanager' && $salesAgent->status == '1') {

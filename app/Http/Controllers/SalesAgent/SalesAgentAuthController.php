@@ -16,20 +16,18 @@ class SalesAgentAuthController extends Controller
 {
     public function getSalesAgentdashboard()
     {
-
         return view('salesagent.index');
     }
-    public function getProfile()
+    public function getSalesAgentProfile()
     {
         if (Auth::guard('sales_agent')->check()) {
-            $data = SalesAgent::find(Auth::guard('sales_agent')->id());
+            $data = Auth::guard('sales_agent')->user();
         } else {
-            return redirect('/sales-agent')->with(['alert' => 'error', 'error' => 'You Are Unable For Login!']);
+            return redirect('/sales-agent')->with(['alert' => 'error', 'message' => 'You are not logged in!']);
         }
         return view('salesagent.auth.profile', compact('data'));
     }
-
-    public function update_profile(Request $request)
+    public function sales_agent_update_profile(Request $request)
     {
         $request->validate([
             'name' => 'required',

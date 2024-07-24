@@ -213,10 +213,11 @@ Route::get('/change_password/{id}', [SalesAgentAuthController::class, 'salesAgen
 Route::post('/salesAgent-reset-password', [SalesAgentAuthController::class, 'salesAgentResetPassword']);
 
 Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
+    // ############## Sales Agent Profile ############
     Route::controller(SalesAgentAuthController::class)->group(function () {
-        Route::get('dashboard', 'getSalesAgentdashboard');
-        Route::get('profile', 'getProfile');
-        Route::post('update-profile', 'update_profile');
+        Route::get('dashboard', 'getSalesAgentdashboard')->name('dashboard.salesAgent');
+        Route::get('profile', 'getSalesAgentProfile');
+        Route::post('update-profile', 'sales_agent_update_profile');
         Route::get('logout', 'salesAgentlogout');
     });
 });
