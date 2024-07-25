@@ -38,10 +38,10 @@ class SalesAgentController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users|max:255',
+                'email' => 'required|email|unique:sales_agents|max:255',
                 'account_number' => 'required|numeric|unique:user_accounts|min:16',
                 'password' => 'required|string|min:8|max:255',
-                'phone' => 'required|unique:users|min:11',
+                'phone' => 'required|unique:sales_agents|min:11',
                 'confirmpassword' => 'required|same:password',
                 'user_type' => 'required|string',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
@@ -92,7 +92,7 @@ class SalesAgentController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'email' => 'required|email|max:255|unique:sales_agents,email,' . $id,
             'phone' => 'required',
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
             'account_number' => 'required|numeric|unique:user_accounts|min:16,' . $id,
@@ -124,7 +124,7 @@ class SalesAgentController extends Controller
             // Update Account Info
             $accountData = $request->only(['account_number', 'account_name', 'account_holder_name']);
             AgentAccount::updateOrCreate(
-                ['agent_id' => $id], 
+                ['agent_id' => $id],
                 $accountData
             );
             return response()->json(['alert' => 'success', 'message' => 'Sales Managers Updated Successfully!']);

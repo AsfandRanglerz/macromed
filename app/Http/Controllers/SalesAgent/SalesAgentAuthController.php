@@ -64,13 +64,7 @@ class SalesAgentAuthController extends Controller
     {
         // Validate the email
         $validator = Validator::make($request->all(), [
-            'email' => [
-                'required',
-                'email',
-                'exists_in_users_or_admins' // Custom validation rule
-            ],
-        ], [
-            'email.exists_in_users_or_admins' => 'This email does not exist.',
+            'email' => 'required|email|unique:sales_agents|max:255',
         ]);
 
         if ($validator->fails()) {
