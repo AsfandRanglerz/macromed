@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
@@ -177,6 +178,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/update-numberOfUse-status/{id}',  'updateNumberOfUseStatus')->name('numberOfUseBlock.update');
     });
 
+    // ############## Suppliers ############
+    Route::controller(SupplierController::class)->group(function () {
+        Route::get('/supplier',  'supplierIndex')->name('supplier.index');
+        Route::post('/supplier-create',  'supplierCreate')->name('supplier.create');
+        Route::get('/supplierData',  'supplierData')->name('supplier.get');
+        Route::get('/supplier/{id}',  'showSupplier')->name('supplier.show');
+        Route::post('/supplierUpdate/{id}',  'updateSupplier')->name('supplier.update');
+        Route::get('/supplier/delete/{id}',  'deleteSupplier')->name('supplier.delete');
+        Route::post('/update-supplier-status/{id}',  'updateSupplierStatus')->name('supplierBlock.update');
+    });
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
         Route::get('/productData',  'productData')->name('products.get');
@@ -220,5 +231,4 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::post('update-profile', 'sales_agent_update_profile');
         Route::get('logout', 'salesAgentlogout');
     });
-
 });

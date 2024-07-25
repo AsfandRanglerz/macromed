@@ -27,7 +27,7 @@
                             data-feather="layout"></i><span>Inventory
                             Managment</span></a>
                     <ul
-                        class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') ? 'show' : '' }}">
+                        class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') || request()->is('admin/supplier*') ? 'show' : '' }}">
                         {{-- Category --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('category'))
                             <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
@@ -172,6 +172,22 @@
                                 </a>
                             </li>
                         @endif
+                        {{-- Suppliers --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                            <li class="dropdown {{ request()->is('admin/supplier*') ? 'active' : '' }}">
+                                <a href="{{ route('supplier.index') }}"
+                                    class="nav-link {{ request()->is('admin/supplier*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Suppliers</span>
+                                </a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="dropdown {{ request()->is('admin/supplier*') ? 'active' : '' }}">
+                                <a href="{{ route('supplier.index') }}"
+                                    class="nav-link {{ request()->is('admin/supplier*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Suppliers</span>
+                                </a>
+                            </li>
+                        @endif
                         {{-- Products --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('products'))
                             <li class="dropdown {{ request()->is('admin/product*') ? 'active' : '' }}">
@@ -197,7 +213,8 @@
                     (auth()->guard('web')->user()->can('Sub Admins') || auth()->guard('web')->user()->can('users'))) ||
                     auth()->guard('admin')->check())
                 <li class="dropdown">
-                    <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="users"></i><span>User
+                    <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                            data-feather="users"></i><span>User
                             Managment</span></a>
                     <ul
                         class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/salesagent*') ? 'show' : '' }}">
