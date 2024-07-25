@@ -22,7 +22,7 @@ class admin
         if (auth()->guard('admin')->check() || auth()->guard('web')->check()) {
             return $next($request);
         } else {
-            return redirect('admin');
+            return redirect('admin')->with(['alert' => 'error', 'error' => 'Unauthorized access!']);
         }
     }
 }
