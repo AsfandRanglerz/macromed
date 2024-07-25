@@ -69,10 +69,10 @@ class SalesAgentController extends Controller
                 $account->account_holder_name = $request->account_holder_name;
                 $account->account_number = $request->account_number;
                 $account->save();
-                // $data['subadminname'] = $salesManager->name;
-                // $data['subadminemail'] = $salesManager->email;
-                // $data['password'] = $request->password;
-                // Mail::to($salesManager->email)->send(new subAdminRegistration($data));
+                $data['subadminname'] = $salesManager->name;
+                $data['subadminemail'] = $salesManager->email;
+                $data['password'] = $request->password;
+                Mail::to($salesManager->email)->send(new subAdminRegistration($data));
                 return response()->json(['alert' => 'success', 'message' => 'Sales Managers Created Successfully!']);
             }
             return response()->json(['alert' => 'error', 'message' => 'Sales Managers Not Created!']);
@@ -145,16 +145,16 @@ class SalesAgentController extends Controller
             $user = SalesAgent::findOrFail($id);
             if ($user->status == '0') {
                 $user->status = '1';
-                // $data['username'] =  $user->name;
-                // $data['useremail'] =  $user->email;
-                // Mail::to($user->email)->send(new userUnBlocked($data));
+                $data['username'] =  $user->name;
+                $data['useremail'] =  $user->email;
+                Mail::to($user->email)->send(new userUnBlocked($data));
                 $message = 'Sales Manager Active Successfully';
             } else if ($user->status == '1') {
                 $user->status = '0';
-                // $data['username'] =  $user->name;
-                // $data['useremail'] =  $user->email;
-                // $data['reason'] = $request->reason;
-                // Mail::to($user->email)->send(new userBlocked($data));
+                $data['username'] =  $user->name;
+                $data['useremail'] =  $user->email;
+                $data['reason'] = $request->reason;
+                Mail::to($user->email)->send(new userBlocked($data));
                 $message = 'Sales Manager In Active Successfully';
             } else {
                 return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);

@@ -64,32 +64,29 @@ class SalesAgentAuthController extends Controller
     {
         // Validate the email
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:sales_agents|max:255',
+            'email' => 'required|email|exists:sales_agents,email|max:255',
         ]);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-
-        // If validation passes, continue with sending the reset link
         $token = Str::random(30);
         DB::table('password_resets')->insert([
             'email' => $request->email,
             'token' => $token,
         ]);
-        if ($token) {
-            $data['url'] = url('change_password', $token);
-            Mail::to($request->email)->send(new PasswordResetMail($data));
-            return back()->with(['alert' => 'success', 'message' => 'Reset Password Link Sent Successfully']);
-        } else {
-            return back()->with(['alert' => 'error', 'message' => 'Reset Password Link Not Sent']);
+        $data['url'] = url('salesAgent-change-password', $token);
+        Mail::to($request->email)->send(new PasswordResetMail($data));
+        if (Mail::failures()) {
+            return back()->with(['alert' => 'error', 'error' => 'Reset Password Link Not Sent']);
         }
+        return back()->with(['alert' => 'success', 'message' => 'Reset Password Link Sent Successfully']);
     }
-    public function salesAgentChange_password($id)
+    public function salesAgentChangePassword($id)
     {
-        $salesAgent = DB::table('password_resets')->where('token', $id)->first();
+        $user = DB::table('password_resets')->where('token', $id)->first();
 
-        if (isset($salesAgent)) {
+        if (isset($user)) {
             return view('salesagent.auth.chnagePassword', compact('user'));
         }
     }

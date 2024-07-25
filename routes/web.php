@@ -209,7 +209,7 @@ Route::get('/sales-agent', [SalesAgentLoginController::class, 'getAgentLoginPage
 Route::post('sales-agent/login', [SalesAgentLoginController::class, 'loginSalesAgent']);
 Route::get('/salesAgent-forgot-password', [SalesAgentAuthController::class, 'salesAgentforgetPassword']);
 Route::post('/salesAgent-reset-password-link', [SalesAgentAuthController::class, 'salesAgentResetPasswordLink']);
-Route::get('/change_password/{id}', [SalesAgentAuthController::class, 'salesAgentChange_password']);
+Route::get('/salesAgent-change-password/{id}', [SalesAgentAuthController::class, 'salesAgentChangePassword']);
 Route::post('/salesAgent-reset-password', [SalesAgentAuthController::class, 'salesAgentResetPassword']);
 
 Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
