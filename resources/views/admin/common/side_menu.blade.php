@@ -27,7 +27,7 @@
                             data-feather="layout"></i><span>Inventory
                             Managment</span></a>
                     <ul
-                        class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') || request()->is('admin/supplier*') ? 'show' : '' }}">
+                        class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') || request()->is('admin/supplier*') || request()->is('admin/mainMaterial*') ? 'show' : '' }}">
                         {{-- Category --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('category'))
                             <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
@@ -185,6 +185,22 @@
                                 <a href="{{ route('supplier.index') }}"
                                     class="nav-link {{ request()->is('admin/supplier*') ? 'text-white' : '' }}">
                                     <i data-feather="layers"></i><span>Suppliers</span>
+                                </a>
+                            </li>
+                        @endif
+                        {{-- Main Material --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                            <li class="dropdown {{ request()->is('admin/mainMaterial*') ? 'active' : '' }}">
+                                <a href="{{ route('mainMaterial.index') }}"
+                                    class="nav-link {{ request()->is('admin/mainMaterial*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Main Materials</span>
+                                </a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="dropdown {{ request()->is('admin/mainMaterial*') ? 'active' : '' }}">
+                                <a href="{{ route('mainMaterial.index') }}"
+                                    class="nav-link {{ request()->is('admin/mainMaterial*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>Main Materials</span>
                                 </a>
                             </li>
                         @endif

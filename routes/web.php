@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\MainMaterialController;
 use App\Http\Controllers\Admin\ModalsController;
 use App\Http\Controllers\Admin\NumberOfUseController;
 use App\Http\Controllers\Admin\ProductController;
@@ -188,6 +189,19 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/supplier/delete/{id}',  'deleteSupplier')->name('supplier.delete');
         Route::post('/update-supplier-status/{id}',  'updateSupplierStatus')->name('supplierBlock.update');
     });
+
+    // ############## Main Material ############
+    Route::controller(MainMaterialController::class)->group(function () {
+        Route::get('/mainMaterial',  'mainMaterialIndex')->name('mainMaterial.index');
+        Route::post('/mainMaterial-create',  'mainMaterialCreate')->name('mainMaterial.create');
+        Route::get('/mainMaterialData',  'mainMaterialData')->name('mainMaterial.get');
+        Route::get('/mainMaterial/{id}',  'showMainMaterial')->name('mainMaterial.show');
+        Route::post('/mainMaterialUpdate/{id}',  'updateMainMaterial')->name('mainMaterial.update');
+        Route::get('/mainMaterial/delete/{id}',  'deleteMainMaterial')->name('mainMaterial.delete');
+        Route::post('/update-mainMaterial-status/{id}',  'updateMainMaterialStatus')->name('mainMaterialBlock.update');
+    });
+
+
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
         Route::get('/productData',  'productData')->name('products.get');
