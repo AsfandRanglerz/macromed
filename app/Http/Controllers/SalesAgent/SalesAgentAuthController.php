@@ -38,7 +38,7 @@ class SalesAgentAuthController extends Controller
         if (auth()->guard('sales_agent')->check()) {
             $salesAgent = SalesAgent::find(auth()->guard('sales_agent')->id());
             if (!$salesAgent) {
-                return back()->with(['alert' => 'error', 'error' => 'User not found.']);
+                return back()->with(['alert' => 'error', 'error' => 'Sales Agent not found.']);
             }
             if ($request->hasFile('image')) {
                 $file = $request->file('image');

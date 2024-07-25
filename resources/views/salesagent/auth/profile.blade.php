@@ -1,4 +1,4 @@
-@extends('admin.layout.app')
+@extends('salesagent.layout.app')
 @section('title', 'Profile')
 @section('content')
     <!-- Main Content -->
@@ -97,7 +97,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="card-footer text-right">
+                                            <div class="card-footer text-center">
                                                 <button type="submit" class="btn btn-primary">Save Changes</button>
                                             </div>
                                         </form>

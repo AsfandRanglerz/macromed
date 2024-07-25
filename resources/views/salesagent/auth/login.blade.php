@@ -1,4 +1,4 @@
-@extends('admin.auth.layout.app')
+@extends('salesagent.auth.layout.app')
 @section('title', 'Login')
 @section('content')
     <section class="section">

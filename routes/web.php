@@ -220,4 +220,5 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::post('update-profile', 'sales_agent_update_profile');
         Route::get('logout', 'salesAgentlogout');
     });
+
 });

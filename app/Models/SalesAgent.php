@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class SalesAgent extends Authenticatable
 {
     use HasFactory;
-    protected $table = 'sales_agents';
+    // protected $table = 'sales_agents';
     protected $guarded = [];
     /**
      * The attributes that should be hidden for serialization.

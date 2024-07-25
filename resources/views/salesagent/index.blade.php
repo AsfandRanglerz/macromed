@@ -1,4 +1,4 @@
-@extends('admin.layout.app')
+@extends('salesagent.layout.app')
 @section('title', 'Dashboard')
 @section('content')
     <!-- Main Content -->

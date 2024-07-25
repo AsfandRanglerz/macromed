@@ -11,7 +11,7 @@
                 <a href="{{ url('/admin/dashboard') }}" class="nav-link"><i
                         data-feather="home"></i><span>Dashboard</span></a>
             </li>
-            <li class="dropdown {{ request()->is('admin/company*') ? 'active' : '' }}">
+            {{-- <li class="dropdown {{ request()->is('admin/company*') ? 'active' : '' }}">
                 <a href="{{ route('company.index') }}" class="nav-link"><i data-feather="users"></i><span>Company</span></a>
             </li>
             <li class="dropdown {{ request()->is('admin/officer*') ? 'active' : '' }}">
@@ -31,7 +31,7 @@
             <li class="dropdown {{ request()->is('admin/faq*') ? 'active' : '' }}">
                 <a href="{{ route('faq.index') }}" class="nav-link"><i
                         data-feather="monitor"></i><span>FAQ's</span></a>
-            </li>
+            </li> --}}
             </li>
         </ul>
     </aside>
