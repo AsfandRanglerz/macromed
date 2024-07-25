@@ -1,14 +1,15 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="index.html"> <img alt="image" src="{{ asset('public/admin/assets/images/logo1.png') }}"
-                    class="header-logo" /> <span class="logo-name">Typing center</span>
+            <a href="index.html"> <img alt="image" src="{{ asset('public/admin/assets/images/logo-macromed.png') }}"
+                    style="width: 40%" />
             </a>
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">Main</li>
-            <li class="dropdown {{ request()->is('admin/dashboard') ? 'active' : '' }}">
-                <a href="{{ url('/admin/dashboard') }}" class="nav-link"><i
+            {{-- DashBoard --}}
+            <li class="dropdown {{ request()->is('sales-agent/dashboard') ? 'active' : '' }}">
+                <a href="{{ url('/sales-agent/dashboard') }}" class="nav-link"><i
                         data-feather="home"></i><span>Dashboard</span></a>
             </li>
             {{-- <li class="dropdown {{ request()->is('admin/company*') ? 'active' : '' }}">
