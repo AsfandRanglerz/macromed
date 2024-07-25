@@ -86,7 +86,7 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Company</label>
-                                            <select name="company" class="form-control" id="company">
+                                            <select name="company" class="form-control select2" id="company">
                                                 <option value="" disabled selected>Select Company</option>
                                                 @foreach ($companies as $company)
                                                     <option {{ old('company') == $company->id ? 'selected' : '' }}
@@ -96,7 +96,7 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Models <span class="text-danger">*</span></label>
-                                            <select name="models" class="form-control" id="models">
+                                            <select name="models" class="form-control select2" id="models">
                                                 <option value="" disabled selected>Select Models</option>
                                                 @foreach ($models as $model)
                                                     <option {{ old('models') == $model->id ? 'selected' : '' }}
@@ -132,7 +132,7 @@
                                     <div class="row col-12">
                                         <div class="form-group col-md-4">
                                             <label>Number Of Use<span class="text-danger">*</span></label>
-                                            <select name="product_use_status" class="form-control">
+                                            <select name="product_use_status" class="form-control select2">
                                                 <option value="" disabled selected>Select Number Of Use</option>
                                                 @foreach ($numberOfUses as $numberOfUse)
                                                     <option {{ old('numberOfUses') == $numberOfUse->id ? 'selected' : '' }}
@@ -143,7 +143,8 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Sterilizations <span class="text-danger">*</span></label>
-                                            <select name="sterilizations" class="form-control" id="sterilizations">
+                                            <select name="sterilizations" class="form-control select2"
+                                                id="sterilizations">
                                                 <option value="" disabled selected>Select Sterilizations</option>
                                                 @foreach ($sterilizations as $sterilization)
                                                     <option
@@ -155,72 +156,65 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Buyer Type <span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
+                                            <select name="buyer_type" class="form-control select2">
                                                 <option value="" disabled selected>Select Buyer Type</option>
-                                                <option value="1">Option 1</option>
-                                                <option value="1">Option 2</option>
-                                                <option value="1">Option 3</option>
-                                                <option value="1">Option 4</option>
-                                                <option value="0">Option 5</option>
+                                                <option value="Option 1">Option 1</option>
+                                                <option value="Option 2">Option 2</option>
+                                                <option value="Option 3">Option 3</option>
+                                                <option value="Option 4">Option 4</option>
+                                                <option value="Option 5">Option 5</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
-                                            <label>Product Class <span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
+                                            <label>Product Class <span class="text-danger ">*</span></label>
+                                            <select name="product_class" class="form-control select2">
                                                 <option value="" disabled selected>Select Product Class</option>
-                                                <option value="1">Option 1</option>
-                                                <option value="1">Option 2</option>
-                                                <option value="1">Option 3</option>
-                                                <option value="1">Option 4</option>
-                                                <option value="0">Option 5</option>
+                                                <option value="Class A">Class A</option>
+                                                <option value="Clas B">Class B</option>
+                                                <option value="Class C">Class C</option>
+                                                <option value="Class D">Class D</option>
+                                                <option value="Class E">Class E</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Main Material <span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
-                                                <option value="" disabled selected>Select Main Material</option>
-                                                <option value="1">Option 1</option>
-                                                <option value="1">Option 2</option>
-                                                <option value="1">Option 3</option>
-                                                <option value="1">Option 4</option>
-                                                <option value="0">Option 5</option>
+                                            <select name="mian_material" class="form-control select2" multiple>
+                                                @foreach ($mianMaterials as $mainMaterial)
+                                                    <option
+                                                        {{ old('mianMaterials') == $mainMaterial->id ? 'selected' : '' }}
+                                                        value="{{ $mainMaterial->name }}">{{ $mainMaterial->name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Supplier Name <span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
-                                                <option value="" disabled selected>Select Supplier Name</option>
-                                                <option value="1">Option 1</option>
-                                                <option value="1">Option 2</option>
-                                                <option value="1">Option 3</option>
-                                                <option value="1">Option 4</option>
-                                                <option value="0">Option 5</option>
+                                            <select name="supplier_name" id="supplier_name" class="form-control select2">
+                                                {{-- <option value="" disabled selected>Select Supplier Name</option> --}}
+                                                <!-- Options will be populated dynamically -->
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
                                             <label>Supplier Id <span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
+                                            <select name="supplier_id" id="supplier_id" class="form-control select2"
+                                                disabled>
                                                 <option value="" disabled selected>Select Supplier Id</option>
-                                                <option value="1">Option 1</option>
-                                                <option value="1">Option 2</option>
-                                                <option value="1">Option 3</option>
-                                                <option value="1">Option 4</option>
-                                                <option value="0">Option 5</option>
+                                                <!-- Options will be populated dynamically -->
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Supplier Delivery Time <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="video_link"
-                                                value="{{ old('video_link') }}">
+                                            <input type="time" class="form-control" name="supplier_delivery_time"
+                                                value="{{ old('supplier_delivery_time') }}">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Delivery Period <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="video_link"
-                                                value="{{ old('video_link') }}">
+                                            <input type="text" class="form-control" name="delivery_period"
+                                                value="{{ old('delivery_period') }}">
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
@@ -239,8 +233,8 @@
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-6">
                                             <label>Self Life<span class="text-danger">*</span></label>
-                                            <input type="date" class="form-control" name="video_link"
-                                                value="{{ old('video_link') }}">
+                                            <input type="date" class="form-control" name="self_life"
+                                                value="{{ old('self_life') }}">
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Status <span class="text-danger">*</span></label>
@@ -256,35 +250,118 @@
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-3">
                                             <label>Federal Tax<span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="video_link"
-                                                value="{{ old('video_link') }}">
+                                            <input type="text" class="form-control" name="federal_tax"
+                                                value="{{ old('federal_tax') }}">
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label>Provincial Tax <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="video_link"
-                                                value="{{ old('video_link') }}">
+                                            <input type="text" class="form-control" name="provincial_tax"
+                                                value="{{ old('provincial_tax') }}">
                                         </div>
+                                        {{-- City List  --}}
                                         <div class="form-group col-md-3">
                                             <label>Tax/City<span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
+                                            <select name="tax_per_city" class="form-control select2">
                                                 <option value="" disabled selected>Select City</option>
-                                                <option value="1">Option 1</option>
-                                                <option value="1">Option 2</option>
-                                                <option value="1">Option 3</option>
-                                                <option value="1">Option 4</option>
-                                                <option value="0">Option 5</option>
+                                                <option value="Karachi">Karachi</option>
+                                                <option value="Lahore">Lahore</option>
+                                                <option value="Faisalabad">Faisalabad</option>
+                                                <option value="Rawalpindi">Rawalpindi</option>
+                                                <option value="Multan">Multan</option>
+                                                <option value="Hyderabad">Hyderabad</option>
+                                                <option value="Gujranwala">Gujranwala</option>
+                                                <option value="Peshawar">Peshawar</option>
+                                                <option value="Quetta">Quetta</option>
+                                                <option value="Islamabad">Islamabad</option>
+                                                <option value="Sargodha">Sargodha</option>
+                                                <option value="Sialkot">Sialkot</option>
+                                                <option value="Bahawalpur">Bahawalpur</option>
+                                                <option value="Sukkur">Sukkur</option>
+                                                <option value="Larkana">Larkana</option>
+                                                <option value="Sheikhupura">Sheikhupura</option>
+                                                <option value="Mardan">Mardan</option>
+                                                <option value="Gujrat">Gujrat</option>
+                                                <option value="Rahim Yar Khan">Rahim Yar Khan</option>
+                                                <option value="Kasur">Kasur</option>
+                                                <option value="Okara">Okara</option>
+                                                <option value="Sahiwal">Sahiwal</option>
+                                                <option value="Wah Cantonment">Wah Cantonment</option>
+                                                <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
+                                                <option value="Mingora">Mingora</option>
+                                                <option value="Mirpur Khas">Mirpur Khas</option>
+                                                <option value="Chiniot">Chiniot</option>
+                                                <option value="Nawabshah">Nawabshah</option>
+                                                <option value="Kamoke">Kamoke</option>
+                                                <option value="Burewala">Burewala</option>
+                                                <option value="Jhelum">Jhelum</option>
+                                                <option value="Sadiqabad">Sadiqabad</option>
+                                                <option value="Khanewal">Khanewal</option>
+                                                <option value="Hafizabad">Hafizabad</option>
+                                                <option value="Kohat">Kohat</option>
+                                                <option value="Jacobabad">Jacobabad</option>
+                                                <option value="Shikarpur">Shikarpur</option>
+                                                <option value="Muzaffargarh">Muzaffargarh</option>
+                                                <option value="Abottabad">Abottabad</option>
+                                                <option value="Muridke">Muridke</option>
+                                                <option value="Jhang">Jhang</option>
+                                                <option value="Daska">Daska</option>
+                                                <option value="Mandi Bahauddin">Mandi Bahauddin</option>
+                                                <option value="Khuzdar">Khuzdar</option>
+                                                <option value="Pakpattan">Pakpattan</option>
+                                                <option value="Tando Allahyar">Tando Allahyar</option>
+                                                <option value="Vehari">Vehari</option>
+                                                <option value="Gojra">Gojra</option>
+                                                <option value="Mandi Bahauddin">Mandi Bahauddin</option>
+                                                <option value="Turbat">Turbat</option>
+                                                <option value="Dadu">Dadu</option>
+                                                <option value="Bahawalnagar">Bahawalnagar</option>
+                                                <option value="Khairpur">Khairpur</option>
+                                                <option value="Chishtian">Chishtian</option>
+                                                <option value="Charsadda">Charsadda</option>
+                                                <option value="Kandhkot">Kandhkot</option>
+                                                <option value="Mianwali">Mianwali</option>
+                                                <option value="Tando Adam">Tando Adam</option>
+                                                <option value="Dera Ismail Khan">Dera Ismail Khan</option>
+                                                <option value="Kot Addu">Kot Addu</option>
+                                                <option value="Nowshera">Nowshera</option>
+                                                <option value="Swabi">Swabi</option>
+                                                <option value="Chakwal">Chakwal</option>
+                                                <option value="Tando Muhammad Khan">Tando Muhammad Khan</option>
+                                                <option value="Jaranwala">Jaranwala</option>
+                                                <option value="Kandhkot">Kandhkot</option>
+                                                <option value="Hasilpur">Hasilpur</option>
+                                                <option value="Gojra">Gojra</option>
+                                                <option value="Samundri">Samundri</option>
+                                                <option value="Haveli Lakha">Haveli Lakha</option>
+                                                <option value="Layyah">Layyah</option>
+                                                <option value="Tank">Tank</option>
+                                                <option value="Chaman">Chaman</option>
+                                                <option value="Bannu">Bannu</option>
+                                                <option value="Haripur">Haripur</option>
+                                                <option value="Attock">Attock</option>
+                                                <option value="Mansehra">Mansehra</option>
+                                                <option value="Lodhran">Lodhran</option>
+                                                <option value="Chakwal">Chakwal</option>
+                                                <option value="Chitral">Chitral</option>
+                                                <option value="Kharan">Kharan</option>
+                                                <option value="Kohlu">Kohlu</option>
+                                                <option value="Zhob">Zhob</option>
+                                                <option value="Hub">Hub</option>
+                                                <option value="Gwadar">Gwadar</option>
+                                                <option value="Sibi">Sibi</option>
                                             </select>
                                         </div>
+
                                         <div class="form-group col-md-3">
                                             <label>Local Tax <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="video_link"
-                                                value="{{ old('video_link') }}">
+                                            <input type="text" class="form-control" name="local_tax"
+                                                value="{{ old('local_tax') }}">
                                         </div>
                                     </div>
                                     <div class="row">
-                                        {{-- <div class="col-md-12 text-center">
+                                        <div class="col-md-12 text-center">
                                             <button class="btn btn-success">Save</button>
-                                        </div> --}}
+                                        </div>
                                     </div>
                                 </form>
 
@@ -380,6 +457,49 @@
                 toastr.error('{{ $error }}');
             @endforeach
         @endif
+        //################ Get Supplier Name ############
+        $.ajax({
+            url: '{{ route('getSuppliers') }}',
+            type: 'GET',
+            success: function(data) {
+                let supplierNameDropdown = $('#supplier_name');
+                supplierNameDropdown.append('<option value="" disabled selected>Select Supplier Name</option>');
+                data.forEach(function(supplier) {
+                    supplierNameDropdown.append(
+                        `<option value="${supplier.id}">${supplier.name}</option>`);
+                });
+            },
+            error: function(error) {
+                console.log('Error fetching suppliers:', error);
+            }
+        });
+
+
+        // Handle change event on Supplier Name dropdown
+        $('#supplier_name').change(function() {
+            let selectedSupplierId = $(this).val();
+            let supplierIdDropdown = $('#supplier_id');
+
+            if (selectedSupplierId) {
+                // Find the selected supplier
+                $.ajax({
+                    url: '{{ route('getSuppliers') }}',
+                    type: 'GET',
+                    success: function(data) {
+                        let selectedSupplier = data.find(supplier => supplier.id == selectedSupplierId);
+                        if (selectedSupplier) {
+                            supplierIdDropdown.empty().append(
+                                `<option value="${selectedSupplier.supplier_id}">${selectedSupplier.supplier_id}</option>`
+                            );
+                            supplierIdDropdown.prop('disabled', true);
+                        }
+                    },
+                    error: function(error) {
+                        console.log('Error fetching suppliers:', error);
+                    }
+                });
+            }
+        });
     </script>
 
 @endsection

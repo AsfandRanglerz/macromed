@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('image')->nullable();
             $table->string('phone')->nullable();
             $table->string('password')->nullable();
+            $table->string('user_type')->nullable();
             $table->enum('status',[0,1])->default(0);
             $table->timestamps();
         });

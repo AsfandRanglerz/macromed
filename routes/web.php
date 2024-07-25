@@ -213,6 +213,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories');
         Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update');
         Route::get('/product/delete/{id}',  'deleteProduct')->name('product.delete');
+        Route::get('/supplier-name',  'getSuppliers')->name('getSuppliers');
         // Products Images
         Route::get('/product/Image/{id}',  'show')->name('product.image');
         Route::post('/products/{id}/upload-images',  'uploadImages')->name('products.upload-images');

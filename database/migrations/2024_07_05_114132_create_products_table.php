@@ -15,8 +15,7 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('thumbnail_image');
-            $table->string('banner_image')->nullable();
+            $table->string('thumbnail_image')->nullable();
             $table->string('short_name')->nullable();
             $table->string('product_name')->nullable();
             $table->string('slug')->nullable();
@@ -28,6 +27,8 @@ class CreateProductsTable extends Migration
             $table->string('product_status')->default('New Product');
             $table->string('short_description')->nullable();
             $table->longText('long_description')->nullable();
+            $table->string('sterilizations')->nullable();
+            $table->string('product_use_status')->nullable();
             $table->enum('status', [0, 1])->default(0);
             $table->timestamps();
         });

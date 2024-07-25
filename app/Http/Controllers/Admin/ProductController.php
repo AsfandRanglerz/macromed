@@ -8,8 +8,10 @@ use App\Models\Models;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Supplier;
 use App\Models\NumberOfUse;
 use App\Models\SubCategory;
+use App\Models\MainMaterial;
 use Illuminate\Http\Request;
 use App\Models\Certification;
 use App\Models\ProductBrands;
@@ -62,8 +64,10 @@ class ProductController extends Controller
         $certifications = Certification::where('status', '1')->get();
         $companies = Company::where('status', '1')->get();
         $sterilizations = Sterilization::where('status', '1')->get();
+        $suppliers = Supplier::where('status', '1')->get();
+        $mianMaterials = MainMaterial::where('status', '1')->get();
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->latest()->get();
-        return view('admin.product.index', compact('numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
+        return view('admin.product.index', compact('mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
     public function productCreateIndex()
@@ -92,9 +96,16 @@ class ProductController extends Controller
         $companies = Company::where('status', '1')->get();
         $sterilizations = Sterilization::where('status', '1')->get();
         $numberOfUses = NumberOfUse::where('status', '1')->get();
-        return view('admin.product.create', compact('numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
+        $suppliers = Supplier::where('status', '1')->get();
+        $mianMaterials = MainMaterial::where('status', '1')->get();
+        return view('admin.product.create', compact('mianMaterials', 'suppliers', 'numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
     }
 
+    public function getSuppliers()
+    {
+        $suppliers = Supplier::where('status', '1')->get(['id', 'name', 'supplier_id']);
+        return response()->json($suppliers);
+    }
     public function getSubCategories(Request $request)
     {
         $categoryIds = $request->category_ids;
