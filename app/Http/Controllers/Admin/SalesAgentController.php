@@ -25,7 +25,6 @@ class SalesAgentController extends Controller
     public function salesagentIndex()
     {
         $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('agentAccounts')->latest()->get();
-        // return $salesManagers;
         return view('admin.salesagent.index', compact('salesManagers'));
     }
     // public function Sales ManagersProfile($id)
