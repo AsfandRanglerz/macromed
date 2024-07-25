@@ -248,18 +248,21 @@
                                         <h4 class="col-md-12">Taxes:</h4>
                                     </div>
                                     <div class="row col-md-12">
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-6">
                                             <label>Federal Tax<span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="federal_tax"
                                                 value="{{ old('federal_tax') }}">
                                         </div>
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-6">
                                             <label>Provincial Tax <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="provincial_tax"
                                                 value="{{ old('provincial_tax') }}">
                                         </div>
+                                    </div>
+
+                                    <div class="row col-md-12">
                                         {{-- City List  --}}
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-6">
                                             <label>Tax/City<span class="text-danger">*</span></label>
                                             <select name="tax_per_city" class="form-control select2">
                                                 <option value="" disabled selected>Select City</option>
@@ -351,8 +354,7 @@
                                                 <option value="Sibi">Sibi</option>
                                             </select>
                                         </div>
-
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-6">
                                             <label>Local Tax <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="local_tax"
                                                 value="{{ old('local_tax') }}">

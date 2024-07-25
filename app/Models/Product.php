@@ -30,4 +30,14 @@ class Product extends Model
     {
         return $this->hasMany(ProductSubCatgeory::class, 'product_id');
     }
+
+    public function productMaterial()
+    {
+        return $this->hasMany(ProductMaterial::class, 'product_id');
+    }
+
+    public function productTax()
+    {
+        return $this->hasMany(ProductTax::class, 'product_id');
+    }
 }

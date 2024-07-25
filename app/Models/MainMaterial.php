@@ -12,4 +12,9 @@ class MainMaterial extends Model
         'name',
         'status'
     ];
+
+    public function materials()
+    {
+        $this->hasMany(ProductMaterial::class, 'material_id');
+    }
 }

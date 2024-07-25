@@ -116,7 +116,6 @@ class ProductController extends Controller
     {
         $validatedData = $request->validate([
             'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_name' => 'required|string|max:255',
             'product_name' => 'required|string|max:255',
             'category_id' => 'required|array',
@@ -155,14 +154,6 @@ class ProductController extends Controller
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
-
-            if ($request->hasFile('banner_image')) {
-                $banner_image = $request->file('banner_image');
-                $banner_name = time() . '.' . $banner_image->getClientOriginalExtension();
-                $banner_path = 'admin/assets/images/products/' . $banner_name;
-                $banner_image->move(public_path('admin/assets/images/products'), $banner_name);
-                $product->banner_image = $banner_path;
-            }
             $product->save();
             // Save product variants
             $category_ids = $request->input('category_id');
@@ -183,8 +174,6 @@ class ProductController extends Controller
                     $productVariant->save();
                 }
             }
-
-
             foreach ($brand_ids as $brandId) {
                 $productVariant = new ProductBrands();
                 $productVariant->product_id = $product->id;
