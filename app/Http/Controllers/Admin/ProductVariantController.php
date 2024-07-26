@@ -21,7 +21,8 @@ class ProductVariantController extends Controller
     {
         $units = Unit::all();
         $productVariant = ProductVaraint::where('product_id', $id)->get();
-        return view('admin.product.product_variants_index', compact('productVariant', 'id', 'units'));
+        $product = Product::findOrFail($id);
+        return view('admin.product.product_variants_index', compact('productVariant', 'id', 'units', 'product'));
     }
     public function productVariantIndex($id)
     {

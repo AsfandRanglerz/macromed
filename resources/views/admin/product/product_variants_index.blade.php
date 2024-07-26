@@ -113,36 +113,44 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="col-12">
-                                    <h4>Product Varaints</h4>
+                        @if ($product->status == '1')
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="col-12">
+                                        <h4>Product Varaints</h4>
+                                    </div>
+                                </div>
+                                <div class="card-body table-responsive">
+                                    <table class="responsive table table-striped table-bordered" id="example">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>SKU</th>
+                                                <th>Packing</th>
+                                                <th>Unit</th>
+                                                <th>Quantity</th>
+                                                <th>Price per Unit</th>
+                                                <th>Selling Price per Unit</th>
+                                                <th>Actual Weight</th>
+                                                <th>Shipping Weight</th>
+                                                <th>Shipping Chargeable Weight</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                                {{-- <th>Description</th> --}}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="card-body table-responsive">
-                                <table class="responsive table table-striped table-bordered" id="example">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>SKU</th>
-                                            <th>Packing</th>
-                                            <th>Unit</th>
-                                            <th>Quantity</th>
-                                            <th>Price per Unit</th>
-                                            <th>Selling Price per Unit</th>
-                                            <th>Actual Weight</th>
-                                            <th>Shipping Weight</th>
-                                            <th>Shipping Chargeable Weight</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                            {{-- <th>Description</th> --}}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                        @else
+                            <div class="alert alert-danger alert-dismissible fade show text-center mt-5" role="alert">
+                                <h4 class="alert-heading text-white">Warning!</h4>
+                                <p class="text-white">This product is not active. You cannot view product variants to it.
+                                </p>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -216,7 +224,7 @@
                         "data": null,
                         "render": function(data, type, row) {
                             return '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
-                            row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
                             // '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
                             // row.id + '"><i class="fas fa-edit"></i></button>' +
                         }

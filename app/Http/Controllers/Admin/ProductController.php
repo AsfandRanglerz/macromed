@@ -451,5 +451,5 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Failed to delete image.');
         }
     }
-  
+
 }
