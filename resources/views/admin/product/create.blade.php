@@ -115,7 +115,7 @@
                                                 @endforeach
                                             </select>
                                             @if ($countries == null)
-                                                <div class="internet-error">No Internet Connection Found!</div>
+                                                <div class="internet-error text-danger">No Internet Connection Found!</div>
                                             @endif
                                         </div>
                                         <div class="form-group col-md-4">
@@ -180,32 +180,36 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Main Material <span class="text-danger">*</span></label>
-                                            <select name="mian_material" class="form-control select2" multiple>
+                                            <select name="material_id[]" class="form-control select2" multiple>
                                                 @foreach ($mianMaterials as $mainMaterial)
                                                     <option
-                                                        {{ old('mianMaterials') == $mainMaterial->id ? 'selected' : '' }}
-                                                        value="{{ $mainMaterial->name }}">{{ $mainMaterial->name }}
+                                                        {{ old('mianMaterial') == $mainMaterial->id ? 'selected' : '' }}
+                                                        value="{{ $mainMaterial->id }}">{{ $mainMaterial->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
+                                        {{-- Suppliers Fields --}}
                                         <div class="form-group col-md-4">
                                             <label>Supplier Name <span class="text-danger">*</span></label>
-                                            <select name="supplier_name" id="supplier_name" class="form-control select2">
-                                                {{-- <option value="" disabled selected>Select Supplier Name</option> --}}
-                                                <!-- Options will be populated dynamically -->
+                                            <select id="supplier_name" name="supplier_name_display"
+                                                class="form-control select2">
+                                                <!-- Options will be populated by AJAX -->
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
                                             <label>Supplier Id <span class="text-danger">*</span></label>
-                                            <select name="supplier_id" id="supplier_id" class="form-control select2"
-                                                disabled>
-                                                <option value="" disabled selected>Select Supplier Id</option>
-                                                <!-- Options will be populated dynamically -->
+                                            <select id="supplier_id" name="supplier_id_display"
+                                                class="form-control select2" disabled>
+                                                <!-- Options will be populated by AJAX -->
                                             </select>
                                         </div>
+                                        <!-- Hidden fields to store actual values -->
+                                        <input type="hidden" id="supplier_name_hidden" name="supplier_name">
+                                        <input type="hidden" id="supplier_id_hidden" name="supplier_id">
+                                        {{-- Delivery Fields --}}
                                         <div class="form-group col-md-4">
                                             <label>Supplier Delivery Time <span class="text-danger">*</span></label>
                                             <input type="time" class="form-control" name="supplier_delivery_time"
@@ -259,20 +263,13 @@
                                                 value="{{ old('provincial_tax') }}">
                                         </div>
                                     </div>
-                                    <!-- Append Button & Fields -->
-                                    <div class="row col-md-12 mt-0 mb-2">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-success" id="addTaxBtn">
-                                                Add Tax/City
-                                            </button>
-                                        </div>
-                                    </div>
+
                                     <div class="tax-fields">
                                         <div id="taxFields" class="row col-md-12">
                                             {{-- City List  --}}
                                             <div class="form-group col-md-6">
                                                 <label>Tax/City<span class="text-danger">*</span></label>
-                                                <select name="taxes[0]tax_per_city" class="form-control select2">
+                                                <select name="taxes[0][tax_per_city]" class="form-control select2">
                                                     <option value="" disabled selected>Select City</option>
                                                     <option value="Karachi">Karachi</option>
                                                     <option value="Lahore">Lahore</option>
@@ -364,9 +361,17 @@
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label>Local Tax <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" name="taxes[0]local_tax"
+                                                <input type="text" class="form-control" name="taxes[0][local_tax]"
                                                     value="{{ old('taxes.0.local_tax') }}">
                                             </div>
+                                        </div>
+                                    </div>
+                                    <!-- Append Button & Fields -->
+                                    <div class="row col-md-12 mt-0 mb-2">
+                                        <div class="col-md-12">
+                                            <button type="button" class="btn btn-success" id="addTaxBtn">
+                                                Add Tax/City
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -469,6 +474,7 @@
             @endforeach
         @endif
         //################ Get Supplier Name ############
+        // Fetch and populate supplier names
         $.ajax({
             url: '{{ route('getSuppliers') }}',
             type: 'GET',
@@ -477,14 +483,14 @@
                 supplierNameDropdown.append('<option value="" disabled selected>Select Supplier Name</option>');
                 data.forEach(function(supplier) {
                     supplierNameDropdown.append(
-                        `<option value="${supplier.id}">${supplier.name}</option>`);
+                        `<option value="${supplier.id}">${supplier.name}</option>`
+                    );
                 });
             },
             error: function(error) {
                 console.log('Error fetching suppliers:', error);
             }
         });
-
 
         // Handle change event on Supplier Name dropdown
         $('#supplier_name').change(function() {
@@ -503,6 +509,9 @@
                                 `<option value="${selectedSupplier.supplier_id}">${selectedSupplier.supplier_id}</option>`
                             );
                             supplierIdDropdown.prop('disabled', true);
+                            // Store supplier name and ID in hidden fields
+                            $('#supplier_name_hidden').val(selectedSupplier.name);
+                            $('#supplier_id_hidden').val(selectedSupplier.supplier_id);
                         }
                     },
                     error: function(error) {
@@ -511,18 +520,19 @@
                 });
             }
         });
+
         // ############# Add Taxes #############
         function addTax() {
             let taxCount = $('.tax-fields').length;
             let variantFieldHTML = `
-    <div class="tax-fields border  mt-1 col-md-12 mb-2">
+    <div class="tax-fields border mt-1 col-md-12 mb-2">
         <div class="d-flex justify-content-end mt-1 mb-0">
             <i class="fa fa-trash btn btn-danger btn-sm removeVariantBtn"></i>
         </div>
         <div class="row">
             <div class="form-group col-md-6 col-sm-12">
                 <label>Tax/City<span class="text-danger">*</span></label>
-                <select name="taxes[${taxCount}]tax_per_city" class="form-control select2">
+                <select name="taxes[${taxCount}][tax_per_city]" class="form-control select2">
                     <option value="" disabled selected>Select City</option>
                     <option value="Karachi">Karachi</option>
                     <option value="Lahore">Lahore</option>
@@ -614,13 +624,14 @@
             </div>
             <div class="form-group col-md-6 col-sm-12">
                 <label>Local Tax <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="taxes[${taxCount}]local_tax"
-                    value="{{ old('taxes.[${taxCount}].local_tax') }}">
+                <input type="text" class="form-control" name="taxes[${taxCount}][local_tax]"
+                    value="">
             </div>
         </div>
     </div>
     `;
             $('#taxFields').append(variantFieldHTML);
+            $('.select2').select2();
         }
 
         // Remove variant field

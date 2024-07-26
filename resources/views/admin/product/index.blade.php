@@ -254,6 +254,9 @@
                                             <th>Sub Category</th>
                                             <th>Company</th>
                                             <th>Models</th>
+                                            <th>Country</th>
+                                            <th>Supplier Name</th>
+                                            <th>Number Of Use</th>
                                             <th>Status</th>
                                             <th>Variants</th>
                                             <th>Uploads Images</th>
@@ -355,7 +358,15 @@
                     {
                         "data": "models"
                     },
-
+                    {
+                        "data": "country"
+                    },
+                    {
+                        "data": "supplier_name"
+                    },
+                    {
+                        "data":"product_use_status"
+                    },
                     {
                         "data": null,
                         "render": function(data, type, row) {

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\MainMaterialController;
 use App\Http\Controllers\Admin\ModalsController;
 use App\Http\Controllers\Admin\NumberOfUseController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\SubAdminController;
@@ -201,7 +202,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/update-mainMaterial-status/{id}',  'updateMainMaterialStatus')->name('mainMaterialBlock.update');
     });
 
-
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
         Route::get('/productData',  'productData')->name('products.get');
@@ -219,7 +219,10 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/products/{id}/upload-images',  'uploadImages')->name('products.upload-images');
         Route::put('/products/{productId}/images/{imageId}/update-cover-status',  'updateCoverStatus')->name('products.images.update-cover-status');
         Route::delete('/image/delete/{id}',  'deleteImage')->name('image.delete');
-        // Product Variants Routes
+    });
+
+    // ############## Product Varaint ############
+    Route::controller(ProductVariantController::class)->group(function () {
         Route::get('/product-variants-index/{id}', 'productVariantViewIndex')->name('product_variant_index.index');
         Route::get('/product-variant/{id}', 'getProductVariants')->name('product.variants');
         Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index');
