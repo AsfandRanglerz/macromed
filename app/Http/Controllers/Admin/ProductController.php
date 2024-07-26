@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Log;
 use App\Models\Unit;
 use App\Models\Brands;
 use App\Models\Models;
@@ -18,7 +19,6 @@ use App\Models\Certification;
 use App\Models\ProductBrands;
 use App\Models\ProductImages;
 use App\Models\Sterilization;
-use App\Models\ProductVaraint;
 use App\Models\ProductCatgeory;
 use App\Models\ProductMaterial;
 use Illuminate\Validation\Rule;
@@ -69,7 +69,13 @@ class ProductController extends Controller
         $sterilizations = Sterilization::where('status', '1')->get();
         $suppliers = Supplier::where('status', '1')->get();
         $mianMaterials = MainMaterial::where('status', '1')->get();
-        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->latest()->get();
+        $products = Product::with(
+            'productBrands.brands',
+            'productCertifications.certification',
+            'productCategory.categories',
+            'productSubCategory.subCategories',
+            'productTax'
+        )->where('status', '1')->latest()->get();
         return view('admin.product.index', compact('mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
@@ -244,21 +250,40 @@ class ProductController extends Controller
 
     public function productEdit($id)
     {
-        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('status', '1')->find($id);
-        if (!$products) {
-            return response()->json(['alert' => 'error', 'message' => 'Models Not Found'], 500);
-        }
-        return response()->json($products);
-    }
+        $products = Product::with(
+            'productBrands.brands',
+            'productCertifications.certification',
+            'productCategory.categories',
+            'productSubCategory.subCategories',
+            'productTax',
+            'productMaterial.mainMaterial'
+        )->find($id);
+        if ($products) {
+            return response()->json($products);
+        } else {
 
+            return response()->json(['alert' => 'error', 'warning' => 'Models Not Found']);
+        }
+    }
     public function productUpdate(Request $request, $id)
     {
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_name' => 'required|string|max:255',
-            'product_name' => 'required|string|max:255',
-            'company' => 'required',
-            'models' => 'required',
+            'product_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products')->ignore($id)
+            ],
+            'category_id' => 'required|array',
+            'category_id.*' => 'exists:categories,id',
+            'brand_id' => 'required|array',
+            'brand_id.*' => 'exists:brands,id',
+            'certification_id' => 'required|array',
+            'certification_id.*' => 'exists:certifications,id',
+            'company' => 'required|string|max:255',
+            'models' => 'required|string|max:255',
             'country' => 'required|string|max:255',
             'sterilizations' => 'required|string|max:255',
             'product_use_status' => 'required|string|max:255',
@@ -266,15 +291,33 @@ class ProductController extends Controller
             'video_link' => 'nullable|string|max:255',
             'short_description' => 'required|string',
             'long_description' => 'required|string',
-            'buyer_type' => 'required',
-            'product_class' => 'required',
-            'supplier_delivery_time' => 'required',
-            'supplier_name' => 'required',
-            'delivery_period' => 'required',
-            'self_life' => 'required',
-            'federal_tax' => 'required',
-            'provincial_tax' => 'required',
+            'buyer_type' => 'required|string|max:255',
+            'product_class' => 'required|string|max:255',
+            'supplier_delivery_time' => 'required|string|max:255',
+            'supplier_name' => 'required|string|max:255',
+            'delivery_period' => 'required|string|max:255',
+            'self_life' => 'required|date',
+            'federal_tax' => 'required|numeric',
+            'provincial_tax' => 'required|numeric',
+            'material_id' => 'required|array',
+            'material_id.*' => 'exists:main_materials,id',
+            'taxes' => 'nullable|array',
+            'taxes.*.tax_per_city' => 'nullable|string|max:255',
+            'taxes.*.local_tax' => 'nullable|numeric',
+        ], [
+            'category_id.required' => 'Category is required.',
+            'category_id.*.exists' => 'Category does not exist.',
+            'brand_id.required' => 'Brand is required.',
+            'brand_id.*.exists' => 'Brand does not exist.',
+            'certification_id.required' => 'Certification is required.',
+            'certification_id.*.exists' => 'Certification does not exist.',
+            'material_id.required' => 'Main Material is required.',
+            'material_id.*.exists' => 'Main Material does not exist.',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         try {
             $product = Product::findOrFail($id);
@@ -292,67 +335,59 @@ class ProductController extends Controller
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
+
             $product->save();
 
             // Update product variants
             $category_ids = json_decode($request->input('category_id'), true);
-            $sub_category_ids = json_decode($request->input('sub_category_id'), true);
+            $sub_category_ids = json_decode($request->input('sub_category_id'), true) ?? [];
             $brand_ids = json_decode($request->input('brand_id'), true);
             $certification_ids = json_decode($request->input('certification_id'), true);
-            $mian_materials = json_decode($request->input('mian_material'), true);
+            $material_ids = json_decode($request->input('material_id'), true);
+
             // Delete old variants
             ProductCatgeory::where('product_id', $product->id)->delete();
             ProductSubCatgeory::where('product_id', $product->id)->delete();
             ProductBrands::where('product_id', $product->id)->delete();
             ProductCertifcation::where('product_id', $product->id)->delete();
             ProductMaterial::where('product_id', $product->id)->delete();
+
+            // Insert new variants
             foreach ($category_ids as $categoryId) {
-                $productCategory = new ProductCatgeory();
-                $productCategory->product_id = $product->id;
-                $productCategory->category_id = $categoryId;
-                $productCategory->save();
+                ProductCatgeory::create(['product_id' => $product->id, 'category_id' => $categoryId]);
             }
 
-            if ($sub_category_ids) {
-                foreach ($sub_category_ids as $subCategoryId) {
-                    $productSubCategory = new ProductSubCatgeory();
-                    $productSubCategory->product_id = $product->id;
-                    $productSubCategory->sub_category_id = $subCategoryId;
-                    $productSubCategory->save();
-                }
+            foreach ($sub_category_ids as $subCategoryId) {
+                ProductSubCatgeory::create(['product_id' => $product->id, 'sub_category_id' => $subCategoryId]);
             }
 
             foreach ($brand_ids as $brandId) {
-                $productBrand = new ProductBrands();
-                $productBrand->product_id = $product->id;
-                $productBrand->brand_id = $brandId;
-                $productBrand->save();
+                ProductBrands::create(['product_id' => $product->id, 'brand_id' => $brandId]);
             }
-            foreach ($certification_ids as $certificationIds) {
-                $productVariant = new ProductCertifcation();
-                $productVariant->product_id = $product->id;
-                $productVariant->certification_id = $certificationIds;
-                $productVariant->save();
+
+            foreach ($certification_ids as $certificationId) {
+                ProductCertifcation::create(['product_id' => $product->id, 'certification_id' => $certificationId]);
             }
-            foreach ($mian_materials as $mianMaterialId) {
-                $productCertification = new ProductMaterial();
-                $productCertification->product_id = $product->id;
-                $productCertification->material_id = $mianMaterialId;
-                $productCertification->save();
+
+            foreach ($material_ids as $materialId) {
+                ProductMaterial::create(['product_id' => $product->id, 'material_id' => $materialId]);
             }
-            foreach ($request->taxes as $taxes) {
-                ProductTax::updateOrCreate(
-                    [
-                        'product_id' => $product->id,
-                        'tax_per_city' => $taxes['tax_per_city'],
-                        'local_tax' => $taxes['local_tax'],
-                    ]
-                );
+            // Handle taxes
+            if ($request->has('taxes')) {
+                foreach ($request->input('taxes') as $tax) {
+                    ProductTax::updateOrCreate(
+                        [
+                            'product_id' => $product->id,
+                            'tax_per_city' => $tax['tax_per_city'],
+                        ],
+                        ['local_tax' => $tax['local_tax']]
+                    );
+                }
             }
+
             return response()->json(['message' => 'Product Updated Successfully!']);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Failed to update Product. Please try again later.']);
         }
     }
@@ -451,5 +486,4 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Failed to delete image.');
         }
     }
-
 }
