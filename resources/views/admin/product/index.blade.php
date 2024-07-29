@@ -261,7 +261,7 @@
                             </div>
                             <!-- Hidden fields to store actual values -->
                             <input type="hidden" id="supplier_name_hidden" name="supplier_name">
-                            <input type="hidden" id="supplier_id_hidden supplier_id" name="supplier_id">
+                            <input type="hidden" id="supplier_id_hidden" name="supplier_id">
                             {{-- Delivery Fields --}}
                             <div class="form-group col-md-4">
                                 <label>Supplier Delivery Time <span class="text-danger">*</span></label>
@@ -317,22 +317,8 @@
                             </div>
                         </div>
 
-                        <div class="tax-fields">
-                            <div id="taxFields" class="row col-md-12">
-                                <div class="form-group col-md-6">
-                                    <label>Tax/City<span class="text-danger">*</span></label>
-                                    <select name="taxes[0][tax_per_city]" class="form-control select2"
-                                        style="width: 100%">
-                                        <option value="" disabled selected>Select City</option>
-                                        <!-- City options will be populated by JavaScript -->
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Local Tax <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="taxes[0][local_tax]"
-                                        value="{{ old('taxes.0.local_tax') }}">
-                                </div>
-                            </div>
+                        <div class="tax-fields" id="taxFields">
+
                         </div>
 
                         <!-- Append Button & Fields -->
@@ -411,7 +397,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('products.get') }}",
+                    "url": "{{ route('product.get') }}",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -568,37 +554,45 @@
                 .join('');
         }
 
-        function updateTax() {
-            let taxCount = $('.tax-fields').length;
-            let variantFieldHTML = `
-    <div class="tax-fields border mt-1 col-md-12 mb-2">
-        <div class="d-flex justify-content-end mt-1 mb-0">
-            <i class="fa fa-trash btn btn-danger btn-sm removeVariantBtn"></i>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-6 col-sm-12">
-                <label>Tax/City<span class="text-danger">*</span></label>
-                <select name="taxes[${taxCount}][tax_per_city]" class="form-control select2" style="width: 100%">
-                    <option value="" disabled selected>Select City</option>
-                    ${getCityOptions()}
-                </select>
+        function updateTaxFields() {
+            $('#taxFields .tax-fields').each(function(index, element) {
+                $(element).find('select').attr('name', `taxes[${index}][tax_per_city]`);
+                $(element).find('input').attr('name', `taxes[${index}][local_tax]`);
+            });
+        }
+
+        function addTaxField(tax = {}) {
+            let taxFieldHTML = `
+        <div class="tax-fields border mt-1 col-md-12 mb-2">
+            <div class="d-flex justify-content-end mt-1 mb-0">
+                <i class="fa fa-trash btn btn-danger btn-sm removeVariantBtn"></i>
             </div>
-            <div class="form-group col-md-6 col-sm-12">
-                <label>Local Tax <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="taxes[${taxCount}][local_tax]" value="">
+            <div class="row">
+                <div class="form-group col-md-6 col-sm-12">
+                    <label>Tax/City<span class="text-danger">*</span></label>
+                    <select class="form-control select2" name="taxes[0][tax_per_city]" style="width: 100%">
+                        <option value="" disabled ${!tax.tax_per_city ? 'selected' : ''}>Select City</option>
+                        ${getCityOptions(tax.tax_per_city || '')}
+                    </select>
+                </div>
+                <div class="form-group col-md-6 col-sm-12">
+                    <label>Local Tax <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="taxes[0][local_tax]" value="${tax.local_tax || ''}">
+                </div>
             </div>
-        </div>
-    </div>`;
-            $('#taxFields').append(variantFieldHTML);
+        </div>`;
+            $('#taxFields').append(taxFieldHTML);
             $('.select2').select2();
+            updateTaxFields();
         }
 
         $(document).on('click', '.removeVariantBtn', function() {
             $(this).closest('.tax-fields').remove();
+            updateTaxFields();
         });
 
         $('#addTaxBtn').click(function() {
-            updateTax();
+            addTaxField();
         });
 
         function editModelsModal(id) {
@@ -640,18 +634,20 @@
                     } else {
                         geteditor.setData('');
                     }
-
+                    // Update supplier dropdowns
+                    updateSupplierDropdowns(response.supplier_id, response.supplier_name);
                     let categoryIds = [];
                     let brands = [];
                     let certification = [];
                     let subCategoryId = [];
                     let mainMaterialId = [];
-
+                    // Category
                     if (response.product_category) {
                         categoryIds = response.product_category.map(category => category.categories.id);
                     }
-                    $('#editModels .category').val(categoryIds).trigger('change');
 
+                    $('#editModels .category').val(categoryIds).trigger('change');
+                    // Sub Category
                     if (response.product_sub_category && response.product_sub_category.length > 0) {
                         subCategoryId = response.product_sub_category.map(subCategory => subCategory
                             .sub_categories.id);
@@ -664,51 +660,32 @@
                     } else {
                         fetchSubcategoriesByCategory(categoryIds);
                     }
-
+                    // Brand
                     if (response.product_brands) {
                         brands = response.product_brands.map(brands => brands.brands.id);
                     }
                     $('#editModels .brand').val(brands).trigger('change');
-
+                    // Certification
                     if (response.product_certifications) {
                         certification = response.product_certifications.map(certification => certification
                             .certification.id);
                     }
                     $('#editModels .certification').val(certification).trigger('change');
-
+                    // Material
                     if (response.product_material) {
                         mainMaterialId = response.product_material.map(mainMaterial => mainMaterial
                             .main_material.id);
                     }
                     $('#editModels .material_id').val(mainMaterialId).trigger('change');
 
-                    $('#taxFields').empty();
+                    // Product Tax
                     if (response.product_tax && response.product_tax.length > 0) {
-                        response.product_tax.forEach(function(tax, index) {
-                            let taxFieldHTML = `
-                    <div class="tax-fields border mt-1 col-md-12 mb-2">
-                        <div class="d-flex justify-content-end mt-1 mb-0">
-                            <i class="fa fa-trash btn btn-danger btn-sm removeVariantBtn"></i>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-6 col-sm-12">
-                                <label>Tax/City<span class="text-danger">*</span></label>
-                                <select name="taxes[${index}][tax_per_city]" class="form-control select2" style="width: 100%">
-                                    <option value="" disabled>Select City</option>
-                                    ${getCityOptions(tax.tax_per_city)}
-                                </select>
-                            </div>
-                            <div class="form-group col-md-6 col-sm-12">
-                                <label>Local Tax <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="taxes[${index}][local_tax]" value="${tax.local_tax}">
-                            </div>
-                        </div>
-                    </div>`;
-                            $('#taxFields').append(taxFieldHTML);
+                        $('#taxFields').empty();
+                        response.product_tax.forEach(function(tax) {
+                            addTaxField(tax);
                         });
-
                     } else {
-                        updateTax();
+                        addTaxField();
                     }
 
                     $('.select2').select2();
@@ -737,8 +714,8 @@
             var sterilizations = form["sterilizations"].value;
             var buyer_type = form["buyer_type"].value;
             var product_class = form["product_class"].value;
-            var supplier_name = form["supplier_name"].value;
-            var supplier_id = form["supplier_id"].value;
+            var supplier_name = form["supplier_name_hidden"].value;
+            var supplier_id = form["supplier_id_hidden"].value;
             var supplier_delivery_time = form["supplier_delivery_time"].value;
             var delivery_period = form["delivery_period"].value;
             var self_life = form["self_life"].value;
@@ -802,11 +779,13 @@
             $('.tax-fields').each(function(index, element) {
                 let taxPerCity = $(element).find('select[name^="taxes["]').val();
                 let localTax = $(element).find('input[name^="taxes["]').val();
-                formData.append(`taxes[${index}][tax_per_city]`, taxPerCity);
-                formData.append(`taxes[${index}][local_tax]`, localTax);
+                if (taxPerCity && localTax) {
+                    formData.append(`taxes[${index}][tax_per_city]`, taxPerCity);
+                    formData.append(`taxes[${index}][local_tax]`, localTax);
+                }
             });
-            // console.log('data',JSON.stringify(Object.fromEntries(formData)));
-            // return ;
+            // console.log('data', JSON.stringify(Object.fromEntries(formData)));
+            // return;
             $.ajax({
                 url: updateModels.replace(':id', id),
                 type: 'POST',
@@ -957,22 +936,44 @@
 
         //################ Get Supplier Name ############
         // Fetch and populate supplier names
+        let suppliersData = [];
         $.ajax({
             url: '{{ route('getSuppliers') }}',
             type: 'GET',
             success: function(data) {
-                let supplierNameDropdown = $('#supplier_name');
-                supplierNameDropdown.append('<option value="" disabled selected>Select Supplier Name</option>');
-                data.forEach(function(supplier) {
-                    supplierNameDropdown.append(
-                        `<option value="${supplier.id}">${supplier.name}</option>`
-                    );
-                });
+                suppliersData = data;
+                updateSupplierDropdowns();
             },
             error: function(error) {
                 console.log('Error fetching suppliers:', error);
             }
         });
+
+        function updateSupplierDropdowns(selectedSupplierId = '', selectedSupplierName = '') {
+            let supplierNameDropdown = $('#supplier_name');
+            let supplierIdDropdown = $('#supplier_id');
+            supplierNameDropdown.empty();
+            supplierIdDropdown.empty();
+
+            supplierNameDropdown.append('<option value="" disabled>Select Supplier Name</option>');
+
+            suppliersData.forEach(function(supplier) {
+                supplierNameDropdown.append(
+                    `<option value="${supplier.id}" ${supplier.id == selectedSupplierId ? 'selected' : ''}>${supplier.name}</option>`
+                );
+
+                if (supplier.id == selectedSupplierId) {
+                    supplierIdDropdown.append(
+                        `<option value="${supplier.supplier_id}" selected>${supplier.supplier_id}</option>`
+                    );
+                    $('#supplier_name_hidden').val(supplier.name);
+                    $('#supplier_id_hidden').val(supplier.supplier_id);
+                }
+            });
+
+            supplierIdDropdown.prop('disabled', true);
+            supplierNameDropdown.trigger('change');
+        }
 
         // Handle change event on Supplier Name dropdown
         $('#supplier_name').change(function() {
@@ -980,26 +981,14 @@
             let supplierIdDropdown = $('#supplier_id');
 
             if (selectedSupplierId) {
-                // Find the selected supplier
-                $.ajax({
-                    url: '{{ route('getSuppliers') }}',
-                    type: 'GET',
-                    success: function(data) {
-                        let selectedSupplier = data.find(supplier => supplier.id == selectedSupplierId);
-                        if (selectedSupplier) {
-                            supplierIdDropdown.empty().append(
-                                `<option value="${selectedSupplier.supplier_id}">${selectedSupplier.supplier_id}</option>`
-                            );
-                            supplierIdDropdown.prop('disabled', true);
-                            // Store supplier name and ID in hidden fields
-                            $('#supplier_name_hidden').val(selectedSupplier.name);
-                            $('#supplier_id_hidden').val(selectedSupplier.supplier_id);
-                        }
-                    },
-                    error: function(error) {
-                        console.log('Error fetching suppliers:', error);
-                    }
-                });
+                let selectedSupplier = suppliersData.find(supplier => supplier.id == selectedSupplierId);
+                if (selectedSupplier) {
+                    supplierIdDropdown.empty().append(
+                        `<option value="${selectedSupplier.supplier_id}" selected>${selectedSupplier.supplier_id}</option>`
+                    );
+                    $('#supplier_name_hidden').val(selectedSupplier.name);
+                    $('#supplier_id_hidden').val(selectedSupplier.supplier_id);
+                }
             }
         });
     </script>

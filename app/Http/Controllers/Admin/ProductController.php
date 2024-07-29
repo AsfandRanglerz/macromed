@@ -28,7 +28,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-
+use Mockery\Undefined;
 
 class ProductController extends Controller
 {
@@ -267,57 +267,57 @@ class ProductController extends Controller
     }
     public function productUpdate(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'short_name' => 'required|string|max:255',
-            'product_name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('products')->ignore($id)
-            ],
-            'category_id' => 'required|array',
-            'category_id.*' => 'exists:categories,id',
-            'brand_id' => 'required|array',
-            'brand_id.*' => 'exists:brands,id',
-            'certification_id' => 'required|array',
-            'certification_id.*' => 'exists:certifications,id',
-            'company' => 'required|string|max:255',
-            'models' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'sterilizations' => 'required|string|max:255',
-            'product_use_status' => 'required|string|max:255',
-            'product_commission' => 'required|string|max:255',
-            'video_link' => 'nullable|string|max:255',
-            'short_description' => 'required|string',
-            'long_description' => 'required|string',
-            'buyer_type' => 'required|string|max:255',
-            'product_class' => 'required|string|max:255',
-            'supplier_delivery_time' => 'required|string|max:255',
-            'supplier_name' => 'required|string|max:255',
-            'delivery_period' => 'required|string|max:255',
-            'self_life' => 'required|date',
-            'federal_tax' => 'required|numeric',
-            'provincial_tax' => 'required|numeric',
-            'material_id' => 'required|array',
-            'material_id.*' => 'exists:main_materials,id',
-            'taxes' => 'nullable|array',
-            'taxes.*.tax_per_city' => 'nullable|string|max:255',
-            'taxes.*.local_tax' => 'nullable|numeric',
-        ], [
-            'category_id.required' => 'Category is required.',
-            'category_id.*.exists' => 'Category does not exist.',
-            'brand_id.required' => 'Brand is required.',
-            'brand_id.*.exists' => 'Brand does not exist.',
-            'certification_id.required' => 'Certification is required.',
-            'certification_id.*.exists' => 'Certification does not exist.',
-            'material_id.required' => 'Main Material is required.',
-            'material_id.*.exists' => 'Main Material does not exist.',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        //     'short_name' => 'required|string|max:255',
+        //     'product_name' => [
+        //         'required',
+        //         'string',
+        //         'max:255',
+        //         Rule::unique('products')->ignore($id)
+        //     ],
+        //     'category_id' => 'required|array',
+        //     'category_id.*' => 'exists:categories,id',
+        //     'brand_id' => 'required|array',
+        //     'brand_id.*' => 'exists:brands,id',
+        //     'certification_id' => 'required|array',
+        //     'certification_id.*' => 'exists:certifications,id',
+        //     'company' => 'required|string|max:255',
+        //     'models' => 'required|string|max:255',
+        //     'country' => 'required|string|max:255',
+        //     'sterilizations' => 'required|string|max:255',
+        //     'product_use_status' => 'required|string|max:255',
+        //     'product_commission' => 'required|string|max:255',
+        //     'video_link' => 'nullable|string|max:255',
+        //     'short_description' => 'required|string',
+        //     'long_description' => 'required|string',
+        //     'buyer_type' => 'required|string|max:255',
+        //     'product_class' => 'required|string|max:255',
+        //     'supplier_delivery_time' => 'required|string|max:255',
+        //     'supplier_name' => 'required|string|max:255',
+        //     'delivery_period' => 'required|string|max:255',
+        //     'self_life' => 'required|date',
+        //     'federal_tax' => 'required|numeric',
+        //     'provincial_tax' => 'required|numeric',
+        //     'material_id' => 'required|array',
+        //     'material_id.*' => 'exists:main_materials,id',
+        //     'taxes' => 'nullable|array',
+        //     'taxes.*.tax_per_city' => 'nullable|string|max:255',
+        //     'taxes.*.local_tax' => 'nullable|numeric',
+        // ], [
+        //     'category_id.required' => 'Category is required.',
+        //     'category_id.*.exists' => 'Category does not exist.',
+        //     'brand_id.required' => 'Brand is required.',
+        //     'brand_id.*.exists' => 'Brand does not exist.',
+        //     'certification_id.required' => 'Certification is required.',
+        //     'certification_id.*.exists' => 'Certification does not exist.',
+        //     'material_id.required' => 'Main Material is required.',
+        //     'material_id.*.exists' => 'Main Material does not exist.',
+        // ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        // if ($validator->fails()) {
+        //     return redirect()->back()->withErrors($validator)->withInput();
+        // }
 
         try {
             $product = Product::findOrFail($id);
@@ -344,6 +344,7 @@ class ProductController extends Controller
             $brand_ids = json_decode($request->input('brand_id'), true);
             $certification_ids = json_decode($request->input('certification_id'), true);
             $material_ids = json_decode($request->input('material_id'), true);
+            $taxes = $request->input('taxes');
 
             // Delete old variants
             ProductCatgeory::where('product_id', $product->id)->delete();
@@ -351,7 +352,7 @@ class ProductController extends Controller
             ProductBrands::where('product_id', $product->id)->delete();
             ProductCertifcation::where('product_id', $product->id)->delete();
             ProductMaterial::where('product_id', $product->id)->delete();
-
+            ProductTax::where('product_id', $product->id)->delete();
             // Insert new variants
             foreach ($category_ids as $categoryId) {
                 ProductCatgeory::create(['product_id' => $product->id, 'category_id' => $categoryId]);
@@ -373,21 +374,25 @@ class ProductController extends Controller
                 ProductMaterial::create(['product_id' => $product->id, 'material_id' => $materialId]);
             }
             // Handle taxes
-            if ($request->has('taxes')) {
-                foreach ($request->input('taxes') as $tax) {
+            if (!empty($taxes)) {
+                foreach ($taxes as $tax) {
                     ProductTax::updateOrCreate(
                         [
                             'product_id' => $product->id,
-                            'tax_per_city' => $tax['tax_per_city'],
+                            'tax_per_city' => $tax['tax_per_city']
                         ],
-                        ['local_tax' => $tax['local_tax']]
+                        [
+                            'local_tax' => $tax['local_tax']
+                        ]
                     );
                 }
             }
 
+
+
             return response()->json(['message' => 'Product Updated Successfully!']);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            // Log::error($e->getMessage());
             return response()->json(['error' => 'Failed to update Product. Please try again later.']);
         }
     }

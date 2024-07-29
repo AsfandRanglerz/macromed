@@ -204,7 +204,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
-        Route::get('/productData',  'productData')->name('products.get');
+        Route::get('/productData',  'productData')->name('product.get');
         Route::get('/product',  'productIndex')->name('product.index');
         Route::get('/product-create',  'productCreateIndex')->name('product.create');
         Route::post('/product-store', 'productStore')->name('product.store');
