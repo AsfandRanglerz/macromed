@@ -233,7 +233,6 @@
                                             <textarea name="long_description" cols="20" rows="50" class="long_description">{{ old('long_description') }}</textarea>
                                         </div>
                                     </div>
-
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-6">
                                             <label>Self Life<span class="text-danger">*</span></label>
@@ -248,6 +247,57 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <hr>
+                                    {{-- Tabs  --}}
+                                    <div class="row col-md-12">
+                                        <h4 class="col-md-12">Tabs Content:</h4>
+                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="form-group col-md-12">
+                                            <label>Tab 1 Heading<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="tab_1_heading"
+                                                value="{{ old('tab_1_heading') }}">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Tab 1 Content<span class="text-danger">*</span></label>
+                                            <textarea name="tab_1_text" cols="20" rows="50" class="long_description">{{ old('tab_1_text') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="form-group col-md-12">
+                                            <label>Tab 2 Heading<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="tab_2_heading"
+                                                value="{{ old('tab_2_heading') }}">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Tab 2 Content<span class="text-danger">*</span></label>
+                                            <textarea name="tab_2_text" cols="20" rows="50" class="long_description">{{ old('tab_2_text') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="form-group col-md-12">
+                                            <label>Tab 3 Heading<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="tab_3_heading"
+                                                value="{{ old('tab_3_heading') }}">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Tab 3 Content<span class="text-danger">*</span></label>
+                                            <textarea name="tab_3_text" cols="20" rows="50" class="long_description">{{ old('tab_3_text') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row col-md-12">
+                                        <div class="form-group col-md-12">
+                                            <label>Tab 4 Heading<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="tab_4_heading"
+                                                value="{{ old('tab_4_heading') }}">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Tab 4 Content<span class="text-danger">*</span></label>
+                                            <textarea name="tab_4_text" cols="20" rows="50" class="long_description">{{ old('tab_4_text') }}</textarea>
+                                        </div>
+                                    </div>
+                                    {{-- Tabs --}}
+                                    <hr>
                                     <div class="row col-md-12">
                                         <h4 class="col-md-12">Taxes:</h4>
                                     </div>

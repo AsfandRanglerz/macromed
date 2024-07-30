@@ -176,7 +176,9 @@ class ProductController extends Controller
             $product = new Product($request->only([
                 'product_name', 'short_name', 'slug', 'company', 'country',
                 'models', 'product_commission', 'video_link',
-                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_id', 'supplier_delivery_time', 'supplier_name', 'delivery_period', 'self_life', 'federal_tax', 'provincial_tax'
+                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_id', 'supplier_delivery_time', 'supplier_name',
+                'delivery_period', 'self_life', 'federal_tax', 'provincial_tax',
+                'tab_1_heading', 'tab_1_text', 'tab_2_heading', 'tab_2_text', 'tab_3_heading', 'tab_3_text', 'tab_4_heading', 'tab_4_text'
             ]));
 
             if ($request->hasFile('thumbnail_image')) {
@@ -325,7 +327,9 @@ class ProductController extends Controller
             $product->fill($request->only([
                 'product_name', 'short_name', 'slug', 'company', 'country',
                 'models', 'product_commission', 'video_link',
-                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_delivery_time', 'supplier_name', 'supplier_id', 'delivery_period', 'self_life', 'federal_tax', 'provincial_tax'
+                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_id', 'supplier_delivery_time', 'supplier_name',
+                'delivery_period', 'self_life', 'federal_tax', 'provincial_tax',
+                'tab_1_heading', 'tab_1_text', 'tab_2_heading', 'tab_2_text', 'tab_3_heading', 'tab_3_text', 'tab_4_heading', 'tab_4_text'
             ]));
 
             if ($request->hasFile('thumbnail_image')) {
@@ -416,6 +420,26 @@ class ProductController extends Controller
             return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
         }
     }
+    public function updateProductFeatureStatus($id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+            if ($product->product_status == 'New Product') {
+                $product->product_status = 'Featured Product';
+                $message = 'Product has been successfully marked as Featured.';
+            } else if ($product->product_status == 'Featured Product') {
+                $product->product_status = 'New Product';
+                $message = 'Product is no longer featured successfully.';
+            } else {
+                return response()->json(['alert' => 'info', 'message' => 'Product status is already updated or cannot be updated.']);
+            }
+            $product->save();
+            return response()->json(['alert' => 'success', 'message' => $message]);
+        } catch (\Exception $e) {
+            return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating the product status.']);
+        }
+    }
+
 
     public function deleteProduct($id)
     {

@@ -1,7 +1,7 @@
 @extends('admin.layout.app')
 @section('title', 'Product')
 @section('content')
-    {{-- <style>
+    <style>
         .modal-fullscreen {
             width: 100vw;
             height: 100vh;
@@ -28,7 +28,7 @@
         .modal-body {
             overflow-y: auto;
         }
-    </style> --}}
+    </style>
     <!-- Delete Subadmin Modal -->
     <div class="modal fade" id="deleteSubadminModal" tabindex="-1" role="dialog" aria-labelledby="deleteSubadminModalLabel"
         aria-hidden="true">
@@ -308,6 +308,57 @@
                                 </select>
                             </div>
                         </div>
+                        <hr>
+                        {{-- Tabs  --}}
+                        <div class="row col-md-12">
+                            <h4 class="col-md-12">Tabs Content:</h4>
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-12">
+                                <label>Tab 1 Heading<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control tab_1_heading" name="tab_1_heading"
+                                    value="{{ old('tab_1_heading') }}">
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label>Tab 1 Content<span class="text-danger">*</span></label>
+                                <textarea name="tab_1_text" cols="20" rows="50" class="long_description">{{ old('tab_1_text') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-12">
+                                <label>Tab 2 Heading<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control tab_2_heading" name="tab_2_heading"
+                                    value="{{ old('tab_2_heading') }}">
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label>Tab 2 Content<span class="text-danger">*</span></label>
+                                <textarea name="tab_2_text" cols="20" rows="50" class="long_description">{{ old('tab_2_text') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-12">
+                                <label>Tab 3 Heading<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control tab_3_heading" name="tab_3_heading"
+                                    value="{{ old('tab_3_heading') }}">
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label>Tab 3 Content<span class="text-danger">*</span></label>
+                                <textarea name="tab_3_text" cols="20" rows="50" class="long_description">{{ old('tab_3_text') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-12">
+                                <label>Tab 4 Heading<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control tab_4_heading" name="tab_4_heading"
+                                    value="{{ old('tab_4_heading') }}">
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label>Tab 4 Content<span class="text-danger">*</span></label>
+                                <textarea name="tab_4_text" cols="20" rows="50" class="long_description">{{ old('tab_4_text') }}</textarea>
+                            </div>
+                        </div>
+                        {{-- Tabs --}}
+                        <hr>
                         <div class="row col-md-12">
                             <h4 class="col-md-12">Taxes:</h4>
                         </div>
@@ -323,11 +374,9 @@
                                     value="{{ old('provincial_tax') }}">
                             </div>
                         </div>
-
                         <div class="tax-fields" id="taxFields">
 
                         </div>
-
                         <!-- Append Button & Fields -->
                         <div class="row col-md-12 mt-0 mb-2">
                             <div class="col-md-12">
@@ -375,6 +424,7 @@
                                             <th>Country</th>
                                             <th>Supplier Name</th>
                                             <th>Number Of Use</th>
+                                            <th>Product Status</th>
                                             <th>Status</th>
                                             <th>Variants</th>
                                             <th>Uploads Images</th>
@@ -484,6 +534,22 @@
                     },
                     {
                         "data": "product_use_status"
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            var buttonClass = row.product_status == 'Featured Product' ?
+                                'btn-success' :
+                                'btn-danger';
+                            var buttonText = row.product_status == 'Featured Product' ?
+                                'Featured Product' :
+                                'New Product';
+                            return '<button id="update-productfeature-status" class="btn ' +
+                                buttonClass +
+                                '" data-userid="' + row
+                                .id + '">' + buttonText + '</button>';
+                        },
+
                     },
                     {
                         "data": null,
@@ -636,12 +702,43 @@
                     $('#editModels .federal_tax').val(response.federal_tax);
                     $('#editModels .provincial_tax').val(response.provincial_tax);
                     $('#editModels .supplier_name').val(response.supplier_name).trigger('change');
+                    $('#editModels .tab_1_heading').val(response.tab_1_heading);
+                    $('#editModels .tab_1_text').val(response.tab_1_text);
+                    $('#editModels .tab_2_heading').val(response.tab_2_heading);
+                    $('#editModels .tab_2_text').val(response.tab_2_text);
+                    $('#editModels .tab_3_heading').val(response.tab_3_heading);
+                    $('#editModels .tab_3_text').val(response.tab_3_text);
+                    $('#editModels .tab_4_heading').val(response.tab_4_heading);
+                    $('#editModels .tab_4_text').val(response.tab_4_text);
 
-            
                     if (response.long_description !== null) {
-                        geteditor.setData(response.long_description);
+                        editors[0].setData(response.long_description);
                     } else {
-                        geteditor.setData('');
+                        editors[0].setData('');
+                    }
+
+                    if (response.tab_1_text !== null) {
+                        editors[1].setData(response.tab_1_text);
+                    } else {
+                        editors[1].setData('');
+                    }
+
+                    if (response.tab_2_text !== null) {
+                        editors[2].setData(response.tab_2_text);
+                    } else {
+                        editors[2].setData('');
+                    }
+
+                    if (response.tab_3_text !== null) {
+                        editors[3].setData(response.tab_3_text);
+                    } else {
+                        editors[3].setData('');
+                    }
+
+                    if (response.tab_4_text !== null) {
+                        editors[4].setData(response.tab_4_text);
+                    } else {
+                        editors[4].setData('');
                     }
                     // Category
                     let categoryIds = [];
@@ -704,82 +801,42 @@
             var updateModels = '{{ route('product.update', ':id') }}';
             var id = $('#editModelsModal').data('id');
             var form = document.getElementById("editModels");
-            var short_name = form["short_name"].value;
-            var product_name = form["product_name"].value;
-            var slug = form["slug"].value;
-            var company = form["company"].value;
-            var models = form["models"].value;
-            var country = form["country"].value;
-            var video_link = form["video_link"].value;
-            var product_commission = form["product_commission"].value; // Fixed typo here
-            var short_description = form["short_description"].value;
-            var status = form["status"].value;
-            var product_use_status = form["product_use_status"].value;
-            var sterilizations = form["sterilizations"].value;
-            var buyer_type = form["buyer_type"].value;
-            var product_class = form["product_class"].value;
-            var supplier_name = form["supplier_name"].value;
-            var supplier_id = form["supplier_id"].value;
-            var supplier_delivery_time = form["supplier_delivery_time"].value;
-            var delivery_period = form["delivery_period"].value;
-            var self_life = form["self_life"].value;
-            var federal_tax = form["federal_tax"].value;
-            var provincial_tax = form["provincial_tax"].value;
-            var long_description = geteditor.getData();
-
+            var formData = new FormData(form);
+            formData.append('long_description', editors[0] ? editors[0].getData() : '');
+            formData.append('tab_1_text', editors[1] ? editors[1].getData() : '');
+            formData.append('tab_2_text', editors[2] ? editors[2].getData() : '');
+            formData.append('tab_3_text', editors[3] ? editors[3].getData() : '');
+            formData.append('tab_4_text', editors[4] ? editors[4].getData() : '');
             var category_id = [];
             $('select[name="category_id[]"] option:selected').each(function(index, element) {
                 category_id.push($(element).val());
             });
+            formData.append('category_id', JSON.stringify(category_id));
 
             var sub_category_id = [];
             $('select[name="sub_category_id[]"] option:selected').each(function(index, element) {
                 sub_category_id.push($(element).val());
             });
+            formData.append('sub_category_id', JSON.stringify(sub_category_id));
 
             var brand_id = [];
             $('select[name="brand_id[]"] option:selected').each(function(index, element) {
                 brand_id.push($(element).val());
             });
+            formData.append('brand_id', JSON.stringify(brand_id));
 
             var certification_id = [];
             $('select[name="certification_id[]"] option:selected').each(function(index, element) {
                 certification_id.push($(element).val());
             });
+            formData.append('certification_id', JSON.stringify(certification_id));
 
             var material_id = [];
             $('select[name="material_id[]"] option:selected').each(function(index, element) {
                 material_id.push($(element).val());
             });
-            // Form Data
-            var formData = new FormData();
-            formData.append('short_name', short_name);
-            formData.append('product_name', product_name);
-            formData.append('slug', slug);
-            formData.append('company', company);
-            formData.append('models', models);
-            formData.append('video_link', video_link);
-            formData.append('product_commission', product_commission);
-            formData.append('short_description', short_description);
-            formData.append('status', status);
-            formData.append('country', country);
-            formData.append('product_use_status', product_use_status);
-            formData.append('sterilizations', sterilizations);
-            formData.append('buyer_type', buyer_type);
-            formData.append('product_class', product_class);
-            formData.append('supplier_name', supplier_name);
-            formData.append('supplier_id', supplier_id);
-            formData.append('supplier_delivery_time', supplier_delivery_time);
-            formData.append('delivery_period', delivery_period);
-            formData.append('self_life', self_life);
-            formData.append('federal_tax', federal_tax);
-            formData.append('provincial_tax', provincial_tax);
-            formData.append('long_description', long_description);
-            formData.append('category_id', JSON.stringify(category_id));
-            formData.append('sub_category_id', JSON.stringify(sub_category_id));
-            formData.append('brand_id', JSON.stringify(brand_id));
-            formData.append('certification_id', JSON.stringify(certification_id));
             formData.append('material_id', JSON.stringify(material_id));
+
             $('.tax-fields').each(function(index, element) {
                 let taxPerCity = $(element).find('select[name^="taxes["]').val();
                 let localTax = $(element).find('input[name^="taxes["]').val();
@@ -788,8 +845,7 @@
                     formData.append(`taxes[${index}][local_tax]`, localTax);
                 }
             });
-            // console.log('data', JSON.stringify(Object.fromEntries(formData)));
-            // return;
+
             $.ajax({
                 url: updateModels.replace(':id', id),
                 type: 'POST',
@@ -855,7 +911,48 @@
                 }
             });
         });
+        // ################ Product Status ############
 
+        $('#example').on('click', '#update-productfeature-status', function() {
+            var button = $(this);
+            var userId = button.data('userid');
+            var currentProductStatus = button.text().trim().toLowerCase();
+            var newProductStatus = currentProductStatus === 'Active' ? 'Featured Product' : 'New Product';
+            button.prop('disabled', true);
+
+            $.ajax({
+                url: '{{ route('productsFeature.update', ['id' => ':userId']) }}'.replace(':userId',
+                    userId),
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    product_status: newProductStatus
+                },
+                success: function(response) {
+                    toastr.success(response.message);
+                    // Update button text and class
+                    var productButtonText = newProductStatus === 'Featured Product' ?
+                        'Featured Product' :
+                        'New Product';
+                    var productButtonClass = newProductStatus === 'Featured Product' ? 'btn-success' :
+                        'btn-danger';
+                    button.text(productButtonText).removeClass('btn-success btn-danger').addClass(
+                        productButtonClass);
+                    // Update status cell content
+                    var statusCell = button.closest('tr').find('td:eq(6)');
+                    var statusText, statusClass;
+                    statusCell.html('<span class="' + statusClass + '">' + statusText + '</span>');
+                    reloadDataTable();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                },
+                complete: function() {
+                    // Enable the button again
+                    button.prop('disabled', false);
+                }
+            });
+        });
         // ############# Delete Subadmin Data###########
         function deleteSubadminModal(subadminId) {
             $('#confirmDeleteSubadmin').data('subadmin-id', subadminId);
@@ -884,15 +981,19 @@
             });
         }
 
-        let geteditor;
-        ClassicEditor
-            .create(document.querySelector('.long_description'))
-            .then(newGetEditor => {
-                geteditor = newGetEditor;
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        // Classic Editor Code
+        let editors = [];
+
+        document.querySelectorAll('.long_description').forEach((textarea, index) => {
+            ClassicEditor
+                .create(textarea)
+                .then(editor => {
+                    editors[index] = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
 
         function previewThumnailImage(event) {
             var reader = new FileReader();
