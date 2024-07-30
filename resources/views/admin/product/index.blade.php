@@ -414,6 +414,7 @@
                                     <thead>
                                         <tr>
                                             <th>Sr.</th>
+                                            <th>Product Code</th>
                                             <th>Product Name</th>
                                             <th>Brands</th>
                                             <th>Certifications</th>
@@ -466,7 +467,12 @@
                             return meta.row + 1;
                         }
                     },
-
+                    {
+                        "data": "product_code",
+                        "render": function(data, type, row) {
+                            return '#' + data;
+                        }
+                    },
                     {
                         "data": "product_name",
                         "render": function(data, type, row) {

@@ -298,12 +298,7 @@ class ProductController extends Controller
                 'max:255',
                 Rule::unique('products')->ignore($id)
             ],
-            'category_id' => 'required|array',
-            'category_id.*' => 'exists:categories,id',
-            'brand_id' => 'required|array',
-            'brand_id.*' => 'exists:brands,id',
-            'certification_id' => 'required|array',
-            'certification_id.*' => 'exists:certifications,id',
+
             'company' => 'required|string|max:255',
             'models' => 'required|string|max:255',
             'country' => 'required|string|max:255',
@@ -321,20 +316,7 @@ class ProductController extends Controller
             'self_life' => 'required|date',
             'federal_tax' => 'required|numeric',
             'provincial_tax' => 'required|numeric',
-            'material_id' => 'required|array',
-            'material_id.*' => 'exists:main_materials,id',
-            'taxes' => 'nullable|array',
-            'taxes.*.tax_per_city' => 'nullable|string|max:255',
-            'taxes.*.local_tax' => 'nullable|numeric',
-        ], [
-            'category_id.required' => 'Category is required.',
-            'category_id.*.exists' => 'Category does not exist.',
-            'brand_id.required' => 'Brand is required.',
-            'brand_id.*.exists' => 'Brand does not exist.',
-            'certification_id.required' => 'Certification is required.',
-            'certification_id.*.exists' => 'Certification does not exist.',
-            'material_id.required' => 'Main Material is required.',
-            'material_id.*.exists' => 'Main Material does not exist.',
+
         ]);
 
 
