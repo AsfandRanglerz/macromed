@@ -637,48 +637,45 @@
                     $('#editModels .provincial_tax').val(response.provincial_tax);
                     $('#editModels .supplier_name').val(response.supplier_name).trigger('change');
 
-
+            
                     if (response.long_description !== null) {
                         geteditor.setData(response.long_description);
                     } else {
                         geteditor.setData('');
                     }
-                    let categoryIds = [];
-                    let brands = [];
-                    let certification = [];
-                    let subCategoryId = [];
-                    let mainMaterialId = [];
                     // Category
+                    let categoryIds = [];
                     if (response.product_category) {
                         categoryIds = response.product_category.map(category => category.categories.id);
                     }
 
                     $('#editModels .category').val(categoryIds).trigger('change');
                     // Sub Category
+                    let subCategoryId = [];
                     if (response.product_sub_category && response.product_sub_category.length > 0) {
                         subCategoryId = response.product_sub_category.map(subCategory => subCategory
                             .sub_categories.id);
-                        response.product_sub_category.forEach(function(subCategory) {
-                            $('#sub_category').append(
-                                `<option value="${subCategory.sub_categories.id}">${subCategory.sub_categories.name}</option>`
-                            );
+                        fetchSubcategoriesByCategory(categoryIds, function() {
+                            $('#sub_category').val(subCategoryId).trigger('change');
                         });
-                        $('#sub_category').val(subCategoryId).trigger('change');
                     } else {
                         fetchSubcategoriesByCategory(categoryIds);
                     }
                     // Brand
+                    let brands = [];
                     if (response.product_brands) {
                         brands = response.product_brands.map(brands => brands.brands.id);
                     }
                     $('#editModels .brand').val(brands).trigger('change');
                     // Certification
+                    let certification = [];
                     if (response.product_certifications) {
                         certification = response.product_certifications.map(certification => certification
                             .certification.id);
                     }
                     $('#editModels .certification').val(certification).trigger('change');
                     // Material
+                    let mainMaterialId = [];
                     if (response.product_material) {
                         mainMaterialId = response.product_material.map(mainMaterial => mainMaterial
                             .main_material.id);
@@ -905,8 +902,8 @@
             }
             reader.readAsDataURL(event.target.files[0]);
         };
-        // Show sub Categories against Category
-        function fetchSubcategoriesByCategory(selectedCategories) {
+
+        function fetchSubcategoriesByCategory(selectedCategories, callback = null) {
             if (selectedCategories.length > 0) {
                 $.ajax({
                     url: '{{ route('category.subCategories') }}',
@@ -926,12 +923,14 @@
                             $('#sub_category').append('<option value="">No Sub Category Available</option>');
                             $('#sub_category').prop('disabled', true);
                         }
+                        if (callback) callback();
                     }
                 });
             } else {
                 $('#sub_category').empty();
                 $('#sub_category').append('<option value="">Select Sub Category</option>');
                 $('#sub_category').prop('disabled', true);
+                if (callback) callback();
             }
         }
 
@@ -939,7 +938,6 @@
             var selectedCategories = $(this).val();
             fetchSubcategoriesByCategory(selectedCategories);
         });
-
 
         //################ Get Supplier Name ############
         $('#supplier_name').change(function() {
