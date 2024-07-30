@@ -343,7 +343,6 @@ class ProductController extends Controller
 
         try {
             $product = Product::findOrFail($id);
-
             $product->fill($request->only([
                 'product_name', 'short_name', 'slug', 'company', 'country',
                 'models', 'product_commission', 'video_link',
@@ -355,7 +354,7 @@ class ProductController extends Controller
             if ($request->hasFile('thumbnail_image')) {
                 $thumbnail_image = $request->file('thumbnail_image');
                 $thumbnail_name = time() . '.' . $thumbnail_image->getClientOriginalExtension();
-                $thumbnail_path = 'admin/assets/images/products/' . $thumbnail_name;
+                $thumbnail_path = 'public/admin/assets/images/products/' . $thumbnail_name;
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }

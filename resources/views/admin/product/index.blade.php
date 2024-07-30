@@ -74,7 +74,7 @@
                         </div>
                         <div class="form-group col-md-12">
                             <label>Thumnail Image <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control-file" name="thumbnail_image"
+                            <input type="file" class="form-control-file thumbnail_image" name="thumbnail_image"
                                 onchange="previewThumnailImage(event)">
                         </div>
                         <div class="row col-md-12">
@@ -678,8 +678,15 @@
                         toastr.warning('This product is inactive. You cannot edit the product.');
                         return;
                     }
+                    var imageUrl = response.thumbnail_image;
+                    var baseUrl = 'http://localhost/macromed/';
+                    var responseImage = baseUrl + response.thumbnail_image;
+                    if (imageUrl) {
+                        $('.admin-img').attr('src', responseImage).show();
+                    } else {
+                        $('.admin-img').hide();
+                    }
                     $('#editModels .short_name').val(response.short_name);
-                    $('#editModels .thumbnail_image').val(response.thumbnail_image);
                     $('#editModels .banner_image').val(response.banner_image);
                     $('#editModels .product_name').val(response.product_name);
                     $('#editModels .slug').val(response.slug);
