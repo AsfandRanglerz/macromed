@@ -107,8 +107,6 @@
                                 <textarea name="description" id="description" cols="30" rows="5" class="form-control description"></textarea>
                             </div>
                         </div>
-
-
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center mb-0">

@@ -102,7 +102,8 @@ class ProductVariantController extends Controller
                     ]
                 );
             }
-            return  redirect()->route('product.index')->with('message', 'Product variants saved successfully!');
+            return redirect()->route('product_variant_index.index', ['id' => $productId])
+                ->with('message', 'Product variants saved successfully!');
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
