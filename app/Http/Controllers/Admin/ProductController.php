@@ -32,7 +32,27 @@ use Mockery\Undefined;
 
 class ProductController extends Controller
 {
+    // ########## Generate Product Code #############
+    private function generateUniqueProductId()
+    {
+        do {
+            $productCode = $this->generateRandomProductId();
+        } while (Product::where('product_code', $productCode)->exists());
 
+        return $productCode;
+    }
+
+    private function generateRandomProductId($length = 10)
+    {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $productCode = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $productCode .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $productCode;
+    }
     public function productData()
     {
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->latest()->get();
@@ -180,7 +200,7 @@ class ProductController extends Controller
                 'delivery_period', 'self_life', 'federal_tax', 'provincial_tax',
                 'tab_1_heading', 'tab_1_text', 'tab_2_heading', 'tab_2_text', 'tab_3_heading', 'tab_3_text', 'tab_4_heading', 'tab_4_text'
             ]));
-
+            $product->product_code = $this->generateUniqueProductId();
             if ($request->hasFile('thumbnail_image')) {
                 $thumbnail_image = $request->file('thumbnail_image');
                 $thumbnail_name = time() . '.' . $thumbnail_image->getClientOriginalExtension();

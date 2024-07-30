@@ -11,7 +11,7 @@
             left: 0;
         }
 
-        .modal-dialog {
+        #modal-dialog {
             width: 100%;
             height: 100%;
             max-width: none;
@@ -53,7 +53,7 @@
     {{-- Edit product --}}
     <div class="modal fade" id="editModelsModal" tabindex="-1" role="dialog" aria-labelledby="editModelsModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen modal-xl" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen modal-xl" role="document" id="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editModelsModalLabel">Edit Product</h5>
