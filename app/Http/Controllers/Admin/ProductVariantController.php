@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductVaraint;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class ProductVariantController extends Controller
@@ -34,6 +35,7 @@ class ProductVariantController extends Controller
     {
         try {
             $request->validate([
+                'variants.*.m_p_n' => 'required|string',
                 'variants.*.s_k_u' => 'required|string',
                 'variants.*.packing' => 'required|string',
                 'variants.*.unit' => 'required|string',
@@ -47,6 +49,9 @@ class ProductVariantController extends Controller
             ], [
                 'variants.*.s_k_u.required' => 'SKU is required.',
                 'variants.*.s_k_u.string' => 'SKU must be a string.',
+
+                'variants.*.m_p_n.required' => 'MPN is required.',
+                'variants.*.m_p_n.string' => 'MPN must be a string.',
 
                 'variants.*.packing.required' => 'Packing is required.',
                 'variants.*.packing.string' => 'Packing must be a string.',
@@ -82,6 +87,7 @@ class ProductVariantController extends Controller
                     ['id' => $variant['id'] ?? null],
                     [
                         'product_id' => $productId,
+                        'm_p_n' => $variant['m_p_n'],
                         's_k_u' => $variant['s_k_u'],
                         'packing' => $variant['packing'],
                         'unit' => $variant['unit'],
@@ -116,19 +122,28 @@ class ProductVariantController extends Controller
     public function updateVariant(Request $request, $id)
     {
         try {
-            // $validator = Validator::make($request->all(), [
-            //     'category_id' => 'exists:categories,id',
-            //     'subcategory_id' => 'exists:sub_categories,id',
-            //     'name' => 'required',
-            //     'commision' => 'required|numeric',
-            // ]);
+            $validator = Validator::make($request->all(), [
+                'm_p_n' => 'required',
+                's_k_u' => 'required',
+                'packing' => 'required',
+                'unit' => 'required',
+                'quantity' => 'required|numeric',
+                'price_per_unit' => 'required|numeric',
+                'selling_price_per_unit' => 'required|numeric',
+                'actual_weight' => 'required|numeric',
+                'shipping_weight' => 'required|numeric',
+                'shipping_chargeable_weight' => 'required|numeric',
+            ]);
 
-            // if ($validator->fails()) {
-            //     return response()->json(['errors' => $validator->errors()], 422);
-            // }
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
 
             $product = ProductVaraint::findOrFail($id);
-            $product->fill($request->only(['s_k_u', 'packing', 'unit', 'quantity', 'price_per_unit', 'selling_price_per_unit', 'actual_weight', 'shipping_weight', 'shipping_chargeable_weight', 'status', 'description']));
+            $product->fill($request->only([
+                'm_p_n', 's_k_u', 'packing', 'unit', 'quantity', 'price_per_unit', 'selling_price_per_unit',
+                'actual_weight', 'shipping_weight', 'shipping_chargeable_weight', 'status', 'description'
+            ]));
             $product->save();
             return response()->json(['alert' => 'success', 'message' => 'Product Variant Updated Successfully!']);
         } catch (\Exception $e) {

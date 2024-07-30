@@ -37,6 +37,10 @@
                     <form id="editVariants" enctype="multipart/form-data">
                         <div class="row col-12">
                             <div class="form-group col-md-4">
+                                <label>MPN</label>
+                                <input type="text" class="form-control m_p_n" name="m_p_n">
+                            </div>
+                            <div class="form-group col-md-4">
                                 <label>SKU</label>
                                 <input type="text" class="form-control s_k_u" name="s_k_u">
                             </div>
@@ -44,7 +48,9 @@
                                 <label>Packing</label>
                                 <input type="text" class="form-control packing" name="packing">
                             </div>
-                            <div class="form-group col-md-4">
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-6">
                                 <label>Unit</label>
                                 <select class="form-control unit" name="unit">
                                     <option value="" disabled selected>Select Units</option>
@@ -55,38 +61,39 @@
                                     @endforeach
                                 </select>
                             </div>
-
-                        </div>
-                        <div class="row col-12">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label>Quantity</label>
                                 <input type="text" class="form-control quantity" name="quantity">
                             </div>
-                            <div class="form-group col-md-4">
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-6">
                                 <label>Actual Price/Unit</label>
                                 <input type="text" class="form-control price_per_unit" name="price_per_unit">
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label>Selling Price/Unit</label>
                                 <input type="text" class="form-control selling_price_per_unit"
                                     name="selling_price_per_unit">
                             </div>
                         </div>
-                        <div class="row col-12">
-                            <div class="form-group col-md-4">
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-6">
                                 <label>Actual Weight</label>
                                 <input type="text" class="form-control actual_weight" name="actual_weight">
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label>Shipping Weight</label>
                                 <input type="text" class="form-control shipping_weight" name="shipping_weight">
                             </div>
-                            <div class="form-group col-md-4">
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-6">
                                 <label>Shipping Chargeable Weight</label>
                                 <input type="text" class="form-control shipping_chargeable_weight"
                                     name="shipping_chargeable_weight">
                             </div>
-                            <div class="form-group col-12">
+                            <div class="form-group col-md-6">
                                 <label>Status <span class="text-danger">*</span></label>
                                 <select name="status" class="form-control status">
                                     <option value="1">Active</option>
@@ -94,10 +101,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group col-12">
-                            <label>Description <span class="text-danger">*</span></label>
-                            <textarea name="description" id="description" cols="30" rows="5" class="form-control description"></textarea>
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-12">
+                                <label>Description <span class="text-danger">*</span></label>
+                                <textarea name="description" id="description" cols="30" rows="5" class="form-control description"></textarea>
+                            </div>
                         </div>
+
 
                     </form>
                 </div>
@@ -125,6 +135,7 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
+                                                <th>MPN</th>
                                                 <th>SKU</th>
                                                 <th>Packing</th>
                                                 <th>Unit</th>
@@ -183,6 +194,9 @@
                         }
                     },
                     {
+                        "data": "m_p_n"
+                    },
+                    {
                         "data": "s_k_u"
                     },
                     {
@@ -223,10 +237,11 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
+                            return '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
+                                row.id + '"><i class="fas fa-edit"></i></button>' +
+                                '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
-                            // '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
-                            // row.id + '"><i class="fas fa-edit"></i></button>' +
+
                         }
                     }
                     // { "data": "description" }
@@ -251,6 +266,7 @@
                 url: showVariants.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
+                    $('#editVariants .m_p_n').val(response.m_p_n);
                     $('#editVariants .s_k_u').val(response.s_k_u);
                     $('#editVariants .packing').val(response.packing);
                     $('#editVariants .unit').val(response.unit);
@@ -290,6 +306,7 @@
             var updateVariants = '{{ route('variants.update', ':id') }}';
             var id = $('#editVariantsModal').data('id');
             var form = document.getElementById("editVariants");
+            var m_p_n = form["m_p_n"].value;
             var s_k_u = form["s_k_u"].value;
             var packing = form["packing"].value;
             var unit = form["unit"].value;
@@ -303,6 +320,7 @@
             var description = geteditor.getData();
             // ########### Form Data ###########
             var formData = new FormData();
+            formData.append('m_p_n', m_p_n);
             formData.append('s_k_u', s_k_u);
             formData.append('packing', packing);
             formData.append('unit', unit);
