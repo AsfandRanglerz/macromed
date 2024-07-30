@@ -963,62 +963,6 @@
                 }
             });
         });
-        // Fetch and populate supplier names
-        // let suppliersData = [];
-        // $.ajax({
-        //     url: '{{ route('getSuppliers') }}',
-        //     type: 'GET',
-        //     success: function(data) {
-        //         suppliersData = data;
-        //         updateSupplierDropdowns();
-        //     },
-        //     error: function(error) {
-        //         console.log('Error fetching suppliers:', error);
-        //     }
-        // });
-
-        // function updateSupplierDropdowns(selectedSupplierId = '', selectedSupplierName = '') {
-        //     let supplierNameDropdown = $('#supplier_name');
-        //     let supplierIdDropdown = $('#supplier_id');
-        //     supplierNameDropdown.empty();
-        //     supplierIdDropdown.empty();
-
-        //     supplierNameDropdown.append('<option value="" disabled>Select Supplier Name</option>');
-
-        //     suppliersData.forEach(function(supplier) {
-        //         supplierNameDropdown.append(
-        //             `<option value="${supplier.id}" ${supplier.id == selectedSupplierId ? 'selected' : ''}>${supplier.name}</option>`
-        //         );
-
-        //         if (supplier.id == selectedSupplierId) {
-        //             supplierIdDropdown.append(
-        //                 `<option value="${supplier.supplier_id}" selected>${supplier.supplier_id}</option>`
-        //             );
-        //             $('#supplier_name_hidden').val(supplier.name);
-        //             $('#supplier_id_hidden').val(supplier.supplier_id);
-        //         }
-        //     });
-
-        //     supplierIdDropdown.prop('disabled', true);
-        //     supplierNameDropdown.trigger('change');
-        // }
-
-        // // Handle change event on Supplier Name dropdown
-        // $('#supplier_name').change(function() {
-        //     let selectedSupplierId = $(this).val();
-        //     let supplierIdDropdown = $('#supplier_id');
-
-        //     if (selectedSupplierId) {
-        //         let selectedSupplier = suppliersData.find(supplier => supplier.id == selectedSupplierId);
-        //         if (selectedSupplier) {
-        //             supplierIdDropdown.empty().append(
-        //                 `<option value="${selectedSupplier.supplier_id}" selected>${selectedSupplier.supplier_id}</option>`
-        //             );
-        //             $('#supplier_name_hidden').val(selectedSupplier.name);
-        //             $('#supplier_id_hidden').val(selectedSupplier.supplier_id);
-        //         }
-        //     }
-        // });
     </script>
 
 @endsection
