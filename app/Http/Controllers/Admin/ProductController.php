@@ -325,7 +325,7 @@ class ProductController extends Controller
             $product->fill($request->only([
                 'product_name', 'short_name', 'slug', 'company', 'country',
                 'models', 'product_commission', 'video_link',
-                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_delivery_time', 'supplier_name', 'delivery_period', 'self_life', 'federal_tax', 'provincial_tax'
+                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_delivery_time', 'supplier_name', 'supplier_id', 'delivery_period', 'self_life', 'federal_tax', 'provincial_tax'
             ]));
 
             if ($request->hasFile('thumbnail_image')) {

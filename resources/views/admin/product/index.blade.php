@@ -245,23 +245,30 @@
                             {{-- Suppliers Fields --}}
                             <div class="form-group col-md-4">
                                 <label>Supplier Name <span class="text-danger">*</span></label>
-                                <select id="supplier_name" name="supplier_name_display"
+                                <select id="supplier_name" name="supplier_name"
                                     class="form-control select2 supplier_name" style="width: 100%">
-                                    <!-- Options will be populated by AJAX -->
+                                    @foreach ($suppliers as $supplier)
+                                        <option {{ old('supplier') == $supplier->id ? 'selected' : '' }}
+                                            value="{{ $supplier->name }}">
+                                            {{ $supplier->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="row col-md-12">
                             <div class="form-group col-md-4">
                                 <label>Supplier Id <span class="text-danger">*</span></label>
-                                <select id="supplier_id" name="supplier_id_display"
-                                    class="form-control select2 supplier_id" disabled style="width: 100%">
-                                    <!-- Options will be populated by AJAX -->
+                                <select id="supplier_id" name="supplier_id" class="form-control select2 supplier_id"
+                                    disabled style="width: 100%">
+                                    @foreach ($suppliers as $supplier)
+                                        <option {{ old('supplier') == $supplier->id ? 'selected' : '' }}
+                                            value="{{ $supplier->supplier_id }}">
+                                            {{ $supplier->supplier_id }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
-                            <!-- Hidden fields to store actual values -->
-                            <input type="hidden" id="supplier_name_hidden" name="supplier_name">
-                            <input type="hidden" id="supplier_id_hidden" name="supplier_id">
                             {{-- Delivery Fields --}}
                             <div class="form-group col-md-4">
                                 <label>Supplier Delivery Time <span class="text-danger">*</span></label>
@@ -628,14 +635,14 @@
                     $('#editModels .self_life').val(response.self_life);
                     $('#editModels .federal_tax').val(response.federal_tax);
                     $('#editModels .provincial_tax').val(response.provincial_tax);
+                    $('#editModels .supplier_name').val(response.supplier_name).trigger('change');
+
 
                     if (response.long_description !== null) {
                         geteditor.setData(response.long_description);
                     } else {
                         geteditor.setData('');
                     }
-                    // Update supplier dropdowns
-                    updateSupplierDropdowns(response.supplier_id, response.supplier_name);
                     let categoryIds = [];
                     let brands = [];
                     let certification = [];
@@ -714,8 +721,8 @@
             var sterilizations = form["sterilizations"].value;
             var buyer_type = form["buyer_type"].value;
             var product_class = form["product_class"].value;
-            var supplier_name = form["supplier_name_hidden"].value;
-            var supplier_id = form["supplier_id_hidden"].value;
+            var supplier_name = form["supplier_name"].value;
+            var supplier_id = form["supplier_id"].value;
             var supplier_delivery_time = form["supplier_delivery_time"].value;
             var delivery_period = form["delivery_period"].value;
             var self_life = form["self_life"].value;
@@ -935,62 +942,83 @@
 
 
         //################ Get Supplier Name ############
-        // Fetch and populate supplier names
-        let suppliersData = [];
-        $.ajax({
-            url: '{{ route('getSuppliers') }}',
-            type: 'GET',
-            success: function(data) {
-                suppliersData = data;
-                updateSupplierDropdowns();
-            },
-            error: function(error) {
-                console.log('Error fetching suppliers:', error);
-            }
-        });
+        $('#supplier_name').change(function() {
+            var selectedName = $(this).val();
+            $.ajax({
+                url: '{{ route('getSuppliers') }}',
+                method: 'GET',
+                success: function(response) {
+                    var suppliers = response;
+                    var supplierIdDropdown = $('#supplier_id');
+                    supplierIdDropdown.empty(); // Clear existing options
 
-        function updateSupplierDropdowns(selectedSupplierId = '', selectedSupplierName = '') {
-            let supplierNameDropdown = $('#supplier_name');
-            let supplierIdDropdown = $('#supplier_id');
-            supplierNameDropdown.empty();
-            supplierIdDropdown.empty();
+                    $.each(suppliers, function(index, supplier) {
+                        if (supplier.name == selectedName) {
+                            supplierIdDropdown.append(new Option(supplier.supplier_id, supplier
+                                .supplier_id));
+                        }
+                    });
 
-            supplierNameDropdown.append('<option value="" disabled>Select Supplier Name</option>');
-
-            suppliersData.forEach(function(supplier) {
-                supplierNameDropdown.append(
-                    `<option value="${supplier.id}" ${supplier.id == selectedSupplierId ? 'selected' : ''}>${supplier.name}</option>`
-                );
-
-                if (supplier.id == selectedSupplierId) {
-                    supplierIdDropdown.append(
-                        `<option value="${supplier.supplier_id}" selected>${supplier.supplier_id}</option>`
-                    );
-                    $('#supplier_name_hidden').val(supplier.name);
-                    $('#supplier_id_hidden').val(supplier.supplier_id);
+                    supplierIdDropdown.prop('disabled', true); // Enable the dropdown
                 }
             });
-
-            supplierIdDropdown.prop('disabled', true);
-            supplierNameDropdown.trigger('change');
-        }
-
-        // Handle change event on Supplier Name dropdown
-        $('#supplier_name').change(function() {
-            let selectedSupplierId = $(this).val();
-            let supplierIdDropdown = $('#supplier_id');
-
-            if (selectedSupplierId) {
-                let selectedSupplier = suppliersData.find(supplier => supplier.id == selectedSupplierId);
-                if (selectedSupplier) {
-                    supplierIdDropdown.empty().append(
-                        `<option value="${selectedSupplier.supplier_id}" selected>${selectedSupplier.supplier_id}</option>`
-                    );
-                    $('#supplier_name_hidden').val(selectedSupplier.name);
-                    $('#supplier_id_hidden').val(selectedSupplier.supplier_id);
-                }
-            }
         });
+        // Fetch and populate supplier names
+        // let suppliersData = [];
+        // $.ajax({
+        //     url: '{{ route('getSuppliers') }}',
+        //     type: 'GET',
+        //     success: function(data) {
+        //         suppliersData = data;
+        //         updateSupplierDropdowns();
+        //     },
+        //     error: function(error) {
+        //         console.log('Error fetching suppliers:', error);
+        //     }
+        // });
+
+        // function updateSupplierDropdowns(selectedSupplierId = '', selectedSupplierName = '') {
+        //     let supplierNameDropdown = $('#supplier_name');
+        //     let supplierIdDropdown = $('#supplier_id');
+        //     supplierNameDropdown.empty();
+        //     supplierIdDropdown.empty();
+
+        //     supplierNameDropdown.append('<option value="" disabled>Select Supplier Name</option>');
+
+        //     suppliersData.forEach(function(supplier) {
+        //         supplierNameDropdown.append(
+        //             `<option value="${supplier.id}" ${supplier.id == selectedSupplierId ? 'selected' : ''}>${supplier.name}</option>`
+        //         );
+
+        //         if (supplier.id == selectedSupplierId) {
+        //             supplierIdDropdown.append(
+        //                 `<option value="${supplier.supplier_id}" selected>${supplier.supplier_id}</option>`
+        //             );
+        //             $('#supplier_name_hidden').val(supplier.name);
+        //             $('#supplier_id_hidden').val(supplier.supplier_id);
+        //         }
+        //     });
+
+        //     supplierIdDropdown.prop('disabled', true);
+        //     supplierNameDropdown.trigger('change');
+        // }
+
+        // // Handle change event on Supplier Name dropdown
+        // $('#supplier_name').change(function() {
+        //     let selectedSupplierId = $(this).val();
+        //     let supplierIdDropdown = $('#supplier_id');
+
+        //     if (selectedSupplierId) {
+        //         let selectedSupplier = suppliersData.find(supplier => supplier.id == selectedSupplierId);
+        //         if (selectedSupplier) {
+        //             supplierIdDropdown.empty().append(
+        //                 `<option value="${selectedSupplier.supplier_id}" selected>${selectedSupplier.supplier_id}</option>`
+        //             );
+        //             $('#supplier_name_hidden').val(selectedSupplier.name);
+        //             $('#supplier_id_hidden').val(selectedSupplier.supplier_id);
+        //         }
+        //     }
+        // });
     </script>
 
 @endsection
