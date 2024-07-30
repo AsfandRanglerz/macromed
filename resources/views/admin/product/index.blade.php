@@ -814,6 +814,7 @@
             formData.append('tab_2_text', editors[2] ? editors[2].getData() : '');
             formData.append('tab_3_text', editors[3] ? editors[3].getData() : '');
             formData.append('tab_4_text', editors[4] ? editors[4].getData() : '');
+
             var category_id = [];
             $('select[name="category_id[]"] option:selected').each(function(index, element) {
                 category_id.push($(element).val());
@@ -875,11 +876,12 @@
                             toastr.error(value[0]);
                         });
                     } else {
-                        toastr.error(error);
+                        toastr.error('An error occurred while updating the product.');
                     }
                 }
             });
         }
+
 
         // ################ Active and Inactive code ############
 

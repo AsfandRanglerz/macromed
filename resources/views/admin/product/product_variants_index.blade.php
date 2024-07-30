@@ -351,13 +351,10 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('.' + key).addClass('is-invalid').siblings(
-                                '.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
-                        console.log("Error:", xhr);
+                        toastr.error('An error occurred while updating the product.');
                     }
                 }
             });

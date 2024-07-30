@@ -123,18 +123,24 @@ class ProductVariantController extends Controller
     public function updateVariant(Request $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'm_p_n' => 'required',
-                's_k_u' => 'required',
-                'packing' => 'required',
-                'unit' => 'required',
-                'quantity' => 'required|numeric',
-                'price_per_unit' => 'required|numeric',
-                'selling_price_per_unit' => 'required|numeric',
-                'actual_weight' => 'required|numeric',
-                'shipping_weight' => 'required|numeric',
-                'shipping_chargeable_weight' => 'required|numeric',
-            ]);
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'm_p_n' => 'required',
+                    's_k_u' => 'required',
+                    'packing' => 'required',
+                    'unit' => 'required',
+                    'quantity' => 'required|numeric',
+                    'price_per_unit' => 'required|numeric',
+                    'selling_price_per_unit' => 'required|numeric',
+                    'actual_weight' => 'required|numeric',
+                    'shipping_weight' => 'required|numeric',
+                    'shipping_chargeable_weight' => 'required|numeric',
+                ],
+                [
+                    'm_p_n.required' => 'MPN is required.',
+                ]
+            );
 
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
