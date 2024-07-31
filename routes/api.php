@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
 use Illuminate\Http\Request;
@@ -23,7 +24,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 ######### Product ##########
 Route::get('/getProducts', [ProductController::class, 'getProducts']);
-
+Route::post('/getProductByRange', [ProductController::class, 'getProductByRange']);
+######### Brands ##########
+Route::get('/getBrands', [BrandController::class, 'getBrand']);
+Route::post('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
