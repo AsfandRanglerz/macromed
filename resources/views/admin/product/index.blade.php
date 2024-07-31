@@ -308,6 +308,19 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="row col-md-12">
+                            <div class="form-group col-md-6">
+                                <label>Minimum Price Range<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="min_price_range"
+                                    value="{{ old('min_price_range') }}">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Maximum Price Range <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="max_price_range"
+                                    value="{{ old('max_price_range') }}">
+                            </div>
+                        </div>
                         <hr>
                         {{-- Tabs  --}}
                         <div class="row col-md-12">
@@ -712,6 +725,8 @@
                     $('#editModels .supplier_delivery_time').val(response.supplier_delivery_time);
                     $('#editModels .delivery_period').val(response.delivery_period);
                     $('#editModels .self_life').val(response.self_life);
+                    $('#editModels .min_price_range').val(response.min_price_range);
+                    $('#editModels .max_price_range').val(response.max_price_range);
                     $('#editModels .federal_tax').val(response.federal_tax);
                     $('#editModels .provincial_tax').val(response.provincial_tax);
                     $('#editModels .supplier_name').val(response.supplier_name).trigger('change');
