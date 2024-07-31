@@ -17,7 +17,7 @@
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="category">Category</label>
-                                <select class="form-control" id="category_id" name="category_id" required>
+                                <select class="form-control select2" id="category_id" name="category_id" required style="width: 100%">
                                     <option value="">Select Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -74,7 +74,7 @@
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="category">Category</label>
-                                <select class="form-control category_id" name="category_id" required>
+                                <select class="form-control category_id select2" name="category_id" required style="width: 100%">
                                     <option value="">Select Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
