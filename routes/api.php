@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\CertificationController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
 use Illuminate\Http\Request;
@@ -27,7 +28,10 @@ Route::get('/getProducts', [ProductController::class, 'getProducts']);
 Route::post('/getProductByRange', [ProductController::class, 'getProductByRange']);
 ######### Brands ##########
 Route::get('/getBrands', [BrandController::class, 'getBrand']);
-Route::post('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter']);
+Route::get('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter']);
+######### Certification ##########
+Route::get('/getCertifications', [CertificationController::class, 'getCertification']);
+Route::get('/getCertificationFilter/{certificationId}', [CertificationController::class, 'getCertificationFilter']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);

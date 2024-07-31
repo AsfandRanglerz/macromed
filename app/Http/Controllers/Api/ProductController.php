@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Currency;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
     public function getProducts()
     {
         try {
+            $currency = Currency::first();
+            if (!$currency) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No Currency found.',
+                ]);
+            }
+            $pkrAmount = $currency->pkr_amount;
             $products = Product::with(
                 'productBrands.brands',
                 'productCertifications.certification'
@@ -28,6 +37,12 @@ class ProductController extends Controller
                 'min_price_range',
                 'max_price_range'
             )->where('status', '1')->latest()->get();
+            // Add converted prices to the products
+            $products->transform(function ($product) use ($pkrAmount) {
+                $product->min_price_range_pkr = $product->min_price_range * $pkrAmount;
+                $product->max_price_range_pkr = $product->max_price_range * $pkrAmount;
+                return $product;
+            });
             return response()->json([
                 'status' => 'success',
                 'products' => $products
@@ -52,7 +67,14 @@ class ProductController extends Controller
                     'message' => 'Both min price and max price are required'
                 ], 400);
             }
-
+            $currency = Currency::first();
+            if (!$currency) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No Currency found.',
+                ]);
+            }
+            $pkrAmount = $currency->pkr_amount;
             $products = Product::with(
                 'productBrands.brands',
                 'productCertifications.certification'
@@ -83,9 +105,16 @@ class ProductController extends Controller
                     'message' => 'No Product Found In This Range'
                 ], 404);
             } else {
+                // Add converted prices to the products
+                $products->transform(function ($product) use ($pkrAmount) {
+                    $product->min_price_range_pkr = $product->min_price_range * $pkrAmount;
+                    $product->max_price_range_pkr = $product->max_price_range * $pkrAmount;
+                    return $product;
+                });
                 return response()->json([
                     'status' => 'success',
-                    'products' => $products
+                    'products' => $products,
+                    'pkrAmount' => $pkrAmount,
                 ]);
             }
         } catch (\Exception $e) {

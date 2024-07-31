@@ -2,39 +2,38 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Brands;
 use App\Models\Product;
 use App\Models\Currency;
 use Illuminate\Http\Request;
-use App\Models\ProductBrands;
+use App\Models\Certification;
 use App\Http\Controllers\Controller;
 
-class BrandController extends Controller
+class CertificationController extends Controller
 {
-    public function getBrand()
+    public function getCertification()
     {
         try {
-            $brands = Brands::where('status', '1')->latest()->get();
-            if ($brands->isEmpty()) {
+            $certifications = Certification::where('status', '1')->latest()->get();
+            if ($certifications->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
-                    'message' => 'Brand Not Found!'
+                    'message' => 'Certifcation Not Found!'
                 ], 404);
             } else {
                 return response()->json([
                     'status' => 'success',
-                    'brands' => $brands
+                    'certifications' => $certifications
                 ]);
             }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred while fetching brands: ' . $e->getMessage()
+                'message' => 'An error occurred while fetching Certifcation: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    public function getBrandFilter($brandId)
+    public function getCertificationFilter($certificationId)
     {
         try {
             $currency = Currency::first();
@@ -46,9 +45,10 @@ class BrandController extends Controller
             }
 
             $pkrAmount = $currency->pkr_amount;
+
             $products = Product::with([
-                'productBrands' => function ($query) use ($brandId) {
-                    $query->where('brand_id', $brandId);
+                'productCertifications' => function ($query) use ($certificationId) {
+                    $query->where('certification_id', $certificationId);
                 },
                 'productBrands.brands',
                 'productCertifications.certification'
@@ -66,8 +66,8 @@ class BrandController extends Controller
                 'min_price_range',
                 'max_price_range'
             )->where('status', '1')
-                ->whereHas('productBrands', function ($query) use ($brandId) {
-                    $query->where('brand_id', $brandId);
+                ->whereHas('productCertifications', function ($query) use ($certificationId) {
+                    $query->where('certification_id', $certificationId);
                 })
                 ->latest()
                 ->get();
@@ -75,7 +75,7 @@ class BrandController extends Controller
             if ($products->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
-                    'message' => 'No Product Found For This Brand'
+                    'message' => 'No Product Found For This Certification'
                 ], 404);
             } else {
                 // Add converted prices to the products
