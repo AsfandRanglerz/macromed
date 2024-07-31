@@ -206,7 +206,7 @@ class ProductController extends Controller
                 'models', 'product_commission', 'video_link',
                 'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_id', 'supplier_delivery_time', 'supplier_name',
                 'delivery_period', 'self_life', 'federal_tax', 'provincial_tax',
-                'tab_1_heading', 'tab_1_text', 'tab_2_heading', 'tab_2_text', 'tab_3_heading', 'tab_3_text', 'tab_4_heading', 'tab_4_text'
+                'tab_1_heading', 'tab_1_text', 'tab_2_heading', 'tab_2_text', 'tab_3_heading', 'tab_3_text', 'tab_4_heading', 'tab_4_text','min_price_range', 'max_price_range'
             ]));
             $product->product_code = $this->generateUniqueProductId();
             if ($request->hasFile('thumbnail_image')) {
