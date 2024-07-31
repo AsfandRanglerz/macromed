@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,19 +17,15 @@ use Illuminate\Support\Facades\Route;
  */
 
 
-Route::group(['namespace' => 'Api'], function () {
-    Route::post('register', 'AuthController@register');
-    Route::post('login', 'AuthController@login');
-    Route::get('notification', 'AuthController@notification');
 
 
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-        return $request->user();
-    });
-    ######### Roles & Permissison##########
-
-    Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
-    Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
-    Route::post('/addRole', [RolesPermissionController::class, 'addRole']);
-    Route::post('/updateRole/{id}', [RolesPermissionController::class, 'updateRole']);
+Route::group(['middleware' => 'auth:api'], function () {
 });
+######### Product ##########
+Route::get('/getProducts', [ProductController::class, 'getProducts']);
+
+######### Roles & Permissison##########
+Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
+Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
+Route::post('/addRole', [RolesPermissionController::class, 'addRole']);
+Route::post('/updateRole/{id}', [RolesPermissionController::class, 'updateRole']);
