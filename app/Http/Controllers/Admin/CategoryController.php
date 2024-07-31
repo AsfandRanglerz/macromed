@@ -32,7 +32,12 @@ class CategoryController extends Controller
                     'max:255',
                     Rule::unique('categories')
                 ],
-                'slug' => 'required'
+                'slug' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('categories')
+                ],
             ]);
 
             if ($validator->fails()) {
@@ -58,6 +63,13 @@ class CategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('categories')->ignore($id),
+                'slug' => 'required'
+            ],
+            'slug' => [
                 'required',
                 'string',
                 'max:255',

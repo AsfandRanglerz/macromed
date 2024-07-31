@@ -34,6 +34,12 @@ class SubCategoryController extends Controller
                     'max:255',
                     Rule::unique('sub_categories')
                 ],
+                'slug' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('sub_categories')
+                ],
                 'category_id' => 'required|exists:categories,id',
 
             ], [
@@ -64,6 +70,12 @@ class SubCategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('sub_categories')->ignore($id)
+            ],
+            'slug' => [
                 'required',
                 'string',
                 'max:255',

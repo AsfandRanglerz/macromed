@@ -152,6 +152,12 @@ class ProductController extends Controller
                 'max:255',
                 Rule::unique('products')
             ],
+            'slug' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products')
+            ],
             'category_id' => 'required|array',
             'category_id.*' => 'exists:categories,id',
             'brand_id' => 'required|array',
@@ -298,7 +304,12 @@ class ProductController extends Controller
                 'max:255',
                 Rule::unique('products')->ignore($id)
             ],
-
+            'slug' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products')->ignore($id)
+            ],
             'company' => 'required|string|max:255',
             'models' => 'required|string|max:255',
             'country' => 'required|string|max:255',
