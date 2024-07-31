@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\MainMaterialController;
 use App\Http\Controllers\Admin\ModalsController;
 use App\Http\Controllers\Admin\NumberOfUseController;
@@ -232,6 +233,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/variants/{id}',  'showVariants')->name('variants.show');
         Route::get('/variants/delete/{id}',  'deleteProductVariant')->name('variant.delete');
         Route::post('/update-variants-status/{id}',  'updateVariantsStatus')->name('variantsBlock.update');
+    });
+
+    // ############## Currency ############
+    Route::controller(CurrencyController::class)->group(function () {
+        Route::get('/currency',  'currencyIndex')->name('currency.index');
+        Route::post('/currency-create',  'currencyCreate')->name('currency.create');
+        Route::get('/currencyData',  'currencyData')->name('currency.get');
+        Route::get('/currency/{id}',  'showCurrency')->name('currency.show');
+        Route::post('/currencyUpdate/{id}',  'updateCurrency')->name('currency.update');
+        Route::get('/currency/delete/{id}',  'deleteCurrency')->name('currency.delete');
     });
 });
 //################################ Sales Agent Routes #############################

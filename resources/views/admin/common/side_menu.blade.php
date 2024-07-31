@@ -258,6 +258,13 @@
                     </ul>
                 </li>
             @endif
+            {{-- Currency --}}
+            <li class="dropdown {{ request()->is('admin/currency*') ? 'active' : '' }}">
+                <a href="{{ route('currency.index') }}"
+                    class="nav-link {{ request()->is('admin/currency*') ? 'text-white' : '' }}">
+                    <i data-feather="dollar-sign"></i><span>Currency</span>
+                </a>
+            </li>
             {{-- About Us --}}
             {{-- <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
                 <a href="{{ route('about.index') }}" class="nav-link"><i data-feather="monitor"></i><span>About
