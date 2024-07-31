@@ -53,7 +53,7 @@
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="doller_amount"> Enter Doller Amount</label>
-                                <input type="number" class="form-control doller_amount" name="doller_amount" required>
+                                <input type="number" class="form-control doller_amount" name="doller_amount" required disabled>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -106,10 +106,10 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
-                                <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
+                                {{-- <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createCurrencyModal">
                                     Create Currency
-                                </a>
+                                </a> --}}
                                 <table class="responsive table table-striped table-bordered" id="example">
                                     <thead>
                                         <tr>
@@ -158,18 +158,24 @@
                         }
                     },
                     {
-                        "data": "doller_amount"
+                        "data": "doller_amount",
+                        "render": function(data, type, row) {
+                            return '$' + data;
+                        }
                     },
                     {
-                        "data": "pkr_amount"
+                        "data": "pkr_amount",
+                        "render": function(data, type, row) {
+                            return 'Rs:' + data;
+                        }
                     },
                     {
                         "data": null,
                         "render": function(data, type, row) {
                             return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                                row.id + '"><i class="fas fa-edit"></i></button>' ;
+                                // '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
+                                // row.id + '"><i class="fas fa-trash-alt"></i></button>';
                         }
                     }
                 ]
@@ -247,8 +253,8 @@
                 url: showCurrency.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editCurrency .name').val(response.name);
-                    $('#editCurrency .status').val(response.status);
+                    $('#editCurrency .doller_amount').val(response.doller_amount);
+                    $('#editCurrency .pkr_amount').val(response.pkr_amount);
                     $('#editCurrencyModal').modal('show');
                     $('#editCurrencyModal').data('id', id);
                 },

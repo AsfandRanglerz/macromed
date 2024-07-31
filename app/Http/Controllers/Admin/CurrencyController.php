@@ -53,7 +53,6 @@ class CurrencyController extends Controller
     public function updateCurrency(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'doller_amount' => 'required|numeric',
             'pkr_amount' => 'required|numeric',
         ]);
         if ($validator->fails()) {
