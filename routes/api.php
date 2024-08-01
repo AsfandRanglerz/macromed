@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CertificationController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
@@ -32,6 +33,9 @@ Route::get('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter
 ######### Certification ##########
 Route::get('/getCertifications', [CertificationController::class, 'getCertification']);
 Route::get('/getCertificationFilter/{certificationId}', [CertificationController::class, 'getCertificationFilter']);
+######### Certification ##########
+Route::get('/getCategorys', [CategoryController::class, 'getCategory']);
+Route::get('/getCategoryFilter/{categoryId}', [CategoryController::class, 'getCategoryFilter']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);

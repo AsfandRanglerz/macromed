@@ -7,9 +7,11 @@ use App\Models\Currency;
 use Illuminate\Http\Request;
 use App\Models\Certification;
 use App\Http\Controllers\Controller;
+use App\Traits\ProductHelperTrait;
 
 class CertificationController extends Controller
 {
+    use ProductHelperTrait;
     public function getCertification()
     {
         try {
@@ -36,14 +38,13 @@ class CertificationController extends Controller
     public function getCertificationFilter($certificationId)
     {
         try {
-            $currency = Currency::first();
+            $currency = $this->getCurrency();
             if (!$currency) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'No Currency found.',
                 ]);
             }
-
             $pkrAmount = $currency->pkr_amount;
 
             $products = Product::with([
@@ -79,11 +80,7 @@ class CertificationController extends Controller
                 ], 404);
             } else {
                 // Add converted prices to the products
-                $products->transform(function ($product) use ($pkrAmount) {
-                    $product->min_price_range_pkr = $product->min_price_range * $pkrAmount;
-                    $product->max_price_range_pkr = $product->max_price_range * $pkrAmount;
-                    return $product;
-                });
+                $products = $this->convertPrices($products, $pkrAmount);
                 return response()->json([
                     'status' => 'success',
                     'products' => $products,

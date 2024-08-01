@@ -2,40 +2,42 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Brands;
 use App\Models\Product;
+use App\Models\Category;
 use App\Models\Currency;
 use Illuminate\Http\Request;
-use App\Models\ProductBrands;
-use App\Http\Controllers\Controller;
 use App\Traits\ProductHelperTrait;
+use App\Http\Controllers\Controller;
 
-class BrandController extends Controller
+class CategoryController extends Controller
 {
     use ProductHelperTrait;
-    public function getBrand()
+
+    public function getCategory()
     {
         try {
-            $brands = Brands::where('status', '1')->latest()->get();
-            if ($brands->isEmpty()) {
+
+            $categories = Category::where('status', '1')->latest()->get();
+            if ($categories->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
-                    'message' => 'Brand Not Found!'
+                    'message' => 'Category Not Found!'
                 ], 404);
             } else {
                 return response()->json([
                     'status' => 'success',
-                    'brands' => $brands
+                    'categories' => $categories
                 ]);
             }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred while fetching brands: ' . $e->getMessage()
+                'message' => 'An error occurred while fetching category: ' . $e->getMessage()
             ], 500);
         }
     }
-    public function getBrandFilter($brandId)
+
+    public function getCategoryFilter($categoryId)
     {
         try {
             $currency = $this->getCurrency();
@@ -45,14 +47,12 @@ class BrandController extends Controller
                     'message' => 'No Currency found.',
                 ]);
             }
+
             $pkrAmount = $currency->pkr_amount;
-            $products = Product::with([
-                'productBrands' => function ($query) use ($brandId) {
-                    $query->where('brand_id', $brandId);
-                },
+            $products = Product::with(
                 'productBrands.brands',
                 'productCertifications.certification'
-            ])->select(
+            )->select(
                 'id',
                 'product_code',
                 'thumbnail_image',
@@ -65,10 +65,9 @@ class BrandController extends Controller
                 'sterilizations',
                 'min_price_range',
                 'max_price_range'
-            )
-                ->where('status', '1')
-                ->whereHas('productBrands', function ($query) use ($brandId) {
-                    $query->where('brand_id', $brandId);
+            )->where('status', '1')
+                ->whereHas('productCategory', function ($query) use ($categoryId) {
+                    $query->where('category_id', $categoryId);
                 })
                 ->latest()
                 ->get();
@@ -76,7 +75,7 @@ class BrandController extends Controller
             if ($products->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
-                    'message' => 'No Product Found For This Brand'
+                    'message' => 'No Product Found For This Category'
                 ], 404);
             } else {
                 // Add converted prices to the products
@@ -89,7 +88,7 @@ class BrandController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred while fetching products: ' . $e->getMessage()
+                'message' => 'An error occurred while fetching category: ' . $e->getMessage()
             ], 500);
         }
     }
