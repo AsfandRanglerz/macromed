@@ -6,6 +6,7 @@ use App\Models\Unit;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductVaraint;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -36,7 +37,7 @@ class ProductVariantController extends Controller
         try {
             $request->validate([
                 'variants.*.m_p_n' => 'required|string',
-                'variants.*.s_k_u' => 'required|string',
+                'variants.*.s_k_u' => 'required|unique:product_varaints|max:255',
                 'variants.*.packing' => 'required|string',
                 'variants.*.unit' => 'required|string',
                 'variants.*.quantity' => 'required|integer',
@@ -49,6 +50,7 @@ class ProductVariantController extends Controller
             ], [
                 'variants.*.s_k_u.required' => 'SKU is required.',
                 'variants.*.s_k_u.string' => 'SKU must be a string.',
+                'variants.*.s_k_u.unique' => 'SKU must be a unique.',
 
                 'variants.*.m_p_n.required' => 'MPN is required.',
                 'variants.*.m_p_n.string' => 'MPN must be a string.',
@@ -127,7 +129,12 @@ class ProductVariantController extends Controller
                 $request->all(),
                 [
                     'm_p_n' => 'required',
-                    's_k_u' => 'required',
+                    's_k_u' => [
+                        'required',
+                        'string',
+                        'max:255',
+                        Rule::unique('product_varaints')->ignore($id)
+                    ],
                     'packing' => 'required',
                     'unit' => 'required',
                     'quantity' => 'required|numeric',
