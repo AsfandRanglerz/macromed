@@ -67,9 +67,6 @@ class CertificationController extends Controller
                 'min_price_range',
                 'max_price_range'
             )->where('status', '1')
-                ->whereHas('productCertifications', function ($query) use ($certificationId) {
-                    $query->where('certification_id', $certificationId);
-                })
                 ->latest()
                 ->get();
 

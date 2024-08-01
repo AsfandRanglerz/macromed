@@ -7,6 +7,8 @@ use App\Models\Currency;
 use Illuminate\Http\Request;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use ProductImage;
 
 class ProductController extends Controller
 {
@@ -121,6 +123,77 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while fetching products: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getFeaturedProduct()
+    {
+        try {
+            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
+                ->where('status', '1')->latest()->get();
+            if ($featureProducts->isEmpty()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'success' => 'Feature Product Not Found!'
+                ], 404);
+            } else {
+                return response()->json([
+                    'status' => 'success',
+                    ' featureProducts' => $featureProducts
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while fetching feature products: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getProductdetail($productId)
+    {
+        try {
+            $productDetails = Product::with([
+                'productImages',
+                'productBrands.brands' => function ($query) use ($productId) {
+                    $query->where('product_id', $productId)
+                        ->where('status', '1');
+                },
+                'productCertifications.certification' => function ($query) use ($productId) {
+                    $query->where('product_id', $productId)
+                        ->where('status', '1');
+                }
+            ])->select(
+                'id',
+                'product_code',
+                'thumbnail_image',
+                'short_name',
+                'country',
+                'company',
+                'models',
+                'product_use_status',
+                'short_description',
+                'sterilizations',
+                'min_price_range',
+                'max_price_range'
+            )->where('status', '1')->where('id', $productId)->get();
+
+            if ($productDetails->isEmpty()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'success' => 'Product Deatil Not Found!'
+                ], 404);
+            } else {
+                return response()->json([
+                    'status' => 'success',
+                    ' productDetails' => $productDetails
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while fetching product details: ' . $e->getMessage()
             ], 500);
         }
     }

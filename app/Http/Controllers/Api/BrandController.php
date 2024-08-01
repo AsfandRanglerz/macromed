@@ -65,11 +65,7 @@ class BrandController extends Controller
                 'sterilizations',
                 'min_price_range',
                 'max_price_range'
-            )
-                ->where('status', '1')
-                ->whereHas('productBrands', function ($query) use ($brandId) {
-                    $query->where('brand_id', $brandId);
-                })
+            )->where('status', '1')
                 ->latest()
                 ->get();
 

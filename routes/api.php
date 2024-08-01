@@ -28,6 +28,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 ######### Product ##########
 Route::get('/getProducts', [ProductController::class, 'getProducts']);
 Route::post('/getProductByRange', [ProductController::class, 'getProductByRange']);
+Route::get('/getFeatureProduct', [ProductController::class, 'getFeaturedProduct']);
+Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);
 ######### Brands ##########
 Route::get('/getBrands', [BrandController::class, 'getBrand']);
 Route::get('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter']);
