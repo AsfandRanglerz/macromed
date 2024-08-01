@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CertificationController;
+use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
 use Illuminate\Http\Request;
@@ -33,9 +34,12 @@ Route::get('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter
 ######### Certification ##########
 Route::get('/getCertifications', [CertificationController::class, 'getCertification']);
 Route::get('/getCertificationFilter/{certificationId}', [CertificationController::class, 'getCertificationFilter']);
-######### Certification ##########
+######### Category ##########
 Route::get('/getCategorys', [CategoryController::class, 'getCategory']);
 Route::get('/getCategoryFilter/{categoryId}', [CategoryController::class, 'getCategoryFilter']);
+######### Company ##########
+Route::get('/getCompany', [CompanyController::class, 'getCompany']);
+Route::post('/getCompanyFilter', [CompanyController::class, 'getCompanyFilter']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
