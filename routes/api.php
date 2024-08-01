@@ -30,6 +30,7 @@ Route::get('/getProducts', [ProductController::class, 'getProducts']);
 Route::post('/getProductByRange', [ProductController::class, 'getProductByRange']);
 Route::get('/getFeatureProduct', [ProductController::class, 'getFeaturedProduct']);
 Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);
+Route::get('/getProductVaraints/{productId}', [ProductController::class, 'getProductVaraint']);
 ######### Brands ##########
 Route::get('/getBrands', [BrandController::class, 'getBrand']);
 Route::get('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter']);

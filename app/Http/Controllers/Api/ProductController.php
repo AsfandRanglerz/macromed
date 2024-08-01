@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\ProductVaraint;
 use ProductImage;
 
 class ProductController extends Controller
@@ -194,6 +195,29 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while fetching product details: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getProductVaraint($productId)
+    {
+        try {
+            $productVaraints = ProductVaraint::where('product_id', $productId)->where('status', '1')->get();
+            if ($productVaraints->isEmpty()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Product Detail Not Found!'
+                ], 404);
+            } else {
+                return response()->json([
+                    'status' => 'success',
+                    'productVaraints' =>  $productVaraints
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while fetching product varaints: ' . $e->getMessage()
             ], 500);
         }
     }
