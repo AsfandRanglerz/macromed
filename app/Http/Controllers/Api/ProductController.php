@@ -155,14 +155,14 @@ class ProductController extends Controller
     {
         try {
             $productDetails = Product::with([
-                'productImages',
-                'productBrands.brands' => function ($query) use ($productId) {
-                    $query->where('product_id', $productId)
-                        ->where('status', '1');
+                'productImages' => function ($query) {
+                    $query->where('status', '0');
                 },
-                'productCertifications.certification' => function ($query) use ($productId) {
-                    $query->where('product_id', $productId)
-                        ->where('status', '1');
+                'productBrands.brands' => function ($query) {
+                    $query->where('status', '1');
+                },
+                'productCertifications.certification' => function ($query) {
+                    $query->where('status', '1');
                 }
             ])->select(
                 'id',
@@ -182,12 +182,12 @@ class ProductController extends Controller
             if ($productDetails->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
-                    'success' => 'Product Deatil Not Found!'
+                    'message' => 'Product Detail Not Found!'
                 ], 404);
             } else {
                 return response()->json([
                     'status' => 'success',
-                    ' productDetails' => $productDetails
+                    'productDetails' => $productDetails
                 ]);
             }
         } catch (\Exception $e) {

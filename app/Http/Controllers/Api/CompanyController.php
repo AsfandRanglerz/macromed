@@ -86,7 +86,7 @@ class CompanyController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred while fetching company: ' . $e->getMessage()
+                'message' => 'An error occurred while fetching : ' . $e->getMessage()
             ], 500);
         }
     }
