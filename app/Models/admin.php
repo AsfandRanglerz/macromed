@@ -9,5 +9,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class admin extends Authenticatable
 {
     use HasFactory;
-    protected $guarded=[];
+    protected $guarded = [];
+
+    public function adminPrivateNote()
+    {
+        return $this->hasMany(AdminNotes::class, 'admin_id');
+    }
 }

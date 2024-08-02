@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\MainMaterialController;
 use App\Http\Controllers\Admin\ModalsController;
 use App\Http\Controllers\Admin\NumberOfUseController;
+use App\Http\Controllers\Admin\PivateNoteController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\SalesAgentController;
@@ -40,7 +41,7 @@ use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
 Admin routes
  * */
 
-Route::get('/admin', [AuthController::class, 'getLoginPage']);
+Route::get('/admin', [AuthController::class, 'getLoginPage'])->name('login');
 Route::post('admin/login', [AuthController::class, 'Login']);
 Route::get('/admin-forgot-password', [AdminController::class, 'forgetPassword']);
 Route::post('/admin-reset-password-link', [AdminController::class, 'adminResetPasswordLink']);
@@ -243,6 +244,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/currency/{id}',  'showCurrency')->name('currency.show');
         Route::post('/currencyUpdate/{id}',  'updateCurrency')->name('currency.update');
         Route::get('/currency/delete/{id}',  'deleteCurrency')->name('currency.delete');
+    });
+
+       // ############## Private Notes ############
+       Route::controller(PivateNoteController::class)->group(function () {
+        Route::get('/privateNotes',  'privateNotesIndex')->name('privateNotes.index');
+        Route::post('/privateNotes-create',  'privateNotesCreate')->name('privateNotes.create');
+        Route::get('/privateNotesData',  'privateNotesData')->name('privateNotes.get');
+        Route::get('/privateNotes/{id}',  'showPrivateNotes')->name('privateNotes.show');
+        Route::post('/privateNotesUpdate/{id}',  'updatePrivateNotes')->name('privateNotes.update');
+        Route::get('/privateNotes/delete/{id}',  'deletePrivateNotes')->name('privateNotes.delete');
     });
 });
 //################################ Sales Agent Routes #############################

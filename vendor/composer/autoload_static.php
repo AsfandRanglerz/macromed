@@ -585,6 +585,7 @@ class ComposerStaticInita31faf40ff9b8773d514dda0170fd133
         'App\\Mail\\userBlocked' => __DIR__ . '/../..' . '/app/Mail/userBlocked.php',
         'App\\Mail\\userUnBlocked' => __DIR__ . '/../..' . '/app/Mail/userUnBlocked.php',
         'App\\Models\\About' => __DIR__ . '/../..' . '/app/Models/About.php',
+        'App\\Models\\AdminNotes' => __DIR__ . '/../..' . '/app/Models/AdminNotes.php',
         'App\\Models\\AgentAccount' => __DIR__ . '/../..' . '/app/Models/AgentAccount.php',
         'App\\Models\\Brands' => __DIR__ . '/../..' . '/app/Models/Brands.php',
         'App\\Models\\Category' => __DIR__ . '/../..' . '/app/Models/Category.php',

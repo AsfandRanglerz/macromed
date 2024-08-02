@@ -59,6 +59,7 @@ return array(
     'App\\Mail\\userBlocked' => $baseDir . '/app/Mail/userBlocked.php',
     'App\\Mail\\userUnBlocked' => $baseDir . '/app/Mail/userUnBlocked.php',
     'App\\Models\\About' => $baseDir . '/app/Models/About.php',
+    'App\\Models\\AdminNotes' => $baseDir . '/app/Models/AdminNotes.php',
     'App\\Models\\AgentAccount' => $baseDir . '/app/Models/AgentAccount.php',
     'App\\Models\\Brands' => $baseDir . '/app/Models/Brands.php',
     'App\\Models\\Category' => $baseDir . '/app/Models/Category.php',

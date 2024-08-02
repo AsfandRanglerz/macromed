@@ -50,4 +50,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(UserAccount::class);
     }
+    public function subAdminPrivateNote()
+    {
+        return $this->hasMany(AdminNotes::class, 'sub_admin_id');
+    }
 }
