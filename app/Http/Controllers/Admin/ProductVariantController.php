@@ -50,7 +50,7 @@ class ProductVariantController extends Controller
             ], [
                 'variants.*.s_k_u.required' => 'SKU is required.',
                 'variants.*.s_k_u.string' => 'SKU must be a string.',
-                'variants.*.s_k_u.unique' => 'SKU must be a unique.',
+                'variants.*.s_k_u.unique' => 'SKU has already been taken.',
 
                 'variants.*.m_p_n.required' => 'MPN is required.',
                 'variants.*.m_p_n.string' => 'MPN must be a string.',
