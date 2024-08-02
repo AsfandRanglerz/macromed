@@ -221,4 +221,29 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    public function getProductTab($productId)
+    {
+        try {
+            $productTabs = Product::where('id', $productId)
+                ->select('tab_1_heading', 'tab_2_heading', 'tab_3_heading', 'tab_4_heading', 'tab_1_text', 'tab_2_text', 'tab_2_text', 'tab_4_text')
+                ->where('status', '1')->get();
+            if ($productTabs->isEmpty()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Product Tabs Not Found!'
+                ], 404);
+            } else {
+                return response()->json([
+                    'status' => 'success',
+                    'productTabs' =>  $productTabs
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while fetching product tabs: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
