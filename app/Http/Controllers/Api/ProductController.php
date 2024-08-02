@@ -357,17 +357,14 @@ class ProductController extends Controller
                     'message' => 'Product not found!'
                 ], 404);
             }
-
             // Extract all category IDs for the product
             $categoryIds = $product->productCategory->pluck('category_id')->toArray();
-
             if (empty($categoryIds)) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'No categories found for this product!'
                 ], 404);
             }
-
             // Find related products based on category IDs
             $relatedProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')
                 ->where('status', '1')
