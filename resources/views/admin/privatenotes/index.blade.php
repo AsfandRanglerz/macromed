@@ -345,6 +345,16 @@
             .catch(error => {
                 console.error(error);
             });
+
+            let geteditor;
+        ClassicEditor
+            .create(document.querySelector('#description'))
+            .then(newEditor => {
+                geteditor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
     </script>
 
 @endsection
