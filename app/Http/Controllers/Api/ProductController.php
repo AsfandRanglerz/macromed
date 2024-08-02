@@ -345,32 +345,54 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
     public function getRelatedProduct($productId)
     {
         try {
-            $relatedProduct = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')
-                ->where('status', '1')
-                ->where('id', '!=', $productId)
-                ->where(function ($query) use ($productId) {
-                    $query->where('category_id', $productId->category_id);
-                })
-                ->latest()->get();
-            if ($relatedProduct->isEmpty()) {
+            // Find the product with its categories
+            $product = Product::with('productCategory')->find($productId);
+
+            if (!$product) {
                 return response()->json([
                     'status' => 'failed',
-                    'success' => 'Related Product Not Found!'
+                    'message' => 'Product not found!'
                 ], 404);
-            } else {
-                return response()->json([
-                    'status' => 'success',
-                    'relatedProduct' => $relatedProduct
-                ]);
             }
+
+            // Extract all category IDs for the product
+            $categoryIds = $product->productCategory->pluck('category_id')->toArray();
+
+            if (empty($categoryIds)) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'No categories found for this product!'
+                ], 404);
+            }
+
+            // Find related products based on category IDs
+            $relatedProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')
+                ->where('status', '1')
+                ->where('id', '!=', $productId)
+                ->whereHas('productCategory', function ($query) use ($categoryIds) {
+                    $query->whereIn('category_id', $categoryIds);
+                })
+                ->latest()
+                ->get();
+
+            if ($relatedProducts->isEmpty()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'No related products found!'
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'relatedProducts' => $relatedProducts
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred while fetching Related products: ' . $e->getMessage()
+                'message' => 'An error occurred while fetching related products: ' . $e->getMessage()
             ], 500);
         }
     }
