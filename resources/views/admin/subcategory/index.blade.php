@@ -149,7 +149,7 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
-                                <a class="btn btn-success mb-3 text-white" data-toggle="modal"
+                                <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createSubCategoryModal">
                                     Create Sub Category
                                 </a>
@@ -319,7 +319,7 @@
                 type: 'GET',
                 success: function(response) {
                     $('#editSubCategory .name').val(response.name);
-                    $('#editSubCategory .category_id').val(response.category_id);
+                    $('#editSubCategory .category_id').val(response.category_id).trigger('change');
                     $('#editSubCategory .slug').val(response.slug);
                     $('#editSubCategory .status').val(response.status);
                     $('#editSubCategoryModal').modal('show');
