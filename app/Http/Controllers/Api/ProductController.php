@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Product;
-use App\Models\Currency;
+
 use Illuminate\Http\Request;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Models\ProductVaraint;
-use ProductImage;
+
 
 class ProductController extends Controller
 {
