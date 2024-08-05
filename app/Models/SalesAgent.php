@@ -26,4 +26,9 @@ class SalesAgent extends Authenticatable
     {
         return $this->hasOne(AgentAccount::class, 'agent_id');
     }
+
+    public function adminNotification()
+    {
+        return $this->hasMany(SalesAgentNotification::class, 'sales_agent_id');
+    }
 }

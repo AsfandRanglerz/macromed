@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\PolicyController;
 use App\Http\Controllers\Admin\AboutusController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CertificationController;
@@ -254,6 +255,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/privateNotes/{id}',  'showPrivateNotes')->name('privateNotes.show')->middleware('permission:Private Notes');
         Route::post('/privateNotesUpdate/{id}',  'updatePrivateNotes')->name('privateNotes.update')->middleware('permission:Private Notes');
         Route::get('/privateNotes/delete/{id}',  'deletePrivateNotes')->name('privateNotes.delete')->middleware('permission:Private Notes');
+    });
+
+    // ############## Admin Notification ############
+    Route::controller(AdminNotificationController::class)->group(function () {
+        Route::get('/adminNotification',  'adminNotificationIndex')->name('adminNotification.index');
+        Route::post('/adminNotification-create',  'adminNotificationCreate')->name('adminNotification.create');
+        // Route::get('/privateNotesData',  'privateNotesData')->name('privateNotes.get');
+        // Route::get('/privateNotes/{id}',  'showPrivateNotes')->name('privateNotes.show');
+        // Route::post('/privateNotesUpdate/{id}',  'updatePrivateNotes')->name('privateNotes.update');
+        // Route::get('/privateNotes/delete/{id}',  'deletePrivateNotes')->name('privateNotes.delete');
     });
 });
 //################################ Sales Agent Routes #############################

@@ -282,6 +282,13 @@
                     </a>
                 </li>
             @endif
+            {{-- Admin Notification --}}
+            <li class="dropdown {{ request()->is('admin/adminNotification*') ? 'active' : '' }}">
+                <a href="{{ route('adminNotification.index') }}"
+                    class="nav-link {{ request()->is('admin/adminNotification*') ? 'text-white' : '' }}">
+                    <i data-feather="bell"></i><span>Notification</span>
+                </a>
+            </li>
             {{-- About Us --}}
             {{-- <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
                 <a href="{{ route('about.index') }}" class="nav-link"><i data-feather="monitor"></i><span>About

@@ -54,4 +54,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(AdminNotes::class, 'sub_admin_id');
     }
+
+    public function adminNotification()
+    {
+        return $this->hasMany(UserNotification::class, 'customer_id');
+    }
 }
