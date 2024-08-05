@@ -160,7 +160,15 @@
                         "data": "title"
                     },
                     {
-                        "data": "description"
+                        "data": "description",
+                        "render": function(data, type, row) {
+                            var words = data.split(" ");
+                            if (words.length > 15) {
+                                return words.slice(0, 10).join(" ") + '...';
+                            } else {
+                                return data;
+                            }
+                        }
                     },
                     {
                         "data": null,
