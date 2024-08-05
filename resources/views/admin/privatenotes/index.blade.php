@@ -24,7 +24,7 @@
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label>Long Description <span class="text-danger">*</span></label>
-                                <textarea name="description" cols="20" rows="50"  id="description"></textarea>
+                                <textarea name="description" cols="20" rows="50" id="description"></textarea>
                             </div>
                             <div class="invalid-feedback"></div>
                         </div>
@@ -60,7 +60,7 @@
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label>Long Description <span class="text-danger">*</span></label>
-                                <textarea name="description" cols="20" rows="50" class="long_description"></textarea>
+                                <textarea name="description" cols="20" rows="50" class="description"></textarea>
                             </div>
                         </div>
                     </form>
@@ -250,9 +250,9 @@
                 success: function(response) {
                     $('#editPrivateNotes .title').val(response.title);
                     if (response.description !== null) {
-                        editors.setData(response.description);
+                        geteditor.setData(response.description);
                     } else {
-                        editors.setData('');
+                        geteditor.setData('');
                     }
                     $('#editPrivateNotesModal').modal('show');
                     $('#editPrivateNotesModal').data('id', id);
@@ -277,8 +277,12 @@
             var updatePrivateNotes = '{{ route('privateNotes.update', ':id') }}';
             var id = $('#editPrivateNotesModal').data('id');
             var form = document.getElementById("editPrivateNotes");
-            var formData = new FormData(form);
-            formData.append('description', editors ? editors.getData() : '');
+            var title = form["title"].value;
+            var description = geteditor.getData();
+            var formData = new FormData();
+            formData.append('title', title);
+            formData.append('description', description);
+
             $.ajax({
                 url: updatePrivateNotes.replace(':id', id),
                 type: 'POST',
@@ -346,9 +350,9 @@
                 console.error(error);
             });
 
-            let geteditor;
+        let geteditor;
         ClassicEditor
-            .create(document.querySelector('#description'))
+            .create(document.querySelector('.description'))
             .then(newEditor => {
                 geteditor = newEditor;
             })

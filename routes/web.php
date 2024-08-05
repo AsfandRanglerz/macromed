@@ -246,14 +246,14 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/currency/delete/{id}',  'deleteCurrency')->name('currency.delete');
     });
 
-       // ############## Private Notes ############
-       Route::controller(PivateNoteController::class)->group(function () {
-        Route::get('/privateNotes',  'privateNotesIndex')->name('privateNotes.index');
-        Route::post('/privateNotes-create',  'privateNotesCreate')->name('privateNotes.create');
-        Route::get('/privateNotesData',  'privateNotesData')->name('privateNotes.get');
-        Route::get('/privateNotes/{id}',  'showPrivateNotes')->name('privateNotes.show');
-        Route::post('/privateNotesUpdate/{id}',  'updatePrivateNotes')->name('privateNotes.update');
-        Route::get('/privateNotes/delete/{id}',  'deletePrivateNotes')->name('privateNotes.delete');
+    // ############## Private Notes ############
+    Route::controller(PivateNoteController::class)->group(function () {
+        Route::get('/privateNotes',  'privateNotesIndex')->name('privateNotes.index')->middleware('permission:Private Notes');
+        Route::post('/privateNotes-create',  'privateNotesCreate')->name('privateNotes.create')->middleware('permission:Private Notes');
+        Route::get('/privateNotesData',  'privateNotesData')->name('privateNotes.get')->middleware('permission:Private Notes');
+        Route::get('/privateNotes/{id}',  'showPrivateNotes')->name('privateNotes.show')->middleware('permission:Private Notes');
+        Route::post('/privateNotesUpdate/{id}',  'updatePrivateNotes')->name('privateNotes.update')->middleware('permission:Private Notes');
+        Route::get('/privateNotes/delete/{id}',  'deletePrivateNotes')->name('privateNotes.delete')->middleware('permission:Private Notes');
     });
 });
 //################################ Sales Agent Routes #############################

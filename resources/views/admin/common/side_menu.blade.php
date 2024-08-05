@@ -267,12 +267,21 @@
             </li>
 
             {{-- Privates --}}
-            <li class="dropdown {{ request()->is('admin/privateNotes*') ? 'active' : '' }}">
-                <a href="{{ route('privateNotes.index') }}"
-                    class="nav-link {{ request()->is('admin/privateNotes*') ? 'text-white' : '' }}">
-                    <i data-feather="dollar-sign"></i><span>Private Notes</span>
-                </a>
-            </li>
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Private Notes'))
+                <li class="dropdown {{ request()->is('admin/privateNotes*') ? 'active' : '' }}">
+                    <a href="{{ route('privateNotes.index') }}"
+                        class="nav-link {{ request()->is('admin/privateNotes*') ? 'text-white' : '' }}">
+                        <i data-feather="file"></i><span>Private Notes</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/privateNotes*') ? 'active' : '' }}">
+                    <a href="{{ route('privateNotes.index') }}"
+                        class="nav-link {{ request()->is('admin/privateNotes*') ? 'text-white' : '' }}">
+                        <i data-feather="file"></i><span>Private Notes</span>
+                    </a>
+                </li>
+            @endif
             {{-- About Us --}}
             {{-- <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
                 <a href="{{ route('about.index') }}" class="nav-link"><i data-feather="monitor"></i><span>About
