@@ -173,7 +173,7 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
+                            return '<button class="btn btn-success mr-2 text-white editSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
