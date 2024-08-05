@@ -112,7 +112,7 @@
     <script>
         function fetchNotifications() {
             $.ajax({
-                url: '{{ route('notifications.index') }}', // Adjust the URL as per your route setup
+                url: '{{ route('notifications.index') }}',
                 type: 'GET',
                 success: function(data) {
                     // Clear existing notifications
@@ -129,7 +129,7 @@
                         data.notifications.forEach(function(notification) {
                             const timeAgo = moment(notification.created_at).fromNow();
                             $('#notificationList').append(`
-                        <a href="#" class="dropdown-item ${notification.status ? '' : 'dropdown-item-unread'}" data-id="${notification.id}">
+                        <a href="#" id="notification-${notification.id}" class="dropdown-item ${notification.status ? '' : 'dropdown-item-unread'}" data-id="${notification.id}">
                             <span class="dropdown-item-avatar text-white">
                                 <img alt="image" src="{{ asset('public/admin/assets/images/admin-image.jpg') }}" class="rounded-circle">
                             </span>
@@ -144,27 +144,30 @@
                     }
 
                     // Attach click event to mark individual notification as read
-                    $('.dropdown-item').click(function(event) {
-                        event.preventDefault();
-                        var notificationId = $(this).data('id');
+                    data.notifications.forEach(function(notification) {
+                        $(`#notification-${notification.id}`).click(function(event) {
+                            event.preventDefault();
+                            var notificationId = $(this).data('id');
 
-                        $.ajax({
-                            url: `{{ route('notification.marked', ['notificationId' => ':notificationId']) }}`
-                                .replace(':notificationId', notificationId),
-                            type: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(data) {
-                                toastr.success(data.message);
-                                fetchNotifications
-                                    (); // Refresh notifications after marking one as read
-                            },
-                            error: function(xhr) {
-                                toastr.error(
-                                    'An error occurred while marking the notification as read.'
-                                );
-                            }
+                            $.ajax({
+                                url: `{{ route('notification.marked', ['notificationId' => ':notificationId']) }}`
+                                    .replace(':notificationId', notificationId),
+                                type: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                        'content')
+                                },
+                                success: function(data) {
+                                    toastr.success(data.message);
+                                    fetchNotifications
+                                (); // Refresh notifications after marking one as read
+                                },
+                                error: function(xhr) {
+                                    toastr.error(
+                                        'An error occurred while marking the notification as read.'
+                                        );
+                                }
+                            });
                         });
                     });
                 },
@@ -173,7 +176,6 @@
                 }
             });
         }
-
 
         // Initial fetch
         fetchNotifications();
