@@ -40,7 +40,7 @@
     <!-- Edit PrivateNotes Modal -->
     <div class="modal fade" id="editPrivateNotesModal" tabindex="-1" role="dialog"
         aria-labelledby="editPrivateNotesModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editPrivateNotesModalLabel">Edit Private Notes</h5>
