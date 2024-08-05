@@ -28,7 +28,7 @@
                     <!-- Notifications will be appended here -->
                 </div>
                 <div class="dropdown-footer text-center">
-                    <a href="#">View All <i class="fas fa-chevron-right"></i></a>
+                    <a href="{{route('notification.screen')}}">View All <i class="fas fa-chevron-right"></i></a>
                 </div>
             </div>
         </li>

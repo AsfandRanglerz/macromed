@@ -290,5 +290,6 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::get('/notifications',  'getNotifications')->name('notifications.index');
         Route::post('/notifcation-read', 'markAllAsRead')->name('notification.read');
         Route::post('/notifcation-read/{notificationId}', 'markAsRead')->name('notification.marked');
+        Route::get('/notifcations', 'notificationScreen')->name('notification.screen');
     });
 });

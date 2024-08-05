@@ -4,7 +4,7 @@ namespace App\Http\Controllers\SalesAgent;
 
 use App\Http\Controllers\Controller;
 use App\Models\SalesAgentNotification;
-use Illuminate\Http\Request;
+
 
 class SalesAgentNotificationController extends Controller
 {
@@ -31,5 +31,11 @@ class SalesAgentNotificationController extends Controller
             return response()->json(['message' => 'Notification marked as read']);
         }
         return response()->json(['message' => 'Notification not found'], 404);
+    }
+
+    public function notificationScreen()
+    {
+        $notificationScreens = SalesAgentNotification::where('sales_agent_id', auth()->guard('sales_agent')->id())->latest()->get();
+        return view('salesagent.notifcationscreen.index', compact('notificationScreens'));
     }
 }
