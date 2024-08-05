@@ -12,6 +12,28 @@
         </ul>
     </div>
     <ul class="navbar-nav navbar-right">
+        <li class="dropdown dropdown-list-toggle">
+            <a href="#" data-toggle="dropdown" class="nav-link nav-link-lg message-toggle">
+                <i data-feather="bell"></i>
+                <span class="badge headerBadge1" id="notificationCounter">0</span>
+            </a>
+            <div class="dropdown-menu dropdown-list dropdown-menu-right pullDown">
+                <div class="dropdown-header">
+                    Notifications
+                    <div class="float-right">
+                        <a href="#" id="markAllRead">Mark All As Read</a>
+                    </div>
+                </div>
+                <div class="dropdown-list-content dropdown-list-message" id="notificationList">
+                    <!-- Notifications will be appended here -->
+                </div>
+                <div class="dropdown-footer text-center">
+                    <a href="#">View All <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </li>
+
+
         <li class="dropdown"><a href="#" data-toggle="dropdown"
                 class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <img alt="image"

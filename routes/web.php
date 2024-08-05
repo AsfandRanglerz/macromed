@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
 use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
+use App\Http\Controllers\SalesAgent\SalesAgentNotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -282,5 +283,12 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::get('profile', 'getSalesAgentProfile');
         Route::post('update-profile', 'sales_agent_update_profile');
         Route::get('logout', 'salesAgentlogout');
+    });
+
+    // ############## Sales Agent Notification Controller ############
+    Route::controller(SalesAgentNotificationController::class)->group(function () {
+        Route::get('/notifications',  'getNotifications')->name('notifications.index');
+        Route::post('/notifcation-read', 'markAllAsRead')->name('notification.read');
+        Route::post('/notifcation-read/{notificationId}', 'markAsRead')->name('notification.marked');
     });
 });
