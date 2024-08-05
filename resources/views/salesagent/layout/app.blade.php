@@ -112,7 +112,7 @@
     <script>
         function fetchNotifications() {
             $.ajax({
-                url: '{{ route('notifications.index') }}',
+                url: '{{ route('notifications.index') }}', // Adjust the URL as per your route setup
                 type: 'GET',
                 success: function(data) {
                     // Clear existing notifications
@@ -128,14 +128,18 @@
                         // Append new notifications
                         data.notifications.forEach(function(notification) {
                             const timeAgo = moment(notification.created_at).fromNow();
+
+                            // Truncate message to 15 words
+                            const truncatedMessage = notification.message.split(' ').slice(0, 3).join(
+                                ' ') + (notification.message.split(' ').length > 15 ? '...' : '');
                             $('#notificationList').append(`
-                        <a href="#" id="notification-${notification.id}" class="dropdown-item ${notification.status ? '' : 'dropdown-item-unread'}" data-id="${notification.id}">
+                        <a href="#" class="dropdown-item ${notification.status ? '' : 'dropdown-item-unread'}" data-id="${notification.id}">
                             <span class="dropdown-item-avatar text-white">
                                 <img alt="image" src="{{ asset('public/admin/assets/images/admin-image.jpg') }}" class="rounded-circle">
                             </span>
                             <span class="dropdown-item-desc">
                                 <span class="message-user">Admin</span>
-                                <span class="time messege-text">${notification.message}</span>
+                                <span class="time messege-text">${truncatedMessage}</span>
                                 <span class="time">${timeAgo}</span>
                             </span>
                         </a>
@@ -144,30 +148,27 @@
                     }
 
                     // Attach click event to mark individual notification as read
-                    data.notifications.forEach(function(notification) {
-                        $(`#notification-${notification.id}`).click(function(event) {
-                            event.preventDefault();
-                            var notificationId = $(this).data('id');
+                    $('.dropdown-item').click(function(event) {
+                        event.preventDefault();
+                        var notificationId = $(this).data('id');
 
-                            $.ajax({
-                                url: `{{ route('notification.marked', ['notificationId' => ':notificationId']) }}`
-                                    .replace(':notificationId', notificationId),
-                                type: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                                        'content')
-                                },
-                                success: function(data) {
-                                    toastr.success(data.message);
-                                    fetchNotifications
-                                (); // Refresh notifications after marking one as read
-                                },
-                                error: function(xhr) {
-                                    toastr.error(
-                                        'An error occurred while marking the notification as read.'
-                                        );
-                                }
-                            });
+                        $.ajax({
+                            url: `{{ route('notification.marked', ['notificationId' => ':notificationId']) }}`
+                                .replace(':notificationId', notificationId),
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(data) {
+                                toastr.success(data.message);
+                                fetchNotifications
+                                    (); // Refresh notifications after marking one as read
+                            },
+                            error: function(xhr) {
+                                toastr.error(
+                                    'An error occurred while marking the notification as read.'
+                                );
+                            }
                         });
                     });
                 },
@@ -176,6 +177,7 @@
                 }
             });
         }
+
 
         // Initial fetch
         fetchNotifications();
