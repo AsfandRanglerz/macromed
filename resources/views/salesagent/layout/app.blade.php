@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <title>Sales Agent Dashboard</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/app.min.css') }}">
     <!-- Template CSS -->
@@ -21,7 +22,6 @@
     <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/datatables/datatables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/select2/dist/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/jquery-selectric/selectric.css') }}">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="{{ asset('public/admin/assets/bundles/lightgallery/dist/css/lightgallery.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('public/admin/toastr/toastr.css') }}">
 
@@ -149,7 +149,7 @@
     <script src="{{ asset('public/admin/toastr/toastr.js') }}"></script>
     {{-- DataTbales --}}
     <script src="{{ asset('public/admin/assets/bundles/datatables/datatables.min.js') }}"></script>
-    <script src="{{ asset('publicadmin/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}">
+    <script src="{{ asset('public/admin/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}">
     </script>
     <script src="{{ asset('public/admin/assets/bundles/jquery-ui/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('public/admin/assets/js/page/datatables.js') }}"></script>

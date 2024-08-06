@@ -12,6 +12,13 @@
                 <a href="{{ url('/sales-agent/dashboard') }}" class="nav-link"><i
                         data-feather="home"></i><span>Dashboard</span></a>
             </li>
+            {{-- Private Notes --}}
+            <li class="dropdown {{ request()->is('sales-agent/agentNotes*') ? 'active' : '' }}">
+                <a href="{{ route('agentNotes.index') }}"
+                    class="nav-link {{ request()->is('sales-agent/agentNotes*') ? 'text-white' : '' }}">
+                    <i data-feather="file"></i><span>Private Notes</span>
+                </a>
+            </li>
             {{-- <li class="dropdown {{ request()->is('admin/company*') ? 'active' : '' }}">
                 <a href="{{ route('company.index') }}" class="nav-link"><i data-feather="users"></i><span>Company</span></a>
             </li>
