@@ -71,7 +71,7 @@
                                 <div class="form-group">
                                     <label for="confirmpassword">User Type</label>
                                     <select name="user_type" class="form-control" id="user_type">
-                                        <option value="">Select User Type</option>
+                                        <option value="" selected disabled>Select User Type</option>
                                         <option value="subadmin">Sub Admin</option>
                                         <option value="customer">Customer</option>
                                         <option value="salesmanager">Sales Manager</option>
@@ -148,7 +148,7 @@
                                 <div class="form-group">
                                     <label for="confirmpassword">User Type</label>
                                     <select name="user_type" class="form-control user_type">
-                                        <option value="">Select User Type</option>
+                                        <option value="" selected disabled>Select User Type</option>
                                         <option value="subadmin">Sub Admin</option>
                                         <option value="customer">Customer</option>
                                         <option value="salesmanager">Sales Manager</option>

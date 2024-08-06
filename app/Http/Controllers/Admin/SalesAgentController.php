@@ -51,7 +51,8 @@ class SalesAgentController extends Controller
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-            $data = $request->only(['name', 'email', 'phone', 'user_type', 'status']);
+            $data = $request->only(['name', 'email', 'phone', 'status']);
+            $data['user_type'] = 'salesmanager';
             $data['password'] = bcrypt($request->input('password'));
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
