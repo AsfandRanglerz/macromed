@@ -60,11 +60,15 @@
             border-left: 5px solid #007bff;
         }
 
-        .no-notifications {
+        #no-notifications {
             text-align: center;
-            color: #888;
-            font-size: 16px;
-            padding: 20px;
+            color: #dc3545;
+            font-size: 1.2em;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #dc3545;
+            border-radius: 5px;
+            background-color: #f8d7da;
         }
     </style>
 
@@ -99,7 +103,7 @@
                                             </span>
                                         </div>
                                     @empty
-                                        <p class="no-notifications">No notifications!</p>
+                                        <p id="no-notifications">No notifications!</p>
                                     @endforelse
                                 </div>
                             </div>
