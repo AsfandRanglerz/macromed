@@ -30,21 +30,19 @@
 </head>
 <style>
     .notification-list {
-        padding: 10px;
+        padding: 5px;
     }
 
     #notification-list {
         max-height: 500px;
-        /* Adjust the height as needed */
         overflow-y: auto;
         padding: 10px;
     }
-
     .notification-item {
         display: flex;
         align-items: center;
-        padding: 15px;
-        margin-bottom: 12px;
+        padding: 10px;
+        margin-bottom: 10px;
         border-radius: 10px;
         transition: background-color 0.3s ease, transform 0.2s ease;
         text-decoration: none;
@@ -104,14 +102,12 @@
         background-color: #f8d7da;
     }
 
-    .loader {
+    .notification-loader {
         border: 16px solid #f3f3f3;
-        /* Light grey */
         border-top: 16px solid #3498db;
-        /* Blue */
         border-radius: 50%;
-        width: 100px;
-        height: 100px;
+        width: 50px;
+        height: 50px;
         animation: spin 2s linear infinite;
         display: block;
         margin: 20px auto;
@@ -192,11 +188,12 @@
     </script>
     <script>
         function fetchNotifications() {
+
             $.ajax({
                 url: '{{ route('notifications.index') }}', // Adjust the URL as per your route setup
                 type: 'GET',
                 success: function(data) {
-                    $('.loader').hide();
+                    $('.notification-loader').hide();
                     // Clear existing notifications
                     $('#notificationList').empty();
 
@@ -255,7 +252,7 @@
                     });
                 },
                 error: function(xhr) {
-                    $('.loader').hide();
+                    $('.notification-loader').hide();
                     console.error('An error occurred while fetching notifications.');
                 }
             });
