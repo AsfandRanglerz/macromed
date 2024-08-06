@@ -93,7 +93,7 @@ class SubAdminController extends Controller
         }
         try {
             $subadmin = User::findOrFail($id);
-            $subadmin->fill($request->only(['name', 'email', 'phone', 'user_type', 'status']));
+            $subadmin->fill($request->only(['name', 'email', 'phone', 'status']));
 
             if ($request->hasFile('image')) {
                 // Delete old image if exists
