@@ -33,6 +33,13 @@
         padding: 10px;
     }
 
+    #notification-list {
+        max-height: 500px;
+        /* Adjust the height as needed */
+        overflow-y: auto;
+        padding: 10px;
+    }
+
     .notification-item {
         display: flex;
         align-items: center;
@@ -41,8 +48,8 @@
         border-radius: 10px;
         transition: background-color 0.3s ease, transform 0.2s ease;
         text-decoration: none;
-        color: #3333;
-        background-color: #f9f9f9;
+        color: #333;
+        background-color: #D3D3D3;
     }
 
     .notification-item:hover {
@@ -95,6 +102,29 @@
         border: 1px solid #dc3545;
         border-radius: 5px;
         background-color: #f8d7da;
+    }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        /* Light grey */
+        border-top: 16px solid #3498db;
+        /* Blue */
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        animation: spin 2s linear infinite;
+        display: block;
+        margin: 20px auto;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
     }
 </style>
 
@@ -166,6 +196,7 @@
                 url: '{{ route('notifications.index') }}', // Adjust the URL as per your route setup
                 type: 'GET',
                 success: function(data) {
+                    $('.loader').hide();
                     // Clear existing notifications
                     $('#notificationList').empty();
 
@@ -224,21 +255,15 @@
                     });
                 },
                 error: function(xhr) {
+                    $('.loader').hide();
                     console.error('An error occurred while fetching notifications.');
                 }
             });
         }
-
-
-
         // Initial fetch
         fetchNotifications();
-
         // Periodically fetch notifications every 30 seconds
         setInterval(fetchNotifications, 1000);
-
-
-
 
         $('.markAllRead').click(function(event) {
             event.preventDefault();

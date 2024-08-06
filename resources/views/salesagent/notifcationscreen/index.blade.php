@@ -18,26 +18,9 @@
                             </div>
                             <div class="container mt-2">
                                 <div id="notification-list">
-                                    @forelse ($notificationScreens as $notificationScreen)
-                                        <div
-                                            class="notification-item {{ $notificationScreen->status ? '' : 'notification-item-unread' }}">
-                                            <span class="notification-avatar">
-                                                <img alt="image"
-                                                    src="{{ asset('public/admin/assets/images/admin-image.jpg') }}"
-                                                    class="rounded-circle">
-                                            </span>
-                                            <span class="notification-desc">
-                                                <span class="notification-user">Admin</span>
-                                                <span class="notification-text">{!! $notificationScreen->message !!}</span>
-                                                <span class="notification-time">
-                                                    {{ \Carbon\Carbon::parse($notificationScreen->created_at)->diffForHumans() }}
-                                                </span>
-                                            </span>
-                                        </div>
-                                    @empty
-                                        <p id="no-notifications">No notifications!</p>
-                                    @endforelse
+
                                 </div>
+                                <div id="loader" class="loader" style="display: none;"></div>
                             </div>
                         </div>
                     </div>
@@ -47,4 +30,51 @@
     </div>
 @endsection
 @section('js')
+    <script>
+        function fetchNotification() {
+            $.ajax({
+                url: '{{ route('notifications.index') }}', // Adjust the URL as per your route setup
+                type: 'GET',
+                success: function(data) {
+                    $('.loader').hide();
+                    // Clear existing notifications
+                    $('#notification-list').empty();
+
+                    // Check if there are no notifications
+                    if (data.notifications.length === 0) {
+                        $('#notification-list').append('<p id="no-notifications">No notifications!</p>');
+                    } else {
+                        // Append new notifications
+                        data.notifications.forEach(function(notification) {
+                            const timeAgo = moment(notification.created_at).fromNow();
+
+                            $('#notification-list').append(`
+                        <div class="notification-item ${notification.status ? '1' : 'notification-item-unread'}">
+                            <span class="notification-avatar">
+                                <img alt="image" src="{{ asset('public/admin/assets/images/admin-image.jpg') }}" class="rounded-circle">
+                            </span>
+                            <span class="notification-desc">
+                                <span class="notification-user">Admin</span>
+                                <span class="notification-text">${notification.message}</span>
+                                <span class="notification-time">${timeAgo}</span>
+                            </span>
+                        </div>
+                    `);
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    $('.loader').hide();
+                    console.log('An error occurred while fetching notifications.');
+                }
+
+
+            });
+
+        }
+        fetchNotification();
+
+        // Periodically fetch notifications every 30 seconds
+        setInterval(fetchNotification, 1000);
+    </script>
 @endsection

@@ -27,6 +27,7 @@
                 <div class="dropdown-list-content dropdown-list-message notification-list" id="notificationList">
                     <!-- Notifications will be appended here -->
                 </div>
+                <div id="loader" class="loader" style="display: none;"></div>
                 <div class="dropdown-footer text-center">
                     <a href="{{ route('notification.screen') }}">View All <i class="fas fa-chevron-right"></i></a>
                 </div>
