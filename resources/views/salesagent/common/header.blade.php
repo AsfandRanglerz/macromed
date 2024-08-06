@@ -21,14 +21,14 @@
                 <div class="dropdown-header">
                     Notifications
                     <div class="float-right">
-                        <a href="#" id="markAllRead">Mark All As Read</a>
+                        <a href="#" id="markAllRead" class="markAllRead">Mark All As Read</a>
                     </div>
                 </div>
-                <div class="dropdown-list-content dropdown-list-message" id="notificationList">
+                <div class="dropdown-list-content dropdown-list-message notification-list" id="notificationList">
                     <!-- Notifications will be appended here -->
                 </div>
                 <div class="dropdown-footer text-center">
-                    <a href="{{route('notification.screen')}}">View All <i class="fas fa-chevron-right"></i></a>
+                    <a href="{{ route('notification.screen') }}">View All <i class="fas fa-chevron-right"></i></a>
                 </div>
             </div>
         </li>

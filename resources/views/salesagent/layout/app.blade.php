@@ -29,21 +29,72 @@
 
 </head>
 <style>
-    .no-notifications {
-        text-align: center;
-        /* Center-align the text */
-        color: #dc3545;
-        /* Bootstrap's danger color for red */
-        font-size: 1.2em;
-        /* Slightly larger font size */
+    .notification-list {
         padding: 10px;
-        /* Add some padding */
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        text-decoration: none;
+        color: #3333;
+        background-color: #f9f9f9;
+    }
+
+    .notification-item:hover {
+        background-color: #e2e2e2;
+        transform: translateX(5px);
+    }
+
+    .notification-avatar {
+        margin-right: 15px;
+    }
+
+    .notification-avatar img {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+    }
+
+    .notification-desc {
+        flex-grow: 1;
+    }
+
+    .notification-user {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .notification-text {
+        font-size: 15px;
+        color: #333;
+        white-space: wrap;
+        display: block;
+    }
+
+    .notification-time {
+        font-size: 13px;
+        color: #888;
+    }
+
+    .notification-item-unread {
+        background-color: #eaf0f7;
+        border-left: 5px solid #007bff;
+    }
+
+    #no-notifications {
+        text-align: center;
+        color: #dc3545;
+        font-size: 1.2em;
+        padding: 10px;
         margin-top: 10px;
-        /* Add margin on top */
-        /* border: 1px solid #dc3545; */
+        border: 1px solid #dc3545;
         border-radius: 5px;
-        /* Optional rounded corners */
-        /* background-color: #f8d7da;  */
+        background-color: #f8d7da;
     }
 </style>
 
@@ -123,32 +174,32 @@
 
                     // Check if there are no notifications
                     if (data.notifications.length === 0) {
-                        $('#notificationList').append('<p class="no-notifications">No notifications!</p>');
+                        $('#notificationList').append('<p id="no-notifications">No notifications!</p>');
                     } else {
                         // Append new notifications
                         data.notifications.forEach(function(notification) {
                             const timeAgo = moment(notification.created_at).fromNow();
 
                             // Truncate message to 15 words
-                            const truncatedMessage = notification.message.split(' ').slice(0, 3).join(
+                            const truncatedMessage = notification.message.split(' ').slice(0, 5).join(
                                 ' ') + (notification.message.split(' ').length > 15 ? '...' : '');
                             $('#notificationList').append(`
-                        <a href="#" class="dropdown-item ${notification.status ? '' : 'dropdown-item-unread'}" data-id="${notification.id}">
-                            <span class="dropdown-item-avatar text-white">
+                        <div id="drop-item-${notification.id}" class="notify-item notification-item ${notification.status ? '' : 'notification-item-unread'}" data-id="${notification.id}">
+                            <span class="notification-avatar text-white">
                                 <img alt="image" src="{{ asset('public/admin/assets/images/admin-image.jpg') }}" class="rounded-circle">
                             </span>
-                            <span class="dropdown-item-desc">
-                                <span class="message-user">Admin</span>
-                                <span class="time messege-text">${truncatedMessage}</span>
-                                <span class="time">${timeAgo}</span>
+                            <span class="notification-desc">
+                                <span class="notification-user">Admin</span>
+                                <span class="notification-text">${truncatedMessage}</span>
+                                <span class="notification-time">${timeAgo}</span>
                             </span>
-                        </a>
+                        </div>
                     `);
                         });
                     }
 
                     // Attach click event to mark individual notification as read
-                    $('.dropdown-item').click(function(event) {
+                    $('.notify-item').click(function(event) {
                         event.preventDefault();
                         var notificationId = $(this).data('id');
 
@@ -179,6 +230,7 @@
         }
 
 
+
         // Initial fetch
         fetchNotifications();
 
@@ -188,7 +240,7 @@
 
 
 
-        $('#markAllRead').click(function(event) {
+        $('.markAllRead').click(function(event) {
             event.preventDefault();
 
             $.ajax({
