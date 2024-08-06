@@ -100,14 +100,14 @@
         <section class="section">
             <div class="section-body">
                 <div class="row">
-                    <div class="col-12 col-md-12 col-lg-12">
+                    <div class="col-6 col-md-6 col-lg-6">
                         <div class="card">
                             <div class="card-header">
                                 <div class="col-12">
                                     <h4>Notification</h4>
                                 </div>
                             </div>
-                            <div class="card-body table-responsive">
+                            <div class="card-body table-responsive text-center">
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createAdminNotificationModal">
                                     Create Notification
