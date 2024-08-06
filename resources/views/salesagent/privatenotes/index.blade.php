@@ -338,7 +338,7 @@
                 url: "{{ route('agentNotes.delete', ['id' => ':id']) }}".replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    toastr.success('PrivateNotes Deleted Successfully!');
+                    toastr.success('Private Notes Deleted Successfully!');
                     $('#deletePrivateNotesModal').modal('hide');
                     reloadDataTable();
                 },
