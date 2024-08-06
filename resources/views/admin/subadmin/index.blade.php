@@ -403,7 +403,7 @@
                     toastr.success('Sub Admin Created Successfully!');
                     $('#createSubadminModal').modal('hide');
                     reloadDataTable();
-                    $('#createSubadminForm').reset();
+                    $('#createSubadminForm')[0].reset();
                 },
                 error: function(xhr, status, error) {
                     console.log("data", xhr);
