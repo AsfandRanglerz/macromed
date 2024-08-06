@@ -49,7 +49,8 @@
                         // Append new notifications
                         data.notifications.forEach(function(notification) {
                             const timeAgo = moment(notification.created_at).fromNow();
-                            const unreadClass = notification.status ? '' : 'notification-item-unread';
+                            const unreadClass = notification.status === '1' ? '' :
+                                'notification-item-unread';
                             $('#notification-list').append(`
                         <div class="notification-item ${unreadClass}">
                             <span class="notification-avatar">
@@ -75,8 +76,6 @@
 
         }
         fetchNotification();
-
-        // Periodically fetch notifications every 30 seconds
         setInterval(fetchNotification, 1000);
     </script>
 @endsection

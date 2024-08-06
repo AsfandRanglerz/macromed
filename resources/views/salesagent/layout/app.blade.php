@@ -38,6 +38,7 @@
         overflow-y: auto;
         padding: 10px;
     }
+
     .notification-item {
         display: flex;
         align-items: center;
@@ -212,7 +213,7 @@
                             const truncatedMessage = notification.message.split(' ').slice(0, 5).join(
                                 ' ') + (notification.message.split(' ').length > 15 ? '...' : '');
                             $('#notificationList').append(`
-                        <div id="drop-item-${notification.id}" class="notify-item notification-item ${notification.status ? '' : 'notification-item-unread'}" data-id="${notification.id}">
+                        <div id="drop-item-${notification.id}" class="notify-item notification-item ${notification.status ==='1' ? '' : 'notification-item-unread'}" data-id="${notification.id}">
                             <span class="notification-avatar text-white">
                                 <img alt="image" src="{{ asset('public/admin/assets/images/admin-image.jpg') }}" class="rounded-circle">
                             </span>
