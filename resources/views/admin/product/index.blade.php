@@ -694,7 +694,7 @@
                 type: 'GET',
                 success: function(response) {
                     if (response.status != "1") {
-                        toastr.warning('This product is inactive. You cannot edit the product.');
+                        toastr.error('This product is inactive. You cannot edit the product.');
                         return;
                     }
                     var imageUrl = response.thumbnail_image;

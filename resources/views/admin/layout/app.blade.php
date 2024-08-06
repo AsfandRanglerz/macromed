@@ -28,7 +28,19 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
 
 </head>
-
+<style>
+     .inactive-product {
+        text-align: center;
+        color: #dc3545;
+        font-size: 1.2em;
+        padding: 20px;
+        margin-top: 10px;
+        border: 1px solid #dc3545;
+        border-radius: 5px;
+        background-color: #f8d7da;
+        margin-top:10rem
+    }
+</style>
 <body>
     <div class="loader"></div>
 

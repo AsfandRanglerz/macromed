@@ -108,9 +108,10 @@
                             </div>
                         </div>
                     @else
-                        <div class="alert alert-danger text-center mt-5" role="alert">
-                            <h4 class="alert-heading text-white">Warning!</h4>
-                            <p class="text-white">This product is not active. You cannot add images to it.</p>
+                        <div class="inactive-product">
+                            <h4 class="alert-heading text-danger">Warning!</h4>
+                            <p class="text-danger">This product is not active. You cannot add & view product images to it.
+                            </p>
                         </div>
                 @endif
 

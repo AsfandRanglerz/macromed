@@ -131,13 +131,12 @@
                                             </div>
                                         </div>
                                     </form>
-
                                 </div>
                             </div>
                         @else
-                            <div class="alert alert-danger alert-dismissible fade show text-center mt-5" role="alert">
-                                <h4 class="alert-heading text-white">Warning!</h4>
-                                <p class="text-white">This product is not active. You cannot add product variants to it.</p>
+                            <div class="inactive-product">
+                                <h4 class="alert-heading text-danger">Warning!</h4>
+                                <p class="text-danger">This product is not active. You cannot add product variants to it.</p>
                             </div>
                         @endif
                     </div>
