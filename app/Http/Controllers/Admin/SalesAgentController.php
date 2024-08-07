@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
+use App\Mail\SalesAgentRegistration;
 use App\Models\AgentWallet;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -157,10 +158,14 @@ class SalesAgentController extends Controller
                 $wallet->remaning_commission_amount = 0;
                 $wallet->total_commission_amount = 0;
                 $wallet->save();
+                //######### Send Mail  ###########
                 $data['subadminname'] = $salesManager->name;
                 $data['subadminemail'] = $salesManager->email;
                 $data['password'] = $request->password;
-                Mail::to($salesManager->email)->send(new subAdminRegistration($data));
+                $data['account_name'] = $salesManager->name;
+                $data['account_holder_name'] = $salesManager->email;
+                $data['account_number'] = $request->password;
+                Mail::to($salesManager->email)->send(new SalesAgentRegistration($data));
                 return response()->json(['alert' => 'success', 'message' => 'Sales Managers Created Successfully!']);
             }
             return response()->json(['alert' => 'error', 'message' => 'Sales Managers Not Created!']);
