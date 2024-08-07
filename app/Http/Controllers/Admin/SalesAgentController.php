@@ -11,7 +11,6 @@ use App\Models\UserAccount;
 use App\Models\AgentAccount;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
 use App\Mail\SalesAgentRegistration;
 use App\Models\AgentWallet;
@@ -104,7 +103,7 @@ class SalesAgentController extends Controller
     }
     public function salesagentProfile($id)
     {
-        $salesManager= SalesAgent::findOrFail($id);
+        $salesManager = SalesAgent::findOrFail($id);
         return view('admin.salesagent.profile', compact('salesManager'));
     }
     public function salesagentCreate(Request $request)
