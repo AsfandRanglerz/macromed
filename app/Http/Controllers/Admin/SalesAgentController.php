@@ -102,11 +102,11 @@ class SalesAgentController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-    // public function Sales ManagersProfile($id)
-    // {
-    //     $salesManager = User::findOrFail($id);
-    //     return view('admin.Sales Managers.Sales Managersprofile', compact('Sales Managers'));
-    // }
+    public function salesagentProfile($id)
+    {
+        $salesManager= SalesAgent::findOrFail($id);
+        return view('admin.salesagent.profile', compact('salesManager'));
+    }
     public function salesagentCreate(Request $request)
     {
         try {
