@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Exception;
 use App\Models\User;
 use App\Mail\userBlocked;
+use App\Models\SalesAgent;
 use App\Mail\userUnBlocked;
+use App\Models\UserAccount;
+use App\Models\AgentAccount;
 use Illuminate\Http\Request;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
-use App\Models\AgentAccount;
-use App\Models\SalesAgent;
-use App\Models\UserAccount;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,8 +25,79 @@ class SalesAgentController extends Controller
     }
     public function salesagentIndex()
     {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => array(
+                'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $countries = json_decode($response);
+
+        // Decode the JSON response
+        if ($countries == NULL) {
+            $countries = [];
+        }
         $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('agentAccounts')->latest()->get();
-        return view('admin.salesagent.index', compact('salesManagers'));
+        return view('admin.salesagent.index', compact('salesManagers', 'countries'));
+    }
+    public function fetchStates(Request $request)
+    {
+        $countryCode = $request->input('country_code');
+
+        try {
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries/' . $countryCode . '/states',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => array(
+                    'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+                ),
+            ));
+            $response = curl_exec($curl);
+
+            if ($response === false) {
+                throw new Exception('Error occurred while fetching states: ' . curl_error($curl));
+            }
+
+            curl_close($curl);
+            $states = json_decode($response);
+
+            return response()->json($states);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function fetchCities(Request $request)
+    {
+        $stateCode = $request->input('state_code');
+        $countryCode = $request->input('country_code');
+        try {
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries/' . $countryCode . '/states/' . $stateCode . '/cities',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => array(
+                    'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+                ),
+            ));
+            $response = curl_exec($curl);
+
+            if ($response === false) {
+                throw new Exception('Error occurred while fetching cities: ' . curl_error($curl));
+            }
+
+            curl_close($curl);
+            $cities = json_decode($response);
+
+            return response()->json($cities);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
     // public function Sales ManagersProfile($id)
     // {
@@ -41,8 +113,11 @@ class SalesAgentController extends Controller
                 'account_number' => 'required|numeric|unique:user_accounts|min:16',
                 'password' => 'required|string|min:8|max:255',
                 'phone' => 'required|unique:sales_agents|min:11',
+                'country' => 'required',
+                'state' => 'required',
+                'city' => 'required',
+                'location' => 'required',
                 'confirmpassword' => 'required|same:password',
-                'user_type' => 'required|string',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
                 'account_name' => 'required|string|max:255',
                 'account_holder_name' => 'required|string|max:255'
@@ -51,7 +126,7 @@ class SalesAgentController extends Controller
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-            $data = $request->only(['name', 'email', 'phone', 'status']);
+            $data = $request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location']);
             $data['user_type'] = 'salesmanager';
             $data['password'] = bcrypt($request->input('password'));
             if ($request->hasFile('image')) {

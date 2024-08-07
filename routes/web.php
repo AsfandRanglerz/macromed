@@ -87,6 +87,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/salesagent/delete/{id}',  'deletesalesagent')->name('salesagent.delete')->middleware('permission:Sales Managers');
         Route::post('/update-salesagent-status/{id}',  'updateAgentBlockStatus')->name('agentBlock.update')->middleware('permission:Sales Managers');
         Route::get('/salesagent-profile/{id}',  'salesagentProfile')->name('salesagent.profile')->middleware('permission:Sales Managers');
+        Route::get('/fetch-states', 'fetchStates')->name('fetchStates');
+        Route::get('/fetch-cities', 'fetchCities')->name('fetchCities');
     });
     // ############## Category ############
     Route::controller(CategoryController::class)->group(function () {

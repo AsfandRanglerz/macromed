@@ -67,18 +67,46 @@
                             </div>
                         </div>
                         <div class="row">
-                            {{-- <div class="col-md-6">
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <select name="country" class="form-control select2" id="country" style="width: 100%">
+                                    <option value="">Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
+                                            {{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($countries == null)
+                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
+                                @endif
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="state">State</label>
+                                <select class="form-control select2" id="state" name="state" style="width: 100%"
+                                    required>
+                                    <option value="" selected disabled>Select State</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="city">City</label>
+                                <select class="form-control select2" id="city" name="city" style="width: 100%"
+                                    required>
+                                    <option value="" selected disabled>Select City</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="confirmpassword">User Type</label>
-                                    <select name="user_type" class="form-control" id="user_type">
-                                        <option value="" selected disabled>Select User Type</option>
-                                        <option value="subadmin">Sub Admins</option>
-                                        <option value="customer">Customer</option>
-                                        <option value="salesmanager">Sales Manager</option>
-                                    </select>
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control" id="location" name="location">
                                     <div class="invalid-feedback"></div>
                                 </div>
-                            </div> --}}
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
@@ -87,6 +115,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <h4>Add Accounts Information:</h4>
                         <div class="row">
                             <div class="col-md-4">
@@ -168,18 +197,18 @@
                             </div>
                         </div>
                         <div class="row">
-                            {{-- <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirmpassword">User Type</label>
-                                    <select name="user_type" class="form-control user_type">
-                                        <option value="" selected disabled>Select User Type</option>
-                                        <option value="subadmin">Sub Admin</option>
-                                        <option value="customer">Customer</option>
-                                        <option value="salesmanager">Sales Manager</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div> --}}
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <select name="country" class="form-control select2" id="country">
+                                    <option value="">Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($countries == null)
+                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
+                                @endif
+                            </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
@@ -401,7 +430,7 @@
                     toastr.success('Sales Manager Created Successfully!');
                     $('#createSalesAgentModal').modal('hide');
                     reloadDataTable();
-                    $('#createSalesAgentForm').reset();
+                    $('#createSalesAgentForm')[0].reset();
                 },
                 error: function(xhr, status, error) {
                     console.log("data", xhr);
@@ -433,7 +462,7 @@
                 url: salesAgentShowRoute.replace(':id', salesAgentId),
                 type: 'GET',
                 success: function(response) {
-                    console.log("data",response);
+                    console.log("data", response);
                     $('#editSalesAgentForm .name').val(response.name);
                     $('#editSalesAgentForm .email').val(response.email);
                     $('#editSalesAgentForm .phone').val(response.phone);
@@ -536,7 +565,6 @@
         $(document).ready(function() {
             var userId;
             var button;
-
             $('.table').on('click', '#update-status', function() {
                 button = $(this);
                 userId = button.data('userid');
@@ -597,5 +625,59 @@
                 });
             }
         });
+        $('#country').change(function() {
+            let countryCode = $(this).val();
+            let arr = countryCode.split(',');
+            $('#city').val(null).empty();
+            $('#state').val(null).empty();
+            $.ajax({
+                url: '{{ route('fetchStates') }}',
+                type: 'GET',
+                data: {
+                    country_code: arr[0]
+                },
+                success: function(data) {
+                    var stateSelect = $('#state');
+                    stateSelect.empty();
+                    stateSelect.append('<option value="">Select State</option>');
+                    data.forEach(function(state) {
+                        stateSelect.append('<option value="' + state.iso2 + "," + state.name +
+                            '">' +
+                            state.name + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    // Handle error here
+                }
+            });
+        });
+        $('#state').change(function() {
+            let stateCode = $(this).val();
+            let arr1 = stateCode.split(',');
+            let countryCode = $('#country').val();
+            let arr2 = countryCode.split(',');
+            $.ajax({
+                url: '{{ route('fetchCities') }}',
+                type: 'GET',
+                data: {
+                    state_code: arr1[0],
+                    country_code: arr2[0]
+                },
+                success: function(data) {
+                    var citySelect = $('#city');
+                    citySelect.empty();
+                    citySelect.append('<option value="">Select City</option>');
+                    data.forEach(function(city) {
+                        citySelect.append('<option value="' + city.name + '">' +
+                            city.name + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
     </script>
+
 @endsection
