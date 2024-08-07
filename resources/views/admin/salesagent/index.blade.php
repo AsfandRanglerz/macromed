@@ -70,7 +70,7 @@
                             <div class="form-group col-md-6">
                                 <label>Country</label>
                                 <select name="country" class="form-control select2" id="country" style="width: 100%">
-                                    <option value="">Select Country</option>
+                                    <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
                                             {{ $country->name }}</option>
@@ -199,16 +199,45 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Country</label>
-                                <select name="country" class="form-control select2" id="country">
-                                    <option value="">Select Country</option>
+                                <select name="country" class="form-control select2 country" id="country"
+                                    style="width: 100%">
+                                    <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
-                                        <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
+                                            {{ $country->name }}</option>
                                     @endforeach
                                 </select>
                                 @if ($countries == null)
                                     <div class="internet-error text-danger">No Internet Connection Found!</div>
                                 @endif
                             </div>
+                            <div class="form-group col-md-6">
+                                <label for="state">State</label>
+                                <select class="form-control select2 state" id="state" name="state"
+                                    style="width: 100%" required>
+                                    <option value="" selected disabled>Select State</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="city">City</label>
+                                <select class="form-control select2 city" id="city" name="city"
+                                    style="width: 100%" required>
+                                    <option value="" selected disabled>Select City</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control location" id="location" name="location">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
@@ -219,6 +248,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <h4>Update Accounts Information:</h4>
                         <div class="row">
                             <div class="col-md-4">
@@ -467,7 +497,7 @@
                     $('#editSalesAgentForm .email').val(response.email);
                     $('#editSalesAgentForm .phone').val(response.phone);
                     $('#editSalesAgentForm .status').val(response.status);
-                    $('#editSalesAgentForm .user_type').val(response.user_type);
+                    $('#editSalesAgentForm .location').val(response.location);
                     // Assuming response.image contains the URL of the existing image
                     var imageUrl = response.image;
                     var baseUrl = 'http://localhost/macromed/';
@@ -517,7 +547,7 @@
                     toastr.success('Sales Manager Updated Successfully!');
                     $('#editSalesAgentModal').modal('hide');
                     reloadDataTable();
-                    $('#editSalesAgentForm').reset();
+                    $('#editSalesAgentForm')[0].reset();
                 },
                 error: function(xhr, status, error) {
                     console.log("data", xhr);

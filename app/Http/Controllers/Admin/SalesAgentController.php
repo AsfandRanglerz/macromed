@@ -10,8 +10,10 @@ use App\Mail\userUnBlocked;
 use App\Models\UserAccount;
 use App\Models\AgentAccount;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
+use App\Models\AgentWallet;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -108,11 +110,16 @@ class SalesAgentController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('sales_agents')
+                ],
                 'email' => 'required|email|unique:sales_agents|max:255',
                 'account_number' => 'required|numeric|unique:user_accounts|min:16',
                 'password' => 'required|string|min:8|max:255',
-                'phone' => 'required|unique:sales_agents|min:11',
+                'phone' => 'required|numeric|unique:sales_agents|min:11',
                 'country' => 'required',
                 'state' => 'required',
                 'city' => 'required',
@@ -144,6 +151,12 @@ class SalesAgentController extends Controller
                 $account->account_holder_name = $request->account_holder_name;
                 $account->account_number = $request->account_number;
                 $account->save();
+                //######### Wallet  ###########
+                $wallet = new AgentWallet();
+                $wallet->agent_id = $salesManager->id;
+                $wallet->remaning_commission_amount = 0;
+                $wallet->total_commission_amount = 0;
+                $wallet->save();
                 $data['subadminname'] = $salesManager->name;
                 $data['subadminemail'] = $salesManager->email;
                 $data['password'] = $request->password;
@@ -166,9 +179,14 @@ class SalesAgentController extends Controller
     public function updateSalesAgent(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('sales_agents')->ignore($id)
+            ],
             'email' => 'required|email|max:255|unique:sales_agents,email,' . $id,
-            'phone' => 'required',
+            'phone' => 'required|numeric|min:11,' . $id,
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
             'account_number' => 'required|numeric|unique:user_accounts|min:16,' . $id,
             'account_name' => 'required|string|max:255',
@@ -180,12 +198,11 @@ class SalesAgentController extends Controller
         }
         try {
             $salesManager = SalesAgent::findOrFail($id);
-            $salesManager->fill($request->only(['name', 'email', 'phone', 'user_type', 'status']));
+            $salesManager->fill($request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location']));
 
             if ($request->hasFile('image')) {
                 // Delete old image if exists
                 $oldImagePath = public_path('admin/assets/images/users/' . $salesManager->image);
-
                 // Delete old image if it exists
                 if ($salesManager->image && file_exists($oldImagePath)) {
                     unlink($oldImagePath);
