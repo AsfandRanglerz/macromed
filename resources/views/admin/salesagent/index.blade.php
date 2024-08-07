@@ -199,7 +199,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Country</label>
-                                <select name="country" class="form-control select2 country" id="country"
+                                <select name="country" class="form-control select2 country"
                                     style="width: 100%">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
@@ -213,7 +213,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="state">State</label>
-                                <select class="form-control select2 state" id="state" name="state"
+                                <select class="form-control select2 state" name="state"
                                     style="width: 100%" required>
                                     <option value="" selected disabled>Select State</option>
                                 </select>
@@ -223,7 +223,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="city">City</label>
-                                <select class="form-control select2 city" id="city" name="city"
+                                <select class="form-control select2 city"  name="city"
                                     style="width: 100%" required>
                                     <option value="" selected disabled>Select City</option>
                                 </select>
@@ -486,40 +486,6 @@
         });
         // ######Get & Update Sales Manager#########
 
-        function openEditSalesAgentModal(salesAgentId) {
-            var salesAgentShowRoute = '{{ route('salesagent.show', ':id') }}';
-            $.ajax({
-                url: salesAgentShowRoute.replace(':id', salesAgentId),
-                type: 'GET',
-                success: function(response) {
-                    console.log("data", response);
-                    $('#editSalesAgentForm .name').val(response.name);
-                    $('#editSalesAgentForm .email').val(response.email);
-                    $('#editSalesAgentForm .phone').val(response.phone);
-                    $('#editSalesAgentForm .status').val(response.status);
-                    $('#editSalesAgentForm .location').val(response.location);
-                    // Assuming response.image contains the URL of the existing image
-                    var imageUrl = response.image;
-                    var baseUrl = 'http://localhost/macromed/';
-                    var responseImage = baseUrl + response.image;
-                    if (imageUrl) {
-                        $('#imagePreview').attr('src', responseImage).show();
-                    } else {
-                        $('#imagePreview').hide();
-                    }
-                    $('#editSalesAgentForm .account_number').val(response.agent_accounts.account_number);
-                    $('#editSalesAgentForm .account_name').val(response.agent_accounts.account_name);
-                    $('#editSalesAgentForm .account_holder_name').val(response.agent_accounts
-                        .account_holder_name);
-                    $('#editSalesAgentModal').modal('show');
-                    $('#editSalesAgentModal').data('salesAgentId', salesAgentId);
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.log(xhr.responseText);
-                }
-            });
-        }
         // #############Update SalesAgent#############
         $(document).ready(function() {
             $('#editSalesAgentForm input, #editSalesAgentForm select, #editSalesAgentForm textarea').on(
@@ -655,59 +621,226 @@
                 });
             }
         });
-        $('#country').change(function() {
-            let countryCode = $(this).val();
-            let arr = countryCode.split(',');
-            $('#city').val(null).empty();
-            $('#state').val(null).empty();
+        // ################### Get Dpended Country,State & City For Create Code ###################
+        $('#country').on('change', function() {
+        var country_code = $(this).val();
+        if (country_code) {
+            $.ajax({
+                url: '{{ route("fetchStates") }}',
+                type: 'POST',
+                data: {
+                    country_code: country_code,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(data) {
+                    $('#state').empty();
+                    $('#state').append('<option value="" selected disabled>Select State</option>');
+                    $.each(data, function(key, value) {
+                        $('#state').append('<option value="'+ value.iso2 +'">'+ value.name +'</option>');
+                    });
+                },
+                error: function(xhr) {
+                    var error = JSON.parse(xhr.responseText);
+                    alert(error.error);
+                }
+            });
+        } else {
+            $('#state').empty();
+            $('#state').append('<option value="" selected disabled>Select State</option>');
+        }
+    });
+
+    $('#state').on('change', function() {
+        var state_code = $(this).val();
+        var country_code = $('#country').val();
+        if (state_code) {
+            $.ajax({
+                url: '{{ route("fetchCities") }}',
+                type: 'POST',
+                data: {
+                    state_code: state_code,
+                    country_code: country_code,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(data) {
+                    $('#city').empty();
+                    $('#city').append('<option value="" selected disabled>Select City</option>');
+                    $.each(data, function(key, value) {
+                        $('#city').append('<option value="'+ value.name +'">'+ value.name +'</option>');
+                    });
+                },
+                error: function(xhr) {
+                    var error = JSON.parse(xhr.responseText);
+                    alert(error.error);
+                }
+            });
+        } else {
+            $('#city').empty();
+            $('#city').append('<option value="" selected disabled>Select City</option>');
+        }
+    });
+        // $('#country').change(function() {
+        //     let countryCode = $(this).val();
+        //     let arr = countryCode.split(',');
+        //     $('#city').val(null).empty();
+        //     $('#state').val(null).empty();
+        //     $.ajax({
+        //         url: '{{ route('fetchStates') }}',
+        //         type: 'GET',
+        //         data: {
+        //             country_code: arr[0]
+        //         },
+        //         success: function(data) {
+        //             var stateSelect = $('#state');
+        //             stateSelect.empty();
+        //             stateSelect.append('<option value="">Select State</option>');
+        //             forEach(function(state) {
+        //                 stateSelect.append('<option value="' + state.iso2 + "," + state.name +
+        //                     '">' +
+        //                     state.name + '</option>');
+        //             });
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error(xhr.responseText);
+        //             // Handle error here
+        //         }
+        //     });
+        // });
+        // $('#state').change(function() {
+        //     let stateCode = $(this).val();
+        //     let arr1 = stateCode.split(',');
+        //     let countryCode = $('#country').val();
+        //     let arr2 = countryCode.split(',');
+        //     $.ajax({
+        //         url: '{{ route('fetchCities') }}',
+        //         type: 'GET',
+        //         data: {
+        //             state_code: arr1[0],
+        //             country_code: arr2[0]
+        //         },
+        //         success: function(data) {
+        //             var citySelect = $('#city');
+        //             citySelect.empty();
+        //             citySelect.append('<option value="">Select City</option>');
+        //             forEach(function(city) {
+        //                 citySelect.append('<option value="' + city.name + '">' +
+        //                     city.name + '</option>');
+        //             });
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error(xhr.responseText);
+        //         }
+        //     });
+        // });
+        // ################### Get Country ,State & City for Update Code ###################
+        function openEditSalesAgentModal(salesAgentId) {
+            var salesAgentShowRoute = '{{ route('salesagent.show', ':id') }}';
+            $.ajax({
+                url: salesAgentShowRoute.replace(':id', salesAgentId),
+                type: 'GET',
+                success: function(response) {
+                    console.log("data", response);
+                    $('#editSalesAgentForm .name').val(response.name);
+                    $('#editSalesAgentForm .email').val(response.email);
+                    $('#editSalesAgentForm .phone').val(response.phone);
+                    $('#editSalesAgentForm .status').val(response.status);
+                    $('#editSalesAgentForm .location').val(response.location);
+
+                    var imageUrl = response.image;
+                    var baseUrl = 'http://localhost/macromed/';
+                    var responseImage = baseUrl + imageUrl;
+                    if (imageUrl) {
+                        $('#imagePreview').attr('src', responseImage).show();
+                    } else {
+                        $('#imagePreview').hide();
+                    }
+                    $('#editSalesAgentForm .account_number').val(response.agent_accounts.account_number);
+                    $('#editSalesAgentForm .account_name').val(response.agent_accounts.account_name);
+                    $('#editSalesAgentForm .account_holder_name').val(response.agent_accounts
+                        .account_holder_name);
+
+                    var nativeCountryValues = $('.country option').map(function() {
+                        return $(this).val();
+                    }).get();
+                    for (let k of nativeCountryValues) {
+                        if (k.includes(response.country)) {
+                            $('#editSalesAgentForm .country').val(k).trigger('change');
+                            fetchStates(k.split(',')[0], response.state.split(',')[0], function(stateCode) {
+                                if (response.state.split(',')[0]) {
+                                    fetchCities(response.state.split(',')[0], k.split(',')[0], response
+                                        .city);
+                                }
+                            });
+                            break;
+                        }
+                    }
+
+                    $('#editSalesAgentForm [name="city"]').val(response.city);
+
+                    $('#editSalesAgentModal').modal('show');
+                    $('#editSalesAgentModal').data('salesAgentId', salesAgentId);
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+
+        function fetchStates(countryCode, selectedState, callback) {
             $.ajax({
                 url: '{{ route('fetchStates') }}',
                 type: 'GET',
                 data: {
-                    country_code: arr[0]
+                    country_code: countryCode
                 },
                 success: function(data) {
-                    var stateSelect = $('#state');
+                    var stateSelect = $('.state');
                     stateSelect.empty();
-                    stateSelect.append('<option value="">Select State</option>');
-                    data.forEach(function(state) {
-                        stateSelect.append('<option value="' + state.iso2 + "," + state.name +
-                            '">' +
-                            state.name + '</option>');
+                    var stateCode = '';
+                    $('.city').val(null).empty();
+                    data.forEach(function(stateData) {
+                        var stateName = stateData.name;
+                        var statecode = stateData.iso2;
+                        var option = $('<option></option>').attr('value', statecode).text(stateName);
+                        if (stateName === selectedState) {
+                            option.prop('selected', true);
+                            stateCode = statecode;
+                        }
+                        stateSelect.append(option);
                     });
+                    callback(stateCode);
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
-                    // Handle error here
                 }
             });
-        });
-        $('#state').change(function() {
-            let stateCode = $(this).val();
-            let arr1 = stateCode.split(',');
-            let countryCode = $('#country').val();
-            let arr2 = countryCode.split(',');
+        }
+
+        function fetchCities(stateCode, countryCode, selectedCity) {
             $.ajax({
                 url: '{{ route('fetchCities') }}',
                 type: 'GET',
                 data: {
-                    state_code: arr1[0],
-                    country_code: arr2[0]
+                    state_code: stateCode,
+                    country_code: countryCode
                 },
                 success: function(data) {
-                    var citySelect = $('#city');
+                    var citySelect = $('.city');
                     citySelect.empty();
-                    citySelect.append('<option value="">Select City</option>');
-                    data.forEach(function(city) {
-                        citySelect.append('<option value="' + city.name + '">' +
-                            city.name + '</option>');
+                    data.forEach(function(cityData) {
+                        var cityName = cityData.name;
+                        var option = $('<option></option>').attr('value', cityName).text(cityName);
+                        if (cityName === selectedCity) {
+                            option.prop('selected', true);
+                        }
+                        citySelect.append(option);
                     });
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
                 }
             });
-        });
+        }
     </script>
 
 @endsection
