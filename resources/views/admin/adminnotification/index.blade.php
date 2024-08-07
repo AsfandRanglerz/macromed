@@ -1,5 +1,5 @@
 @extends('admin.layout.app')
-@section('title', 'AdminNotification')
+@section('title', 'Notification')
 @section('content')
     {{-- Create AdminNotification Model  --}}
     <div class="modal fade" id="createAdminNotificationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Admin Dashboard</title>
+    <title>Macromed | @yield('title')</title>
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/app.min.css') }}">
     <!-- Template CSS -->
@@ -15,7 +15,7 @@
     {{-- <link rel="stylesheet" href="{{ asset('public/admin/assets/toastr/css/toastr.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/prism/prism.css') }}">
-    <link rel='shortcut icon' type='image/x-icon' href='{{ asset('public/admin/assets/Fav Icon 2.png') }}' />
+    <link rel='shortcut icon' type='image/x-icon' href='{{ asset('public/admin/assets/images/Favicon-02.png') }}' />
     <link rel="stylesheet"
         href="{{ asset('public/admin/assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/datatables/datatables.min.css') }}">
@@ -29,7 +29,7 @@
 
 </head>
 <style>
-     .inactive-product {
+    .inactive-product {
         text-align: center;
         color: #dc3545;
         font-size: 1.2em;
@@ -38,9 +38,10 @@
         border: 1px solid #dc3545;
         border-radius: 5px;
         background-color: #f8d7da;
-        margin-top:10rem
+        margin-top: 10rem
     }
 </style>
+
 <body>
     <div class="loader"></div>
 

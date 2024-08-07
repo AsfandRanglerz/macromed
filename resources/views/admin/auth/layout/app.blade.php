@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>SafeJourney - @yield('title')</title>
+    <title>Macromed | @yield('title')</title>
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/app.min.css') }}">
     <link rel="stylesheet" href="{{ asset('public/admin/assets/bundles/bootstrap-social/bootstrap-social.css') }}">
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/components.css') }}">
     <!-- Custom style CSS -->
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/custom.css') }}">
-    <link rel='shortcut icon' type='image/x-icon' href='{{ asset('public/admin/assets/images/logo-macromed.png') }}' />
+    <link rel='shortcut icon' type='image/x-icon' href='{{ asset('public/admin/assets/images/Favicon-02.png') }}' />
     <link rel="stylesheet" href="{{ asset('public/admin/toastr/toastr.css') }}">
     @yield('style')
 </head>

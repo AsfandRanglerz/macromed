@@ -1,5 +1,5 @@
 @extends('admin.layout.app')
-@section('title', 'PrivateNotes')
+@section('title', 'Private Notes')
 @section('content')
     {{-- Create PrivateNotes Model  --}}
     <div class="modal fade" id="createPrivateNotesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

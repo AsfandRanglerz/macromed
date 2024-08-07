@@ -1,5 +1,5 @@
 @extends('admin.layout.app')
-@section('title', 'NumberOfUse')
+@section('title', 'Number Of Use')
 @section('content')
     {{-- Create NumberOfUse Model  --}}
     <div class="modal fade" id="createNumberOfUseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
