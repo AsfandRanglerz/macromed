@@ -729,7 +729,6 @@
 
         $('.country').change(function() {
             var countryCode = $(this).val();
-            console.log("Country changed:", countryCode.split(',')[0]);
             if (countryCode) {
                 fetchStates(countryCode.split(',')[0], null, function() {
                     $('.state').trigger('change');
@@ -746,7 +745,6 @@
             }
         });
 
-
         function fetchStates(countryCode, selectedState, callback) {
             $.ajax({
                 url: '{{ route('fetchStates') }}',
@@ -755,22 +753,31 @@
                     country_code: countryCode
                 },
                 success: function(data) {
-                    console.log("States data received:", data);
                     var stateSelect = $('.state');
                     stateSelect.empty();
                     var stateCode = '';
-                    $('.city').val(null).empty();
+
+                    // Add default "Select State" option
+                    stateSelect.append('<option value="" disabled selected>Select State</option>');
+
+                    $('.city').val(null).empty().append(
+                        '<option value="" disabled selected>Select City</option>'); // Reset cities dropdown
+
                     data.forEach(function(stateData) {
                         var stateName = stateData.name;
                         var statecode = stateData.iso2;
-                        var option = $('<option></option>').attr('value', statecode + ',' + stateName)
-                            .text(stateName);
-                        if (stateName === selectedState) {
+                        var optionValue = statecode + ',' + stateName;
+                        var option = $('<option></option>').attr('value', optionValue).text(stateName);
+
+                        if (selectedState && (selectedState === statecode || selectedState ===
+                                optionValue)) {
                             option.prop('selected', true);
                             stateCode = statecode;
                         }
+
                         stateSelect.append(option);
                     });
+
                     callback(stateCode);
                 },
                 error: function(xhr, status, error) {
@@ -791,6 +798,10 @@
                     console.log("Cities data received:", data);
                     var citySelect = $('.city');
                     citySelect.empty();
+
+                    // Add default "Select City" option
+                    citySelect.append('<option value="" disabled selected>Select City</option>');
+
                     data.forEach(function(cityData) {
                         var cityName = cityData.name;
                         var option = $('<option></option>').attr('value', cityName).text(cityName);

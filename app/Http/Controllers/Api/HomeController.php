@@ -45,13 +45,13 @@ class HomeController extends Controller
     {
         try {
             // Retrieve query parameters
-            $minPrice = $request->query('min_price');
-            $maxPrice = $request->query('max_price');
-            $company = $request->query('company');
-            $brandId = $request->query('brand_id');
-            $categoryId = $request->query('category_id');
-            $certificationId = $request->query('certification_id');
-            $country = $request->query('country');
+            $minPrice = $request->input('min_price');
+            $maxPrice = $request->input('max_price');
+            $company = $request->input('company');
+            $brandId = $request->input('brand_id');
+            $categoryId = $request->input('category_id');
+            $certificationId = $request->input('certification_id');
+            $country = $request->input('country');
             // Get currency and handle errors
             $currency = $this->getCurrency();
             if (!$currency) {
