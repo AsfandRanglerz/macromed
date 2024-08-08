@@ -32,9 +32,6 @@ Route::get('/getDropDownData',[HomeController::class,'getDropDownData']);
 Route::post('/getProducts',[HomeController::class,'getFilteredProducts']);
 Route::get('/getFeatureProduct', [HomeController::class, 'getFeaturedProduct']);
 ######### Product ##########
-// Route::get('/getProducts', [ProductController::class, 'getProducts']);
-// Route::get('/getFilteredProducts', [ProductController::class, 'getFilteredProducts']);
-// Route::post('/getProductByRange', [ProductController::class, 'getProductByRange']);
 Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);
 Route::get('/getProductVaraints/{productId}', [ProductController::class, 'getProductVaraint']);
 Route::get('/getProductTab/{productId}', [ProductController::class, 'getProductTab']);
