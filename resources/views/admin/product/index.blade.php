@@ -312,12 +312,12 @@
                         <div class="row col-md-12">
                             <div class="form-group col-md-6">
                                 <label>Minimum Price Range<span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="min_price_range"
+                                <input type="number" class="form-control min_price_range" name="min_price_range"
                                     value="{{ old('min_price_range') }}">
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Maximum Price Range <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="max_price_range"
+                                <input type="number" class="form-control max_price_range" name="max_price_range"
                                     value="{{ old('max_price_range') }}">
                             </div>
                         </div>
