@@ -18,18 +18,18 @@ class HomeController extends Controller
     {
         try {
             $countryOfManufacture = Product::where('status', '1')->select('country')->distinct()->get();
-            $categories = Category::where('status', '1')->get();
-            $brands = Brands::where('status', '1')->get();
-            $certifications = Certification::where('status', '1')->get();
-            $company = Company::where('status', '1')->get();
+            $categories = Category::where('status', '1')->select('id','name')->get();
+            $brands = Brands::where('status', '1')->select('id','name')->get();
+            $certifications = Certification::where('status', '1')->select('id','name')->get();
+            $company = Company::where('status', '1')->select('id','name')->get();
             return response()->json([
                 'status' => 'success',
                 'data' => [
-                    'country_of_manufacture' => $countryOfManufacture,
+                    'countries_of_manufacture' => $countryOfManufacture,
                     'categories' => $categories,
                     'brands' => $brands,
                     'certifications' => $certifications,
-                    'company' => $company
+                    'companies' => $company
                 ]
             ], 200);
         } catch (\Exception $e) {
@@ -60,13 +60,11 @@ class HomeController extends Controller
                     'message' => 'No Currency found.',
                 ]);
             }
-
             $pkrAmount = $currency->pkr_amount;
-
             // Build the query
             $query = Product::with(
-                'productBrands.brands',
-                'productCertifications.certification'
+                'productBrands.brands:id,name',
+                'productCertifications.certification:id,name',
             )->select(
                 'id',
                 'product_code',

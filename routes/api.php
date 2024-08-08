@@ -29,7 +29,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 // ################### Home Controllers ###################
 Route::get('/getDropDownData',[HomeController::class,'getDropDownData']);
-Route::post('/getProducts',[HomeController::class,'getFilteredProducts']);
+Route::get('/getProducts',[HomeController::class,'getFilteredProducts']);
 Route::get('/getFeatureProduct', [HomeController::class, 'getFeaturedProduct']);
 ######### Product ##########
 // Route::get('/getProducts', [ProductController::class, 'getProducts']);

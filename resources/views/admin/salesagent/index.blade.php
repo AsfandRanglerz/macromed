@@ -69,7 +69,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Country</label>
-                                <select name="country" class="form-control select2" id="country" style="width: 100%">
+                                <select name="country" class="form-control select2 " id="country" style="width: 100%">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
@@ -82,7 +82,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="state">State</label>
-                                <select class="form-control select2" id="state" name="state" style="width: 100%"
+                                <select class="form-control select2 " id="state" name="state" style="width: 100%"
                                     required>
                                     <option value="" selected disabled>Select State</option>
                                 </select>
@@ -92,7 +92,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="city">City</label>
-                                <select class="form-control select2" id="city" name="city" style="width: 100%"
+                                <select class="form-control select2 " id="city" name="city" style="width: 100%"
                                     required>
                                     <option value="" selected disabled>Select City</option>
                                 </select>
@@ -199,8 +199,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Country</label>
-                                <select name="country" class="form-control select2 country"
-                                    style="width: 100%">
+                                <select name="country" class="form-control select2 country" style="width: 100%">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
@@ -213,8 +212,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="state">State</label>
-                                <select class="form-control select2 state" name="state"
-                                    style="width: 100%" required>
+                                <select class="form-control select2 state" name="state" style="width: 100%" required>
                                     <option value="" selected disabled>Select State</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
@@ -223,8 +221,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="city">City</label>
-                                <select class="form-control select2 city"  name="city"
-                                    style="width: 100%" required>
+                                <select class="form-control select2 city" name="city" style="width: 100%" required>
                                     <option value="" selected disabled>Select City</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
@@ -622,116 +619,60 @@
             }
         });
         // ################### Get Dpended Country,State & City For Create Code ###################
-        $('#country').on('change', function() {
-        var country_code = $(this).val();
-        if (country_code) {
-            $.ajax({
-                url: '{{ route("fetchStates") }}',
-                type: 'POST',
-                data: {
-                    country_code: country_code,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(data) {
-                    $('#state').empty();
-                    $('#state').append('<option value="" selected disabled>Select State</option>');
-                    $.each(data, function(key, value) {
-                        $('#state').append('<option value="'+ value.iso2 +'">'+ value.name +'</option>');
-                    });
-                },
-                error: function(xhr) {
-                    var error = JSON.parse(xhr.responseText);
-                    alert(error.error);
-                }
-            });
-        } else {
-            $('#state').empty();
-            $('#state').append('<option value="" selected disabled>Select State</option>');
-        }
-    });
 
-    $('#state').on('change', function() {
-        var state_code = $(this).val();
-        var country_code = $('#country').val();
-        if (state_code) {
+        $('#country').change(function() {
+            let countryCode = $(this).val();
+            let arr = countryCode.split(',');
+            $('#city').val(null).empty();
+            $('#state').val(null).empty();
             $.ajax({
-                url: '{{ route("fetchCities") }}',
-                type: 'POST',
+                url: '{{ route('fetchStates') }}',
+                type: 'GET',
                 data: {
-                    state_code: state_code,
-                    country_code: country_code,
-                    _token: '{{ csrf_token() }}'
+                    country_code: arr[0]
                 },
                 success: function(data) {
-                    $('#city').empty();
-                    $('#city').append('<option value="" selected disabled>Select City</option>');
-                    $.each(data, function(key, value) {
-                        $('#city').append('<option value="'+ value.name +'">'+ value.name +'</option>');
+                    var stateSelect = $('#state');
+                    stateSelect.empty();
+                    stateSelect.append('<option value="">Select State</option>');
+                    data.forEach(function(state) {
+                        stateSelect.append('<option value="' + state.iso2 + "," + state.name +
+                            '">' +
+                            state.name + '</option>');
                     });
                 },
-                error: function(xhr) {
-                    var error = JSON.parse(xhr.responseText);
-                    alert(error.error);
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    // Handle error here
                 }
             });
-        } else {
-            $('#city').empty();
-            $('#city').append('<option value="" selected disabled>Select City</option>');
-        }
-    });
-        // $('#country').change(function() {
-        //     let countryCode = $(this).val();
-        //     let arr = countryCode.split(',');
-        //     $('#city').val(null).empty();
-        //     $('#state').val(null).empty();
-        //     $.ajax({
-        //         url: '{{ route('fetchStates') }}',
-        //         type: 'GET',
-        //         data: {
-        //             country_code: arr[0]
-        //         },
-        //         success: function(data) {
-        //             var stateSelect = $('#state');
-        //             stateSelect.empty();
-        //             stateSelect.append('<option value="">Select State</option>');
-        //             forEach(function(state) {
-        //                 stateSelect.append('<option value="' + state.iso2 + "," + state.name +
-        //                     '">' +
-        //                     state.name + '</option>');
-        //             });
-        //         },
-        //         error: function(xhr, status, error) {
-        //             console.error(xhr.responseText);
-        //             // Handle error here
-        //         }
-        //     });
-        // });
-        // $('#state').change(function() {
-        //     let stateCode = $(this).val();
-        //     let arr1 = stateCode.split(',');
-        //     let countryCode = $('#country').val();
-        //     let arr2 = countryCode.split(',');
-        //     $.ajax({
-        //         url: '{{ route('fetchCities') }}',
-        //         type: 'GET',
-        //         data: {
-        //             state_code: arr1[0],
-        //             country_code: arr2[0]
-        //         },
-        //         success: function(data) {
-        //             var citySelect = $('#city');
-        //             citySelect.empty();
-        //             citySelect.append('<option value="">Select City</option>');
-        //             forEach(function(city) {
-        //                 citySelect.append('<option value="' + city.name + '">' +
-        //                     city.name + '</option>');
-        //             });
-        //         },
-        //         error: function(xhr, status, error) {
-        //             console.error(xhr.responseText);
-        //         }
-        //     });
-        // });
+        });
+        $('#state').change(function() {
+            let stateCode = $(this).val();
+            let arr1 = stateCode.split(',');
+            let countryCode = $('#country').val();
+            let arr2 = countryCode.split(',');
+            $.ajax({
+                url: '{{ route('fetchCities') }}',
+                type: 'GET',
+                data: {
+                    state_code: arr1[0],
+                    country_code: arr2[0]
+                },
+                success: function(data) {
+                    var citySelect = $('#city');
+                    citySelect.empty();
+                    citySelect.append('<option value="">Select City</option>');
+                    data.forEach(function(city) {
+                        citySelect.append('<option value="' + city.name + '">' +
+                            city.name + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
         // ################### Get Country ,State & City for Update Code ###################
         function openEditSalesAgentModal(salesAgentId) {
             var salesAgentShowRoute = '{{ route('salesagent.show', ':id') }}';
@@ -786,7 +727,30 @@
             });
         }
 
+        $('.country').change(function() {
+            var countryCode = $(this).val();
+            console.log("Country changed:", countryCode.split(',')[0]);
+            if (countryCode) {
+                fetchStates(countryCode.split(',')[0], null, function() {
+                    console.log("States fetched for country:", countryCode);
+                    $('.state').trigger('change');
+                });
+            }
+        });
+
+        // Trigger when state is changed
+        $('.state').change(function() {
+            var stateCode = $(this).val();
+            var countryCode = $('.country').val();
+            console.log("State changed:", stateCode.split(',')[0], "Country:", countryCode.split(',')[0]);
+            if (stateCode && countryCode) {
+                fetchCities(stateCode.split(',')[0], countryCode.split(',')[0], null);
+            }
+        });
+
+
         function fetchStates(countryCode, selectedState, callback) {
+            console.log("Fetching states for country code:", countryCode);
             $.ajax({
                 url: '{{ route('fetchStates') }}',
                 type: 'GET',
@@ -794,6 +758,7 @@
                     country_code: countryCode
                 },
                 success: function(data) {
+                    console.log("States data received:", data);
                     var stateSelect = $('.state');
                     stateSelect.empty();
                     var stateCode = '';
@@ -802,6 +767,8 @@
                         var stateName = stateData.name;
                         var statecode = stateData.iso2;
                         var option = $('<option></option>').attr('value', statecode).text(stateName);
+                        console.log("data",);
+
                         if (stateName === selectedState) {
                             option.prop('selected', true);
                             stateCode = statecode;
@@ -811,12 +778,13 @@
                     callback(stateCode);
                 },
                 error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
+                    console.error("Error fetching states:", xhr.responseText);
                 }
             });
         }
 
         function fetchCities(stateCode, countryCode, selectedCity) {
+            console.log("Fetching cities for state code:", stateCode, "Country code:", countryCode);
             $.ajax({
                 url: '{{ route('fetchCities') }}',
                 type: 'GET',
@@ -825,6 +793,7 @@
                     country_code: countryCode
                 },
                 success: function(data) {
+                    console.log("Cities data received:", data);
                     var citySelect = $('.city');
                     citySelect.empty();
                     data.forEach(function(cityData) {
@@ -837,7 +806,7 @@
                     });
                 },
                 error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
+                    console.error("Error fetching cities:", xhr.responseText);
                 }
             });
         }
