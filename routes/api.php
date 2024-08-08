@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CertificationController;
 use App\Http\Controllers\Api\CompanyController;
+use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
 use App\Models\Product;
@@ -27,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'auth:api'], function () {
 });
 // ################### Get All DropDown Data ###################
-Route::get('/getDropDownData',[ProductController::class,'getDropDownData']);
+Route::get('/getDropDownData',[HomeController::class,'getDropDownData']);
 ######### Product ##########
 // Route::get('/getProducts', [ProductController::class, 'getProducts']);
 Route::get('/getFilteredProducts', [ProductController::class, 'getFilteredProducts']);
