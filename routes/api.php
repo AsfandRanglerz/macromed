@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:api'], function () {
 });
-// ################### Get All DropDown Data ###################
+// ################### Home Controllers ###################
 Route::get('/getDropDownData',[HomeController::class,'getDropDownData']);
 Route::post('/getProducts',[HomeController::class,'getFilteredProducts']);
 Route::get('/getFeatureProduct', [HomeController::class, 'getFeaturedProduct']);
@@ -39,18 +39,6 @@ Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProd
 Route::get('/getProductVaraints/{productId}', [ProductController::class, 'getProductVaraint']);
 Route::get('/getProductTab/{productId}', [ProductController::class, 'getProductTab']);
 Route::get('/getRelatedProduct/{productId}', [ProductController::class, 'getRelatedProduct']);
-######### Brands ##########
-// Route::get('/getBrands', [BrandController::class, 'getBrand']);
-// Route::get('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter']);
-######### Certification ##########
-// Route::get('/getCertifications', [CertificationController::class, 'getCertification']);
-// Route::get('/getCertificationFilter/{certificationId}', [CertificationController::class, 'getCertificationFilter']);
-######### Category ##########
-// Route::get('/getCategorys', [CategoryController::class, 'getCategory']);
-// Route::get('/getCategoryFilter/{categoryId}', [CategoryController::class, 'getCategoryFilter']);
-######### Company ##########
-// Route::get('/getCompany', [CompanyController::class, 'getCompany']);
-// Route::post('/getCompanyFilter', [CompanyController::class, 'getCompanyFilter']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
