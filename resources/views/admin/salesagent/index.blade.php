@@ -69,7 +69,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Country</label>
-                                <select name="country" class="form-control select2 " id="country" style="width: 100%">
+                                <select name="country" class="form-control select2" id="country" style="width: 100%">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
@@ -82,7 +82,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="state">State</label>
-                                <select class="form-control select2 " id="state" name="state" style="width: 100%"
+                                <select class="form-control select2" id="state" name="state" style="width: 100%"
                                     required>
                                     <option value="" selected disabled>Select State</option>
                                 </select>
@@ -120,7 +120,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="account_name">Account Name</label>
+                                    <label for="account_name">Bank Name</label>
                                     <input type="text" class="form-control" name="account_name">
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -250,7 +250,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="account_name">Account Name</label>
+                                    <label for="account_name">Bank Name</label>
                                     <input type="text" class="form-control account_name" name="account_name">
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -291,7 +291,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h5>Are you sure you want to delete this SalesAgent?</h5>
+                    <h5>Are you sure you want to delete this Sales Manager?</h5>
                 </div>
                 <div class="modal-footer justify-content-center">
                     <button type="button" class="btn btn-danger col-md-4 col-sm-4 col-lg-4"
