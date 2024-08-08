@@ -795,13 +795,10 @@
                     country_code: countryCode
                 },
                 success: function(data) {
-                    console.log("Cities data received:", data);
                     var citySelect = $('.city');
                     citySelect.empty();
-
                     // Add default "Select City" option
                     citySelect.append('<option value="" disabled selected>Select City</option>');
-
                     data.forEach(function(cityData) {
                         var cityName = cityData.name;
                         var option = $('<option></option>').attr('value', cityName).text(cityName);
