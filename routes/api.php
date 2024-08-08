@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:api'], function () {
 });
-// ################### Home Controllers ###################
+######### Home ##########
 Route::get('/getDropDownData',[HomeController::class,'getDropDownData']);
 Route::post('/getProducts',[HomeController::class,'getFilteredProducts']);
 Route::get('/getFeatureProduct', [HomeController::class, 'getFeaturedProduct']);
