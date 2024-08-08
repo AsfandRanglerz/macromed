@@ -29,9 +29,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 // ################### Get All DropDown Data ###################
 Route::get('/getDropDownData',[HomeController::class,'getDropDownData']);
+Route::post('/getFilteredProducts',[HomeController::class,'getFilteredProducts']);
 ######### Product ##########
 // Route::get('/getProducts', [ProductController::class, 'getProducts']);
-Route::get('/getFilteredProducts', [ProductController::class, 'getFilteredProducts']);
+// Route::get('/getFilteredProducts', [ProductController::class, 'getFilteredProducts']);
 Route::post('/getProductByRange', [ProductController::class, 'getProductByRange']);
 Route::get('/getFeatureProduct', [ProductController::class, 'getFeaturedProduct']);
 Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);

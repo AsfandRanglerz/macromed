@@ -41,10 +41,9 @@ class HomeController extends Controller
         }
     }
 
-
-    public function getFilteredProducts(Request $request){
-
-       try {
+    public function getFilteredProducts(Request $request)
+{
+    try {
         // Retrieve query parameters
         $minPrice = $request->query('min_price');
         $maxPrice = $request->query('max_price');
@@ -52,14 +51,8 @@ class HomeController extends Controller
         $brandId = $request->query('brand_id');
         $categoryId = $request->query('category_id');
         $certificationId = $request->query('certification_id');
+        $country = $request->query('country'); // New filter parameter
 
-        // Check if at least one filter parameter is provided
-        if (!$minPrice && !$maxPrice && !$company && !$brandId && !$categoryId && !$certificationId) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'At least one filter parameter is required'
-            ], 400);
-        }
         // Get currency and handle errors
         $currency = $this->getCurrency();
         if (!$currency) {
@@ -68,7 +61,9 @@ class HomeController extends Controller
                 'message' => 'No Currency found.',
             ]);
         }
+
         $pkrAmount = $currency->pkr_amount;
+
         // Build the query
         $query = Product::with(
             'productBrands.brands',
@@ -88,7 +83,7 @@ class HomeController extends Controller
             'max_price_range'
         )->where('status', '1');
 
-        // Apply filters
+        // Apply filters only if provided
         if ($minPrice && $maxPrice) {
             $query->where(function ($query) use ($minPrice, $maxPrice) {
                 $query->whereBetween('min_price_range', [$minPrice, $maxPrice])
@@ -118,6 +113,10 @@ class HomeController extends Controller
             });
         }
 
+        if ($country) {
+            $query->where('country', $country);
+        }
+
         // Execute query and get results
         $products = $query->latest()->get();
 
@@ -130,6 +129,7 @@ class HomeController extends Controller
         }
         // Convert prices
         $products = $this->convertPrices($products, $pkrAmount);
+
         // Return the response
         return response()->json([
             'status' => 'success',
@@ -143,5 +143,6 @@ class HomeController extends Controller
         ], 500);
     }
 }
+
 
 }
