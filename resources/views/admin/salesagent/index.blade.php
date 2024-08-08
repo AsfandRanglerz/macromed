@@ -732,7 +732,6 @@
             console.log("Country changed:", countryCode.split(',')[0]);
             if (countryCode) {
                 fetchStates(countryCode.split(',')[0], null, function() {
-                    console.log("States fetched for country:", countryCode);
                     $('.state').trigger('change');
                 });
             }
@@ -742,7 +741,6 @@
         $('.state').change(function() {
             var stateCode = $(this).val();
             var countryCode = $('.country').val();
-            console.log("State changed:", stateCode.split(',')[0], "Country:", countryCode.split(',')[0]);
             if (stateCode && countryCode) {
                 fetchCities(stateCode.split(',')[0], countryCode.split(',')[0], null);
             }
@@ -750,7 +748,6 @@
 
 
         function fetchStates(countryCode, selectedState, callback) {
-            console.log("Fetching states for country code:", countryCode);
             $.ajax({
                 url: '{{ route('fetchStates') }}',
                 type: 'GET',
@@ -766,9 +763,8 @@
                     data.forEach(function(stateData) {
                         var stateName = stateData.name;
                         var statecode = stateData.iso2;
-                        var option = $('<option></option>').attr('value', statecode).text(stateName);
-                        console.log("data",);
-
+                        var option = $('<option></option>').attr('value', statecode + ',' + stateName)
+                            .text(stateName);
                         if (stateName === selectedState) {
                             option.prop('selected', true);
                             stateCode = statecode;
@@ -784,7 +780,6 @@
         }
 
         function fetchCities(stateCode, countryCode, selectedCity) {
-            console.log("Fetching cities for state code:", stateCode, "Country code:", countryCode);
             $.ajax({
                 url: '{{ route('fetchCities') }}',
                 type: 'GET',
