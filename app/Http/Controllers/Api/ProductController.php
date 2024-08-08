@@ -2,17 +2,48 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Product;
+use App\Models\Brands;
 
+use App\Models\Company;
+use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\Certification;
+use App\Models\ProductVaraint;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
-use App\Models\ProductVaraint;
-
 
 class ProductController extends Controller
 {
     use ProductHelperTrait;
+
+    public function getDropDownData()
+    {
+        try {
+            $countryOfManufacture = Product::where('status', '1')->select('country')->distinct()->get();
+            $categories = Category::where('status', '1')->get();
+            $brands = Brands::where('status', '1')->get();
+            $certifications = Certification::where('status', '1')->get();
+            $company = Company::where('status', '1')->get();
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'country_of_manufacture' => $countryOfManufacture,
+                    'categories' => $categories,
+                    'brands' => $brands,
+                    'certifications' => $certifications,
+                    'company' => $company
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            // Handling errors
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while fetching data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getProducts()
     {
         try {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CertificationController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,8 +26,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:api'], function () {
 });
+// ################### Get All DropDown Data ###################
+Route::get('/getDropDownData',[ProductController::class,'getDropDownData']);
 ######### Product ##########
-Route::get('/getProducts', [ProductController::class, 'getProducts']);
+// Route::get('/getProducts', [ProductController::class, 'getProducts']);
 Route::get('/getFilteredProducts', [ProductController::class, 'getFilteredProducts']);
 Route::post('/getProductByRange', [ProductController::class, 'getProductByRange']);
 Route::get('/getFeatureProduct', [ProductController::class, 'getFeaturedProduct']);
@@ -35,16 +38,16 @@ Route::get('/getProductVaraints/{productId}', [ProductController::class, 'getPro
 Route::get('/getProductTab/{productId}', [ProductController::class, 'getProductTab']);
 Route::get('/getRelatedProduct/{productId}', [ProductController::class, 'getRelatedProduct']);
 ######### Brands ##########
-Route::get('/getBrands', [BrandController::class, 'getBrand']);
+// Route::get('/getBrands', [BrandController::class, 'getBrand']);
 Route::get('/getBrandFilter/{brandId}', [BrandController::class, 'getBrandFilter']);
 ######### Certification ##########
-Route::get('/getCertifications', [CertificationController::class, 'getCertification']);
+// Route::get('/getCertifications', [CertificationController::class, 'getCertification']);
 Route::get('/getCertificationFilter/{certificationId}', [CertificationController::class, 'getCertificationFilter']);
 ######### Category ##########
-Route::get('/getCategorys', [CategoryController::class, 'getCategory']);
+// Route::get('/getCategorys', [CategoryController::class, 'getCategory']);
 Route::get('/getCategoryFilter/{categoryId}', [CategoryController::class, 'getCategoryFilter']);
 ######### Company ##########
-Route::get('/getCompany', [CompanyController::class, 'getCompany']);
+// Route::get('/getCompany', [CompanyController::class, 'getCompany']);
 Route::post('/getCompanyFilter', [CompanyController::class, 'getCompanyFilter']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
