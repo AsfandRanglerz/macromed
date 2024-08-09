@@ -29,9 +29,6 @@ Route::group(['middleware' => 'auth:api'], function () {});
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts']);
-Route::get('/getFeatureProduct', [HomeController::class, 'getFeaturedProduct']);
-
-
 ######### Product ##########
 Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);
 Route::get('/getProductVaraints/{productId}', [ProductController::class, 'getProductVaraint']);

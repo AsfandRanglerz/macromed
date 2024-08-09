@@ -177,29 +177,4 @@ class HomeController extends Controller
             ], 500);
         }
     }
-
-
-    public function getFeaturedProduct()
-    {
-        try {
-            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
-                ->where('status', '1')->latest()->get();
-            if ($featureProducts->isEmpty()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'success' => 'Feature Product Not Found!'
-                ], 404);
-            } else {
-                return response()->json([
-                    'status' => 'success',
-                    ' featureProducts' => $featureProducts
-                ]);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching feature products: ' . $e->getMessage()
-            ], 500);
-        }
-    }
 }
