@@ -18,10 +18,10 @@ class HomeController extends Controller
     {
         try {
             $countryOfManufacture = Product::where('status', '1')->select('country')->distinct()->get();
-            $categories = Category::where('status', '1')->select('id','name')->get();
-            $brands = Brands::where('status', '1')->select('id','name')->get();
-            $certifications = Certification::where('status', '1')->select('id','name')->get();
-            $company = Company::where('status', '1')->select('id','name')->get();
+            $categories = Category::where('status', '1')->select('id', 'name')->get();
+            $brands = Brands::where('status', '1')->select('id', 'name')->get();
+            $certifications = Certification::where('status', '1')->select('id', 'name')->get();
+            $company = Company::where('status', '1')->select('id', 'name')->get();
             return response()->json([
                 'status' => 'success',
                 'data' => [
