@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\Certification;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
+use App\Models\WhishList;
 
 class HomeController extends Controller
 {
@@ -52,6 +53,9 @@ class HomeController extends Controller
             $categoryId = $request->input('category_id');
             $certificationId = $request->input('certification_id');
             $country = $request->input('country');
+            $userId = $request->input('user_id');
+            $productId = $request->input('product_id');
+
             // Get currency and handle errors
             $currency = $this->getCurrency();
             if (!$currency) {
@@ -61,10 +65,11 @@ class HomeController extends Controller
                 ]);
             }
             $pkrAmount = $currency->pkr_amount;
+
             // Build the query
             $query = Product::with(
                 'productBrands.brands:id,name',
-                'productCertifications.certification:id,name',
+                'productCertifications.certification:id,name'
             )->select(
                 'id',
                 'product_code',
@@ -84,9 +89,15 @@ class HomeController extends Controller
             if ($minPrice && $maxPrice) {
                 $query->where(function ($query) use ($minPrice, $maxPrice) {
                     $query->whereBetween('min_price_range', [$minPrice, $maxPrice])
-                        ->orWhereBetween('max_price_range', [$minPrice, $maxPrice]);
+                        ->orWhereBetween('max_price_range', [$minPrice, $maxPrice])
+                        ->orWhere(function ($query) use ($minPrice, $maxPrice) {
+                            $query->where('min_price_range', '<=', $minPrice)
+                                ->where('max_price_range', '>=', $maxPrice);
+                        });
                 });
             }
+
+
 
             if ($company) {
                 $query->where('company', $company);
@@ -122,15 +133,41 @@ class HomeController extends Controller
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'No products found for the given filters'
-                ]);
+                ], 404);
             }
+
             // Convert prices
             $products = $this->convertPrices($products, $pkrAmount);
 
-            // Return the response
+            // Fetch the favorite products based on user_id and product_id
+            $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
+
+            $likes = [];
+            foreach ($products as $product) {
+                // Populate likes array
+                $productLikes = $favoriteProducts->where('product_id', $product->id)->pluck('user_id');
+                $product->likes = $productLikes->isEmpty() ? [] : $productLikes->toArray();
+
+                // Check if user_id and product_id are present in the request, save to WishList
+                if ($userId && $productId && $productId == $product->id) {
+                    $wishlist = WhishList::firstOrNew([
+                        'user_id' => $userId,
+                        'product_id' => $productId,
+                    ]);
+                }
+            }
+            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
+                ->where('status', '1')->latest()->get();
+            if ($featureProducts->isEmpty()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'success' => 'Feature Product Not Found!'
+                ], 404);
+            }
             return response()->json([
                 'status' => 'success',
                 'products' => $products,
+                ' featureProducts' => $featureProducts,
                 'pkrAmount' => $pkrAmount,
             ]);
         } catch (\Exception $e) {
@@ -140,6 +177,7 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
 
     public function getFeaturedProduct()
     {
