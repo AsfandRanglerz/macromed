@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Brands;
 
-use App\Models\Company;
+
+
 use App\Models\Product;
-use App\Models\Category;
-use Illuminate\Http\Request;
-use App\Models\Certification;
 use App\Models\ProductVaraint;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;

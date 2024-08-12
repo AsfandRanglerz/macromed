@@ -31,9 +31,6 @@ Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts']);
 ######### Product ##########
 Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);
-Route::get('/getProductVaraints/{productId}', [ProductController::class, 'getProductVaraint']);
-Route::get('/getProductTab/{productId}', [ProductController::class, 'getProductTab']);
-Route::get('/getRelatedProduct/{productId}', [ProductController::class, 'getRelatedProduct']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
