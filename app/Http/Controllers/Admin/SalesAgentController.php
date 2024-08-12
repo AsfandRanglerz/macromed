@@ -7,13 +7,14 @@ use App\Models\User;
 use App\Mail\userBlocked;
 use App\Models\SalesAgent;
 use App\Mail\userUnBlocked;
+use App\Models\AgentWallet;
 use App\Models\UserAccount;
 use App\Models\AgentAccount;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use App\Mail\SalesAgentRegistration;
-use App\Models\AgentWallet;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -206,10 +207,10 @@ class SalesAgentController extends Controller
 
             if ($request->hasFile('image')) {
                 // Delete old image if exists
-                $oldImagePath = public_path('admin/assets/images/users/' . $salesManager->image);
+                $oldImagePath =  $salesManager->image;
                 // Delete old image if it exists
-                if ($salesManager->image && file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
+                if ($salesManager->image &&  File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
                 }
                 $image = $request->file('image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
@@ -231,6 +232,10 @@ class SalesAgentController extends Controller
     public function deleteSalesAgent($id)
     {
         $salesManager = SalesAgent::findOrFail($id);
+        $imagePath = $salesManager->image;
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
         $salesManager->delete();
         return response()->json(['alert' => 'success', 'message' => 'Sales Managers Deleted SuccessFully!']);
     }

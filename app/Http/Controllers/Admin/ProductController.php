@@ -202,11 +202,38 @@ class ProductController extends Controller
 
         try {
             $product = new Product($request->only([
-                'product_name', 'short_name', 'slug', 'company', 'country',
-                'models', 'product_commission', 'video_link',
-                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_id', 'supplier_delivery_time', 'supplier_name',
-                'delivery_period', 'self_life', 'federal_tax', 'provincial_tax',
-                'tab_1_heading', 'tab_1_text', 'tab_2_heading', 'tab_2_text', 'tab_3_heading', 'tab_3_text', 'tab_4_heading', 'tab_4_text', 'min_price_range', 'max_price_range'
+                'product_name',
+                'short_name',
+                'slug',
+                'company',
+                'country',
+                'models',
+                'product_commission',
+                'video_link',
+                'short_description',
+                'long_description',
+                'status',
+                'sterilizations',
+                'product_use_status',
+                'buyer_type',
+                'product_class',
+                'supplier_id',
+                'supplier_delivery_time',
+                'supplier_name',
+                'delivery_period',
+                'self_life',
+                'federal_tax',
+                'provincial_tax',
+                'tab_1_heading',
+                'tab_1_text',
+                'tab_2_heading',
+                'tab_2_text',
+                'tab_3_heading',
+                'tab_3_text',
+                'tab_4_heading',
+                'tab_4_text',
+                'min_price_range',
+                'max_price_range'
             ]));
             $product->product_code = $this->generateUniqueProductId();
             if ($request->hasFile('thumbnail_image')) {
@@ -342,20 +369,52 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
             $product->fill($request->only([
-                'product_name', 'short_name', 'slug', 'company', 'country',
-                'models', 'product_commission', 'video_link',
-                'short_description', 'long_description', 'status', 'sterilizations', 'product_use_status', 'buyer_type', 'product_class', 'supplier_id', 'supplier_delivery_time', 'supplier_name',
-                'delivery_period', 'self_life', 'federal_tax', 'provincial_tax',
-                'tab_1_heading', 'tab_1_text', 'tab_2_heading', 'tab_2_text', 'tab_3_heading', 'tab_3_text', 'tab_4_heading', 'tab_4_text', 'min_price_range', 'max_price_range'
+                'product_name',
+                'short_name',
+                'slug',
+                'company',
+                'country',
+                'models',
+                'product_commission',
+                'video_link',
+                'short_description',
+                'long_description',
+                'status',
+                'sterilizations',
+                'product_use_status',
+                'buyer_type',
+                'product_class',
+                'supplier_id',
+                'supplier_delivery_time',
+                'supplier_name',
+                'delivery_period',
+                'self_life',
+                'federal_tax',
+                'provincial_tax',
+                'tab_1_heading',
+                'tab_1_text',
+                'tab_2_heading',
+                'tab_2_text',
+                'tab_3_heading',
+                'tab_3_text',
+                'tab_4_heading',
+                'tab_4_text',
+                'min_price_range',
+                'max_price_range'
             ]));
             if ($request->hasFile('thumbnail_image')) {
+                // Delete old image if exists
+                $oldImagePath =  $product->thumbnail_image;
+                // Delete old image if it exists
+                if ($product->thumbnail_image &&  File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
                 $thumbnail_image = $request->file('thumbnail_image');
                 $thumbnail_name = time() . '.' . $thumbnail_image->getClientOriginalExtension();
                 $thumbnail_path = 'public/admin/assets/images/products/' . $thumbnail_name;
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
-
             $product->save();
 
             // Update product variants
@@ -407,9 +466,6 @@ class ProductController extends Controller
                     );
                 }
             }
-
-
-
             return response()->json(['message' => 'Product Updated Successfully!']);
         } catch (\Exception $e) {
             // Log::error($e->getMessage());
@@ -460,6 +516,10 @@ class ProductController extends Controller
     public function deleteProduct($id)
     {
         $product = Product::findOrFail($id);
+        $imagePath = $product->thumbnail_image;
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
         $product->delete();
         return response()->json(['alert' => 'success', 'message' => 'Product Deleted SuccessFully!']);
     }
@@ -520,8 +580,7 @@ class ProductController extends Controller
     {
         try {
             $image = ProductImages::findOrFail($id);
-            $imagePath =$image->image;
-
+            $imagePath = $image->image;
             if (File::exists($imagePath)) {
                 File::delete($imagePath);
             }

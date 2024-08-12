@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\Certification;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
+use App\Models\SilderImages;
 use App\Models\WhishList;
 
 class HomeController extends Controller
@@ -25,6 +26,7 @@ class HomeController extends Controller
             $company = Company::where('status', '1')->select('id', 'name')->get();
             $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
                 ->where('status', '1')->latest()->get();
+            $silders = SilderImages::where('status', '0')->select('id','images')->latest()->get();
             if ($featureProducts->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
@@ -34,13 +36,13 @@ class HomeController extends Controller
             return response()->json([
                 'status' => 'success',
                 'data' => [
+                    'silders' => $silders,
                     'countries_of_manufacture' => $countryOfManufacture,
                     'categories' => $categories,
                     'brands' => $brands,
                     'certifications' => $certifications,
                     'companies' => $company,
                     'featureProducts' => $featureProducts,
-
                 ]
             ], 200);
         } catch (\Exception $e) {
@@ -106,9 +108,6 @@ class HomeController extends Controller
                             ->where('max_price_range', '=', $maxPrice);
                     });
             }
-
-
-
 
             if ($company) {
                 $query->where('company', $company);
