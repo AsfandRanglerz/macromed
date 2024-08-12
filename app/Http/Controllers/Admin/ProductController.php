@@ -520,7 +520,7 @@ class ProductController extends Controller
     {
         try {
             $image = ProductImages::findOrFail($id);
-            $imagePath = public_path('admin/assets/images/products' . $image->image);
+            $imagePath =$image->image;
 
             if (File::exists($imagePath)) {
                 File::delete($imagePath);
