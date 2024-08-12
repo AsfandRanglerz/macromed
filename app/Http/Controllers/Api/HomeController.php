@@ -23,6 +23,14 @@ class HomeController extends Controller
             $brands = Brands::where('status', '1')->select('id', 'name')->get();
             $certifications = Certification::where('status', '1')->select('id', 'name')->get();
             $company = Company::where('status', '1')->select('id', 'name')->get();
+            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
+                ->where('status', '1')->latest()->get();
+            if ($featureProducts->isEmpty()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'success' => 'Feature Product Not Found!'
+                ], 404);
+            }
             return response()->json([
                 'status' => 'success',
                 'data' => [
@@ -30,7 +38,9 @@ class HomeController extends Controller
                     'categories' => $categories,
                     'brands' => $brands,
                     'certifications' => $certifications,
-                    'companies' => $company
+                    'companies' => $company,
+                    'featureProducts' => $featureProducts,
+
                 ]
             ], 200);
         } catch (\Exception $e) {
@@ -88,14 +98,15 @@ class HomeController extends Controller
             // Apply filters only if provided
             if ($minPrice && $maxPrice) {
                 $query->where(function ($query) use ($minPrice, $maxPrice) {
-                    $query->whereBetween('min_price_range', [$minPrice, $maxPrice])
-                        ->orWhereBetween('max_price_range', [$minPrice, $maxPrice])
-                        ->orWhere(function ($query) use ($minPrice, $maxPrice) {
-                            $query->where('min_price_range', '<=', $minPrice)
-                                ->where('max_price_range', '>=', $maxPrice);
-                        });
-                });
+                    $query->where('min_price_range', '<=', $minPrice)
+                        ->where('max_price_range', '>=', $maxPrice);
+                })
+                    ->orWhere(function ($query) use ($minPrice, $maxPrice) {
+                        $query->where('min_price_range', '=', $minPrice)
+                            ->where('max_price_range', '=', $maxPrice);
+                    });
             }
+
 
 
 
@@ -156,18 +167,11 @@ class HomeController extends Controller
                     ]);
                 }
             }
-            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
-                ->where('status', '1')->latest()->get();
-            if ($featureProducts->isEmpty()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'success' => 'Feature Product Not Found!'
-                ], 404);
-            }
+
             return response()->json([
                 'status' => 'success',
                 'products' => $products,
-                ' featureProducts' => $featureProducts,
+
                 'pkrAmount' => $pkrAmount,
             ]);
         } catch (\Exception $e) {
