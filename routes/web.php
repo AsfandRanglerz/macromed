@@ -3,28 +3,29 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\PolicyController;
-use App\Http\Controllers\Admin\AboutusController;
-use App\Http\Controllers\Admin\AdminNotificationController;
-use App\Http\Controllers\Admin\BrandsController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\CertificationController;
-use App\Http\Controllers\Admin\CompanyController;
-use App\Http\Controllers\Admin\CurrencyController;
-use App\Http\Controllers\Admin\MainMaterialController;
-use App\Http\Controllers\Admin\ModalsController;
-use App\Http\Controllers\Admin\NumberOfUseController;
-use App\Http\Controllers\Admin\PivateNoteController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\ProductVariantController;
-use App\Http\Controllers\Admin\SalesAgentController;
-use App\Http\Controllers\Admin\SterilizationController;
-use App\Http\Controllers\Admin\SubAdminController;
-use App\Http\Controllers\Admin\SubCategoryController;
-use App\Http\Controllers\Admin\SupplierController;
-use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BrandsController;
+use App\Http\Controllers\Admin\ModalsController;
+use App\Http\Controllers\Admin\PolicyController;
+use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\Admin\AboutusController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CurrencyController;
+use App\Http\Controllers\Admin\SubAdminController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\PivateNoteController;
+use App\Http\Controllers\Admin\SalesAgentController;
+use App\Http\Controllers\Admin\NumberOfUseController;
+use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\MainMaterialController;
+use App\Http\Controllers\Admin\CertificationController;
+use App\Http\Controllers\Admin\SterilizationController;
+use App\Http\Controllers\Admin\TermConditionController;
+use App\Http\Controllers\Admin\ProductVariantController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
 use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
 use App\Http\Controllers\SalesAgent\SalesAgentNotificationController;
@@ -64,6 +65,13 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::resource('policy', PolicyController::class);
     Route::resource('terms', TermConditionController::class);
     Route::resource('faq', FaqController::class);
+    // ############## Silder ############
+    Route::controller(SliderController::class)->group(function () {
+        Route::get('/silder-image',  'showSilderImage')->name('silder.image');
+        Route::post('/silders/upload-images',  'uploadSilderImages')->name('silders.upload-images');
+        Route::put('/silders/update-cover-status/{imageId}', 'updateSilderStatus')->name('silders.update-cover-status');
+        Route::get('/silder/delete/{id}', 'deleteSilderImage')->name('silderImage.delete');
+    });
     // ############## SubAdmin ############
     Route::controller(SubAdminController::class)->group(function () {
         Route::get('/subadmin',  'subadminIndex')->name('subadmin.index')->middleware('permission:Sub Admins');

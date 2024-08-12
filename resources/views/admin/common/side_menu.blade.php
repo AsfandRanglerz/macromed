@@ -12,6 +12,11 @@
                 <a href="{{ url('/admin/dashboard') }}" class="nav-link"><i
                         data-feather="home"></i><span>Dashboard</span></a>
             </li>
+            {{-- Silder --}}
+            <li class="dropdown {{ request()->is('admin/silder-image') ? 'active' : '' }}">
+                <a href="{{ url('/admin/silder-image') }}" class="nav-link"><i
+                        data-feather="image"></i><span>Sliders</span></a>
+            </li>
             {{-- Inventory Managment --}}
             @if (
                 (auth()->guard('web')->check() &&
