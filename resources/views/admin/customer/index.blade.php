@@ -109,33 +109,16 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="address">Profession</label>
+                                    <input type="text" class="form-control profession" id="profession"
+                                        name="profession">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="image">Image</label>
                                     <input type="file" class="form-control" id="image" name="image">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h4>Add Accounts Information:</h4>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_name">Bank Name</label>
-                                    <input type="text" class="form-control" name="account_name">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_holder_name">Account Holder Name</label>
-                                    <input type="text" class="form-control" name="account_holder_name">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_number">Account Number</label>
-                                    <input type="text" class="form-control" name="account_number">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -237,36 +220,18 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="address">Profession</label>
+                                    <input type="text" class="form-control profession" id="profession"
+                                        name="profession">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="image">Image</label>
                                     <input type="file" class="form-control image" name="image">
                                     <img id="imagePreview" src="" alt="Image Preview"
                                         style="display: none; max-width: 100px; margin-top: 10px;">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h4>Update Accounts Information:</h4>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_name">Bank Name</label>
-                                    <input type="text" class="form-control account_name" name="account_name">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_holder_name">Account Holder Name</label>
-                                    <input type="text" class="form-control account_holder_name"
-                                        name="account_holder_name">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_number">Account Number</label>
-                                    <input type="text" class="form-control account_number" name="account_number">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -686,6 +651,7 @@
                     $('#editCustomerForm .phone').val(response.phone);
                     $('#editCustomerForm .status').val(response.status);
                     $('#editCustomerForm .location').val(response.location);
+                    $('#editCustomerForm .profession').val(response.profession);
 
                     var imageUrl = response.image;
                     var baseUrl = 'http://localhost/macromed/';
@@ -695,10 +661,6 @@
                     } else {
                         $('#imagePreview').hide();
                     }
-                    $('#editCustomerForm .account_number').val(response.agent_accounts.account_number);
-                    $('#editCustomerForm .account_name').val(response.agent_accounts.account_name);
-                    $('#editCustomerForm .account_holder_name').val(response.agent_accounts
-                        .account_holder_name);
 
                     var nativeCountryValues = $('.country option').map(function() {
                         return $(this).val();
@@ -706,20 +668,20 @@
                     for (let k of nativeCountryValues) {
                         if (k.includes(response.country)) {
                             $('#editCustomerForm .country').val(k).trigger('change');
-                            fetchCustomerStates(k.split(',')[0], response.state.split(',')[0], function(
-                                stateCode) {
-                                if (response.state.split(',')[0]) {
-                                    fetchCustomerCities(response.state.split(',')[0], k.split(',')[0],
-                                        response
-                                        .city);
-                                }
-                            });
+
+                            var stateValue = response.state ? response.state.split(',')[0] : null;
+                            if (stateValue) {
+                                fetchCustomerStates(k.split(',')[0], stateValue, function(stateCode) {
+                                    if (stateCode) {
+                                        fetchCustomerCities(stateCode, k.split(',')[0], response.city);
+                                    }
+                                });
+                            }
                             break;
                         }
                     }
 
                     $('#editCustomerForm [name="city"]').val(response.city);
-
                     $('#editCustomerModal').modal('show');
                     $('#editCustomerModal').data('CustomerId', CustomerId);
                 },

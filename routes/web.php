@@ -110,8 +110,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/customer/delete/{id}',  'deleteCustomer')->name('customer.delete');
         Route::post('/update-customer-status/{id}',  'updateCustomerBlockStatus')->name('customerBlock.update');
         Route::get('/customer-profile/{id}',  'customerProfile')->name('customer.profile');
-        Route::get('/fetch-states', 'fetchCutomerStates')->name('fetchCustomerStates');
-        Route::get('/fetch-cities', 'fetchCustomerCities')->name('fetchCustomerCities');
+        Route::get('/fetchCustomer-states', 'fetchCutomerStates')->name('fetchCustomerStates');
+        Route::get('/fetchCustomer-cities', 'fetchCustomerCities')->name('fetchCustomerCities');
     });
     // ############## Category ############
     Route::controller(CategoryController::class)->group(function () {

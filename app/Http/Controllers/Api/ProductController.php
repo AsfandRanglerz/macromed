@@ -36,6 +36,7 @@ class ProductController extends Controller
                 ->where('id', $productId)
                 ->select(
                     'id',
+                    'product_name',
                     'product_code',
                     'thumbnail_image',
                     'short_name',
@@ -43,7 +44,6 @@ class ProductController extends Controller
                     'company',
                     'models',
                     'product_use_status',
-                    'short_description',
                     'sterilizations',
                     'min_price_range',
                     'max_price_range',

@@ -122,13 +122,14 @@ class CustomerController extends Controller
                 'location' => 'required',
                 'confirmpassword' => 'required|same:password',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
+                'profession' => 'required'
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-            $data = $request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location']);
-            $data['user_type'] = 'salesmanager';
+            $data = $request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location', 'profession']);
+            $data['user_type'] = 'customer';
             $data['password'] = bcrypt($request->input('password'));
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
@@ -176,14 +177,14 @@ class CustomerController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'phone' => 'required|numeric|min:11,' . $id,
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
+            'profession' => 'required',
         ]);
-
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
         try {
             $customer = User::findOrFail($id);
-            $customer->fill($request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location']));
+            $customer->fill($request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location', 'profession']));
 
             if ($request->hasFile('image')) {
                 // Delete old image if exists
