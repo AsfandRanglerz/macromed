@@ -260,6 +260,12 @@
                                 class="nav-link {{ request()->is('admin/salesagent*') ? 'text-white' : '' }}"><i
                                     data-feather="user"></i><span>Sales Managers</span></a>
                         </li>
+                        {{-- Customers --}}
+                        <li class="{{ request()->is('admin/customer*') ? 'active' : '' }}">
+                            <a href="{{ route('customer.index') }}"
+                                class="nav-link {{ request()->is('admin/customer*') ? 'text-white' : '' }}"><i
+                                    data-feather="user"></i><span>Customers</span></a>
+                        </li>
                     </ul>
                 </li>
             @endif

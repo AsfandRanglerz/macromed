@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CurrencyController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\PivateNoteController;
@@ -97,6 +98,20 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/salesagent-profile/{id}',  'salesagentProfile')->name('salesagent.profile')->middleware('permission:Sales Managers');
         Route::get('/fetch-states', 'fetchStates')->name('fetchStates');
         Route::get('/fetch-cities', 'fetchCities')->name('fetchCities');
+    });
+
+    // ############## Customer ############
+    Route::controller(CustomerController::class)->group(function () {
+        Route::get('/customer',  'customerIndex')->name('customer.index');
+        Route::post('/customer-create',  'customerCreate')->name('customer.create');
+        Route::get('/customerData',  'customerData')->name('customer.get');
+        Route::get('/customer/{id}',  'showCustomer')->name('customer.show');
+        Route::post('/customerUpdate/{id}',  'updateCustomer')->name('customer.update');
+        Route::get('/customer/delete/{id}',  'deleteCustomer')->name('customer.delete');
+        Route::post('/update-customer-status/{id}',  'updateCustomerBlockStatus')->name('customerBlock.update');
+        Route::get('/customer-profile/{id}',  'customerProfile')->name('customer.profile');
+        Route::get('/fetch-states', 'fetchCutomerStates')->name('fetchCustomerStates');
+        Route::get('/fetch-cities', 'fetchCustomerCities')->name('fetchCustomerCities');
     });
     // ############## Category ############
     Route::controller(CategoryController::class)->group(function () {
