@@ -17,384 +17,83 @@ class ProductController extends Controller
 {
     use ProductHelperTrait;
 
-    public function getDropDownData()
-    {
-        try {
-            $countryOfManufacture = Product::where('status', '1')->select('country')->distinct()->get();
-            $categories = Category::where('status', '1')->get();
-            $brands = Brands::where('status', '1')->get();
-            $certifications = Certification::where('status', '1')->get();
-            $company = Company::where('status', '1')->get();
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'country_of_manufacture' => $countryOfManufacture,
-                    'categories' => $categories,
-                    'brands' => $brands,
-                    'certifications' => $certifications,
-                    'company' => $company
-                ]
-            ], 200);
-        } catch (\Exception $e) {
-            // Handling errors
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching data: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function getProducts()
+    public function getProductDetail($productId)
     {
         try {
             $currency = $this->getCurrency();
-            if (!$currency) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No Currency found.',
-                ]);
-            }
-
-            $pkrAmount = $currency->pkr_amount;
-            $products = Product::with(
-                'productBrands.brands',
-                'productCertifications.certification'
-            )->select(
-                'id',
-                'product_code',
-                'thumbnail_image',
-                'short_name',
-                'country',
-                'company',
-                'models',
-                'product_use_status',
-                'short_description',
-                'sterilizations',
-                'min_price_range',
-                'max_price_range'
-            )->where('status', '1')->latest()->get();
-
-            // Convert prices
-            $products = $this->convertPrices($products, $pkrAmount);
-
-            return response()->json([
-                'status' => 'success',
-                'products' => $products
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching products: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    public function getFilteredProducts(Request $request)
-    {
-        try {
-            $minPrice = $request->input('min_price');
-            $maxPrice = $request->input('max_price');
-            $company = $request->input('company');
-            $brandId = $request->input('brand_id');
-            $categoryId = $request->input('category_id');
-            $certificationId = $request->input('certification_id');
-
-            if (!$minPrice && !$maxPrice && !$company && !$brandId && !$categoryId && !$certificationId) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'At least one filter parameter is required'
-                ], 400);
-            }
-
-            $currency = $this->getCurrency();
-            if (!$currency) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No Currency found.',
-                ]);
-            }
-
             $pkrAmount = $currency->pkr_amount;
 
-            $query = Product::with(
-                'productBrands.brands',
-                'productCertifications.certification'
-            )->select(
-                'id',
-                'product_code',
-                'thumbnail_image',
-                'short_name',
-                'country',
-                'company',
-                'models',
-                'product_use_status',
-                'short_description',
-                'sterilizations',
-                'min_price_range',
-                'max_price_range'
-            )->where('status', '1');
-
-            if ($minPrice && $maxPrice) {
-                $query->where(function ($query) use ($minPrice, $maxPrice) {
-                    $query->whereBetween('min_price_range', [$minPrice, $maxPrice])
-                        ->orWhereBetween('max_price_range', [$minPrice, $maxPrice]);
-                });
-            }
-
-            if ($company) {
-                $query->where('company', $company);
-            }
-
-            if ($brandId) {
-                $query->whereHas('productBrands', function ($q) use ($brandId) {
-                    $q->where('brand_id', $brandId);
-                });
-            }
-
-            if ($categoryId) {
-                $query->whereHas('productCategory', function ($q) use ($categoryId) {
-                    $q->where('category_id', $categoryId);
-                });
-            }
-
-            if ($certificationId) {
-                $query->whereHas('productCertifications', function ($q) use ($certificationId) {
-                    $q->where('certification_id', $certificationId);
-                });
-            }
-
-            $products = $query->latest()->get();
-
-            if ($products->isEmpty()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'No products found for the given filters'
-                ], 404);
-            }
-
-            // Convert prices
-            $products = $this->convertPrices($products, $pkrAmount);
-
-            return response()->json([
-                'status' => 'success',
-                'products' => $products,
-                'pkrAmount' => $pkrAmount,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching products: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    // ###########################################################################
-    public function getProductByRange(Request $request)
-    {
-        try {
-            $minPrice = $request->input('min_price');
-            $maxPrice = $request->input('max_price');
-
-            if (!$minPrice || !$maxPrice) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'Both min price and max price are required'
-                ], 400);
-            }
-
-            $currency = $this->getCurrency();
-            if (!$currency) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No Currency found.',
-                ]);
-            }
-
-            $pkrAmount = $currency->pkr_amount;
-            $products = Product::with(
-                'productBrands.brands',
-                'productCertifications.certification'
-            )->select(
-                'id',
-                'product_code',
-                'thumbnail_image',
-                'short_name',
-                'country',
-                'company',
-                'models',
-                'product_use_status',
-                'short_description',
-                'sterilizations',
-                'min_price_range',
-                'max_price_range'
-            )->where('status', '1')
-                ->where(function ($query) use ($minPrice, $maxPrice) {
-                    $query->whereBetween('min_price_range', [$minPrice, $maxPrice])
-                        ->orWhereBetween('max_price_range', [$minPrice, $maxPrice]);
-                })
-                ->latest()
-                ->get();
-
-            if ($products->isEmpty()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'No Product Found In This Range'
-                ], 404);
-            }
-
-            // Convert prices
-            $products = $this->convertPrices($products, $pkrAmount);
-
-            return response()->json([
-                'status' => 'success',
-                'products' => $products,
-                'pkrAmount' => $pkrAmount,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching products: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function getFeaturedProduct()
-    {
-        try {
-            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
-                ->where('status', '1')->latest()->get();
-            if ($featureProducts->isEmpty()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'success' => 'Feature Product Not Found!'
-                ], 404);
-            } else {
-                return response()->json([
-                    'status' => 'success',
-                    ' featureProducts' => $featureProducts
-                ]);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching feature products: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function getProductdetail($productId)
-    {
-        try {
+            // Fetch product details with related data in a single query
             $productDetails = Product::with([
                 'productImages' => function ($query) {
-                    $query->where('status', '0');
+                    $query->where('status', '0')->select('id', 'image', 'product_id');
                 },
                 'productBrands.brands' => function ($query) {
-                    $query->where('status', '1');
+                    $query->where('status', '1')->select('id', 'name');
                 },
                 'productCertifications.certification' => function ($query) {
-                    $query->where('status', '1');
-                }
-            ])->select(
-                'id',
-                'product_code',
-                'thumbnail_image',
-                'short_name',
-                'country',
-                'company',
-                'models',
-                'product_use_status',
-                'short_description',
-                'sterilizations',
-                'min_price_range',
-                'max_price_range'
-            )->where('status', '1')->where('id', $productId)->get();
+                    $query->where('status', '1')->select('id', 'name');
+                },
+            ])
+                ->where('status', '1')
+                ->where('id', $productId)
+                ->select(
+                    'id',
+                    'product_code',
+                    'thumbnail_image',
+                    'short_name',
+                    'country',
+                    'company',
+                    'models',
+                    'product_use_status',
+                    'short_description',
+                    'sterilizations',
+                    'min_price_range',
+                    'max_price_range',
+                    'tab_1_heading',
+                    'tab_2_heading',
+                    'tab_3_heading',
+                    'tab_4_heading',
+                    'tab_1_text',
+                    'tab_2_text',
+                    'tab_3_text',
+                    'tab_4_text'
+                )
+                ->first();
 
-            if ($productDetails->isEmpty()) {
+            if (!$productDetails) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'Product Detail Not Found!'
                 ], 404);
-            } else {
-                return response()->json([
-                    'status' => 'success',
-                    'productDetails' => $productDetails
-                ]);
             }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching product details: ' . $e->getMessage()
-            ], 500);
-        }
-    }
 
-    public function getProductVaraint($productId)
-    {
-        try {
-            $productVaraints = ProductVaraint::where('product_id', $productId)->where('status', '1')->get();
-            if ($productVaraints->isEmpty()) {
+            // Fetch product variants and calculate the selling price in PKR
+            $productVariants = ProductVaraint::where('product_id', $productId)
+                ->where('status', '1')
+                ->select('s_k_u', 'description', 'packing', 'unit', 'selling_price_per_unit')
+                ->get()
+                ->map(function ($variant) use ($pkrAmount) {
+                    $variant->selling_price_per_unit_pkr = $variant->selling_price_per_unit * $pkrAmount;
+                    return $variant;
+                });
+
+            if ($productVariants->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
-                    'message' => 'Product Detail Not Found!'
+                    'message' => 'Product Variants Not Found!'
                 ], 404);
-            } else {
-                return response()->json([
-                    'status' => 'success',
-                    'productVaraints' =>  $productVaraints
-                ]);
             }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching product varaints: ' . $e->getMessage()
-            ], 500);
-        }
-    }
 
-    public function getProductTab($productId)
-    {
-        try {
-            $productTabs = Product::where('id', $productId)
-                ->select('tab_1_heading', 'tab_2_heading', 'tab_3_heading', 'tab_4_heading', 'tab_1_text', 'tab_2_text', 'tab_2_text', 'tab_4_text')
-                ->where('status', '1')->get();
-            if ($productTabs->isEmpty()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'Product Tabs Not Found!'
-                ], 404);
-            } else {
-                return response()->json([
-                    'status' => 'success',
-                    'productTabs' =>  $productTabs
-                ]);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while fetching product tabs: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    public function getRelatedProduct($productId)
-    {
-        try {
-            // Find the product with its categories
-            $product = Product::with('productCategory')->find($productId);
-
-            if (!$product) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'Product not found!'
-                ], 404);
-            }
-            // Extract all category IDs for the product
-            $categoryIds = $product->productCategory->pluck('category_id')->toArray();
+            // Extract category IDs for the product
+            $categoryIds = $productDetails->productCategory->pluck('category_id')->toArray();
             if (empty($categoryIds)) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'No categories found for this product!'
                 ], 404);
             }
+
             // Find related products based on category IDs
             $relatedProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')
                 ->where('status', '1')
@@ -405,22 +104,22 @@ class ProductController extends Controller
                 ->latest()
                 ->get();
 
-            if ($relatedProducts->isEmpty()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'No related products found!'
-                ], 404);
-            }
-
+            // It's not necessary to return an error if no related products are found
+            // as it's optional data. Instead, return an empty array.
             return response()->json([
                 'status' => 'success',
-                'relatedProducts' => $relatedProducts
+                'productDetails' => $productDetails,
+                'productVariants' => $productVariants,
+                'relatedProducts' => $relatedProducts,
+                'pkrAmount' => $pkrAmount,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'An error occurred while fetching related products: ' . $e->getMessage()
+                'message' => 'An error occurred while fetching product details: ' . $e->getMessage()
             ], 500);
         }
     }
+
+
 }
