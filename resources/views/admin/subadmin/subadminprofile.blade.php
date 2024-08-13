@@ -19,10 +19,10 @@
                                                 <th scope="row">Image</th>
                                                 <td>
                                                     @if ($subAdmin->image)
-                                                        <img src="{{ asset('public/admin/assets/images/users/' . $subAdmin->image) }}"
-                                                            class="rounded-circle" alt="Profile Image" width="80px">
+                                                        <img src="{{ asset($subAdmin->image) }}" class="rounded-circle"
+                                                            alt="Profile Image" width="80px">
                                                     @else
-                                                        <img src="http://localhost/macromed/public/admin/assets/images/users/admin.png"
+                                                        <img src="{{ asset('public/admin/assets/images/users/admin.png') }}"
                                                             class="rounded-circle" alt="Default Profile Image"
                                                             width="80px">
                                                     @endif

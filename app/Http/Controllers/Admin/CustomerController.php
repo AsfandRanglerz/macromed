@@ -107,12 +107,7 @@ class CustomerController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('users')
-                ],
+                'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users|max:255',
                 'password' => 'required|string|min:8|max:255',
                 'phone' => 'required|numeric|unique:users|min:11',
@@ -168,12 +163,7 @@ class CustomerController extends Controller
     public function updateCustomer(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('users')->ignore($id)
-            ],
+            'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'phone' => 'required|numeric|min:11,' . $id,
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',

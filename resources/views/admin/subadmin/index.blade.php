@@ -132,7 +132,7 @@
                             </div>
                         </div>
                         <div class="row">
-                        
+
                             {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
@@ -420,7 +420,7 @@
                     $('#editSubadminForm .user_type').val(response.user_type);
                     // Assuming response.image contains the URL of the existing image
                     var imageUrl = response.image;
-                    var baseUrl = 'http://localhost/macromed/';
+                    var baseUrl = 'https://ranglerzwp.xyz/macromed/';
                     var responseImage = baseUrl + response.image;
                     if (imageUrl) {
                         $('#imagePreview').attr('src', responseImage).show();

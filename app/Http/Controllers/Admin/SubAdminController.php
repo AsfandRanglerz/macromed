@@ -10,6 +10,7 @@ use ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
@@ -42,7 +43,6 @@ class SubAdminController extends Controller
                 'password' => 'required|string|min:8|max:255',
                 'phone' => 'required|unique:users|min:11',
                 'confirmpassword' => 'required|same:password',
-                'user_type' => 'required|string',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
             ]);
 
@@ -84,7 +84,7 @@ class SubAdminController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'phone' => 'required',
+            'phone' => 'required|numeric|min:11,' . $id,
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
         ]);
 
@@ -97,11 +97,10 @@ class SubAdminController extends Controller
 
             if ($request->hasFile('image')) {
                 // Delete old image if exists
-                $oldImagePath = public_path('admin/assets/images/users/' . $subadmin->image);
-
+                $oldImagePath =  $subadmin->image;
                 // Delete old image if it exists
-                if ($subadmin->image && file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
+                if ($subadmin->image &&  File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
                 }
                 $image = $request->file('image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
@@ -119,6 +118,10 @@ class SubAdminController extends Controller
     public function deleteSubadmin($id)
     {
         $subadmin = User::findOrFail($id);
+        $imagePath = $subadmin->image;
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
         $subadmin->delete();
         return response()->json(['alert' => 'success', 'message' => 'SubAdmin Deleted SuccessFully!']);
     }
