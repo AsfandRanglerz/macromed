@@ -573,7 +573,7 @@
                         reloadDataTable();
                     },
                     error: function(xhr, status, error) {
-                        toastr.success(response.error);
+                        toastr.error(response.error);
                         console.error(xhr.responseText);
                     },
                     complete: function() {

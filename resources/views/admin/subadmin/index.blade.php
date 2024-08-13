@@ -69,18 +69,6 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="confirmpassword">User Type</label>
-                                    <select name="user_type" class="form-control" id="user_type">
-                                        <option value="" selected disabled>Select User Type</option>
-                                        <option value="subadmin">Sub Admin</option>
-                                        <option value="customer">Customer</option>
-                                        <option value="salesmanager">Sales Manager</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label for="image">Image</label>
                                     <input type="file" class="form-control" id="image" name="image">
                                     <div class="invalid-feedback"></div>
@@ -144,18 +132,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirmpassword">User Type</label>
-                                    <select name="user_type" class="form-control user_type">
-                                        <option value="" selected disabled>Select User Type</option>
-                                        <option value="subadmin">Sub Admin</option>
-                                        <option value="customer">Customer</option>
-                                        <option value="salesmanager">Sales Manager</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
+                        
                             {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>

@@ -239,7 +239,7 @@ class CustomerController extends Controller
             $customer->save();
             return response()->json(['alert' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
+            return response()->json(['error' => 'An error occurred while updating user status: ' . $e->getMessage()]);
         }
     }
 }
