@@ -238,7 +238,7 @@
                             data-feather="users"></i><span>User
                             Managment</span></a>
                     <ul
-                        class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/user*') || request()->is('admin/salesagent*') ? 'show' : '' }}">
+                        class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/customer*') || request()->is('admin/salesagent*') ? 'show' : '' }}">
                         {{-- Roles & Permissions --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admins'))
                             <li class="{{ request()->is('admin/subadmin') ? 'active' : '' }}">
