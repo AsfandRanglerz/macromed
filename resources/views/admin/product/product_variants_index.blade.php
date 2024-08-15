@@ -35,6 +35,13 @@
                 </div>
                 <div class="modal-body">
                     <form id="editVariants" enctype="multipart/form-data">
+                        <div class="row col-12 col-md-12">
+                            <div class="form-group col-md-12">
+                                <label>Varient Additional Information</label>
+                                <input type="text" class="form-control" name="tooltip_information">
+                            </div>
+                        </div>
+
                         <div class="row col-12">
                             <div class="form-group col-md-4">
                                 <label>MPN</label>
@@ -264,6 +271,7 @@
                 url: showVariants.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
+                    $('#editVariants .tooltip_information').val(response.tooltip_information);
                     $('#editVariants .m_p_n').val(response.m_p_n);
                     $('#editVariants .s_k_u').val(response.s_k_u);
                     $('#editVariants .packing').val(response.packing);
@@ -304,6 +312,7 @@
             var updateVariants = '{{ route('variants.update', ':id') }}';
             var id = $('#editVariantsModal').data('id');
             var form = document.getElementById("editVariants");
+            var tooltip_information = form["tooltip_information"].value;
             var m_p_n = form["m_p_n"].value;
             var s_k_u = form["s_k_u"].value;
             var packing = form["packing"].value;
@@ -318,6 +327,7 @@
             var description = geteditor.getData();
             // ########### Form Data ###########
             var formData = new FormData();
+            formData.append('tooltip_information', tooltip_information);
             formData.append('m_p_n', m_p_n);
             formData.append('s_k_u', s_k_u);
             formData.append('packing', packing);

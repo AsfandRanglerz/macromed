@@ -40,6 +40,7 @@ class ProductVariantController extends Controller
                 'variants.*.s_k_u' => 'required|unique:product_varaints|max:255',
                 'variants.*.packing' => 'required|string',
                 'variants.*.unit' => 'required|string',
+                'variants.*.tooltip_information' => 'required|string',
                 'variants.*.quantity' => 'required|integer',
                 'variants.*.price_per_unit' => 'required|numeric',
                 'variants.*.selling_price_per_unit' => 'required|numeric',
@@ -54,6 +55,8 @@ class ProductVariantController extends Controller
 
                 'variants.*.m_p_n.required' => 'MPN is required.',
                 'variants.*.m_p_n.string' => 'MPN must be a string.',
+
+                'variants.*.tooltip_information.required' => 'Varaiant Additional Information is required.',
 
                 'variants.*.packing.required' => 'Packing is required.',
                 'variants.*.packing.string' => 'Packing must be a string.',
@@ -101,6 +104,7 @@ class ProductVariantController extends Controller
                         'shipping_chargeable_weight' => $variant['shipping_chargeable_weight'],
                         'status' => $variant['status'],
                         'description' => $variant['description'],
+                        'tooltip_information' => $variant['tooltip_information'],
                     ]
                 );
             }
@@ -135,6 +139,7 @@ class ProductVariantController extends Controller
                         'max:255',
                         Rule::unique('product_varaints')->ignore($id)
                     ],
+                    'tooltip_information' => 'required',
                     'packing' => 'required',
                     'unit' => 'required',
                     'quantity' => 'required|numeric',
@@ -155,8 +160,19 @@ class ProductVariantController extends Controller
 
             $product = ProductVaraint::findOrFail($id);
             $product->fill($request->only([
-                'm_p_n', 's_k_u', 'packing', 'unit', 'quantity', 'price_per_unit', 'selling_price_per_unit',
-                'actual_weight', 'shipping_weight', 'shipping_chargeable_weight', 'status', 'description'
+                'm_p_n',
+                's_k_u',
+                'packing',
+                'unit',
+                'quantity',
+                'price_per_unit',
+                'selling_price_per_unit',
+                'actual_weight',
+                'shipping_weight',
+                'shipping_chargeable_weight',
+                'status',
+                'description',
+                'tooltip_information'
             ]));
             $product->save();
             return response()->json(['alert' => 'success', 'message' => 'Product Variant Updated Successfully!']);

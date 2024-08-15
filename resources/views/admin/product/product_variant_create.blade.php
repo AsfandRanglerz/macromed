@@ -23,6 +23,14 @@
                                         <div id="variantFields">
                                             <!-- Initial fields -->
                                             <div class="variant-field">
+                                                <div class="row col-12">
+                                                    <div class="form-group col-md-12">
+                                                        <label>Varient Additional Information</label>
+                                                        <input type="text" class="form-control"
+                                                            name="variants[0][tooltip_information]"
+                                                            value="{{ old('variants.0.tooltip_information') }}">
+                                                    </div>
+                                                </div>
                                                 <div class="row col-md-12">
                                                     <div class="form-group col-md-6">
                                                         <label>MPN</label>
@@ -107,11 +115,14 @@
                                                             value="{{ old('variants.0.selling_price_per_unit') }}">
                                                     </div>
                                                 </div>
+                                                <div class="row col-12">
 
-                                                <div class="form-group col-12">
-                                                    <label>Description <span class="text-danger">*</span></label>
-                                                    <textarea name="variants[0][description]" id="description" cols="30" rows="5" class="form-control">{{ old('variants.0.description') }}</textarea>
+                                                    <div class="form-group col-12">
+                                                        <label>Description <span class="text-danger">*</span></label>
+                                                        <textarea name="variants[0][description]" id="description" cols="30" rows="5" class="form-control">{{ old('variants.0.description') }}</textarea>
+                                                    </div>
                                                 </div>
+
                                             </div>
                                         </div>
 
@@ -136,7 +147,8 @@
                         @else
                             <div class="inactive-product">
                                 <h4 class="alert-heading text-danger">Warning!</h4>
-                                <p class="text-danger">This product is not active. You cannot add product variants to it.</p>
+                                <p class="text-danger">This product is not active. You cannot add product variants to it.
+                                </p>
                             </div>
                         @endif
                     </div>
@@ -179,6 +191,14 @@
                     <i class="fa fa-trash btn btn-danger btn-sm removeVariantBtn"></i>
                 </div>
             </div>
+               <div class="row col-12">
+                    <div class="form-group col-md-12">
+                    <label>Varient Additional Information</label>
+                    <input type="text" class="form-control"
+                    name="variants[${variantCount}][tooltip_information]"
+                    value="{{ old('variants.${variantCount}.tooltip_information') }}">
+                    </div>
+                </div>
             <div class="row col-md-12">
                 <div class="form-group col-md-6">
                     <label>MPN</label>

@@ -68,7 +68,7 @@ class ProductController extends Controller
             // Fetch product variants and calculate the selling price in PKR
             $productVariants = ProductVaraint::where('product_id', $productId)
                 ->where('status', '1')
-                ->select('s_k_u', 'description', 'packing', 'unit','quantity', 'selling_price_per_unit')
+                ->select('s_k_u', 'description', 'packing', 'unit','quantity', 'selling_price_per_unit','tooltip_information')
                 ->get()
                 ->map(function ($variant) use ($pkrAmount) {
                     $variant->selling_price_per_unit_pkr = $variant->selling_price_per_unit * $pkrAmount;
