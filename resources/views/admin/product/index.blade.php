@@ -698,7 +698,7 @@
                         return;
                     }
                     var imageUrl = response.thumbnail_image;
-                    var baseUrl = 'http://localhost/macromed/';
+                    var baseUrl = 'https://ranglerzwp.xyz/macromed/';
                     var responseImage = baseUrl + response.thumbnail_image;
                     if (imageUrl) {
                         $('.admin-img').attr('src', responseImage).show();
