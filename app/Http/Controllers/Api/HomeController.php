@@ -26,7 +26,7 @@ class HomeController extends Controller
             $company = Company::where('status', '1')->select('id', 'name')->get();
             $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
                 ->where('status', '1')->latest()->get();
-            $silders = SilderImages::where('status', '0')->select('id','images')->latest()->get();
+            $silders = SilderImages::where('status', '0')->select('id', 'images')->latest()->get();
             if ($featureProducts->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
@@ -67,7 +67,8 @@ class HomeController extends Controller
             $country = $request->input('country');
             $userId = $request->input('user_id');
             $productId = $request->input('product_id');
-
+            $searchByWords = $request->input('key_words');
+            $availability = $request->input('available_product');
             // Get currency and handle errors
             $currency = $this->getCurrency();
             if (!$currency) {
@@ -135,6 +136,13 @@ class HomeController extends Controller
                 $query->where('country', $country);
             }
 
+            if ($searchByWords) {
+                $query->where('short_name', 'like', '%' . $searchByWords . '%');
+            }
+            if ($availability) {
+                // Ensure the product has at least one variant
+                $query->whereHas('productVaraint'); // No need to check a specific column, just ensure existence
+            }
             // Execute query and get results
             $products = $query->latest()->get();
 
