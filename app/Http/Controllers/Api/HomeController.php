@@ -267,19 +267,19 @@ class HomeController extends Controller
             )->where('status', '1');
 
             // Apply the price filters using variants' prices
-            if ($minPrice !== null && $maxPrice !== null) {
+            if ($minPrice  && $maxPrice ) {
                 $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice, $maxPrice) {
                     $variantPrice->whereBetween('selling_price_per_unit', [$minPrice, $maxPrice]);
                 });
             }
-            if ($minPrice !== null) {
+            if ($minPrice) {
                 $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice) {
                     $variantPrice->where('selling_price_per_unit', '>=', $minPrice);
                 });
             }
-            if ($maxPrice !== null) {
+            if ($maxPrice) {
                 $query->whereHas('productVaraint', function ($variantPrice) use ($maxPrice) {
-                    $variantPrice->where('selling_price_per_unit', '<=', $maxPrice);
+                    $variantPrice->where('selling_price_per_unit', '>=', $maxPrice);
                 });
             }
 
