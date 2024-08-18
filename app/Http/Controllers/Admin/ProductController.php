@@ -183,8 +183,6 @@ class ProductController extends Controller
             'provincial_tax' => 'required',
             'material_id' => 'required|array',
             'material_id.*' => 'exists:main_materials,id',
-            'min_price_range' => 'required|numeric',
-            'max_price_range' => 'required|numeric',
         ], [
             'category_id' => 'Category is required.',
             'category_id.*' => 'Category is required.',
@@ -232,8 +230,6 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
-                'min_price_range',
-                'max_price_range'
             ]));
             $product->product_code = $this->generateUniqueProductId();
             if ($request->hasFile('thumbnail_image')) {
@@ -339,8 +335,6 @@ class ProductController extends Controller
                 'max:255',
                 Rule::unique('products')->ignore($id)
             ],
-            'min_price_range' => 'required|numeric',
-            'max_price_range' => 'required|numeric',
             'company' => 'required|string|max:255',
             'models' => 'required|string|max:255',
             'country' => 'required|string|max:255',
@@ -399,8 +393,6 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
-                'min_price_range',
-                'max_price_range'
             ]));
             if ($request->hasFile('thumbnail_image')) {
                 // Delete old image if exists

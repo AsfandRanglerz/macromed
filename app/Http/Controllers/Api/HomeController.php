@@ -69,6 +69,7 @@ class HomeController extends Controller
     //         $productId = $request->input('product_id');
     //         $searchByWords = $request->input('key_words');
     //         $availability = $request->input('available_product');
+
     //         // Get currency and handle errors
     //         $currency = $this->getCurrency();
     //         if (!$currency) {
@@ -79,7 +80,7 @@ class HomeController extends Controller
     //         }
     //         $pkrAmount = $currency->pkr_amount;
 
-    //         // Build the query
+    //         // Build the initial query
     //         $query = Product::with(
     //             'productBrands.brands:id,name',
     //             'productCertifications.certification:id,name'
@@ -98,59 +99,91 @@ class HomeController extends Controller
     //             'max_price_range'
     //         )->where('status', '1');
 
-    //         // Apply filters only if provided
-    //         if ($minPrice && $maxPrice) {
-    //             $query->where(function ($query) use ($minPrice, $maxPrice) {
-    //                 $query->where('min_price_range', '<=', $minPrice)
-    //                     ->where('max_price_range', '>=', $maxPrice);
-    //             })
-    //                 ->orWhere(function ($query) use ($minPrice, $maxPrice) {
-    //                     $query->where('min_price_range', '=', $minPrice)
-    //                         ->where('max_price_range', '=', $maxPrice);
-    //                 });
-    //         }
+    //         // Apply the price filters
 
+    //         if ($minPrice !== null && $maxPrice !== null) {
+    //             $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice, $maxPrice) {
+    //                 $variantPrice->whereBetween('selling_price_per_unit', [$minPrice, $maxPrice]);
+    //             });
+    //         }
+    //         if ($minPrice !== null) {
+    //             $query->where('selling_price_per_unit', '>=', $minPrice);
+    //         }
+    //         if ($maxPrice !== null) {
+    //             $query->where('selling_price_per_unit', '>=', $maxPrice);
+    //         }
+    //         // Apply other filters one by one, returning an empty array if any filter does not match
     //         if ($company) {
     //             $query->where('company', $company);
+    //             if ($query->count() === 0) {
+    //                 return response()->json([
+    //                     'products' => [],
+    //                 ]);
+    //             }
     //         }
 
     //         if ($brandId) {
     //             $query->whereHas('productBrands', function ($q) use ($brandId) {
     //                 $q->where('brand_id', $brandId);
     //             });
+    //             if ($query->count() === 0) {
+    //                 return response()->json([
+    //                     'products' => [],
+    //                 ]);
+    //             }
     //         }
 
     //         if ($categoryId) {
     //             $query->whereHas('productCategory', function ($q) use ($categoryId) {
     //                 $q->where('category_id', $categoryId);
     //             });
+    //             if ($query->count() === 0) {
+    //                 return response()->json([
+    //                     'products' => [],
+    //                 ]);
+    //             }
     //         }
 
     //         if ($certificationId) {
     //             $query->whereHas('productCertifications', function ($q) use ($certificationId) {
     //                 $q->where('certification_id', $certificationId);
     //             });
+    //             if ($query->count() === 0) {
+    //                 return response()->json([
+    //                     'products' => [],
+    //                 ]);
+    //             }
     //         }
 
     //         if ($country) {
     //             $query->where('country', $country);
+    //             if ($query->count() === 0) {
+    //                 return response()->json([
+    //                     'products' => [],
+    //                 ]);
+    //             }
     //         }
 
     //         if ($searchByWords) {
     //             $query->where('short_name', 'like', '%' . $searchByWords . '%');
+    //             if ($query->count() === 0) {
+    //                 return response()->json([
+    //                     'products' => [],
+    //                 ]);
+    //             }
     //         }
+
     //         if ($availability) {
-    //             // Ensure the product has at least one variant
-    //             $query->whereHas('productVaraint'); // No need to check a specific column, just ensure existence
+    //             $query->whereHas('productVaraint');
     //         }
+
     //         // Execute query and get results
     //         $products = $query->latest()->get();
 
     //         // Handle no products found
     //         if ($products->isEmpty()) {
     //             return response()->json([
-    //                 'status' => 'failed',
-    //                 'data' => []
+    //                 'products' => [],
     //             ], 404);
     //         }
 
@@ -160,7 +193,6 @@ class HomeController extends Controller
     //         // Fetch the favorite products based on user_id and product_id
     //         $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
 
-    //         $likes = [];
     //         foreach ($products as $product) {
     //             // Populate likes array
     //             $productLikes = $favoriteProducts->where('product_id', $product->id)->pluck('user_id');
@@ -172,8 +204,10 @@ class HomeController extends Controller
     //                     'user_id' => $userId,
     //                     'product_id' => $productId,
     //                 ]);
+    //                 $wishlist->save();
     //             }
     //         }
+
     //         return response()->json([
     //             'status' => 'success',
     //             'products' => $products,
@@ -213,10 +247,13 @@ class HomeController extends Controller
             $pkrAmount = $currency->pkr_amount;
 
             // Build the initial query
-            $query = Product::with(
+            $query = Product::with([
                 'productBrands.brands:id,name',
-                'productCertifications.certification:id,name'
-            )->select(
+                'productCertifications.certification:id,name',
+                'productVaraint' => function ($query) {
+                    $query->select('product_id', 'selling_price_per_unit');
+                }
+            ])->select(
                 'id',
                 'product_code',
                 'thumbnail_image',
@@ -226,83 +263,51 @@ class HomeController extends Controller
                 'models',
                 'product_use_status',
                 'short_description',
-                'sterilizations',
-                'min_price_range',
-                'max_price_range'
+                'sterilizations'
             )->where('status', '1');
 
-            // Apply the price filters
-
-            if ($minPrice  && $maxPrice) {
-                $query->whereHas('max_price_range', [$minPrice, $maxPrice]);
-                if ($query->count() === 0) {
-                    return response()->json([
-                        'products' => [],
-                    ]);
-                }
+            // Apply the price filters using variants' prices
+            if ($minPrice !== null && $maxPrice !== null) {
+                $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice, $maxPrice) {
+                    $variantPrice->whereBetween('selling_price_per_unit', [$minPrice, $maxPrice]);
+                });
+            }
+            if ($minPrice !== null) {
+                $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice) {
+                    $variantPrice->where('selling_price_per_unit', '>=', $minPrice);
+                });
+            }
+            if ($maxPrice !== null) {
+                $query->whereHas('productVaraint', function ($variantPrice) use ($maxPrice) {
+                    $variantPrice->where('selling_price_per_unit', '<=', $maxPrice);
+                });
             }
 
-            // Apply other filters one by one, returning an empty array if any filter does not match
+            // Apply other filters as before
             if ($company) {
                 $query->where('company', $company);
-                if ($query->count() === 0) {
-                    return response()->json([
-                        'products' => [],
-                    ]);
-                }
             }
-
             if ($brandId) {
                 $query->whereHas('productBrands', function ($q) use ($brandId) {
                     $q->where('brand_id', $brandId);
                 });
-                if ($query->count() === 0) {
-                    return response()->json([
-                        'products' => [],
-                    ]);
-                }
             }
-
             if ($categoryId) {
                 $query->whereHas('productCategory', function ($q) use ($categoryId) {
                     $q->where('category_id', $categoryId);
                 });
-                if ($query->count() === 0) {
-                    return response()->json([
-                        'products' => [],
-                    ]);
-                }
             }
-
             if ($certificationId) {
                 $query->whereHas('productCertifications', function ($q) use ($certificationId) {
                     $q->where('certification_id', $certificationId);
                 });
-                if ($query->count() === 0) {
-                    return response()->json([
-                        'products' => [],
-                    ]);
-                }
             }
-
             if ($country) {
                 $query->where('country', $country);
-                if ($query->count() === 0) {
-                    return response()->json([
-                        'products' => [],
-                    ]);
-                }
             }
-
             if ($searchByWords) {
                 $query->where('short_name', 'like', '%' . $searchByWords . '%');
-                if ($query->count() === 0) {
-                    return response()->json([
-                        'products' => [],
-                    ]);
-                }
             }
-
             if ($availability) {
                 $query->whereHas('productVaraint');
             }
@@ -316,9 +321,22 @@ class HomeController extends Controller
                     'products' => [],
                 ], 404);
             }
+            // Calculate min/max prices for variants in PKR and adjust for single price
+            $products->each(function ($product) use ($pkrAmount) {
+                $variantPrices = $product->productVaraint->pluck('selling_price_per_unit')->map(function ($price) use ($pkrAmount) {
+                    return $price * $pkrAmount;
+                });
+                if ($variantPrices->count() == 1) {
+                    $product->price_pkr = $variantPrices->first();
+                } else {
+                    // Set min and max prices for the product
+                    $product->min_price_range_pkr = $variantPrices->min();
+                    $product->max_price_range_pkr = $variantPrices->max();
+                }
 
-            // Convert prices
-            $products = $this->convertPrices($products, $pkrAmount);
+                // Detach the variants to exclude them from the response
+                unset($product->productVaraint);
+            });
 
             // Fetch the favorite products based on user_id and product_id
             $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
