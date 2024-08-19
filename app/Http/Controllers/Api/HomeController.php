@@ -69,8 +69,8 @@ class HomeController extends Controller
             $productId = $request->input('product_id');
             $searchByWords = $request->input('key_words');
             $availability = $request->input('available_product');
-            $page = $request->input('page', 1);
-            $perPage = 2;
+            $page = $request->input('page', 6);
+            $perPage = 6;
             $offset = ($page - 1) * $perPage;
             // Get currency and handle errors
             $currency = $this->getCurrency();
@@ -177,7 +177,7 @@ class HomeController extends Controller
             if ($availability) {
                 $query->whereHas('productVaraint');
             }
-
+            $totalProducts = $query->count();
             // Execute query and get results
             $products = $query->latest()
                 ->skip($offset)
@@ -229,6 +229,7 @@ class HomeController extends Controller
                 'status' => 'success',
                 'products' => $products,
                 'pkrAmount' => $pkrAmount,
+                'totalProducts'=>$totalProducts,
             ]);
         } catch (\Exception $e) {
             return response()->json([
