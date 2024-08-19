@@ -214,10 +214,16 @@
                         "data": "quantity"
                     },
                     {
-                        "data": "price_per_unit"
+                        "data": "price_per_unit",
+                        "render": function(data, type, row) {
+                            return '$' + data;
+                        }
                     },
                     {
-                        "data": "selling_price_per_unit"
+                        "data": "selling_price_per_unit",
+                        "render": function(data, type, row) {
+                            return '$' + data;
+                        }
                     },
                     {
                         "data": "actual_weight"

@@ -103,13 +103,13 @@
                                                             value="{{ old('variants.0.quantity') }}">
                                                     </div>
                                                     <div class="form-group col-md-4">
-                                                        <label>Total Cost/Unit</label>
+                                                        <label>Total Cost/Unit ($)</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[0][price_per_unit]"
                                                             value="{{ old('variants.0.price_per_unit') }}">
                                                     </div>
                                                     <div class="form-group col-md-4">
-                                                        <label>Selling Price/Unit</label>
+                                                        <label>Selling Price/Unit ($)</label>
                                                         <input type="text" class="form-control"
                                                             name="variants[0][selling_price_per_unit]"
                                                             value="{{ old('variants.0.selling_price_per_unit') }}">
@@ -253,11 +253,11 @@
                     <input type="text" class="form-control" name="variants[${variantCount}][quantity]" value="{{ old('variants.${variantCount}.quantity') }}">
                 </div>
                 <div class="form-group col-md-4">
-                    <label>Total Cost/Unit</label>
+                    <label>Total Cost/Unit ($)</label>
                     <input type="text" class="form-control" name="variants[${variantCount}][price_per_unit]" value="{{ old('variants.${variantCount}.price_per_unit') }}">
                 </div>
                 <div class="form-group col-md-4">
-                    <label>Selling Price/Unit</label>
+                    <label>Selling Price/Unit ($)</label>
                     <input type="text" class="form-control" name="variants[${variantCount}][selling_price_per_unit]" value="{{ old('variants.${variantCount}.selling_price_per_unit') }}">
                 </div>
             </div>

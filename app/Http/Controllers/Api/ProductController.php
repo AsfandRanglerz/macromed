@@ -45,8 +45,6 @@ class ProductController extends Controller
                     'models',
                     'product_use_status',
                     'sterilizations',
-                    'min_price_range',
-                    'max_price_range',
                     'tab_1_heading',
                     'tab_2_heading',
                     'tab_3_heading',

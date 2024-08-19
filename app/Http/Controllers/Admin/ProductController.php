@@ -145,7 +145,12 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'short_name' => 'required|string|max:255',
+            'short_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products')
+            ],
             'product_name' => [
                 'required',
                 'string',
@@ -322,7 +327,12 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'short_name' => 'required|string|max:255',
+            'short_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products')->ignore($id)
+            ],
             'product_name' => [
                 'required',
                 'string',
