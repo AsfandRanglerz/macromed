@@ -45,11 +45,7 @@ use App\Http\Controllers\SalesAgent\SalesAgentPrivateNotesController;
 /*
 Admin routes
  * */
-// ############ React routes ############
-Route::get('/{any}', function () {
-    return view('react.index');
-})->where('any', '.*');
-// ############ React routes ############
+
 Route::get('/admin', [AuthController::class, 'getLoginPage'])->name('login');
 Route::post('admin/login', [AuthController::class, 'Login']);
 Route::get('/admin-forgot-password', [AdminController::class, 'forgetPassword']);
@@ -332,3 +328,8 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::get('/agentNotes/delete/{id}',  'deleteAgentNotes')->name('agentNotes.delete');
     });
 });
+// ############ React routes ############
+// Route::get('/{any}', function () {
+//     return view('react.index');
+// })->where('any', '.*');
+// ############ React routes ############
