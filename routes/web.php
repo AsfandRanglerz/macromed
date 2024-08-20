@@ -329,7 +329,7 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
     });
 });
 // ############ React routes ############
-// Route::get('/{any}', function () {
-//     return view('react.index');
-// })->where('any', '.*');
+Route::get('/{any}', function () {
+    return view('react.index');
+})->where('any', '.*');
 // ############ React routes ############
