@@ -165,7 +165,7 @@ class AuthController extends Controller
         DB::table('otps')->where('user_id', $user->id)->update(['otp' => $otp]);
         Mail::to($request->email)->send(new ResetPasswordMail($otp));
         return response()->json([
-            'message' => 'OTP resent successfully.',
+            'message' => 'OTP resend successfully.',
             'status' => 'success',
         ], 200);
     }
