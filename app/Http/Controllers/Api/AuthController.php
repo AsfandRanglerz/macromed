@@ -140,7 +140,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
-    
+
     public function resendOtp(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -172,19 +172,19 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         try {
-            $password = bcrypt($request->password);
+            $password = Hash::make($request->password);
             $tags_data = [
-                'password' => bcrypt($request->password)
+                'password' => Hash::make($request->password)
             ];
             $user = User::where('email', $request->email)->first();
             if (!$user) {
                 return response()->json(['error_message' => 'User not found']);
             }
             if ($user->update($tags_data)) {
-                DB::table('o_t_p_s')->where('email', $request->email)->delete();
+                DB::table('otps')->where('email', $request->email)->delete();
                 return response()->json(['status' => 'success', 'message' => 'Password reset successfully'], 200);
             } else {
-                return response()->json(['status' => 'error', 'error_message' => 'Failed to reset password']);
+                return response()->json(['status' => 'error', 'message' => 'Failed to reset password']);
             }
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Something went wrong: ' . $e->getMessage()], 500);

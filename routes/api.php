@@ -27,6 +27,10 @@ use Illuminate\Support\Facades\Route;
 ######### Auth  ##########
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/userForgetPassword', [AuthController::class, 'userForgetPassword']);
+Route::post('/verifyOtp', [AuthController::class, 'verifyOtp']);
+Route::post('/resendOtp', [AuthController::class, 'resendOtp']);
+Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
