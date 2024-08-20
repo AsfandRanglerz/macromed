@@ -218,6 +218,7 @@ class CustomerController extends Controller
                 $message = 'Customer Active Successfully';
             } else if ($customer->status == '1') {
                 $customer->status = '0';
+                $customer->is_active = 0;
                 $data['username'] =  $customer->name;
                 $data['useremail'] =  $customer->email;
                 $data['reason'] = $request->reason;

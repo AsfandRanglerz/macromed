@@ -313,7 +313,8 @@
                                             <th>Sr.</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Status</th>
+                                            <th>Active & Deactivate Status</th>
+                                            <th>Login & Logut Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -367,6 +368,16 @@
                                 .id + '">' + buttonText + '</button>';
                         },
 
+                    },
+                    {
+                        "data": "is_active",
+                        "render": function(data, type, row) {
+                            if (data == 0) {
+                                return '<span class="badge bg-danger text-white">Offline</span>';
+                            } else {
+                                return '<span class="badge bg-success text-white">Online</span>';
+                            }
+                        }
                     },
                     {
                         "data": null,

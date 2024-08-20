@@ -49,7 +49,8 @@ class User extends Authenticatable implements JWTSubject
         'profession',
         'location',
         'status',
-        'user_type'
+        'user_type',
+        'is_active'
     ];
     public function bankAccounts()
     {

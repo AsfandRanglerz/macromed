@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CertificationController;
@@ -23,9 +24,13 @@ use Illuminate\Support\Facades\Route;
  */
 
 
+######### Auth  ##########
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-
-Route::group(['middleware' => 'auth:api'], function () {});
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts']);
