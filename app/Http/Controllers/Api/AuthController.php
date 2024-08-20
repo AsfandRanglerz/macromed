@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
+use App\Mail\UserResetPasswordMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -93,32 +94,43 @@ class AuthController extends Controller
     {
         try {
             $request->validate([
-                'email' => 'required|email|exists:users,email',
+                'email' => 'required|email',
             ]);
+            $user = User::where('email', $request->email)->first();
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Email address not found',
+                ], 404);
+            }
             $exists = OTP::where('email', $request->email)->first();
             if ($exists) {
-                return response()->json(['status' => 'error', 'message' => 'Reset Password OTP has already been sent']);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Reset Password OTP has already been sent',
+                ]);
             }
             $otp = rand(1000, 9999);
             $token = Str::random(30);
-            $user = User::where('email', $request->email)->first();
-            $userId = $user->id;
             OTP::create([
                 'email' => $request->email,
                 'token' => $token,
                 'otp' => $otp,
-                'user_id' => $userId,
+                'user_id' => $user->id,
             ]);
-            Mail::to($request->email)->send(new ResetPasswordMail($otp));
+            Mail::to($request->email)->send(new UserResetPasswordMail($otp));
             return response()->json([
                 'status' => 'success',
                 'message' => 'OTP Sent Successfully',
                 'data' => [
                     'email' => $request->email,
-                ]
+                ],
             ], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => 'Invalid Email']);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while processing your request:' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -149,7 +161,6 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Validation failed',
                 'status' => 'Failed',
                 'errors' => $validator->errors(),
             ], 422);
