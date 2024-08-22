@@ -32,7 +32,7 @@ class AuthController extends Controller
                 ],
             ]);
             if ($validation->fails()) {
-                return response()->json(['errors' => $validation->errors()]);
+                return response()->json(['errors' => $validation->errors()], 400);
             }
             $data = $request->only(['name', 'email', 'phone', 'profession', 'address']);
             $data['user_type'] = 'customer';
@@ -55,16 +55,14 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
             if (!$user) {
                 return response()->json([
-                    'status' => 'error',
-                    'message' => 'User not found',
+                    'error' => 'User not found',
                 ], 404);
             }
 
             // Check if the user is blocked
             if ($user->status == 0) {
                 return response()->json([
-                    'status' => 'blocked',
-                    'message' => 'You are blocked by the Admin',
+                    'error' => 'You are blocked by the Admin',
                 ], 403);
             }
 
@@ -80,7 +78,7 @@ class AuthController extends Controller
             if ($user) {
                 $user->update(['is_active' => 1]);
                 return response()->json([
-                    'message' => 'Login successful',
+                    'message' => 'Login Successfully',
                     'user' => $user,
                     'token' => $token,
                 ], 200);
@@ -96,19 +94,18 @@ class AuthController extends Controller
             $request->validate([
                 'email' => 'required|email',
             ]);
+
             $user = User::where('email', $request->email)->first();
             if (!$user) {
                 return response()->json([
-                    'status' => 'error',
-                    'message' => 'Email address not found',
+                    'error' => 'Email address not found',
                 ], 404);
             }
-            $exists = OTP::where('email', $request->email)->first();
-            if ($exists) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Reset Password OTP has already been sent',
-                ]);
+
+            // Check if an OTP already exists for this email and delete it
+            $existingOtp = OTP::where('email', $request->email)->first();
+            if ($existingOtp) {
+                $existingOtp->delete();
             }
             $otp = rand(1000, 9999);
             $token = Str::random(30);
@@ -120,19 +117,15 @@ class AuthController extends Controller
             ]);
             Mail::to($request->email)->send(new UserResetPasswordMail($otp));
             return response()->json([
-                'status' => 'success',
                 'message' => 'OTP Sent Successfully',
-                'data' => [
-                    'email' => $request->email,
-                ],
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while processing your request:' . $e->getMessage(),
+                'error' => 'An error occurred while processing your request: ' . $e->getMessage(),
             ], 500);
         }
     }
+
 
     public function verifyOtp(Request $request)
     {
@@ -144,42 +137,39 @@ class AuthController extends Controller
                 ->where('otp', $request->otp)
                 ->first();
             if ($otpRecord) {
-                return response()->json(['status' => 'success', 'message' => 'OTP is Verified'], 200);
+                return response()->json(['error' => 'OTP is Verified'], 200);
             } else {
-                return response()->json(['status' => 'error', 'message' => 'Invalid OTP']);
+                return response()->json(['error' => 'Invalid OTP'], 400);
             }
         } catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
 
-    public function resendOtp(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
+    // public function resendOtp(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'email' => 'required|email',
+    //     ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'Failed',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-        $user = User::where('email', $request->email)->first();
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found.',
-                'status' => 'Failed',
-            ], 404);
-        }
-        $otp = rand(1000, 9999);
-        DB::table('otps')->where('user_id', $user->id)->update(['otp' => $otp]);
-        Mail::to($request->email)->send(new ResetPasswordMail($otp));
-        return response()->json([
-            'message' => 'OTP resend successfully.',
-            'status' => 'success',
-        ], 200);
-    }
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'error' => $validator->errors(),
+    //         ], 422);
+    //     }
+    //     $user = User::where('email', $request->email)->first();
+    //     if (!$user) {
+    //         return response()->json([
+    //             'error' => 'User not found.',
+    //         ], 404);
+    //     }
+    //     $otp = rand(1000, 9999);
+    //     DB::table('otps')->where('user_id', $user->id)->update(['otp' => $otp]);
+    //     Mail::to($request->email)->send(new ResetPasswordMail($otp));
+    //     return response()->json([
+    //         'success' => 'OTP resend successfully.',
+    //     ], 200);
+    // }
     public function resetPassword(Request $request)
     {
         try {
@@ -189,16 +179,16 @@ class AuthController extends Controller
             ];
             $user = User::where('email', $request->email)->first();
             if (!$user) {
-                return response()->json(['error_message' => 'User not found']);
+                return response()->json(['error' => 'User not found']);
             }
             if ($user->update($tags_data)) {
                 DB::table('otps')->where('email', $request->email)->delete();
-                return response()->json(['status' => 'success', 'message' => 'Password reset successfully'], 200);
+                return response()->json(['success' => 'Password reset successfully'], 200);
             } else {
-                return response()->json(['status' => 'error', 'message' => 'Failed to reset password']);
+                return response()->json(['error' => 'Failed to reset password']);
             }
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => 'Something went wrong: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
     public function logout()
@@ -209,7 +199,7 @@ class AuthController extends Controller
             if ($user) {
                 $user->update(['is_active' => 0]);
             }
-            return response()->json(['message' => 'Logout successful'], 200);
+            return response()->json(['success' => 'Logout successful'], 200);
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
             return response()->json(['error' => 'The token is already invalidated or expired'], 400);
         } catch (\Exception $e) {
