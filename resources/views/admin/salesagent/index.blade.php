@@ -492,7 +492,6 @@
                     $(this).removeClass('is-invalid');
                 });
         });
-
         function submitEditSalesAgentForm() {
             var salesAgentUpdateRoute = '{{ route('salesagent.update', ':id') }}';
             var salesAgentId = $('#editSalesAgentModal').data('salesAgentId');
