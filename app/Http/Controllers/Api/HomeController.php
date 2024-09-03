@@ -81,8 +81,6 @@ class HomeController extends Controller
                 ]);
             }
             $pkrAmount = $currency->pkr_amount;
-
-            // Build the initial query
             $query = Product::with([
                 'productBrands.brands:id,name',
                 'productCertifications.certification:id,name',
