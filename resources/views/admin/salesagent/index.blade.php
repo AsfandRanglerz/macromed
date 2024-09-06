@@ -348,7 +348,7 @@
                                             <th>Sr.</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Status</th>
+                                            <th>Active & Deactivate Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -407,7 +407,7 @@
                         "data": null,
                         "render": function(data, type, row) {
                             return '<button class="btn btn-success mb-0 mr-2 text-white editSalesAgentBtn btn-sm" data-id="' +
-                            row.id + '"><i class="fas fa-edit"></i></button>' +
+                                row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger mb-0 mr-2 text-white deleteSalesAgentBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
 

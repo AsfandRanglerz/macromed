@@ -259,7 +259,7 @@
                                             <th>Sr.</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Status</th>
+                                            <th>Active & Deactivate Status</th>
                                             <th>Permissions</th>
                                             <th>Action</th>
                                         </tr>
