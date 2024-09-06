@@ -170,6 +170,14 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="address">Profession</label>
+                                    <input type="text" class="form-control profession" id="profession"
+                                        name="profession">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="confirmpassword">Active Status</label>
                                     <select name="status" class="form-control status">
                                         <option value="1">Active</option>
@@ -177,7 +185,7 @@
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
@@ -218,14 +226,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="address">Profession</label>
-                                    <input type="text" class="form-control profession" id="profession"
-                                        name="profession">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
@@ -387,10 +388,10 @@
                                 '<button class="btn btn-danger mb-0 mr-2 text-white deleteCustomerBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
 
-                                // '<a href="' +
-                                // "{{ route('customer.profile', ['id' => ':id']) }}"
-                                // .replace(':id', row.id) +
-                                // '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
+                            // '<a href="' +
+                            // "{{ route('customer.profile', ['id' => ':id']) }}"
+                            // .replace(':id', row.id) +
+                            // '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
                         }
                     }
                 ]
@@ -666,7 +667,7 @@
                     $('#editCustomerForm .profession').val(response.profession);
 
                     var imageUrl = response.image;
-                    var baseUrl = 'http://localhost/macromed/';
+                    var baseUrl = 'https://ranglerzwp.xyz/macromed/';
                     var responseImage = baseUrl + imageUrl;
                     if (imageUrl) {
                         $('#imagePreview').attr('src', responseImage).show();

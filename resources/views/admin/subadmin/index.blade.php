@@ -122,26 +122,6 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="confirmpassword">Active Status</label>
-                                    <select name="status" class="form-control status">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-
-                            {{-- <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="image">Image</label>
-                                    <input type="file" class="form-control image" name="image">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div> --}}
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label for="image">Image</label>
                                     <input type="file" class="form-control image" name="image">
                                     <img id="imagePreview" src="" alt="Image Preview"
@@ -149,8 +129,18 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-
+                            {{-- <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="confirmpassword">Active Status</label>
+                                    <select name="status" class="form-control status">
+                                        <option value="1">Active</option>
+                                        <option value="0">In Active</option>
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div> --}}
                         </div>
+
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -325,15 +315,15 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return'<button class="btn btn-success mb-0 mr-2 text-white editSubadminBtn btn-sm" data-id="' +
+                            return '<button class="btn btn-success mb-0 mr-2 text-white editSubadminBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger mb-0 mr-2 text-white deleteSubadminBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
 
-                                // '<a href="' +
-                                // "{{ route('subadmin.profile', ['id' => ':id']) }}"
-                                // .replace(':id', row.id) +
-                                // '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
+                            // '<a href="' +
+                            // "{{ route('subadmin.profile', ['id' => ':id']) }}"
+                            // .replace(':id', row.id) +
+                            // '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
                         }
                     }
                 ]
