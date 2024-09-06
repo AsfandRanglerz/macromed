@@ -187,6 +187,13 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control location" id="location" name="location">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="confirmpassword">Active Status</label>
                                     <select name="status" class="form-control status">
                                         <option value="1">Active</option>
@@ -194,7 +201,7 @@
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
@@ -228,15 +235,6 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="address">Address</label>
-                                    <input type="text" class="form-control location" id="location" name="location">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label for="image">Image</label>
                                     <input type="file" class="form-control image" name="image">
                                     <img id="imagePreview" src="" alt="Image Preview"
@@ -245,6 +243,7 @@
                                 </div>
                             </div>
                         </div>
+
 
                         <h4>Update Accounts Information:</h4>
                         <div class="row">
@@ -689,7 +688,7 @@
                     $('#editSalesAgentForm .location').val(response.location);
 
                     var imageUrl = response.image;
-                    var baseUrl = 'http://localhost/macromed/';
+                    var baseUrl = 'https://ranglerzwp.xyz/macromed/';
                     var responseImage = baseUrl + imageUrl;
                     if (imageUrl) {
                         $('#imagePreview').attr('src', responseImage).show();
