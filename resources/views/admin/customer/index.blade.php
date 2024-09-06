@@ -382,14 +382,15 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('customer.profile', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
-                                '<button class="btn btn-success mb-0 mr-2 text-white editCustomerBtn btn-sm" data-id="' +
+                            return '<button class="btn btn-success mb-0 mr-2 text-white editCustomerBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger mb-0 mr-2 text-white deleteCustomerBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
+
+                                // '<a href="' +
+                                // "{{ route('customer.profile', ['id' => ':id']) }}"
+                                // .replace(':id', row.id) +
+                                // '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
                         }
                     }
                 ]

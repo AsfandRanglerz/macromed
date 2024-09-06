@@ -46,6 +46,10 @@ use App\Http\Controllers\SalesAgent\SalesAgentPrivateNotesController;
 Admin routes
  * */
 
+Route::get('/', function () {
+    return redirect('/admin');
+});
+
 Route::get('/admin', [AuthController::class, 'getLoginPage'])->name('login');
 Route::post('admin/login', [AuthController::class, 'Login']);
 Route::get('/admin-forgot-password', [AdminController::class, 'forgetPassword']);
@@ -68,210 +72,210 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::resource('faq', FaqController::class);
     // ############## Silder ############
     Route::controller(SliderController::class)->group(function () {
-        Route::get('/silder-image',  'showSilderImage')->name('silder.image');
-        Route::post('/silders/upload-images',  'uploadSilderImages')->name('silders.upload-images');
-        Route::put('/silders/update-cover-status/{imageId}', 'updateSilderStatus')->name('silders.update-cover-status');
-        Route::get('/silder/delete/{id}', 'deleteSilderImage')->name('silderImage.delete');
+        Route::get('/silder-image',  'showSilderImage')->name('silder.image')->middleware('permission:Sliders');
+        Route::post('/silders/upload-images',  'uploadSilderImages')->name('silders.upload-images')->middleware('permission:Sliders');
+        Route::put('/silders/update-cover-status/{imageId}', 'updateSilderStatus')->name('silders.update-cover-status')->middleware('permission:Sliders');
+        Route::get('/silder/delete/{id}', 'deleteSilderImage')->name('silderImage.delete')->middleware('permission:Sliders');
     });
     // ############## SubAdmin ############
     Route::controller(SubAdminController::class)->group(function () {
-        Route::get('/subadmin',  'subadminIndex')->name('subadmin.index')->middleware('permission:Sub Admins');
-        Route::post('/subadmin-create',  'subadminCreate')->name('subadmin.create')->middleware('permission:Sub Admins');
-        Route::get('/subadminData',  'subadminData')->name('subadmin.get')->middleware('permission:Sub Admins');
-        Route::get('/subadmin/{id}',  'showSubAdmin')->name('subadmin.show')->middleware('permission:Sub Admins');
-        Route::post('/subadminUpdate/{id}',  'updateAdmin')->name('subadmin.update')->middleware('permission:Sub Admins');
-        Route::get('/subadmin/delete/{id}',  'deleteSubadmin')->name('subadmin.delete')->middleware('permission:Sub Admins');
-        Route::get('/get-permissions/{user}',  'fetchUserPermissions')->name('get.permissions')->middleware('permission:Sub Admins');
-        Route::post('/update-permissions/{user}',  'updatePermissions')->name('update.user.permissions')->middleware('permission:Sub Admins');
-        Route::post('/update-user-status/{id}',  'updateBlockStatus')->name('userBlock.update')->middleware('permission:Sub Admins');
-        Route::get('/subadmin-profile/{id}',  'subAdminProfile')->name('subadmin.profile')->middleware('permission:Sub Admins');
+        Route::get('/subadmin',  'subadminIndex')->name('subadmin.index')->middleware('permission:Sales Agent');
+        Route::post('/subadmin-create',  'subadminCreate')->name('subadmin.create')->middleware('permission:Sales Agent');
+        Route::get('/subadminData',  'subadminData')->name('subadmin.get')->middleware('permission:Sales Agent');
+        Route::get('/subadmin/{id}',  'showSubAdmin')->name('subadmin.show')->middleware('permission:Sales Agent');
+        Route::post('/subadminUpdate/{id}',  'updateAdmin')->name('subadmin.update')->middleware('permission:Sales Agent');
+        Route::get('/subadmin/delete/{id}',  'deleteSubadmin')->name('subadmin.delete')->middleware('permission:Sales Agent');
+        Route::get('/get-permissions/{user}',  'fetchUserPermissions')->name('get.permissions')->middleware('permission:Sales Agent');
+        Route::post('/update-permissions/{user}',  'updatePermissions')->name('update.user.permissions')->middleware('permission:Sales Agent');
+        Route::post('/update-user-status/{id}',  'updateBlockStatus')->name('userBlock.update')->middleware('permission:Sales Agent');
+        Route::get('/subadmin-profile/{id}',  'subAdminProfile')->name('subadmin.profile')->middleware('permission:Sales Agent');
     });
     // ############## Sales Agent ############
     Route::controller(SalesAgentController::class)->group(function () {
-        Route::get('/salesagent',  'salesagentIndex')->name('salesagent.index')->middleware('permission:Sales Managers');
-        Route::post('/salesagent-create',  'salesagentCreate')->name('salesagent.create')->middleware('permission:Sales Managers');
-        Route::get('/salesagentData',  'salesagentData')->name('salesagent.get')->middleware('permission:Sales Managers');
-        Route::get('/salesagent/{id}',  'showSalesAgent')->name('salesagent.show')->middleware('permission:Sales Managers');
-        Route::post('/salesagentUpdate/{id}',  'updateSalesAgent')->name('salesagent.update')->middleware('permission:Sales Managers');
-        Route::get('/salesagent/delete/{id}',  'deletesalesagent')->name('salesagent.delete')->middleware('permission:Sales Managers');
-        Route::post('/update-salesagent-status/{id}',  'updateAgentBlockStatus')->name('agentBlock.update')->middleware('permission:Sales Managers');
-        Route::get('/salesagent-profile/{id}',  'salesagentProfile')->name('salesagent.profile')->middleware('permission:Sales Managers');
+        Route::get('/salesagent',  'salesagentIndex')->name('salesagent.index')->middleware('permission:Sales Agent');
+        Route::post('/salesagent-create',  'salesagentCreate')->name('salesagent.create')->middleware('permission:Sales Agent');
+        Route::get('/salesagentData',  'salesagentData')->name('salesagent.get')->middleware('permission:Sales Agent');
+        Route::get('/salesagent/{id}',  'showSalesAgent')->name('salesagent.show')->middleware('permission:Sales Agent');
+        Route::post('/salesagentUpdate/{id}',  'updateSalesAgent')->name('salesagent.update')->middleware('permission:Sales Agent');
+        Route::get('/salesagent/delete/{id}',  'deletesalesagent')->name('salesagent.delete')->middleware('permission:Sales Agent');
+        Route::post('/update-salesagent-status/{id}',  'updateAgentBlockStatus')->name('agentBlock.update')->middleware('permission:Sales Agent');
+        Route::get('/salesagent-profile/{id}',  'salesagentProfile')->name('salesagent.profile')->middleware('permission:Sales Agent');
         Route::get('/fetch-states', 'fetchStates')->name('fetchStates');
         Route::get('/fetch-cities', 'fetchCities')->name('fetchCities');
     });
 
     // ############## Customer ############
     Route::controller(CustomerController::class)->group(function () {
-        Route::get('/customer',  'customerIndex')->name('customer.index');
-        Route::post('/customer-create',  'customerCreate')->name('customer.create');
-        Route::get('/customerData',  'customerData')->name('customer.get');
-        Route::get('/customer/{id}',  'showCustomer')->name('customer.show');
-        Route::post('/customerUpdate/{id}',  'updateCustomer')->name('customer.update');
-        Route::get('/customer/delete/{id}',  'deleteCustomer')->name('customer.delete');
-        Route::post('/update-customer-status/{id}',  'updateCustomerBlockStatus')->name('customerBlock.update');
-        Route::get('/customer-profile/{id}',  'customerProfile')->name('customer.profile');
-        Route::get('/fetchCustomer-states', 'fetchCutomerStates')->name('fetchCustomerStates');
-        Route::get('/fetchCustomer-cities', 'fetchCustomerCities')->name('fetchCustomerCities');
+        Route::get('/customer',  'customerIndex')->name('customer.index')->middleware('permission:Customer');
+        Route::post('/customer-create',  'customerCreate')->name('customer.create')->middleware('permission:Customer');
+        Route::get('/customerData',  'customerData')->name('customer.get')->middleware('permission:Customer');
+        Route::get('/customer/{id}',  'showCustomer')->name('customer.show')->middleware('permission:Customer');
+        Route::post('/customerUpdate/{id}',  'updateCustomer')->name('customer.update')->middleware('permission:Customer');
+        Route::get('/customer/delete/{id}',  'deleteCustomer')->name('customer.delete')->middleware('permission:Customer');
+        Route::post('/update-customer-status/{id}',  'updateCustomerBlockStatus')->name('customerBlock.update')->middleware('permission:Customer');
+        Route::get('/customer-profile/{id}',  'customerProfile')->name('customer.profile')->middleware('permission:Customer');
+        Route::get('/fetchCustomer-states', 'fetchCutomerStates')->name('fetchCustomerStates')->middleware('permission:Customer');
+        Route::get('/fetchCustomer-cities', 'fetchCustomerCities')->name('fetchCustomerCities')->middleware('permission:Customer');
     });
     // ############## Category ############
     Route::controller(CategoryController::class)->group(function () {
-        Route::get('/category', 'categoryIndex')->name('category.index');
-        Route::post('/category-create', 'categoryCreate')->name('category.create');
-        Route::get('/categoryData', 'categoryData')->name('category.get');
-        Route::get('/category/{id}', 'showCategory')->name('category.show');
-        Route::post('/categoryUpdate/{id}', 'updateCategory')->name('category.update');
-        Route::get('/category/delete/{id}', 'deleteCategory')->name('category.delete');
-        Route::post('/update-category-status/{id}',  'updateCategoryStatus')->name('categoryBlock.update');
+        Route::get('/category', 'categoryIndex')->name('category.index')->middleware('permission:Category');
+        Route::post('/category-create', 'categoryCreate')->name('category.create')->middleware('permission:Category');
+        Route::get('/categoryData', 'categoryData')->name('category.get')->middleware('permission:Category');
+        Route::get('/category/{id}', 'showCategory')->name('category.show')->middleware('permission:Category');
+        Route::post('/categoryUpdate/{id}', 'updateCategory')->name('category.update')->middleware('permission:Category');
+        Route::get('/category/delete/{id}', 'deleteCategory')->name('category.delete')->middleware('permission:Category');
+        Route::post('/update-category-status/{id}',  'updateCategoryStatus')->name('categoryBlock.update')->middleware('permission:Category');
     });
 
     // ############## Sub Category ############
     Route::controller(SubCategoryController::class)->group(function () {
-        Route::get('/subCategory',  'subCategoryIndex')->name('subCategory.index');
-        Route::post('/subCategory-create',  'subCategoryCreate')->name('subCategory.create');
-        Route::get('/subCategoryData',  'subCategoryData')->name('subCategory.get');
-        Route::get('/subCategory/{id}',  'showSubCategory')->name('subCategory.show');
-        Route::post('/subCategoryUpdate/{id}',  'updateSubCategory')->name('subCategory.update');
-        Route::get('/subCategory/delete/{id}',  'deleteSubCategory')->name('subCategory.delete');
-        Route::post('/update-subcategory-status/{id}',  'updateSubCategoryStatus')->name('subcategoryBlock.update');
+        Route::get('/subCategory',  'subCategoryIndex')->name('subCategory.index')->middleware('permission:Sub Category');
+        Route::post('/subCategory-create',  'subCategoryCreate')->name('subCategory.create')->middleware('permission:Sub Category');
+        Route::get('/subCategoryData',  'subCategoryData')->name('subCategory.get')->middleware('permission:Sub Category');
+        Route::get('/subCategory/{id}',  'showSubCategory')->name('subCategory.show')->middleware('permission:Sub Category');
+        Route::post('/subCategoryUpdate/{id}',  'updateSubCategory')->name('subCategory.update')->middleware('permission:Sub Category');
+        Route::get('/subCategory/delete/{id}',  'deleteSubCategory')->name('subCategory.delete')->middleware('permission:Sub Category');
+        Route::post('/update-subcategory-status/{id}',  'updateSubCategoryStatus')->name('subcategoryBlock.update')->middleware('permission:Sub Category');
     });
     // ############## Brands ############
     Route::controller(BrandsController::class)->group(function () {
-        Route::get('/brands',  'brandsIndex')->name('brands.index');
-        Route::post('/brands-create',  'brandsCreate')->name('brands.create');
-        Route::get('/brandsData',  'brandsData')->name('brands.get');
-        Route::get('/brands/{id}',  'showBrands')->name('brands.show');
-        Route::post('/brandsUpdate/{id}',  'updateBrands')->name('brands.update');
-        Route::get('/brands/delete/{id}',  'deleteBrands')->name('brands.delete');
-        Route::post('/update-brands-status/{id}',  'updateBrandsStatus')->name('brandsBlock.update');
+        Route::get('/brands',  'brandsIndex')->name('brands.index')->middleware('permission:Brands');
+        Route::post('/brands-create',  'brandsCreate')->name('brands.create')->middleware('permission:Brands');
+        Route::get('/brandsData',  'brandsData')->name('brands.get')->middleware('permission:Brands');
+        Route::get('/brands/{id}',  'showBrands')->name('brands.show')->middleware('permission:Brands');
+        Route::post('/brandsUpdate/{id}',  'updateBrands')->name('brands.update')->middleware('permission:Brands');
+        Route::get('/brands/delete/{id}',  'deleteBrands')->name('brands.delete')->middleware('permission:Brands');
+        Route::post('/update-brands-status/{id}',  'updateBrandsStatus')->name('brandsBlock.update')->middleware('permission:Brands');
     });
     // ############## Comapny ############
     Route::controller(CompanyController::class)->group(function () {
-        Route::get('/company',  'companyIndex')->name('company.index');
-        Route::post('/company-create',  'companyCreate')->name('company.create');
-        Route::get('/companyData',  'companyData')->name('company.get');
-        Route::get('/company/{id}',  'showCompany')->name('company.show');
-        Route::post('/companyUpdate/{id}',  'updateCompany')->name('company.update');
-        Route::get('/company/delete/{id}',  'deleteCompany')->name('company.delete');
-        Route::post('/update-company-status/{id}',  'updateCompanyStatus')->name('companyBlock.update');
+        Route::get('/company',  'companyIndex')->name('company.index')->middleware('permission:Company');
+        Route::post('/company-create',  'companyCreate')->name('company.create')->middleware('permission:Company');
+        Route::get('/companyData',  'companyData')->name('company.get')->middleware('permission:Company');
+        Route::get('/company/{id}',  'showCompany')->name('company.show')->middleware('permission:Company');
+        Route::post('/companyUpdate/{id}',  'updateCompany')->name('company.update')->middleware('permission:Company');
+        Route::get('/company/delete/{id}',  'deleteCompany')->name('company.delete')->middleware('permission:Company');
+        Route::post('/update-company-status/{id}',  'updateCompanyStatus')->name('companyBlock.update')->middleware('permission:Company');
     });
 
     // ############## Model ############
     Route::controller(ModalsController::class)->group(function () {
-        Route::get('/models',  'modelsIndex')->name('models.index');
-        Route::post('/models-create',  'modelsCreate')->name('models.create');
-        Route::get('/modelsData',  'modelsData')->name('models.get');
-        Route::get('/models/{id}',  'showModels')->name('models.show');
-        Route::post('/modelsUpdate/{id}',  'updateModels')->name('models.update');
-        Route::get('/models/delete/{id}',  'deleteModels')->name('models.delete');
-        Route::post('/update-models-status/{id}',  'updateModelsStatus')->name('modelsBlock.update');
+        Route::get('/models',  'modelsIndex')->name('models.index')->middleware('permission:Models');
+        Route::post('/models-create',  'modelsCreate')->name('models.create')->middleware('permission:Models');
+        Route::get('/modelsData',  'modelsData')->name('models.get')->middleware('permission:Models');
+        Route::get('/models/{id}',  'showModels')->name('models.show')->middleware('permission:Models');
+        Route::post('/modelsUpdate/{id}',  'updateModels')->name('models.update')->middleware('permission:Models');
+        Route::get('/models/delete/{id}',  'deleteModels')->name('models.delete')->middleware('permission:Models');
+        Route::post('/update-models-status/{id}',  'updateModelsStatus')->name('modelsBlock.update')->middleware('permission:Models');
     });
 
     // ############## Certifications ############
     Route::controller(CertificationController::class)->group(function () {
-        Route::get('/certification',  'certificationIndex')->name('certification.index');
-        Route::post('/certification-create',  'certificationCreate')->name('certification.create');
-        Route::get('/certificationData',  'certificationData')->name('certification.get');
-        Route::get('/certification/{id}',  'showCertification')->name('certification.show');
-        Route::post('/certificationUpdate/{id}',  'updateCertification')->name('certification.update');
-        Route::get('/certification/delete/{id}',  'deleteCertification')->name('certification.delete');
-        Route::post('/update-certification-status/{id}',  'updateCertificationStatus')->name('certificationBlock.update');
+        Route::get('/certification',  'certificationIndex')->name('certification.index')->middleware('permission:Certification');
+        Route::post('/certification-create',  'certificationCreate')->name('certification.create')->middleware('permission:Certification');
+        Route::get('/certificationData',  'certificationData')->name('certification.get')->middleware('permission:Certification');
+        Route::get('/certification/{id}',  'showCertification')->name('certification.show')->middleware('permission:Certification');
+        Route::post('/certificationUpdate/{id}',  'updateCertification')->name('certification.update')->middleware('permission:Certification');
+        Route::get('/certification/delete/{id}',  'deleteCertification')->name('certification.delete')->middleware('permission:Certification');
+        Route::post('/update-certification-status/{id}',  'updateCertificationStatus')->name('certificationBlock.update')->middleware('permission:Certification');
     });
 
     // ############## Units ############
     Route::controller(UnitController::class)->group(function () {
-        Route::get('/units',  'unitsIndex')->name('units.index');
-        Route::post('/units-create',  'unitsCreate')->name('units.create');
-        Route::get('/unitsData',  'unitsData')->name('units.get');
-        Route::get('/units/{id}',  'showunits')->name('units.show');
-        Route::post('/unitsUpdate/{id}',  'updateUnits')->name('units.update');
-        Route::get('/units/delete/{id}',  'deleteUnits')->name('units.delete');
-        Route::post('/update-units-status/{id}',  'updateUnitsStatus')->name('unitsBlock.update');
+        Route::get('/units',  'unitsIndex')->name('units.index')->middleware('permission:Units');
+        Route::post('/units-create',  'unitsCreate')->name('units.create')->middleware('permission:Units');
+        Route::get('/unitsData',  'unitsData')->name('units.get')->middleware('permission:Units');
+        Route::get('/units/{id}',  'showunits')->name('units.show')->middleware('permission:Units');
+        Route::post('/unitsUpdate/{id}',  'updateUnits')->name('units.update')->middleware('permission:Units');
+        Route::get('/units/delete/{id}',  'deleteUnits')->name('units.delete')->middleware('permission:Units');
+        Route::post('/update-units-status/{id}',  'updateUnitsStatus')->name('unitsBlock.update')->middleware('permission:Units');
     });
 
     // ############## Units ############
     Route::controller(SterilizationController::class)->group(function () {
-        Route::get('/sterilization',  'sterilizationIndex')->name('sterilization.index');
-        Route::post('/sterilization-create',  'sterilizationCreate')->name('sterilization.create');
-        Route::get('/sterilizationData',  'sterilizationData')->name('sterilization.get');
-        Route::get('/sterilization/{id}',  'showSterilization')->name('sterilization.show');
-        Route::post('/sterilizationUpdate/{id}',  'updateSterilization')->name('sterilization.update');
-        Route::get('/sterilization/delete/{id}',  'deleteSterilization')->name('sterilization.delete');
-        Route::post('/update-sterilization-status/{id}',  'updateSterilizationStatus')->name('sterilizationBlock.update');
+        Route::get('/sterilization',  'sterilizationIndex')->name('sterilization.index')->middleware('permission:Sterilization');
+        Route::post('/sterilization-create',  'sterilizationCreate')->name('sterilization.create')->middleware('permission:Sterilization');
+        Route::get('/sterilizationData',  'sterilizationData')->name('sterilization.get')->middleware('permission:Sterilization');
+        Route::get('/sterilization/{id}',  'showSterilization')->name('sterilization.show')->middleware('permission:Sterilization');
+        Route::post('/sterilizationUpdate/{id}',  'updateSterilization')->name('sterilization.update')->middleware('permission:Sterilization');
+        Route::get('/sterilization/delete/{id}',  'deleteSterilization')->name('sterilization.delete')->middleware('permission:Sterilization');
+        Route::post('/update-sterilization-status/{id}',  'updateSterilizationStatus')->name('sterilizationBlock.update')->middleware('permission:Sterilization');
     });
 
     // ############## Number of Use ############
     Route::controller(NumberOfUseController::class)->group(function () {
-        Route::get('/number-of-use',  'numberOfUseIndex')->name('numberOfUse.index');
-        Route::post('/numberOfUse-create',  'numberOfUseCreate')->name('numberOfUse.create');
-        Route::get('/numberOfUseData',  'numberOfUseData')->name('numberOfUse.get');
-        Route::get('/numberOfUse/{id}',  'showNumberOfUse')->name('numberOfUse.show');
-        Route::post('/numberOfUseUpdate/{id}',  'updateNumberOfUse')->name('numberOfUse.update');
-        Route::get('/numberOfUse/delete/{id}',  'deleteNumberOfUse')->name('numberOfUse.delete');
-        Route::post('/update-numberOfUse-status/{id}',  'updateNumberOfUseStatus')->name('numberOfUseBlock.update');
+        Route::get('/number-of-use',  'numberOfUseIndex')->name('numberOfUse.index')->middleware('permission:Number Of Use');
+        Route::post('/numberOfUse-create',  'numberOfUseCreate')->name('numberOfUse.create')->middleware('permission:Number Of Use');
+        Route::get('/numberOfUseData',  'numberOfUseData')->name('numberOfUse.get')->middleware('permission:Number Of Use');
+        Route::get('/numberOfUse/{id}',  'showNumberOfUse')->name('numberOfUse.show')->middleware('permission:Number Of Use');
+        Route::post('/numberOfUseUpdate/{id}',  'updateNumberOfUse')->name('numberOfUse.update')->middleware('permission:Number Of Use');
+        Route::get('/numberOfUse/delete/{id}',  'deleteNumberOfUse')->name('numberOfUse.delete')->middleware('permission:Number Of Use');
+        Route::post('/update-numberOfUse-status/{id}',  'updateNumberOfUseStatus')->name('numberOfUseBlock.update')->middleware('permission:Number Of Use');
     });
 
     // ############## Suppliers ############
     Route::controller(SupplierController::class)->group(function () {
-        Route::get('/supplier',  'supplierIndex')->name('supplier.index');
-        Route::post('/supplier-create',  'supplierCreate')->name('supplier.create');
-        Route::get('/supplierData',  'supplierData')->name('supplier.get');
-        Route::get('/supplier/{id}',  'showSupplier')->name('supplier.show');
-        Route::post('/supplierUpdate/{id}',  'updateSupplier')->name('supplier.update');
-        Route::get('/supplier/delete/{id}',  'deleteSupplier')->name('supplier.delete');
-        Route::post('/update-supplier-status/{id}',  'updateSupplierStatus')->name('supplierBlock.update');
+        Route::get('/supplier',  'supplierIndex')->name('supplier.index')->middleware('permission:Supplier');
+        Route::post('/supplier-create',  'supplierCreate')->name('supplier.create')->middleware('permission:Supplier');
+        Route::get('/supplierData',  'supplierData')->name('supplier.get')->middleware('permission:Supplier');
+        Route::get('/supplier/{id}',  'showSupplier')->name('supplier.show')->middleware('permission:Supplier');
+        Route::post('/supplierUpdate/{id}',  'updateSupplier')->name('supplier.update')->middleware('permission:Supplier');
+        Route::get('/supplier/delete/{id}',  'deleteSupplier')->name('supplier.delete')->middleware('permission:Supplier');
+        Route::post('/update-supplier-status/{id}',  'updateSupplierStatus')->name('supplierBlock.update')->middleware('permission:Supplier');
     });
 
     // ############## Main Material ############
     Route::controller(MainMaterialController::class)->group(function () {
-        Route::get('/mainMaterial',  'mainMaterialIndex')->name('mainMaterial.index');
-        Route::post('/mainMaterial-create',  'mainMaterialCreate')->name('mainMaterial.create');
-        Route::get('/mainMaterialData',  'mainMaterialData')->name('mainMaterial.get');
-        Route::get('/mainMaterial/{id}',  'showMainMaterial')->name('mainMaterial.show');
-        Route::post('/mainMaterialUpdate/{id}',  'updateMainMaterial')->name('mainMaterial.update');
-        Route::get('/mainMaterial/delete/{id}',  'deleteMainMaterial')->name('mainMaterial.delete');
-        Route::post('/update-mainMaterial-status/{id}',  'updateMainMaterialStatus')->name('mainMaterialBlock.update');
+        Route::get('/mainMaterial',  'mainMaterialIndex')->name('mainMaterial.index')->middleware('permission:Main Material');
+        Route::post('/mainMaterial-create',  'mainMaterialCreate')->name('mainMaterial.create')->middleware('permission:Main Material');
+        Route::get('/mainMaterialData',  'mainMaterialData')->name('mainMaterial.get')->middleware('permission:Main Material');
+        Route::get('/mainMaterial/{id}',  'showMainMaterial')->name('mainMaterial.show')->middleware('permission:Main Material');
+        Route::post('/mainMaterialUpdate/{id}',  'updateMainMaterial')->name('mainMaterial.update')->middleware('permission:Main Material');
+        Route::get('/mainMaterial/delete/{id}',  'deleteMainMaterial')->name('mainMaterial.delete')->middleware('permission:Main Material');
+        Route::post('/update-mainMaterial-status/{id}',  'updateMainMaterialStatus')->name('mainMaterialBlock.update')->middleware('permission:Main Material');
     });
 
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
-        Route::get('/productData',  'productData')->name('product.get');
-        Route::get('/product',  'productIndex')->name('product.index');
-        Route::get('/product-create',  'productCreateIndex')->name('product.create');
-        Route::post('/product-store', 'productStore')->name('product.store');
-        Route::get('/product-edit/{id}', 'productEdit')->name('product.show');
-        Route::post('/product-update/{id}', 'productUpdate')->name('product.update');
-        Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories');
-        Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update');
-        Route::post('/update-productfeature-status/{id}',  'updateProductFeatureStatus')->name('productsFeature.update');
-        Route::get('/product/delete/{id}',  'deleteProduct')->name('product.delete');
-        Route::get('/supplier-name',  'getSuppliers')->name('getSuppliers');
+        Route::get('/productData',  'productData')->name('product.get')->middleware('permission:Products');
+        Route::get('/product',  'productIndex')->name('product.index')->middleware('permission:Products');
+        Route::get('/product-create',  'productCreateIndex')->name('product.create')->middleware('permission:Products');
+        Route::post('/product-store', 'productStore')->name('product.store')->middleware('permission:Products');
+        Route::get('/product-edit/{id}', 'productEdit')->name('product.show')->middleware('permission:Products');
+        Route::post('/product-update/{id}', 'productUpdate')->name('product.update')->middleware('permission:Products');
+        Route::get('/category-subCategories', 'getSubCategories')->name('category.subCategories')->middleware('permission:Products');
+        Route::post('/update-products-status/{id}',  'updateProductStatus')->name('productsBlock.update')->middleware('permission:Products');
+        Route::post('/update-productfeature-status/{id}',  'updateProductFeatureStatus')->name('productsFeature.update')->middleware('permission:Products');
+        Route::get('/product/delete/{id}',  'deleteProduct')->name('product.delete')->middleware('permission:Products');
+        Route::get('/supplier-name',  'getSuppliers')->name('getSuppliers')->middleware('permission:Products');
         // Products Images
-        Route::get('/product/Image/{id}',  'show')->name('product.image');
-        Route::post('/products/{id}/upload-images',  'uploadImages')->name('products.upload-images');
-        Route::put('/products/{productId}/images/{imageId}/update-cover-status',  'updateCoverStatus')->name('products.images.update-cover-status');
-        Route::delete('/image/delete/{id}',  'deleteImage')->name('image.delete');
+        Route::get('/product/Image/{id}',  'show')->name('product.image')->middleware('permission:Products');
+        Route::post('/products/{id}/upload-images',  'uploadImages')->name('products.upload-images')->middleware('permission:Products');
+        Route::put('/products/{productId}/images/{imageId}/update-cover-status',  'updateCoverStatus')->name('products.images.update-cover-status')->middleware('permission:Products');
+        Route::delete('/image/delete/{id}',  'deleteImage')->name('image.delete')->middleware('permission:Products');
     });
 
     // ############## Product Varaint ############
     Route::controller(ProductVariantController::class)->group(function () {
-        Route::get('/product-variants-index/{id}', 'productVariantViewIndex')->name('product_variant_index.index');
-        Route::get('/product-variant/{id}', 'getProductVariants')->name('product.variants');
-        Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index');
-        Route::post('/products/{product}/variants', 'productVariantStore')->name('product-variant.store');
-        Route::post('/variantUpdate/{id}',  'updateVariant')->name('variants.update');
-        Route::get('/variants/{id}',  'showVariants')->name('variants.show');
-        Route::get('/variants/delete/{id}',  'deleteProductVariant')->name('variant.delete');
-        Route::post('/update-variants-status/{id}',  'updateVariantsStatus')->name('variantsBlock.update');
+        Route::get('/product-variants-index/{id}', 'productVariantViewIndex')->name('product_variant_index.index')->middleware('permission:Products');
+        Route::get('/product-variant/{id}', 'getProductVariants')->name('product.variants')->middleware('permission:Products');
+        Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index')->middleware('permission:Products');
+        Route::post('/products/{product}/variants', 'productVariantStore')->name('product-variant.store')->middleware('permission:Products');
+        Route::post('/variantUpdate/{id}',  'updateVariant')->name('variants.update')->middleware('permission:Products');
+        Route::get('/variants/{id}',  'showVariants')->name('variants.show')->middleware('permission:Products');
+        Route::get('/variants/delete/{id}',  'deleteProductVariant')->name('variant.delete')->middleware('permission:Products');
+        Route::post('/update-variants-status/{id}',  'updateVariantsStatus')->name('variantsBlock.update')->middleware('permission:Products');
     });
 
     // ############## Currency ############
     Route::controller(CurrencyController::class)->group(function () {
-        Route::get('/currency',  'currencyIndex')->name('currency.index');
-        Route::post('/currency-create',  'currencyCreate')->name('currency.create');
-        Route::get('/currencyData',  'currencyData')->name('currency.get');
-        Route::get('/currency/{id}',  'showCurrency')->name('currency.show');
-        Route::post('/currencyUpdate/{id}',  'updateCurrency')->name('currency.update');
-        Route::get('/currency/delete/{id}',  'deleteCurrency')->name('currency.delete');
+        Route::get('/currency',  'currencyIndex')->name('currency.index')->middleware('permission:Currency');
+        Route::post('/currency-create',  'currencyCreate')->name('currency.create')->middleware('permission:Currency');
+        Route::get('/currencyData',  'currencyData')->name('currency.get')->middleware('permission:Currency');
+        Route::get('/currency/{id}',  'showCurrency')->name('currency.show')->middleware('permission:Currency');
+        Route::post('/currencyUpdate/{id}',  'updateCurrency')->name('currency.update')->middleware('permission:Currency');
+        Route::get('/currency/delete/{id}',  'deleteCurrency')->name('currency.delete')->middleware('permission:Currency');
     });
 
     // ############## Private Notes ############
@@ -328,8 +332,5 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::get('/agentNotes/delete/{id}',  'deleteAgentNotes')->name('agentNotes.delete');
     });
 });
-// ############ React routes ############
-Route::get('/{any}', function () {
-    return view('react.index');
-})->where('any', '.*');
+
 // ############ React routes ############

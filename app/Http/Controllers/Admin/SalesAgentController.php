@@ -153,11 +153,11 @@ class SalesAgentController extends Controller
                 $account->account_number = $request->account_number;
                 $account->save();
                 //######### Wallet  ###########
-                $wallet = new AgentWallet();
-                $wallet->agent_id = $salesManager->id;
-                $wallet->remaning_commission_amount = 0;
-                $wallet->total_commission_amount = 0;
-                $wallet->save();
+                // $wallet = new AgentWallet();
+                // $wallet->agent_id = $salesManager->id;
+                // $wallet->remaning_commission_amount = 0;
+                // $wallet->total_commission_amount = 0;
+                // $wallet->save();
                 //######### Send Mail  ###########
                 $data['subadminname'] = $salesManager->name;
                 $data['subadminemail'] = $salesManager->email;

@@ -13,19 +13,32 @@
                         data-feather="home"></i><span>Dashboard</span></a>
             </li>
             {{-- Silder --}}
-            <li class="dropdown {{ request()->is('admin/silder-image') ? 'active' : '' }}">
-                <a href="{{ url('/admin/silder-image') }}" class="nav-link"><i
-                        data-feather="image"></i><span>Sliders</span></a>
-            </li>
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sliders'))
+                <li class="dropdown {{ request()->is('admin/silder-image') ? 'active' : '' }}">
+                    <a href="{{ url('/admin/silder-image') }}" class="nav-link"><i
+                            data-feather="image"></i><span>Sliders</span></a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/silder-image') ? 'active' : '' }}">
+                    <a href="{{ url('/admin/silder-image') }}" class="nav-link"><i
+                            data-feather="image"></i><span>Sliders</span></a>
+                </li>
+            @endif
             {{-- Inventory Managment --}}
             @if (
                 (auth()->guard('web')->check() &&
-                    (auth()->guard('web')->user()->can('category') ||
-                        auth()->guard('web')->user()->can('subcategory') ||
-                        auth()->guard('web')->user()->can('products') ||
-                        auth()->guard('web')->user()->can('Cash Back Per Order') ||
-                        auth()->guard('web')->user()->can('Bucket Commission') ||
-                        auth()->guard('web')->user()->can('productsize'))) ||
+                    (auth()->guard('web')->user()->can('Category') ||
+                        auth()->guard('web')->user()->can('Sub Category') ||
+                        auth()->guard('web')->user()->can('Brands') ||
+                        auth()->guard('web')->user()->can('Company') ||
+                        auth()->guard('web')->user()->can('Models') ||
+                        auth()->guard('web')->user()->can('Units') ||
+                        auth()->guard('web')->user()->can('Sterilization') ||
+                        auth()->guard('web')->user()->can('Number Of Use') ||
+                        auth()->guard('web')->user()->can('Supplier') ||
+                        auth()->guard('web')->user()->can('Main Material') ||
+                        auth()->guard('web')->user()->can('Products') ||
+                        auth()->guard('web')->user()->can('Certification'))) ||
                     auth()->guard('admin')->check())
                 <li class="dropdown">
                     <a href="#" class="menu-toggle nav-link has-dropdown"><i
@@ -34,7 +47,7 @@
                     <ul
                         class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') || request()->is('admin/supplier*') || request()->is('admin/mainMaterial*') ? 'show' : '' }}">
                         {{-- Category --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('category'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Category'))
                             <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
                                 <a href="{{ route('category.index') }}"
                                     class="nav-link {{ request()->is('admin/category') ? 'text-white' : '' }}">
@@ -50,7 +63,7 @@
                             </li>
                         @endif
                         {{-- Sub Category --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Category'))
                             <li class="dropdown {{ request()->is('admin/subCategory*') ? 'active' : '' }}">
                                 <a href="{{ route('subCategory.index') }}"
                                     class="nav-link {{ request()->is('admin/subCategory*') ? 'text-white' : '' }}">
@@ -66,7 +79,7 @@
                             </li>
                         @endif
                         {{-- Brands --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Brands'))
                             <li class="dropdown {{ request()->is('admin/brands*') ? 'active' : '' }}">
                                 <a href="{{ route('brands.index') }}"
                                     class="nav-link {{ request()->is('admin/brands*') ? 'text-white' : '' }}">
@@ -82,7 +95,7 @@
                             </li>
                         @endif
                         {{-- Company --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Company'))
                             <li class="dropdown {{ request()->is('admin/company*') ? 'active' : '' }}">
                                 <a href="{{ route('company.index') }}"
                                     class="nav-link {{ request()->is('admin/company*') ? 'text-white' : '' }}">
@@ -98,7 +111,7 @@
                             </li>
                         @endif
                         {{-- Modals --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Models'))
                             <li class="dropdown {{ request()->is('admin/models*') ? 'active' : '' }}">
                                 <a href="{{ route('models.index') }}"
                                     class="nav-link {{ request()->is('admin/models*') ? 'text-white' : '' }}">
@@ -114,7 +127,7 @@
                             </li>
                         @endif
                         {{-- Certifications --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Certification'))
                             <li class="dropdown {{ request()->is('admin/certification*') ? 'active' : '' }}">
                                 <a href="{{ route('certification.index') }}"
                                     class="nav-link {{ request()->is('admin/certification*') ? 'text-white' : '' }}">
@@ -130,7 +143,7 @@
                             </li>
                         @endif
                         {{-- Units --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Units'))
                             <li class="dropdown {{ request()->is('admin/units*') ? 'active' : '' }}">
                                 <a href="{{ route('units.index') }}"
                                     class="nav-link {{ request()->is('admin/units*') ? 'text-white' : '' }}">
@@ -146,7 +159,7 @@
                             </li>
                         @endif
                         {{-- Sterilization --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sterilization'))
                             <li class="dropdown {{ request()->is('admin/sterilization*') ? 'active' : '' }}">
                                 <a href="{{ route('sterilization.index') }}"
                                     class="nav-link {{ request()->is('admin/sterilization*') ? 'text-white' : '' }}">
@@ -162,7 +175,7 @@
                             </li>
                         @endif
                         {{-- NUmber Of Use --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Number Of Use'))
                             <li class="dropdown {{ request()->is('admin/number-of-use*') ? 'active' : '' }}">
                                 <a href="{{ route('numberOfUse.index') }}"
                                     class="nav-link {{ request()->is('admin/number-of-use*') ? 'text-white' : '' }}">
@@ -178,7 +191,7 @@
                             </li>
                         @endif
                         {{-- Suppliers --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Supplier'))
                             <li class="dropdown {{ request()->is('admin/supplier*') ? 'active' : '' }}">
                                 <a href="{{ route('supplier.index') }}"
                                     class="nav-link {{ request()->is('admin/supplier*') ? 'text-white' : '' }}">
@@ -194,7 +207,7 @@
                             </li>
                         @endif
                         {{-- Main Material --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('subcategory'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Main Material'))
                             <li class="dropdown {{ request()->is('admin/mainMaterial*') ? 'active' : '' }}">
                                 <a href="{{ route('mainMaterial.index') }}"
                                     class="nav-link {{ request()->is('admin/mainMaterial*') ? 'text-white' : '' }}">
@@ -210,7 +223,7 @@
                             </li>
                         @endif
                         {{-- Products --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('products'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Products'))
                             <li class="dropdown {{ request()->is('admin/product*') ? 'active' : '' }}">
                                 <a href="{{ route('product.index') }}"
                                     class="nav-link {{ request()->is('admin/product*') ? 'text-white' : '' }}">
@@ -231,7 +244,9 @@
             {{-- User Managment --}}
             @if (
                 (auth()->guard('web')->check() &&
-                    (auth()->guard('web')->user()->can('Sub Admins') || auth()->guard('web')->user()->can('users'))) ||
+                    (auth()->guard('web')->user()->can('Sub Admin') ||
+                        auth()->guard('web')->user()->can('Customer') ||
+                        auth()->guard('web')->user()->can('Sales Agent'))) ||
                     auth()->guard('admin')->check())
                 <li class="dropdown">
                     <a href="#" class="menu-toggle nav-link has-dropdown"><i
@@ -240,7 +255,7 @@
                     <ul
                         class="dropdown-menu {{ request()->is('admin/subadmin*') || request()->is('admin/customer*') || request()->is('admin/salesagent*') ? 'show' : '' }}">
                         {{-- Roles & Permissions --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admins'))
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sub Admin'))
                             <li class="{{ request()->is('admin/subadmin') ? 'active' : '' }}">
                                 <a href="{{ route('subadmin.index') }}"
                                     class="nav-link {{ request()->is('admin/subadmin') ? 'text-white' : '' }}"><i
@@ -255,27 +270,53 @@
                                         Admins</span></a>
                             </li>
                         @endif
-                        <li class="{{ request()->is('admin/salesagent*') ? 'active' : '' }}">
-                            <a href="{{ route('salesagent.index') }}"
-                                class="nav-link {{ request()->is('admin/salesagent*') ? 'text-white' : '' }}"><i
-                                    data-feather="user"></i><span>Sales Managers</span></a>
-                        </li>
+                        {{-- Sales Agent --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Sales Agent'))
+                            <li class="{{ request()->is('admin/salesagent*') ? 'active' : '' }}">
+                                <a href="{{ route('salesagent.index') }}"
+                                    class="nav-link {{ request()->is('admin/salesagent*') ? 'text-white' : '' }}"><i
+                                        data-feather="user"></i><span>Sales Managers</span></a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="{{ request()->is('admin/salesagent*') ? 'active' : '' }}">
+                                <a href="{{ route('salesagent.index') }}"
+                                    class="nav-link {{ request()->is('admin/salesagent*') ? 'text-white' : '' }}"><i
+                                        data-feather="user"></i><span>Sales Managers</span></a>
+                            </li>
+                        @endif
                         {{-- Customers --}}
-                        <li class="{{ request()->is('admin/customer*') ? 'active' : '' }}">
-                            <a href="{{ route('customer.index') }}"
-                                class="nav-link {{ request()->is('admin/customer*') ? 'text-white' : '' }}"><i
-                                    data-feather="user"></i><span>Customers</span></a>
-                        </li>
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Customer'))
+                            <li class="{{ request()->is('admin/customer*') ? 'active' : '' }}">
+                                <a href="{{ route('customer.index') }}"
+                                    class="nav-link {{ request()->is('admin/customer*') ? 'text-white' : '' }}"><i
+                                        data-feather="user"></i><span>Customers</span></a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="{{ request()->is('admin/customer*') ? 'active' : '' }}">
+                                <a href="{{ route('customer.index') }}"
+                                    class="nav-link {{ request()->is('admin/customer*') ? 'text-white' : '' }}"><i
+                                        data-feather="user"></i><span>Customers</span></a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             @endif
             {{-- Currency --}}
-            <li class="dropdown {{ request()->is('admin/currency*') ? 'active' : '' }}">
-                <a href="{{ route('currency.index') }}"
-                    class="nav-link {{ request()->is('admin/currency*') ? 'text-white' : '' }}">
-                    <i data-feather="dollar-sign"></i><span>Currency</span>
-                </a>
-            </li>
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Currency'))
+                <li class="dropdown {{ request()->is('admin/currency*') ? 'active' : '' }}">
+                    <a href="{{ route('currency.index') }}"
+                        class="nav-link {{ request()->is('admin/currency*') ? 'text-white' : '' }}">
+                        <i data-feather="dollar-sign"></i><span>Currency</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/currency*') ? 'active' : '' }}">
+                    <a href="{{ route('currency.index') }}"
+                        class="nav-link {{ request()->is('admin/currency*') ? 'text-white' : '' }}">
+                        <i data-feather="dollar-sign"></i><span>Currency</span>
+                    </a>
+                </li>
+            @endif
             {{-- Privates --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Private Notes'))
                 <li class="dropdown {{ request()->is('admin/privateNotes*') ? 'active' : '' }}">
@@ -293,12 +334,21 @@
                 </li>
             @endif
             {{-- Admin Notification --}}
-            <li class="dropdown {{ request()->is('admin/adminNotification*') ? 'active' : '' }}">
-                <a href="{{ route('adminNotification.index') }}"
-                    class="nav-link {{ request()->is('admin/adminNotification*') ? 'text-white' : '' }}">
-                    <i data-feather="bell"></i><span>Notification</span>
-                </a>
-            </li>
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Notifications'))
+                <li class="dropdown {{ request()->is('admin/adminNotification*') ? 'active' : '' }}">
+                    <a href="{{ route('adminNotification.index') }}"
+                        class="nav-link {{ request()->is('admin/adminNotification*') ? 'text-white' : '' }}">
+                        <i data-feather="bell"></i><span>Notification</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/adminNotification*') ? 'active' : '' }}">
+                    <a href="{{ route('adminNotification.index') }}"
+                        class="nav-link {{ request()->is('admin/adminNotification*') ? 'text-white' : '' }}">
+                        <i data-feather="bell"></i><span>Notification</span>
+                    </a>
+                </li>
+            @endif
             {{-- About Us --}}
             {{-- <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
                 <a href="{{ route('about.index') }}" class="nav-link"><i data-feather="monitor"></i><span>About

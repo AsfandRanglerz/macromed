@@ -406,14 +406,15 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('salesagent.profile', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
-                                '<button class="btn btn-success mb-0 mr-2 text-white editSalesAgentBtn btn-sm" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
+                            return '<button class="btn btn-success mb-0 mr-2 text-white editSalesAgentBtn btn-sm" data-id="' +
+                            row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger mb-0 mr-2 text-white deleteSalesAgentBtn btn-sm" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
+
+                            // '<a href="' +
+                            // "{{ route('salesagent.profile', ['id' => ':id']) }}"
+                            // .replace(':id', row.id) +
+                            // '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
                         }
                     }
                 ]
@@ -492,6 +493,7 @@
                     $(this).removeClass('is-invalid');
                 });
         });
+
         function submitEditSalesAgentForm() {
             var salesAgentUpdateRoute = '{{ route('salesagent.update', ':id') }}';
             var salesAgentId = $('#editSalesAgentModal').data('salesAgentId');

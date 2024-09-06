@@ -241,8 +241,7 @@
                             },
                             success: function(data) {
                                 toastr.success(data.message);
-                                fetchNotifications
-                                    (); // Refresh notifications after marking one as read
+                                fetchNotifications();
                             },
                             error: function(xhr) {
                                 toastr.error(
@@ -254,7 +253,7 @@
                 },
                 error: function(xhr) {
                     $('.notification-loader').hide();
-                    console.error('An error occurred while fetching notifications.');
+                    console.log('An error occurred while fetching notifications.');
                 }
             });
         }
