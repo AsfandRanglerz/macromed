@@ -21,11 +21,13 @@ class AuthController extends Controller
         ]);
         $credentials = $request->only('email', 'password');
         if (Auth::guard('admin')->attempt($credentials)) {
+            $request->session()->regenerate();
             return redirect('admin/dashboard')->with(['alert' => 'success', 'message' => 'Login Successfully!']);
         }
         if (Auth::guard('web')->attempt($credentials)) {
             $user = Auth::user();
             if ($user->user_type === 'subadmin' && $user->status == '1') {
+                $request->session()->regenerate();
                 return redirect('admin/dashboard')->with(['alert' => 'success', 'message' => 'Login Successfully!']);
             } else {
                 Auth::logout();

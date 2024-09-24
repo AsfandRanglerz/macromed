@@ -143,15 +143,16 @@ class AdminController extends Controller
         return back()->with(['alert' => 'error', 'error' => 'Invalid email or user not found']);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        if (auth()->guard('web')->check()) {
-            auth()->guard('web')->logout();
-            return redirect('/admin')->with(['alert' => 'success', 'message' => 'You Are Logout Successfully!']);
+        if (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
         }
-        if (auth()->guard('admin')->check()) {
-            auth()->guard('admin')->logout();
-            return redirect('/admin')->with(['alert' => 'success', 'message' => 'You Are Logout Successfully!']);
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
         }
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/admin-login')->with(['status' => true, 'message' => 'Log Out Successfully']);
     }
 }
