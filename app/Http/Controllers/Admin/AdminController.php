@@ -153,6 +153,6 @@ class AdminController extends Controller
         }
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/admin-login')->with(['status' => true, 'message' => 'Log Out Successfully']);
+        return redirect('/admin')->with(['status' => true, 'message' => 'Log Out Successfully']);
     }
 }
