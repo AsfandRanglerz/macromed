@@ -46,13 +46,17 @@
                                                 value="{{ old('slug') }}">
                                         </div>
                                     </div>
+
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
                                             <label>Category <span class="text-danger">*</span></label>
                                             <select name="category_id[]" class="form-control select2" id="category"
                                                 multiple>
                                                 @foreach ($categories as $category)
-                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                    <option value="{{ $category->id }}"
+                                                        {{ in_array($category->id, old('category_id', [])) ? 'selected' : '' }}>
+                                                        {{ $category->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -67,44 +71,57 @@
                                             <label>Brand <span class="text-danger">*</span></label>
                                             <select name="brand_id[]" class="form-control select2" id="brand" multiple>
                                                 @foreach ($brands as $brand)
-                                                    <option {{ old('brand') == $brand->id ? 'selected' : '' }}
-                                                        value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                    <option value="{{ $brand->id }}"
+                                                        {{ in_array($brand->id, old('brand_id', [])) ? 'selected' : '' }}>
+                                                        {{ $brand->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
+                                        <!-- Certifications Field -->
                                         <div class="form-group col-md-4">
                                             <label>Certifications <span class="text-danger">*</span></label>
                                             <select name="certification_id[]" class="form-control select2"
                                                 id="certification" multiple>
                                                 @foreach ($certifications as $certification)
-                                                    <option value="{{ $certification->id }}">{{ $certification->name }}
+                                                    <option value="{{ $certification->id }}"
+                                                        {{ in_array($certification->id, old('certification_id', [])) ? 'selected' : '' }}>
+                                                        {{ $certification->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <!-- Company Field -->
                                         <div class="form-group col-md-4">
                                             <label>Company</label>
                                             <select name="company" class="form-control select2" id="company">
                                                 <option value="" disabled selected>Select Company</option>
                                                 @foreach ($companies as $company)
-                                                    <option {{ old('company') == $company->id ? 'selected' : '' }}
-                                                        value="{{ $company->name }}">{{ $company->name }}</option>
+                                                    <option value="{{ $company->name }}"
+                                                        {{ old('company') == $company->name ? 'selected' : '' }}>
+                                                        {{ $company->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
+
+                                        <!-- Models Field -->
                                         <div class="form-group col-md-4">
                                             <label>Models <span class="text-danger">*</span></label>
                                             <select name="models" class="form-control select2" id="models">
                                                 <option value="" disabled selected>Select Models</option>
                                                 @foreach ($models as $model)
-                                                    <option {{ old('models') == $model->id ? 'selected' : '' }}
-                                                        value="{{ $model->name }}">{{ $model->name }}</option>
+                                                    <option value="{{ $model->name }}"
+                                                        {{ old('models') == $model->name ? 'selected' : '' }}>
+                                                        {{ $model->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
                                             <label>Country</label>
@@ -131,12 +148,13 @@
                                     </div>
                                     <div class="row col-12">
                                         <div class="form-group col-md-4">
-                                            <label>Number Of Use<span class="text-danger">*</span></label>
+                                            <label>Number Of Use <span class="text-danger">*</span></label>
                                             <select name="product_use_status" class="form-control select2">
                                                 <option value="" disabled selected>Select Number Of Use</option>
                                                 @foreach ($numberOfUses as $numberOfUse)
-                                                    <option {{ old('numberOfUses') == $numberOfUse->id ? 'selected' : '' }}
-                                                        value="{{ $numberOfUse->name }}">{{ $numberOfUse->name }}
+                                                    <option value="{{ $numberOfUse->name }}"
+                                                        {{ old('product_use_status') == $numberOfUse->name ? 'selected' : '' }}>
+                                                        {{ $numberOfUse->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -147,80 +165,132 @@
                                                 id="sterilizations">
                                                 <option value="" disabled selected>Select Sterilizations</option>
                                                 @foreach ($sterilizations as $sterilization)
-                                                    <option
-                                                        {{ old('sterilizations') == $sterilization->id ? 'selected' : '' }}
-                                                        value="{{ $sterilization->name }}">{{ $sterilization->name }}
+                                                    <option value="{{ $sterilization->name }}"
+                                                        {{ old('sterilizations') == $sterilization->name ? 'selected' : '' }}>
+                                                        {{ $sterilization->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
+
                                         <div class="form-group col-md-4">
                                             <label>Buyer Type <span class="text-danger">*</span></label>
                                             <select name="buyer_type" class="form-control select2">
-                                                <option value="" disabled selected>Select Buyer Type</option>
-                                                <option value="Option 1">Option 1</option>
-                                                <option value="Option 2">Option 2</option>
-                                                <option value="Option 3">Option 3</option>
-                                                <option value="Option 4">Option 4</option>
-                                                <option value="Option 5">Option 5</option>
+                                                <option value="" disabled
+                                                    {{ old('buyer_type') == '' ? 'selected' : '' }}>Select Buyer Type
+                                                </option>
+                                                <option value=" Individual Customer"
+                                                    {{ old('buyer_type') == ' Individual Customer' ? 'selected' : '' }}>
+                                                    Individual Customer
+                                                </option>
+                                                <option value="Clinic"
+                                                    {{ old('buyer_type') == 'Clinic' ? 'selected' : '' }}>Clinic
+                                                </option>
+                                                <option value=" Private Hospital"
+                                                    {{ old('buyer_type') == ' Private Hospital' ? 'selected' : '' }}>
+                                                    Private Hospital
+                                                </option>
+                                                <option value="Govt. Hospital"
+                                                    {{ old('buyer_type') == 'Govt. Hospital' ? 'selected' : '' }}>Govt.
+                                                    Hospital
+                                                </option>
+                                                <option value="Reseller"
+                                                    {{ old('buyer_type') == 'Reseller' ? 'selected' : '' }}>Reseller
+                                                </option>
+                                                <option value="Distributor"
+                                                    {{ old('buyer_type') == 'Distributor' ? 'selected' : '' }}>Distributor
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
+                                        <!-- Product Class Field -->
                                         <div class="form-group col-md-4">
-                                            <label>Product Class <span class="text-danger ">*</span></label>
+                                            <label>Product Class <span class="text-danger">*</span></label>
                                             <select name="product_class" class="form-control select2">
-                                                <option value="" disabled selected>Select Product Class</option>
-                                                <option value="Class A">Class A</option>
-                                                <option value="Clas B">Class B</option>
-                                                <option value="Class C">Class C</option>
-                                                <option value="Class D">Class D</option>
-                                                <option value="Class E">Class E</option>
+                                                <option value="" disabled
+                                                    {{ old('product_class') == '' ? 'selected' : '' }}>Select Product Class
+                                                </option>
+                                                <option value="Class A-1"
+                                                    {{ old('product_class') == 'Class A-1' ? 'selected' : '' }}>Class A-1
+                                                </option>
+                                                <option value="Class B-2"
+                                                    {{ old('product_class') == 'Class B-2' ? 'selected' : '' }}>Class B-2
+                                                </option>
+                                                <option value="Class C-3"
+                                                    {{ old('product_class') == 'Class C-3' ? 'selected' : '' }}>Class C-3
+                                                </option>
+                                                <option value="Class D-4"
+                                                    {{ old('product_class') == 'Class D-4' ? 'selected' : '' }}>Class D-4
+                                                </option>
+                                                <option value="Class E-5"
+                                                    {{ old('product_class') == 'Class E-5' ? 'selected' : '' }}>Class E-5
+                                                </option>
                                             </select>
                                         </div>
+
+                                        <!-- Main Material Field -->
                                         <div class="form-group col-md-4">
                                             <label>Main Material <span class="text-danger">*</span></label>
                                             <select name="material_id[]" class="form-control select2" multiple>
                                                 @foreach ($mianMaterials as $mainMaterial)
-                                                    <option
-                                                        {{ old('mianMaterial') == $mainMaterial->id ? 'selected' : '' }}
-                                                        value="{{ $mainMaterial->id }}">{{ $mainMaterial->name }}
+                                                    <option value="{{ $mainMaterial->id }}"
+                                                        {{ collect(old('material_id'))->contains($mainMaterial->id) ? 'selected' : '' }}>
+                                                        {{ $mainMaterial->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        {{-- Suppliers Fields --}}
+
+                                        <!-- Supplier Name Field -->
                                         <div class="form-group col-md-4">
                                             <label>Supplier Name <span class="text-danger">*</span></label>
                                             <select id="supplier_name" name="supplier_name_display"
                                                 class="form-control select2">
-                                                <!-- Options will be populated by AJAX -->
+                                                <!-- Options will be populated by AJAX, but old value is stored -->
+                                                @if (old('supplier_name_display'))
+                                                    <option value="{{ old('supplier_name_display') }}" selected>
+                                                        {{ old('supplier_name_display') }}</option>
+                                                @endif
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="row col-md-12">
+                                        <!-- Supplier Id Field -->
                                         <div class="form-group col-md-4">
                                             <label>Supplier Id <span class="text-danger">*</span></label>
                                             <select id="supplier_id" name="supplier_id_display"
                                                 class="form-control select2" disabled>
                                                 <!-- Options will be populated by AJAX -->
+                                                @if (old('supplier_id_display'))
+                                                    <option value="{{ old('supplier_id_display') }}" selected>
+                                                        {{ old('supplier_id_display') }}</option>
+                                                @endif
                                             </select>
                                         </div>
-                                        <!-- Hidden fields to store actual values -->
-                                        <input type="hidden" id="supplier_name_hidden" name="supplier_name">
-                                        <input type="hidden" id="supplier_id_hidden" name="supplier_id">
-                                        {{-- Delivery Fields --}}
+
+                                        <!-- Hidden fields for actual values -->
+                                        <input type="hidden" id="supplier_name_hidden" name="supplier_name"
+                                            value="{{ old('supplier_name') }}">
+                                        <input type="hidden" id="supplier_id_hidden" name="supplier_id"
+                                            value="{{ old('supplier_id') }}">
+
+                                        <!-- Supplier Delivery Time Field -->
                                         <div class="form-group col-md-4">
-                                            <label>Supplier Delivery Time <span class="text-danger">*</span></label>
-                                            <input type="time" class="form-control" name="supplier_delivery_time"
+                                            <label>Supplier Delivery Period <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="supplier_delivery_time"
                                                 value="{{ old('supplier_delivery_time') }}">
                                         </div>
+
+                                        <!-- Delivery Period Field -->
                                         <div class="form-group col-md-4">
                                             <label>Delivery Period <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="delivery_period"
                                                 value="{{ old('delivery_period') }}">
                                         </div>
                                     </div>
+
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-12">
                                             <label>Short Description <span class="text-danger">*</span></label>
@@ -236,7 +306,7 @@
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-6">
                                             <label>Self Life<span class="text-danger">*</span></label>
-                                            <input type="date" class="form-control" name="self_life"
+                                            <input type="text" class="form-control" name="self_life"
                                                 value="{{ old('self_life') }}">
                                         </div>
                                         <div class="form-group col-md-6">

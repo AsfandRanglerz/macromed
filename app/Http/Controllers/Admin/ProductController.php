@@ -149,12 +149,14 @@ class ProductController extends Controller
                 'required',
                 'string',
                 'max:255',
+                'regex:/^[a-zA-Z0-9]+$/', // Alphabet and numbers only
                 Rule::unique('products')
             ],
             'product_name' => [
                 'required',
                 'string',
                 'max:255',
+                'regex:/^[a-zA-Z0-9]+$/', // Alphabet and numbers only
                 Rule::unique('products')
             ],
             'slug' => [
@@ -174,18 +176,19 @@ class ProductController extends Controller
             'country' => 'required|string|max:255',
             'sterilizations' => 'required|string|max:255',
             'product_use_status' => 'required|string|max:255',
-            'product_commission' => 'required|string|max:255',
+            'product_commission' => ['required', 'numeric', 'between:0,49.999'],
             'video_link' => 'nullable|string|max:255',
             'short_description' => 'required|string',
             'long_description' => 'required|string',
             'buyer_type' => 'required',
             'product_class' => 'required',
-            'supplier_delivery_time' => 'required',
+            'supplier_delivery_time' => 'required|regex:/^\d{1,3}$/',
             'supplier_name' => 'required',
-            'delivery_period' => 'required',
-            'self_life' => 'required',
-            'federal_tax' => 'required',
-            'provincial_tax' => 'required',
+            'delivery_period' => 'required|regex:/^\d{1,3}$/',
+            'self_life' => 'required|numeric|digits:4',
+            'federal_tax' => 'required|regex:/^\d{1,3}(\.\d+)?%$/',
+            'provincial_tax' => 'required|regex:/^\d{1,3}(\.\d+)?%$/',
+
             'material_id' => 'required|array',
             'material_id.*' => 'exists:main_materials,id',
         ], [
@@ -196,9 +199,16 @@ class ProductController extends Controller
             'certification_id' => 'Certification is required',
             'certification_id.*' => 'Certification is required',
             'material_id' => 'Main Material is required',
-            'material_id.*' => 'Main Material is required'
+            'material_id.*' => 'Main Material is required',
+            'short_name.regex' => 'The short name must contain only letters and numbers.',
+            'product_name.regex' => 'The product name must contain only letters and numbers.',
+            'product_commission.min' => 'The product commission must be at least 50.',
+            'supplier_delivery_time.regex' => 'The supplier delivery time must be a number with 1 to 3 digits.',
+            'delivery_period.regex' => 'The delivery period must be a number with 1 to 3 digits.',
+            'self_life.digits' => 'The self-life must be exactly 4 digits.',
+            'federal_tax.regex' => 'The federal tax must be a number with at least 3 digits followed by a % sign.',
+            'provincial_tax.regex' => 'The provincial tax must be a number with at least 3 digits followed by a % sign.',
         ]);
-
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
