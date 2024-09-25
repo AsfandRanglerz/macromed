@@ -230,7 +230,6 @@ class ProductController extends Controller
         }
 
         try {
-            // return $request;
             $product = new Product($request->only([
                 'product_hts',
                 'product_name',
@@ -373,6 +372,12 @@ class ProductController extends Controller
                 'max:255',
                 Rule::unique('products')->ignore($id)
             ],
+            'product_hts' => [
+                'required',
+                'string',
+                'regex:/^\d{4}(\.\d{2}){0,2}$/',
+                Rule::unique('products')->ignore($id)
+            ],
             'company' => 'required|string|max:255',
             'models' => 'required|string|max:255',
             'country' => 'required|string|max:255',
@@ -401,6 +406,7 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
             $product->fill($request->only([
+                'product_hts',
                 'product_name',
                 'short_name',
                 'slug',

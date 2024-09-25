@@ -188,14 +188,14 @@
                                                 <option value="" disabled
                                                     {{ old('buyer_type') == '' ? 'selected' : '' }}>Select Buyer Type
                                                 </option>
-                                                <option value=" Individual Customer"
+                                                <option value="Individual Customer"
                                                     {{ old('buyer_type') == ' Individual Customer' ? 'selected' : '' }}>
                                                     Individual Customer
                                                 </option>
                                                 <option value="Clinic"
                                                     {{ old('buyer_type') == 'Clinic' ? 'selected' : '' }}>Clinic
                                                 </option>
-                                                <option value=" Private Hospital"
+                                                <option value="Private Hospital"
                                                     {{ old('buyer_type') == ' Private Hospital' ? 'selected' : '' }}>
                                                     Private Hospital
                                                 </option>

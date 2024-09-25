@@ -144,7 +144,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group col-md-4">
+                            {{-- <div class="form-group col-md-4">
                                 <label>Models <span class="text-danger">*</span></label>
                                 <select name="models" class="form-control select2 models" id="models"
                                     style="width: 100%">
@@ -154,6 +154,11 @@
                                             value="{{ $model->name }}">{{ $model->name }}</option>
                                     @endforeach
                                 </select>
+                            </div> --}}
+                            <div class="form-group col-md-4">
+                                <label>Product HTS Code<span class="text-danger">*</span></label>
+                                <input type="text" id="product_hts" class="form-control product_hts"
+                                    name="product_hts" value="{{ old('product_hts') }}">
                             </div>
                         </div>
                         <div class="row col-md-12">
@@ -210,11 +215,13 @@
                                 <label>Buyer Type <span class="text-danger">*</span></label>
                                 <select name="buyer_type" class="form-control select2 buyer_type" style="width: 100%">
                                     <option value="" disabled selected>Select Buyer Type</option>
-                                    <option value="Option 1">Option 1</option>
-                                    <option value="Option 2">Option 2</option>
-                                    <option value="Option 3">Option 3</option>
-                                    <option value="Option 4">Option 4</option>
-                                    <option value="Option 5">Option 5</option>
+                                    <option value="Individual Customer">Individual Customer</option>
+                                    <option value="Clinic">Clinic</option>
+                                    <option value="Private Hospital">Private Hospital</option>
+                                    <option value="Govt. Hospital">Govt. Hospital</option>
+                                    <option value="Reseller">Reseller</option>
+                                    <option value="Reseller">Reseller</option>
+
                                 </select>
                             </div>
                         </div>
@@ -224,11 +231,11 @@
                                 <select name="product_class" class="form-control select2 product_class"
                                     style="width: 100%">
                                     <option value="" disabled selected>Select Product Class</option>
-                                    <option value="Class A">Class A</option>
-                                    <option value="Clas B">Class B</option>
-                                    <option value="Class C">Class C</option>
-                                    <option value="Class D">Class D</option>
-                                    <option value="Class E">Class E</option>
+                                    <option value="Class A-1">Class A-1</option>
+                                    <option value="Class B-2">Class B-2</option>
+                                    <option value="Class C-3">Class C-3</option>
+                                    <option value="Class D-4">Class D-4</option>
+                                    <option value="Class E-5">Class E-5</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
@@ -271,8 +278,8 @@
                             </div>
                             {{-- Delivery Fields --}}
                             <div class="form-group col-md-4">
-                                <label>Supplier Delivery Time <span class="text-danger">*</span></label>
-                                <input type="time" class="form-control supplier_delivery_time"
+                                <label>Supplier Delivery Period <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control supplier_delivery_time"
                                     name="supplier_delivery_time" value="{{ old('supplier_delivery_time') }}">
                             </div>
                             <div class="form-group col-md-4">
@@ -297,7 +304,7 @@
                         <div class="row col-md-12">
                             <div class="form-group col-md-6">
                                 <label>Self Life<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control self_life" name="self_life"
+                                <input type="text" class="form-control self_life" name="self_life"
                                     value="{{ old('self_life') }}">
                             </div>
                             <div class="form-group col-md-6">
@@ -421,7 +428,7 @@
                                             <th>Category</th>
                                             <th>Sub Category</th>
                                             <th>Company</th>
-                                            <th>Models</th>
+                                            <th>Product Hts Code</th>
                                             <th>Country</th>
                                             <th>Supplier Name</th>
                                             <th>Number Of Use</th>
@@ -530,7 +537,7 @@
                         "data": "company"
                     },
                     {
-                        "data": "models"
+                        "data": "product_hts"
                     },
                     {
                         "data": "country"
@@ -703,6 +710,7 @@
                     $('#editModels .product_commission').val(response.product_commission);
                     $('#editModels .status').val(response.status);
                     $('#editModels .short_description').val(response.short_description);
+                    $('#editModels .product_hts').val(response.product_hts);
                     $('#editModels .sterilizations').val(response.sterilizations).trigger('change');
                     $('#editModels .product_use_status').val(response.product_use_status).trigger('change');
                     $('#editModels .buyer_type').val(response.buyer_type).trigger('change');
