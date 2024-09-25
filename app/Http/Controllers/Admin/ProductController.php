@@ -149,14 +149,14 @@ class ProductController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-zA-Z0-9]+$/', // Alphabet and numbers only
+                'regex:/^[a-zA-Z0-9\s]+$/', // Alphabet and numbers only
                 Rule::unique('products')
             ],
             'product_name' => [
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-zA-Z0-9]+$/', // Alphabet and numbers only
+                'regex:/^[a-zA-Z0-9\s]+$/', // Alphabet and numbers only
                 Rule::unique('products')
             ],
             'slug' => [
@@ -165,6 +165,13 @@ class ProductController extends Controller
                 'max:255',
                 Rule::unique('products')
             ],
+            'product_hts' => [
+                'required',
+                'string',
+                'regex:/^\d{4}(\.\d{2})?(\.\d{2})?$/',
+                'unique:products,product_hts'
+            ],
+
             'category_id' => 'required|array',
             'category_id.*' => 'exists:categories,id',
             'brand_id' => 'required|array',
@@ -172,7 +179,7 @@ class ProductController extends Controller
             'certification_id' => 'required|array',
             'certification_id.*' => 'exists:certifications,id',
             'company' => 'required',
-            'models' => 'required',
+            // 'models' => 'required',
             'country' => 'required|string|max:255',
             'sterilizations' => 'required|string|max:255',
             'product_use_status' => 'required|string|max:255',
@@ -191,6 +198,8 @@ class ProductController extends Controller
 
             'material_id' => 'required|array',
             'material_id.*' => 'exists:main_materials,id',
+            'taxes.*.tax_per_city' => 'required',
+            'taxes.*.local_tax' => 'required|regex:/^\d{1,3}(\.\d+)?%$/',
         ], [
             'category_id' => 'Category is required.',
             'category_id.*' => 'Category is required.',
@@ -208,13 +217,22 @@ class ProductController extends Controller
             'self_life.digits' => 'The self-life must be exactly 4 digits.',
             'federal_tax.regex' => 'The federal tax must be a number with at least 3 digits followed by a % sign.',
             'provincial_tax.regex' => 'The provincial tax must be a number with at least 3 digits followed by a % sign.',
+            'product_hts.required' => 'The HTS code is required.',
+            'product_hts.string' => 'The HTS code must be a valid string.',
+            'product_hts.regex' => 'The HTS code must be in the format XXXX or XXXX.XX or XXXX.XX.XX (where X is a digit).',
+            'product_hts.unique' => 'The HTS code has already been used. Please enter a unique code.',
+            'taxes.*.tax_per_city.required' => 'tax per city is required.',
+            'taxes.*.local_tax.required' => 'Local Tax is required.',
+            'taxes.*.local_tax.regex' => 'The local tax must be a number with at least 3 digits followed by a % sign.',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         try {
+            // return $request;
             $product = new Product($request->only([
+                'product_hts',
                 'product_name',
                 'short_name',
                 'slug',
@@ -312,7 +330,7 @@ class ProductController extends Controller
             }
             return redirect()->route('product.index')->with('message', 'Product Created Successfully!');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to save Product. Please try again later.');
+            return redirect()->back()->with('error', 'Failed to save Product. Please try again later.' . $e->getMessage());
         }
     }
 

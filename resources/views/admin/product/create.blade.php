@@ -108,7 +108,7 @@
                                         </div>
 
                                         <!-- Models Field -->
-                                        <div class="form-group col-md-4">
+                                        {{-- <div class="form-group col-md-4">
                                             <label>Models <span class="text-danger">*</span></label>
                                             <select name="models" class="form-control select2" id="models">
                                                 <option value="" disabled selected>Select Models</option>
@@ -119,6 +119,11 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                        </div> --}}
+                                        <div class="form-group col-md-4">
+                                            <label>Product HTS Code<span class="text-danger">*</span></label>
+                                            <input type="text" id="product_hts" class="form-control product_hts"
+                                                name="product_hts" value="{{ old('product_hts') }}">
                                         </div>
                                     </div>
 
@@ -128,13 +133,17 @@
                                             <select name="country" class="form-control select2" id="country">
                                                 <option value="">Select Country</option>
                                                 @foreach ($countries as $country)
-                                                    <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                                    <option value="{{ $country->name }}"
+                                                        {{ old('country') == $country->name ? 'selected' : '' }}>
+                                                        {{ $country->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                             @if ($countries == null)
                                                 <div class="internet-error text-danger">No Internet Connection Found!</div>
                                             @endif
                                         </div>
+
                                         <div class="form-group col-md-4">
                                             <label>Product Commission</label>
                                             <input type="text" class="form-control" name="product_commission"
@@ -247,10 +256,11 @@
                                             <label>Supplier Name <span class="text-danger">*</span></label>
                                             <select id="supplier_name" name="supplier_name_display"
                                                 class="form-control select2">
-                                                <!-- Options will be populated by AJAX, but old value is stored -->
+                                                <!-- Placeholder option -->
+                                                <option value="" disabled>Select Supplier Name</option>
                                                 @if (old('supplier_name_display'))
                                                     <option value="{{ old('supplier_name_display') }}" selected>
-                                                        {{ old('supplier_name_display') }}</option>
+                                                        {{ old('supplier_name') }}</option>
                                                 @endif
                                             </select>
                                         </div>
@@ -262,10 +272,11 @@
                                             <label>Supplier Id <span class="text-danger">*</span></label>
                                             <select id="supplier_id" name="supplier_id_display"
                                                 class="form-control select2" disabled>
-                                                <!-- Options will be populated by AJAX -->
+                                                <!-- Placeholder option -->
+                                                <option value="" disabled>Select Supplier ID</option>
                                                 @if (old('supplier_id_display'))
                                                     <option value="{{ old('supplier_id_display') }}" selected>
-                                                        {{ old('supplier_id_display') }}</option>
+                                                        {{ old('supplier_id') }}</option>
                                                 @endif
                                             </select>
                                         </div>
@@ -391,95 +402,105 @@
                                             <div class="form-group col-md-6">
                                                 <label>Tax/City<span class="text-danger">*</span></label>
                                                 <select name="taxes[0][tax_per_city]" class="form-control select2">
-                                                    <option value="" disabled selected>Select City</option>
-                                                    <option value="Karachi">Karachi</option>
-                                                    <option value="Lahore">Lahore</option>
-                                                    <option value="Faisalabad">Faisalabad</option>
-                                                    <option value="Rawalpindi">Rawalpindi</option>
-                                                    <option value="Multan">Multan</option>
-                                                    <option value="Hyderabad">Hyderabad</option>
-                                                    <option value="Gujranwala">Gujranwala</option>
-                                                    <option value="Peshawar">Peshawar</option>
-                                                    <option value="Quetta">Quetta</option>
-                                                    <option value="Islamabad">Islamabad</option>
-                                                    <option value="Sargodha">Sargodha</option>
-                                                    <option value="Sialkot">Sialkot</option>
-                                                    <option value="Bahawalpur">Bahawalpur</option>
-                                                    <option value="Sukkur">Sukkur</option>
-                                                    <option value="Larkana">Larkana</option>
-                                                    <option value="Sheikhupura">Sheikhupura</option>
-                                                    <option value="Mardan">Mardan</option>
-                                                    <option value="Gujrat">Gujrat</option>
-                                                    <option value="Rahim Yar Khan">Rahim Yar Khan</option>
-                                                    <option value="Kasur">Kasur</option>
-                                                    <option value="Okara">Okara</option>
-                                                    <option value="Sahiwal">Sahiwal</option>
-                                                    <option value="Wah Cantonment">Wah Cantonment</option>
-                                                    <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
-                                                    <option value="Mingora">Mingora</option>
-                                                    <option value="Mirpur Khas">Mirpur Khas</option>
-                                                    <option value="Chiniot">Chiniot</option>
-                                                    <option value="Nawabshah">Nawabshah</option>
-                                                    <option value="Kamoke">Kamoke</option>
-                                                    <option value="Burewala">Burewala</option>
-                                                    <option value="Jhelum">Jhelum</option>
-                                                    <option value="Sadiqabad">Sadiqabad</option>
-                                                    <option value="Khanewal">Khanewal</option>
-                                                    <option value="Hafizabad">Hafizabad</option>
-                                                    <option value="Kohat">Kohat</option>
-                                                    <option value="Jacobabad">Jacobabad</option>
-                                                    <option value="Shikarpur">Shikarpur</option>
-                                                    <option value="Muzaffargarh">Muzaffargarh</option>
-                                                    <option value="Abottabad">Abottabad</option>
-                                                    <option value="Muridke">Muridke</option>
-                                                    <option value="Jhang">Jhang</option>
-                                                    <option value="Daska">Daska</option>
-                                                    <option value="Mandi Bahauddin">Mandi Bahauddin</option>
-                                                    <option value="Khuzdar">Khuzdar</option>
-                                                    <option value="Pakpattan">Pakpattan</option>
-                                                    <option value="Tando Allahyar">Tando Allahyar</option>
-                                                    <option value="Vehari">Vehari</option>
-                                                    <option value="Gojra">Gojra</option>
-                                                    <option value="Mandi Bahauddin">Mandi Bahauddin</option>
-                                                    <option value="Turbat">Turbat</option>
-                                                    <option value="Dadu">Dadu</option>
-                                                    <option value="Bahawalnagar">Bahawalnagar</option>
-                                                    <option value="Khairpur">Khairpur</option>
-                                                    <option value="Chishtian">Chishtian</option>
-                                                    <option value="Charsadda">Charsadda</option>
-                                                    <option value="Kandhkot">Kandhkot</option>
-                                                    <option value="Mianwali">Mianwali</option>
-                                                    <option value="Tando Adam">Tando Adam</option>
-                                                    <option value="Dera Ismail Khan">Dera Ismail Khan</option>
-                                                    <option value="Kot Addu">Kot Addu</option>
-                                                    <option value="Nowshera">Nowshera</option>
-                                                    <option value="Swabi">Swabi</option>
-                                                    <option value="Chakwal">Chakwal</option>
-                                                    <option value="Tando Muhammad Khan">Tando Muhammad Khan</option>
-                                                    <option value="Jaranwala">Jaranwala</option>
-                                                    <option value="Kandhkot">Kandhkot</option>
-                                                    <option value="Hasilpur">Hasilpur</option>
-                                                    <option value="Gojra">Gojra</option>
-                                                    <option value="Samundri">Samundri</option>
-                                                    <option value="Haveli Lakha">Haveli Lakha</option>
-                                                    <option value="Layyah">Layyah</option>
-                                                    <option value="Tank">Tank</option>
-                                                    <option value="Chaman">Chaman</option>
-                                                    <option value="Bannu">Bannu</option>
-                                                    <option value="Haripur">Haripur</option>
-                                                    <option value="Attock">Attock</option>
-                                                    <option value="Mansehra">Mansehra</option>
-                                                    <option value="Lodhran">Lodhran</option>
-                                                    <option value="Chakwal">Chakwal</option>
-                                                    <option value="Chitral">Chitral</option>
-                                                    <option value="Kharan">Kharan</option>
-                                                    <option value="Kohlu">Kohlu</option>
-                                                    <option value="Zhob">Zhob</option>
-                                                    <option value="Hub">Hub</option>
-                                                    <option value="Gwadar">Gwadar</option>
-                                                    <option value="Sibi">Sibi</option>
+                                                    <option value="" disabled
+                                                        {{ old('taxes.0.tax_per_city') == null ? 'selected' : '' }}>Select
+                                                        City</option>
+                                                    @foreach ([
+            'Karachi',
+            'Lahore',
+            'Faisalabad',
+            'Rawalpindi',
+            'Multan',
+            'Hyderabad',
+            'Gujranwala',
+            'Peshawar',
+            'Quetta',
+            'Islamabad',
+            'Sargodha',
+            'Sialkot',
+            'Bahawalpur',
+            'Sukkur',
+            'Larkana',
+            'Sheikhupura',
+            'Mardan',
+            'Gujrat',
+            'Rahim Yar Khan',
+            'Kasur',
+            'Okara',
+            'Sahiwal',
+            'Wah Cantonment',
+            'Dera Ghazi Khan',
+            'Mingora',
+            'Mirpur Khas',
+            'Chiniot',
+            'Nawabshah',
+            'Kamoke',
+            'Burewala',
+            'Jhelum',
+            'Sadiqabad',
+            'Khanewal',
+            'Hafizabad',
+            'Kohat',
+            'Jacobabad',
+            'Shikarpur',
+            'Muzaffargarh',
+            'Abottabad',
+            'Muridke',
+            'Jhang',
+            'Daska',
+            'Mandi Bahauddin',
+            'Khuzdar',
+            'Pakpattan',
+            'Tando Allahyar',
+            'Vehari',
+            'Gojra',
+            'Mandi Bahauddin',
+            'Turbat',
+            'Dadu',
+            'Bahawalnagar',
+            'Khairpur',
+            'Chishtian',
+            'Charsadda',
+            'Kandhkot',
+            'Mianwali',
+            'Tando Adam',
+            'Dera Ismail Khan',
+            'Kot Addu',
+            'Nowshera',
+            'Swabi',
+            'Chakwal',
+            'Tando Muhammad Khan',
+            'Jaranwala',
+            'Kandhkot',
+            'Hasilpur',
+            'Gojra',
+            'Samundri',
+            'Haveli Lakha',
+            'Layyah',
+            'Tank',
+            'Chaman',
+            'Bannu',
+            'Haripur',
+            'Attock',
+            'Mansehra',
+            'Lodhran',
+            'Chakwal',
+            'Chitral',
+            'Kharan',
+            'Kohlu',
+            'Zhob',
+            'Hub',
+            'Gwadar',
+            'Sibi',
+        ] as $city)
+                                                        <option value="{{ $city }}"
+                                                            {{ old('taxes.0.tax_per_city') == $city ? 'selected' : '' }}>
+                                                            {{ $city }}
+                                                        </option>
+                                                    @endforeach
                                                 </select>
                                             </div>
+
                                             <div class="form-group col-md-6">
                                                 <label>Local Tax <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control" name="taxes[0][local_tax]"
@@ -596,17 +617,27 @@
         @endif
         //################ Get Supplier Name ############
         // Fetch and populate supplier names
+        let oldSupplierName = '{{ old('supplier_name_display') }}';
+        let oldSupplierId = '{{ old('supplier_id_display') }}';
+
         $.ajax({
             url: '{{ route('getSuppliers') }}',
             type: 'GET',
             success: function(data) {
                 let supplierNameDropdown = $('#supplier_name');
-                supplierNameDropdown.append('<option value="" disabled selected>Select Supplier Name</option>');
+                supplierNameDropdown.empty().append(
+                    '<option value="" disabled selected>Select Supplier Name</option>');
+
                 data.forEach(function(supplier) {
                     supplierNameDropdown.append(
-                        `<option value="${supplier.id}">${supplier.name}</option>`
+                        `<option value="${supplier.id}" ${oldSupplierName == supplier.id ? 'selected' : ''}>${supplier.name}</option>`
                     );
                 });
+
+                // If old value for supplier_name exists, manually trigger the change event to load supplier_id
+                if (oldSupplierName) {
+                    supplierNameDropdown.trigger('change');
+                }
             },
             error: function(error) {
                 console.log('Error fetching suppliers:', error);
@@ -627,7 +658,7 @@
                         let selectedSupplier = data.find(supplier => supplier.id == selectedSupplierId);
                         if (selectedSupplier) {
                             supplierIdDropdown.empty().append(
-                                `<option value="${selectedSupplier.supplier_id}">${selectedSupplier.supplier_id}</option>`
+                                `<option value="${selectedSupplier.supplier_id}" ${oldSupplierId == selectedSupplier.supplier_id ? 'selected' : ''}>${selectedSupplier.supplier_id}</option>`
                             );
                             supplierIdDropdown.prop('disabled', true);
                             // Store supplier name and ID in hidden fields
