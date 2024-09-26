@@ -25,7 +25,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Thumbnail Image <span class="text-danger">*</span></label>
+                                        <label>Thumbnail Image</label>
                                         <input type="file" class="form-control-file" name="thumbnail_image"
                                             value="{{ old('thumbnail_image') }}" onchange="previewThumbnailImage(event)">
                                     </div>
@@ -65,6 +65,15 @@
                                             <select name="sub_category_id[]" class="form-control select2" id="sub_category"
                                                 multiple>
                                                 <option value="">Select Sub Category</option>
+                                                @if (old('sub_category_id'))
+                                                    @foreach ($subCategories as $subCategory)
+                                                        <!-- Assuming $subCategories is passed -->
+                                                        <option value="{{ $subCategory->id }}"
+                                                            {{ in_array($subCategory->id, old('sub_category_id', [])) ? 'selected' : '' }}>
+                                                            {{ $subCategory->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
@@ -145,7 +154,7 @@
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label>Product Commission</label>
+                                            <label>Product Commission <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="product_commission"
                                                 value="{{ old('product_commission') }}">
                                         </div>
@@ -335,45 +344,45 @@
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-12">
-                                            <label>Tab 1 Heading<span class="text-danger">*</span></label>
+                                            <label>Tab 1 Heading</label>
                                             <input type="text" class="form-control" name="tab_1_heading"
                                                 value="{{ old('tab_1_heading') }}">
                                         </div>
                                         <div class="form-group col-md-12">
-                                            <label>Tab 1 Content<span class="text-danger">*</span></label>
+                                            <label>Tab 1 Content</label>
                                             <textarea name="tab_1_text" cols="20" rows="50" class="long_description">{{ old('tab_1_text') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-12">
-                                            <label>Tab 2 Heading<span class="text-danger">*</span></label>
+                                            <label>Tab 2 Heading</label>
                                             <input type="text" class="form-control" name="tab_2_heading"
                                                 value="{{ old('tab_2_heading') }}">
                                         </div>
                                         <div class="form-group col-md-12">
-                                            <label>Tab 2 Content<span class="text-danger">*</span></label>
+                                            <label>Tab 2 Content</label>
                                             <textarea name="tab_2_text" cols="20" rows="50" class="long_description">{{ old('tab_2_text') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-12">
-                                            <label>Tab 3 Heading<span class="text-danger">*</span></label>
+                                            <label>Tab 3 Heading</label>
                                             <input type="text" class="form-control" name="tab_3_heading"
                                                 value="{{ old('tab_3_heading') }}">
                                         </div>
                                         <div class="form-group col-md-12">
-                                            <label>Tab 3 Content<span class="text-danger">*</span></label>
+                                            <label>Tab 3 Content</label>
                                             <textarea name="tab_3_text" cols="20" rows="50" class="long_description">{{ old('tab_3_text') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-12">
-                                            <label>Tab 4 Heading<span class="text-danger">*</span></label>
+                                            <label>Tab 4 Heading</label>
                                             <input type="text" class="form-control" name="tab_4_heading"
                                                 value="{{ old('tab_4_heading') }}">
                                         </div>
                                         <div class="form-group col-md-12">
-                                            <label>Tab 4 Content<span class="text-danger">*</span></label>
+                                            <label>Tab 4 Content</label>
                                             <textarea name="tab_4_text" cols="20" rows="50" class="long_description">{{ old('tab_4_text') }}</textarea>
                                         </div>
                                     </div>
@@ -579,8 +588,14 @@
 
         // Show sub Categories against Category
         $(document).ready(function() {
+            // Trigger change if any category is already selected
+            if ($('#category').val().length > 0) {
+                $('#category').trigger('change');
+            }
+
             $('#category').change(function() {
                 var selectedCategories = $(this).val();
+
                 if (selectedCategories.length > 0) {
                     $.ajax({
                         url: '{{ route('category.subCategories') }}',
@@ -589,28 +604,52 @@
                             category_ids: selectedCategories
                         },
                         success: function(response) {
-                            $('#sub_category').empty();
-                            if (response.length > 0) {
-                                response.forEach(function(subCategory) {
-                                    $('#sub_category').append('<option value="' +
-                                        subCategory.id + '">' + subCategory.name +
-                                        '</option>');
-                                });
-                                $('#sub_category').prop('disabled', false);
-                            } else {
-                                $('#sub_category').append(
-                                    '<option value="">No Sub Category Available</option>');
-                                $('#sub_category').prop('disabled', true);
-                            }
+                            populateSubCategoryDropdown(response);
+                        },
+                        error: function(xhr) {
+                            console.error('Error fetching subcategories:', xhr);
                         }
                     });
                 } else {
-                    $('#sub_category').empty();
-                    $('#sub_category').append('<option value="">Select Sub Category</option>');
-                    $('#sub_category').prop('disabled', true);
+                    resetSubCategoryDropdown();
                 }
             });
+
+            // Callback function to populate subcategory dropdown
+            function populateSubCategoryDropdown(response) {
+                $('#sub_category').empty();
+
+                // Store the old subcategory IDs for later use
+                var oldSubCategories = @json(old('sub_category_id', []));
+
+                // Create a set from the old subcategories for easier look-up
+                var oldSubCategorySet = new Set(oldSubCategories);
+
+                if (response.length > 0) {
+                    response.forEach(function(subCategory) {
+                        var isSelected = oldSubCategorySet.has(subCategory.id) ? 'selected' : '';
+                        $('#sub_category').append('<option value="' +
+                            subCategory.id + '" ' + isSelected + '>' +
+                            subCategory.name + '</option>');
+                    });
+
+                    $('#sub_category').prop('disabled', false);
+                } else {
+                    $('#sub_category').append('<option value="">No Sub Category Available</option>');
+                    $('#sub_category').prop('disabled', true);
+                }
+            }
+
+            // Function to reset the subcategory dropdown
+            function resetSubCategoryDropdown() {
+                $('#sub_category').empty();
+                $('#sub_category').append('<option value="">Select Sub Category</option>');
+                $('#sub_category').prop('disabled', true);
+            }
         });
+
+
+
 
         //#### Torster Message##########
         @if ($errors->any())

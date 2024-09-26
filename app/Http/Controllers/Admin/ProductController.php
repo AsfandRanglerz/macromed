@@ -121,6 +121,7 @@ class ProductController extends Controller
         }
         // return $countries;
         $categories = Category::where('status', '1')->get();
+        $subCategories = SubCategory::where('status', '1')->get();
         $brands = Brands::where('status', '1')->get();
         $models = Models::where('status', '1')->get();
         $certifications = Certification::where('status', '1')->get();
@@ -129,7 +130,7 @@ class ProductController extends Controller
         $numberOfUses = NumberOfUse::where('status', '1')->get();
         $suppliers = Supplier::where('status', '1')->get();
         $mianMaterials = MainMaterial::where('status', '1')->get();
-        return view('admin.product.create', compact('mianMaterials', 'suppliers', 'numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
+        return view('admin.product.create', compact('subCategories','mianMaterials', 'suppliers', 'numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
     }
 
     public function getSuppliers()

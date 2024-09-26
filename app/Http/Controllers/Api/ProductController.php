@@ -36,6 +36,7 @@ class ProductController extends Controller
                 ->where('id', $productId)
                 ->select(
                     'id',
+                    'product_hts',
                     'product_name',
                     'product_code',
                     'thumbnail_image',
