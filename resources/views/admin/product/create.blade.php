@@ -20,14 +20,14 @@
                                         <label>Thumbnail Image Preview</label>
                                         <div>
                                             <img id="preview-img" class="admin-img"
-                                                src="{{ asset('public/admin/assets/images/preview.png') }}"
-                                                style="width: 15%" alt="">
+                                                src="{{ old('thumbnail_image') ? asset(old('thumbnail_image')) : asset('public/admin/assets/images/preview.png') }}"
+                                                style="width: 15%" alt="Thumbnail Preview">
                                         </div>
                                     </div>
                                     <div class="form-group col-md-12">
-                                        <label>Thumnail Image <span class="text-danger">*</span></label>
+                                        <label>Thumbnail Image <span class="text-danger">*</span></label>
                                         <input type="file" class="form-control-file" name="thumbnail_image"
-                                            onchange="previewThumnailImage(event)">
+                                            value="{{ old('thumbnail_image') }}" onchange="previewThumbnailImage(event)">
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
@@ -552,14 +552,17 @@
                 .replace(/ +/g, '-');
         }
         // Image perview code
-        function previewThumnailImage(event) {
+        function previewThumbnailImage(event) {
             var reader = new FileReader();
             reader.onload = function() {
                 var output = document.getElementById('preview-img');
-                output.src = reader.result;
+                output.src = reader.result; // Update preview with the new image
             }
-            reader.readAsDataURL(event.target.files[0]);
-        };
+            if (event.target.files[0]) { // Check if a file was selected
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
         // Classic Editor Code
         let editors = [];
 
