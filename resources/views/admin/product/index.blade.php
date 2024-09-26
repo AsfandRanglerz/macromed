@@ -176,9 +176,22 @@
                                 @endif
                             </div>
                             <div class="form-group col-md-4">
-                                <label>Product Commission</label>
-                                <input type="text" class="form-control product_commission" name="product_commission"
-                                    value="{{ old('product_commission') }}">
+                                <label>Product Commission <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control product_commission" name="product_commission"
+                                        value="{{ old('product_commission') }}">
+                                    <span class="input-group-addon"
+                                        style="
+                                        border: 2px solid #ced4da;
+                                        border-left: 0;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        width: 3rem;
+                                        font-weight: bold;
+                                    ">%</span>
+                                </div>
+
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Video Link</label>

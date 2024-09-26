@@ -128,6 +128,7 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
+                        <a class="btn btn-primary mb-3" href="{{ route('product.index') }}">Back</a>
                         @if ($product->status == '1')
                             <div class="card">
                                 <div class="card-header">

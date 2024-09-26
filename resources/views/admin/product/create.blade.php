@@ -7,6 +7,7 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-md-12 col-md-12 col-lg-12">
+                        <a class="btn btn-primary mb-3" href="{{ route('product.index') }}">Back</a>
                         <div class="card">
                             <div class="card-header">
                                 <div class="col-md-12">
@@ -155,8 +156,20 @@
 
                                         <div class="form-group col-md-4">
                                             <label>Product Commission <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="product_commission"
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="product_commission"
                                                 value="{{ old('product_commission') }}">
+                                                <span class="input-group-addon" style="
+                                                    border: 2px solid #ced4da;
+                                                    border-left: 0;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                    width: 3rem;
+                                                    font-weight: bold;
+                                                ">%</span>
+                                            </div>
+
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Video Link</label>

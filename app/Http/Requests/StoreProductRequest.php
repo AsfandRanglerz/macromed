@@ -104,7 +104,7 @@ class StoreProductRequest extends FormRequest
             'short_name.regex' => 'The short name must contain only letters and numbers.',
             'product_name.regex' => 'The product name must contain only letters and numbers.',
             'product_commission.min' => 'The product commission must be at least 50.',
-            'supplier_delivery_time.regex' => 'The supplier delivery time must be a number with 1 to 3 digits.',
+            'supplier_delivery_time.regex' => 'The supplier delivery period must be a number with 1 to 3 digits.',
             'delivery_period.regex' => 'The delivery period must be a number with 1 to 3 digits.',
             'self_life.regex' => 'The self-life must be a number with 1 to 4 digits.',
             'federal_tax.regex' => 'The federal tax must must be either a percentage (up to 3 digits with a % sign) or a number (up to 6 digits).',
