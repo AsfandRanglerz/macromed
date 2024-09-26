@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProductRequest extends FormRequest
+class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,6 +24,7 @@ class StoreProductRequest extends FormRequest
      */
     public function rules()
     {
+        $productId = $this->route('id');
         return [
             'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_name' => [
@@ -31,38 +32,32 @@ class StoreProductRequest extends FormRequest
                 'string',
                 'max:255',
                 'regex:/^[a-zA-Z0-9\s]+$/', // Alphabet and numbers only
-                Rule::unique('products')
+                Rule::unique('products')->ignore($productId)
             ],
             'product_name' => [
                 'required',
                 'string',
                 'max:255',
                 'regex:/^[a-zA-Z0-9\s]+$/', // Alphabet and numbers only
-                Rule::unique('products')
+                Rule::unique('products')->ignore($productId)
             ],
             'slug' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('products')
+                Rule::unique('products')->ignore($productId)
             ],
             'product_hts' => [
                 'required',
                 'string',
                 'regex:/^\d{4}(\.\d{2})?(\.\d{2})?$/',
-                'unique:products,product_hts'
+                Rule::unique('products')->ignore($productId)
             ],
-            'category_id' => 'required|array',
-            'category_id.*' => 'exists:categories,id',
-            'brand_id' => 'required|array',
-            'brand_id.*' => 'exists:brands,id',
-            'certification_id' => 'required|array',
-            'certification_id.*' => 'exists:certifications,id',
             'company' => 'required',
             'country' => 'required|string|max:255',
             'sterilizations' => 'required|string|max:255',
             'product_use_status' => 'required|string|max:255',
-            'product_commission' => ['required', 'numeric', 'between:0,49.999'],
+            'product_commission' => ['required', 'numeric', 'between:0,50'],
             'video_link' => 'nullable|string|max:255',
             'short_description' => 'required|string',
             'long_description' => 'required|string',
@@ -74,24 +69,13 @@ class StoreProductRequest extends FormRequest
             'self_life' => 'required|numeric|digits:4',
             'federal_tax' => 'required|regex:/^\d{1,3}(\.\d+)?%$/',
             'provincial_tax' => 'required|regex:/^\d{1,3}(\.\d+)?%$/',
-            'material_id' => 'required|array',
-            'material_id.*' => 'exists:main_materials,id',
             'taxes.*.tax_per_city' => 'required',
             'taxes.*.local_tax' => 'required|regex:/^\d{1,3}(\.\d+)?%$/',
         ];
     }
-
     public function messages()
     {
         return [
-            'category_id' => 'Category is required.',
-            'category_id.*' => 'Category is required.',
-            'brand_id' => 'Brand is required.',
-            'brand_id.*' => 'Brand is required.',
-            'certification_id' => 'Certification is required.',
-            'certification_id.*' => 'Certification is required.',
-            'material_id' => 'Main Material is required.',
-            'material_id.*' => 'Main Material is required.',
             'short_name.regex' => 'The short name must contain only letters and numbers.',
             'product_name.regex' => 'The product name must contain only letters and numbers.',
             'product_commission.min' => 'The product commission must be at least 50.',

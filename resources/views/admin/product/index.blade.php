@@ -890,6 +890,8 @@
                             toastr.error(value[0]);
                         });
                     } else {
+                    console.log(xhr);
+
                         toastr.error('An error occurred while updating the product.');
                     }
                 }

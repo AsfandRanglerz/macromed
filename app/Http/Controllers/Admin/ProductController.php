@@ -29,6 +29,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
@@ -142,9 +143,9 @@ class ProductController extends Controller
         $subCategories = SubCategory::whereIn('category_id', $categoryIds)->get();
         return response()->json($subCategories);
     }
+
     public function productStore(StoreProductRequest $request)
     {
-
         try {
             $product = new Product($request->only([
                 'product_hts',
@@ -266,59 +267,8 @@ class ProductController extends Controller
             return response()->json(['alert' => 'error', 'warning' => 'Models Not Found']);
         }
     }
-    public function productUpdate(Request $request, $id)
+    public function productUpdate(UpdateProductRequest $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'short_name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('products')->ignore($id)
-            ],
-            'product_name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('products')->ignore($id)
-            ],
-            'slug' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('products')->ignore($id)
-            ],
-            'product_hts' => [
-                'required',
-                'string',
-                'regex:/^\d{4}(\.\d{2}){0,2}$/',
-                Rule::unique('products')->ignore($id)
-            ],
-            'company' => 'required|string|max:255',
-            'models' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'sterilizations' => 'required|string|max:255',
-            'product_use_status' => 'required|string|max:255',
-            'product_commission' => 'required|string|max:255',
-            'video_link' => 'nullable|string|max:255',
-            'short_description' => 'required|string',
-            'long_description' => 'required|string',
-            'buyer_type' => 'required|string|max:255',
-            'product_class' => 'required|string|max:255',
-            'supplier_delivery_time' => 'required|string|max:255',
-            'supplier_name' => 'required|string|max:255',
-            'delivery_period' => 'required|string|max:255',
-            'self_life' => 'required|date',
-            'federal_tax' => 'required|numeric',
-            'provincial_tax' => 'required|numeric',
-
-        ]);
-
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
         try {
             $product = Product::findOrFail($id);
             $product->fill($request->only([
@@ -421,7 +371,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product Updated Successfully!']);
         } catch (\Exception $e) {
             // Log::error($e->getMessage());
-            return response()->json(['error' => 'Failed to update Product. Please try again later.']);
+            return response()->json(['error' => 'Failed to update Product. Please try again later.' . $e->getMessage()]);
         }
     }
 
@@ -441,7 +391,7 @@ class ProductController extends Controller
             $product->save();
             return response()->json(['alert' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
+            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.' . $e->getMessage()]);
         }
     }
     public function updateProductFeatureStatus($id)
