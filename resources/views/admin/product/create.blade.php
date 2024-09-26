@@ -325,7 +325,7 @@
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-6">
-                                            <label>Self Life<span class="text-danger">*</span></label>
+                                            <label>Shelf Life / Expiry Period<span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="self_life"
                                                 value="{{ old('self_life') }}">
                                         </div>

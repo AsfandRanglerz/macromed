@@ -303,7 +303,7 @@
 
                         <div class="row col-md-12">
                             <div class="form-group col-md-6">
-                                <label>Self Life<span class="text-danger">*</span></label>
+                                <label>Shelf Life / Expiry Period<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control self_life" name="self_life"
                                     value="{{ old('self_life') }}">
                             </div>
@@ -428,7 +428,7 @@
                                             <th>Category</th>
                                             <th>Sub Category</th>
                                             <th>Company</th>
-                                            <th>Product Hts Code</th>
+                                            <th>Product HTS Code</th>
                                             <th>Country</th>
                                             <th>Supplier Name</th>
                                             <th>Number Of Use</th>
@@ -890,7 +890,7 @@
                             toastr.error(value[0]);
                         });
                     } else {
-                    console.log(xhr);
+                        console.log(xhr);
 
                         toastr.error('An error occurred while updating the product.');
                     }
