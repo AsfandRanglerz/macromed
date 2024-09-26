@@ -21,7 +21,7 @@
                                         <label>Thumbnail Image Preview</label>
                                         <div>
                                             <img id="preview-img" class="admin-img"
-                                                src="{{ old('thumbnail_image') ? asset(old('thumbnail_image')) : asset('public/admin/assets/images/preview.png') }}"
+                                                src="{{asset('public/admin/assets/images/preview.png') }}"
                                                 style="width: 15%" alt="Thumbnail Preview">
                                         </div>
                                     </div>
@@ -158,16 +158,17 @@
                                             <label>Product Commission <span class="text-danger">*</span></label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control" name="product_commission"
-                                                value="{{ old('product_commission') }}">
-                                                <span class="input-group-addon" style="
-                                                    border: 2px solid #ced4da;
-                                                    border-left: 0;
-                                                    display: flex;
-                                                    align-items: center;
-                                                    justify-content: center;
-                                                    width: 3rem;
-                                                    font-weight: bold;
-                                                ">%</span>
+                                                    value="{{ old('product_commission') }}">
+                                                <span class="input-group-addon"
+                                                    style="
+                                                border: 2px solid #ced4da;
+                                                border-left: 0;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                width: 3rem;
+                                                font-weight: bold;
+                                            ">%</span>
                                             </div>
 
                                         </div>
