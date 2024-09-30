@@ -244,7 +244,6 @@
                             </div>
                         </div>
 
-
                         <h4>Update Accounts Information:</h4>
                         <div class="row">
                             <div class="col-md-4">
