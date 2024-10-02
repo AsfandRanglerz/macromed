@@ -55,6 +55,8 @@ return array(
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Middleware\\admin' => $baseDir . '/app/Http/Middleware/admin.php',
     'App\\Http\\Requests\\Document' => $baseDir . '/app/Http/Requests/Document.php',
+    'App\\Http\\Requests\\StoreProductRequest' => $baseDir . '/app/Http/Requests/StoreProductRequest.php',
+    'App\\Http\\Requests\\UpdateProductRequest' => $baseDir . '/app/Http/Requests/UpdateProductRequest.php',
     'App\\Mail\\PasswordResetMail' => $baseDir . '/app/Mail/PasswordResetMail.php',
     'App\\Mail\\ResetPasswordMail' => $baseDir . '/app/Mail/ResetPasswordMail.php',
     'App\\Mail\\SalesAgentRegistration' => $baseDir . '/app/Mail/SalesAgentRegistration.php',

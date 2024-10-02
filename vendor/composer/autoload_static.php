@@ -581,6 +581,8 @@ class ComposerStaticInita31faf40ff9b8773d514dda0170fd133
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\admin' => __DIR__ . '/../..' . '/app/Http/Middleware/admin.php',
         'App\\Http\\Requests\\Document' => __DIR__ . '/../..' . '/app/Http/Requests/Document.php',
+        'App\\Http\\Requests\\StoreProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreProductRequest.php',
+        'App\\Http\\Requests\\UpdateProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateProductRequest.php',
         'App\\Mail\\PasswordResetMail' => __DIR__ . '/../..' . '/app/Mail/PasswordResetMail.php',
         'App\\Mail\\ResetPasswordMail' => __DIR__ . '/../..' . '/app/Mail/ResetPasswordMail.php',
         'App\\Mail\\SalesAgentRegistration' => __DIR__ . '/../..' . '/app/Mail/SalesAgentRegistration.php',

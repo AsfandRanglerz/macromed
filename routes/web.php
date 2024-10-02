@@ -223,6 +223,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/supplierUpdate/{id}',  'updateSupplier')->name('supplier.update')->middleware('permission:Supplier');
         Route::get('/supplier/delete/{id}',  'deleteSupplier')->name('supplier.delete')->middleware('permission:Supplier');
         Route::post('/update-supplier-status/{id}',  'updateSupplierStatus')->name('supplierBlock.update')->middleware('permission:Supplier');
+        Route::get('/fetchSupplier-states', 'fetchSupplierStates')->name('fetchSupplierStates')->middleware('permission:Supplier');
+        Route::get('/fetchSupplier-cities', 'fetchSupplierCities')->name('fetchSupplierCities')->middleware('permission:Supplier');
     });
 
     // ############## Main Material ############

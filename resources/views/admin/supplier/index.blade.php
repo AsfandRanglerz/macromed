@@ -4,7 +4,7 @@
     {{-- Create Supplier Model  --}}
     <div class="modal fade" id="createSupplierModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Add Supplier</h5>
@@ -14,10 +14,111 @@
                 </div>
                 <div class="modal-body">
                     <form id="createSupplierForm" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Enter Supplier Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Supplier Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Supplier POC</label>
+                                    <input type="text" class="form-control" id="poc" name="poc" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Supplier Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Supplier Phone Number</label>
+                                    <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Physical Addres</label>
+                                    <input type="text" class="form-control" id="address" name="address" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Whats App</label>
+                                    <input type="text" class="form-control" id="whats_app" name="whats_app" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Website</label>
+                                    <input type="text" class="form-control" id="website" name="website" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Alternate Email</label>
+                                    <input type="text" class="form-control" id="alternate_email" name="alternate_email"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Alternate Phone Number</label>
+                                    <input type="text" class="form-control" id="alternate_phone_number"
+                                        name="alternate_phone_number" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <select name="country" class="form-control select2" id="country"
+                                    style="width: 100%">
+                                    <option value="" selected disabled>Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
+                                            {{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($countries == null)
+                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="form-group col-md-6">
+                                <label for="state">State</label>
+                                <select class="form-control select2" id="state" name="state"
+                                    style="width: 100%" required>
+                                    <option value="" selected disabled>Select State</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="city">City</label>
+                                <select class="form-control select2 " id="city" name="city"
+                                    style="width: 100%" required>
+                                    <option value="" selected disabled>Select City</option>
+                                </select>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -41,9 +142,9 @@
         </div>
     </div>
     <!-- Edit Supplier Modal -->
-    <div class="modal fade" id="editSupplierModal" tabindex="-1" role="dialog" aria-labelledby="editSupplierModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade" id="editSupplierModal" tabindex="-1" role="dialog"
+        aria-labelledby="editSupplierModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editSupplierModalLabel">Edit Supplier</h5>
@@ -53,10 +154,107 @@
                 </div>
                 <div class="modal-body">
                     <form id="editSupplier" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Enter Supplier Name</label>
-                                <input type="text" class="form-control name" name="name" required>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Supplier Name</label>
+                                    <input type="text" class="form-control name" name="name" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Supplier POC</label>
+                                    <input type="text" class="form-control poc" name="poc" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Supplier Email</label>
+                                    <input type="email" class="form-control email" name="email" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Supplier Phone Number</label>
+                                    <input type="text" class="form-control phone_number" name="phone_number" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Physical Addres</label>
+                                    <input type="text" class="form-control address" name="address" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Whats App</label>
+                                    <input type="text" class="form-control whats_app" name="whats_app" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Website</label>
+                                    <input type="text" class="form-control website" name="website" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Alternate Email</label>
+                                    <input type="text" class="form-control alternate_email" name="alternate_email"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-sm-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Alternate Phone Number</label>
+                                    <input type="text" class="form-control alternate_phone_number"
+                                        name="alternate_phone_number" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <select name="country" class="form-control select2 country" style="width: 100%">
+                                    <option value="" selected disabled>Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
+                                            {{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($countries == null)
+                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="form-group col-md-6">
+                                <label for="state">State</label>
+                                <select class="form-control select2 state" name="state" style="width: 100%" required>
+                                    <option value="" selected disabled>Select State</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="city">City</label>
+                                <select class="form-control select2 city" name="city" style="width: 100%" required>
+                                    <option value="" selected disabled>Select City</option>
+                                </select>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -70,6 +268,8 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
+
+                    </form>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -240,7 +440,6 @@
                     $('#createSupplierModal form')[0].reset();
                 },
                 error: function(xhr, status, error) {
-                    console.log("data", xhr);
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
@@ -270,7 +469,33 @@
                 type: 'GET',
                 success: function(response) {
                     $('#editSupplier .name').val(response.name);
-                    $('#editSupplier .status').val(response.status);
+                    $('#editSupplier .email').val(response.email);
+                    $('#editSupplier .phone_number').val(response.phone_number);
+                    $('#editSupplier .poc').val(response.poc);
+                    $('#editSupplier .whats_app').val(response.whats_app);
+                    $('#editSupplier .address').val(response.address);
+                    $('#editSupplier .alternate_phone_number').val(response.alternate_phone_number);
+                    $('#editSupplier .alternate_email').val(response.alternate_email);
+                    $('#editSupplier .website').val(response.website);
+                    var nativeCountryValues = $('.country option').map(function() {
+                        return $(this).val();
+                    }).get();
+                    for (let k of nativeCountryValues) {
+                        if (k.includes(response.country)) {
+                            $('#editSupplier .country').val(k).trigger('change');
+                            fetchSupplierStates(k.split(',')[0], response.state.split(',')[0], function(
+                                stateCode) {
+                                if (response.state.split(',')[0]) {
+                                    fetchSupplierCities(response.state.split(',')[0], k.split(',')[0],
+                                        response
+                                        .city);
+                                }
+                            });
+                            break;
+                        }
+                    }
+
+                    $('#editSupplier .city').val(response.city);
                     $('#editSupplierModal').modal('show');
                     $('#editSupplierModal').data('id', id);
                 },
@@ -389,6 +614,150 @@
                 }
             });
         });
+
+        // ################### Get Dpended Country,State & City For Create Code ###################
+
+        $('#country').change(function() {
+            let countryCode = $(this).val();
+            let arr = countryCode.split(',');
+            $('#city').val(null).empty();
+            $('#state').val(null).empty();
+            $.ajax({
+                url: '{{ route('fetchSupplierStates') }}',
+                type: 'GET',
+                data: {
+                    country_code: arr[0]
+                },
+                success: function(data) {
+                    console.log("data", data);
+
+                    var stateSelect = $('#state');
+                    stateSelect.empty();
+                    stateSelect.append('<option value="">Select State</option>');
+                    data.forEach(function(state) {
+                        stateSelect.append('<option value="' + state.iso2 + "," + state.name +
+                            '">' +
+                            state.name + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    // Handle error here
+                }
+            });
+        });
+        $('#state').change(function() {
+            let stateCode = $(this).val();
+            let arr1 = stateCode.split(',');
+            let countryCode = $('#country').val();
+            let arr2 = countryCode.split(',');
+            $.ajax({
+                url: '{{ route('fetchSupplierCities') }}',
+                type: 'GET',
+                data: {
+                    state_code: arr1[0],
+                    country_code: arr2[0]
+                },
+                success: function(data) {
+                    var citySelect = $('#city');
+                    citySelect.empty();
+                    citySelect.append('<option value="">Select City</option>');
+                    data.forEach(function(city) {
+                        citySelect.append('<option value="' + city.name + '">' +
+                            city.name + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+        // ################### Update code of country,state,city #######################
+        $('.country').change(function() {
+            var countryCode = $(this).val();
+            if (countryCode) {
+                fetchSupplierStates(countryCode.split(',')[0], null, function() {
+                    $('.state').trigger('change');
+                });
+            }
+        });
+        // Trigger when state is changed
+        $('.state').change(function() {
+            var stateCode = $(this).val();
+            var countryCode = $('.country').val();
+            if (stateCode && countryCode) {
+                fetchSupplierCities(stateCode.split(',')[0], countryCode.split(',')[0], null);
+            }
+        });
+
+        function fetchSupplierStates(countryCode, selectedState, callback) {
+            $.ajax({
+                url: '{{ route('fetchSupplierStates') }}',
+                type: 'GET',
+                data: {
+                    country_code: countryCode
+                },
+                success: function(data) {
+                    var stateSelect = $('.state');
+                    stateSelect.empty();
+                    var stateCode = '';
+
+                    // Add default "Select State" option
+                    stateSelect.append('<option value="" disabled selected>Select State</option>');
+
+                    $('.city').val(null).empty().append(
+                        '<option value="" disabled selected>Select City</option>'); // Reset cities dropdown
+
+                    data.forEach(function(stateData) {
+                        var stateName = stateData.name;
+                        var statecode = stateData.iso2;
+                        var optionValue = statecode + ',' + stateName;
+                        var option = $('<option></option>').attr('value', optionValue).text(stateName);
+
+                        if (selectedState && (selectedState === statecode || selectedState ===
+                                optionValue)) {
+                            option.prop('selected', true);
+                            stateCode = statecode;
+                        }
+
+                        stateSelect.append(option);
+                    });
+
+                    callback(stateCode);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching states:", xhr.responseText);
+                }
+            });
+        }
+
+        function fetchSupplierCities(stateCode, countryCode, selectedCity) {
+            $.ajax({
+                url: '{{ route('fetchSupplierCities') }}',
+                type: 'GET',
+                data: {
+                    state_code: stateCode,
+                    country_code: countryCode
+                },
+                success: function(data) {
+                    var citySelect = $('.city');
+                    citySelect.empty();
+                    // Add default "Select City" option
+                    citySelect.append('<option value="" disabled selected>Select City</option>');
+                    data.forEach(function(cityData) {
+                        var cityName = cityData.name;
+                        var option = $('<option></option>').attr('value', cityName).text(cityName);
+                        if (cityName === selectedCity) {
+                            option.prop('selected', true);
+                        }
+                        citySelect.append(option);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching cities:", xhr.responseText);
+                }
+            });
+        }
     </script>
 
 @endsection
