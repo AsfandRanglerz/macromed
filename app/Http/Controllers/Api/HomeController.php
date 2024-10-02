@@ -65,8 +65,8 @@ class HomeController extends Controller
             });
 
             $companies = $company->map(function ($company) use ($filterCounts) {
-                $count = $filterCounts['certifications'][$company->id] ?? 0;
-                return ['id' => $company->id, 'name' => $company->name . ' (' . $count . ')'];
+                $count = $filterCounts['companies'][$company->name] ?? 0; // Use the company name for count
+                return ['id' => $company->id, 'name' => $company->name . ' (' . $count . ')']; // Append count to company name
             });
             return response()->json([
                 'status' => 'success',
@@ -120,7 +120,14 @@ class HomeController extends Controller
                 ->where('products.status', '1')
                 ->groupBy('product_certifcations.certification_id')
                 ->pluck('count', 'product_certifcations.certification_id')
-                ->toArray()
+                ->toArray(),
+
+
+            'companies' => Product::where('status', '1')
+                ->selectRaw('company, COUNT(*) as count')
+                ->groupBy('company')
+                ->pluck('count', 'company')
+                ->toArray(),
         ];
     }
 
