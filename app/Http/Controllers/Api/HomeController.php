@@ -64,6 +64,10 @@ class HomeController extends Controller
                 return ['id' => $certification->id, 'name' => $certification->name . ' (' . $count . ')'];
             });
 
+            $companies = $company->map(function ($company) use ($filterCounts) {
+                $count = $filterCounts['certifications'][$company->id] ?? 0;
+                return ['id' => $company->id, 'name' => $company->name . ' (' . $count . ')'];
+            });
             return response()->json([
                 'status' => 'success',
                 'data' => [
@@ -72,7 +76,7 @@ class HomeController extends Controller
                     'categories' => $categories,
                     'brands' => $brands,
                     'certifications' => $certifications,
-                    'companies' => $company,
+                    'companies' =>  $companies,
                     'featureProducts' => $featureProducts,
                 ]
             ], 200);
