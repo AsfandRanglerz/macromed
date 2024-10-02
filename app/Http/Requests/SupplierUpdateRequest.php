@@ -74,7 +74,7 @@ class SupplierUpdateRequest extends FormRequest
             'website' => [
                 'required',
                 'string',
-                'regex:/^(http|https):\/\/[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}(:[0-9]{1,5})?(\/\S*)?$/'
+                'url'
             ],
 
         ];

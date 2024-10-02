@@ -157,6 +157,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/companyUpdate/{id}',  'updateCompany')->name('company.update')->middleware('permission:Company');
         Route::get('/company/delete/{id}',  'deleteCompany')->name('company.delete')->middleware('permission:Company');
         Route::post('/update-company-status/{id}',  'updateCompanyStatus')->name('companyBlock.update')->middleware('permission:Company');
+        Route::get('/fetchCompany-states', 'fetchCompanyStates')->name('fetchCompanyStates')->middleware('permission:Company');
+        Route::get('/fetchCompany-cities', 'fetchCompanyCities')->name('fetchCompanyCities')->middleware('permission:Company');
     });
 
     // ############## Model ############
