@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Condation;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
@@ -91,6 +92,7 @@ class ProductController extends Controller
         $sterilizations = Sterilization::where('status', '1')->get();
         $suppliers = Supplier::where('status', '1')->get();
         $mianMaterials = MainMaterial::where('status', '1')->get();
+        $conditions = Condation::all();
         $products = Product::with(
             'productBrands.brands',
             'productCertifications.certification',
@@ -98,7 +100,7 @@ class ProductController extends Controller
             'productSubCategory.subCategories',
             'productTax'
         )->where('status', '1')->latest()->get();
-        return view('admin.product.index', compact('mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
+        return view('admin.product.index', compact('conditions','mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
     public function productCreateIndex()
@@ -130,7 +132,8 @@ class ProductController extends Controller
         $numberOfUses = NumberOfUse::where('status', '1')->get();
         $suppliers = Supplier::where('status', '1')->get();
         $mianMaterials = MainMaterial::where('status', '1')->get();
-        return view('admin.product.create', compact('subCategories','mianMaterials', 'suppliers', 'numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
+        $conditions = Condation::all();
+        return view('admin.product.create', compact('conditions', 'subCategories', 'mianMaterials', 'suppliers', 'numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
     }
 
     public function getSuppliers()
@@ -180,6 +183,7 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
+                'condition'
             ]));
             $product->product_code = $this->generateUniqueProductId();
             if ($request->hasFile('thumbnail_image')) {
@@ -304,6 +308,7 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
+                'condition'
             ]));
             if ($request->hasFile('thumbnail_image')) {
                 // Delete old image if exists

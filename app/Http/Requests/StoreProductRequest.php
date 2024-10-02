@@ -87,6 +87,7 @@ class StoreProductRequest extends FormRequest
                 'required',
                 'regex:/^(\d{1,3}(\.\d+)?%|\d{1,6})$/'
             ],
+            'condition'=>'required',
         ];
     }
 

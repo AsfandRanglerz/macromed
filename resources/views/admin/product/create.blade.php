@@ -21,7 +21,7 @@
                                         <label>Thumbnail Image Preview</label>
                                         <div>
                                             <img id="preview-img" class="admin-img"
-                                                src="{{asset('public/admin/assets/images/preview.png') }}"
+                                                src="{{ asset('public/admin/assets/images/preview.png') }}"
                                                 style="width: 15%" alt="Thumbnail Preview">
                                         </div>
                                     </div>
@@ -338,12 +338,24 @@
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-4">
                                             <label>Shelf Life / Expiry Period<span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="self_life"
                                                 value="{{ old('self_life') }}">
                                         </div>
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-4">
+                                            <label>Condition <span class="text-danger">*</span></label>
+                                            <select name="condition" class="form-control select2" id="condition">
+                                                <option value="" disabled selected>Select Conditions</option>
+                                                @foreach ($conditions as $condition)
+                                                    <option value="{{ $condition->name }}"
+                                                        {{ old('condition') == $condition->name ? 'selected' : '' }}>
+                                                        {{ $condition->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
                                             <label>Status <span class="text-danger">*</span></label>
                                             <select name="status" class="form-control">
                                                 <option value="1">Active</option>

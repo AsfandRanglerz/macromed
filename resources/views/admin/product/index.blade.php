@@ -178,8 +178,8 @@
                             <div class="form-group col-md-4">
                                 <label>Product Commission <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control product_commission" name="product_commission"
-                                        value="{{ old('product_commission') }}">
+                                    <input type="text" class="form-control product_commission"
+                                        name="product_commission" value="{{ old('product_commission') }}">
                                     <span class="input-group-addon"
                                         style="
                                         border: 2px solid #ced4da;
@@ -315,12 +315,24 @@
                         </div>
 
                         <div class="row col-md-12">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label>Shelf Life / Expiry Period<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control self_life" name="self_life"
                                     value="{{ old('self_life') }}">
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
+                                <label>Condition <span class="text-danger">*</span></label>
+                                <select name="condition" class="form-control select2 condition">
+                                    <option value="" disabled selected>Select Conditions</option>
+                                    @foreach ($conditions as $condition)
+                                        <option value="{{ $condition->name }}"
+                                            {{ old('condition') == $condition->name ? 'selected' : '' }}>
+                                            {{ $condition->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
                                 <label>Status <span class="text-danger">*</span></label>
                                 <select name="status" class="form-control">
                                     <option value="1">Active</option>
@@ -744,7 +756,7 @@
                     $('#editModels .tab_3_text').val(response.tab_3_text);
                     $('#editModels .tab_4_heading').val(response.tab_4_heading);
                     $('#editModels .tab_4_text').val(response.tab_4_text);
-
+                    $('#editModels .condition').val(response.condition);
                     if (response.long_description !== null) {
                         editors[0].setData(response.long_description);
                     } else {
