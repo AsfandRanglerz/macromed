@@ -19,20 +19,51 @@ class HomeController extends Controller
     public function getDropDownData()
     {
         try {
+            // Get the distinct dropdown data
             $countryOfManufacture = Product::where('status', '1')->select('country')->distinct()->get();
             $categories = Category::where('status', '1')->select('id', 'name')->get();
             $brands = Brands::where('status', '1')->select('id', 'name')->get();
             $certifications = Certification::where('status', '1')->select('id', 'name')->get();
             $company = Company::where('status', '1')->select('id', 'name')->get();
-            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')->where('product_status', 'Featured Product')
-                ->where('status', '1')->latest()->get();
+            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')
+                ->where('product_status', 'Featured Product')
+                ->where('status', '1')
+                ->latest()
+                ->get();
             $silders = SilderImages::where('status', '0')->select('id', 'images')->latest()->get();
+
+            // If no featured products found, return a failure response
             if ($featureProducts->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
-                    'success' => 'Feature Product Not Found!'
+                    'message' => 'Feature Product Not Found!'
                 ], 404);
             }
+
+            // Add counts for filters
+            $filterCounts = $this->getFilterCounts();
+
+            // Append counts to dropdown data
+            $countryOfManufacture = $countryOfManufacture->map(function ($country) use ($filterCounts) {
+                $count = $filterCounts['countries'][$country->country] ?? 0;
+                return ['country' => $country->country . ' (' . $count . ')'];
+            });
+
+            $categories = $categories->map(function ($category) use ($filterCounts) {
+                $count = $filterCounts['categories'][$category->id] ?? 0;
+                return ['id' => $category->id, 'name' => $category->name . ' (' . $count . ')'];
+            });
+
+            $brands = $brands->map(function ($brand) use ($filterCounts) {
+                $count = $filterCounts['brands'][$brand->id] ?? 0;
+                return ['id' => $brand->id, 'name' => $brand->name . ' (' . $count . ')'];
+            });
+
+            $certifications = $certifications->map(function ($certification) use ($filterCounts) {
+                $count = $filterCounts['certifications'][$certification->id] ?? 0;
+                return ['id' => $certification->id, 'name' => $certification->name . ' (' . $count . ')'];
+            });
+
             return response()->json([
                 'status' => 'success',
                 'data' => [
@@ -46,13 +77,49 @@ class HomeController extends Controller
                 ]
             ], 200);
         } catch (\Exception $e) {
-            // Handling errors
+            // Handle errors
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while fetching data: ' . $e->getMessage()
             ], 500);
         }
     }
+
+    private function getFilterCounts()
+    {
+        return [
+            'countries' => Product::where('status', '1')
+                ->selectRaw('country, COUNT(*) as count')
+                ->groupBy('country')
+                ->pluck('count', 'country')
+                ->toArray(),
+
+            'brands' => Product::with('productBrands')
+                ->selectRaw('product_brands.brand_id, COUNT(*) as count')
+                ->join('product_brands', 'products.id', '=', 'product_brands.product_id')
+                ->where('products.status', '1')
+                ->groupBy('product_brands.brand_id')
+                ->pluck('count', 'product_brands.brand_id')
+                ->toArray(),
+
+            'categories' => Product::with('productCategory')
+                ->selectRaw('product_catgeories.category_id, COUNT(*) as count')
+                ->join('product_catgeories', 'products.id', '=', 'product_catgeories.product_id')
+                ->where('products.status', '1')
+                ->groupBy('product_catgeories.category_id')
+                ->pluck('count', 'product_catgeories.category_id')
+                ->toArray(),
+
+            'certifications' => Product::with('productCertifications')
+                ->selectRaw('product_certifcations.certification_id, COUNT(*) as count')
+                ->join('product_certifcations', 'products.id', '=', 'product_certifcations.product_id')
+                ->where('products.status', '1')
+                ->groupBy('product_certifcations.certification_id')
+                ->pluck('count', 'product_certifcations.certification_id')
+                ->toArray()
+        ];
+    }
+
 
 
     public function getFilteredProducts(Request $request)
@@ -84,42 +151,59 @@ class HomeController extends Controller
                 ]);
             }
             $pkrAmount = $currency->pkr_amount;
-            if ($searchByWords) {
+
+            if ($suggestedWords) {
                 $suggestedWordsList = Product::selectRaw('DISTINCT(short_name)')
-                    ->where('short_name', 'like', '%' . $searchByWords . '%')
+                    ->where('short_name', 'like', '%' . $suggestedWords . '%')
                     ->pluck('short_name')
                     ->toArray();
-                return response()->json([
-                    'status' => 'success',
-                    'suggested_words' => $suggestedWordsList
-                ]);
+                if (count($suggestedWordsList) > 0) {
+                    return response()->json([
+                        'suggested_words' => $suggestedWordsList
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'message' => 'No words found!'
+                    ], 404);
+                }
             }
-            // Start the query to get products with relationships
+
+            // Build the main query
             $query = Product::with([
                 'productBrands.brands:id,name',
                 'productCertifications.certification:id,name',
                 'productVaraint' => function ($query) {
-                    $query->select('product_id', 'selling_price_per_unit');
+                    $query->select('product_id', 'selling_price_per_unit', 'status');
                 }
             ])->select(
-                'id',
-                'product_code',
-                'thumbnail_image',
-                'short_name',
-                'country',
-                'company',
-                'models',
-                'product_use_status',
-                'short_description',
-                'sterilizations'
-            )->where('status', '1');
+                'products.id',
+                'products.product_code',
+                'products.thumbnail_image',
+                'products.short_name',
+                'products.country',
+                'products.company',
+                'products.models',
+                'products.product_use_status',
+                'products.short_description',
+                'products.sterilizations'
+            )->leftJoin('product_varaints', 'products.id', '=', 'product_varaints.product_id')
+                ->where('products.status', '1'); // Explicitly specify 'products.status'
 
-            // Apply the price filters using variants' prices
+            // Handle min and max price filters
             if ($minPrice && $maxPrice) {
                 $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice, $maxPrice) {
                     $variantPrice->whereBetween('selling_price_per_unit', [$minPrice, $maxPrice]);
                 });
             }
+
+            // Handle price sorting
+            if ($priceOrder === 'low_to_high') {
+                $query->orderBy('product_varaints.selling_price_per_unit', 'asc');
+            } elseif ($priceOrder === 'high_to_low') {
+                $query->orderBy('product_varaints.selling_price_per_unit', 'desc');
+            }
+
+            // Handle other filters
             if (!empty($companies)) {
                 $query->whereIn('company', $companies);
             }
@@ -141,14 +225,15 @@ class HomeController extends Controller
             if (!empty($countries)) {
                 $query->whereIn('country', $countries);
             }
-            if ($suggestedWords) {
-                $query->where('short_name', 'like', '%' . $suggestedWords . '%');
+            if ($searchByWords) {
+                $query->where('short_name', 'like', '%' .  $searchByWords . '%');
             }
             if ($availability) {
                 $query->whereHas('productVaraint');
             }
+
             $totalProducts = $query->count();
-            $products = $query->latest()
+            $products = $query->orderBy('products.created_at', 'desc')
                 ->skip($offset)
                 ->take($perPage)
                 ->get();
@@ -156,9 +241,10 @@ class HomeController extends Controller
             if ($products->isEmpty()) {
                 return response()->json([
                     'products' => [],
-                    'filter_counts' => [],
                 ]);
             }
+
+            // Calculate price ranges and other product details
             $products->each(function ($product) use ($pkrAmount) {
                 $variantPrices = $product->productVaraint->pluck('selling_price_per_unit')->map(function ($price) use ($pkrAmount) {
                     return $price * $pkrAmount;
@@ -166,24 +252,18 @@ class HomeController extends Controller
                 if ($variantPrices->count() == 1) {
                     $product->min_price_range_pkr = $variantPrices->first();
                 } else {
-                    // Set min and max prices for the product
                     $product->min_price_range_pkr = $variantPrices->min();
                     $product->max_price_range_pkr = $variantPrices->max();
                 }
                 $product->variant_count = $product->productVaraint->count();
-                // Detach the variants to exclude them from the response
                 unset($product->productVaraint);
             });
 
-            // Fetch the favorite products based on user_id and product_id
             $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
 
             foreach ($products as $product) {
-                // Populate likes array
                 $productLikes = $favoriteProducts->where('product_id', $product->id)->pluck('user_id');
                 $product->likes = $productLikes->isEmpty() ? [] : $productLikes->toArray();
-
-                // Check if user_id and product_id are present in the request, save to WishList
                 if ($userId && $productId && $productId == $product->id) {
                     $wishlist = WhishList::firstOrNew([
                         'user_id' => $userId,
@@ -192,13 +272,11 @@ class HomeController extends Controller
                     $wishlist->save();
                 }
             }
-
             return response()->json([
                 'status' => 'success',
                 'products' => $products,
                 'pkrAmount' => $pkrAmount,
                 'totalProducts' => $totalProducts,
-                'filter_counts' => $this->getFilterCounts(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -206,30 +284,5 @@ class HomeController extends Controller
                 'message' => 'An error occurred while fetching products: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    private function getFilterCounts()
-    {
-        return [
-            'countries' => Product::selectRaw('country, COUNT(*) as count')->groupBy('country')->pluck('count', 'country')->toArray(),
-            'brands' => Product::with('productBrands')
-                ->selectRaw('product_brands.brand_id, COUNT(*) as count')
-                ->join('product_brands', 'products.id', '=', 'product_brands.product_id')
-                ->groupBy('product_brands.brand_id')
-                ->pluck('count', 'product_brands.brand_id')
-                ->toArray(),
-            'categories' => Product::with('productCategory')
-                ->selectRaw('product_catgeories.category_id, COUNT(*) as count')
-                ->join('product_catgeories', 'products.id', '=', 'product_catgeories.product_id')
-                ->groupBy('product_catgeories.category_id')
-                ->pluck('count', 'product_catgeories.category_id')
-                ->toArray(),
-            'certifications' => Product::with('productCertifications')
-                ->selectRaw('product_certifcations.certification_id, COUNT(*) as count')
-                ->join('product_certifcations', 'products.id', '=', 'product_certifcations.product_id')
-                ->groupBy('product_certifcations.certification_id')
-                ->pluck('count', 'product_certifcations.certification_id')
-                ->toArray()
-        ];
     }
 }
