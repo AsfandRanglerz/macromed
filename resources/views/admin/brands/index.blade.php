@@ -4,7 +4,7 @@
     {{-- Create Brands Model  --}}
     <div class="modal fade" id="createBrandsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Add Brands</h5>
@@ -14,35 +14,80 @@
                 </div>
                 <div class="modal-body">
                     <form id="createBrandsForm" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control name" id="name" name="name" required>
-                                <div class="invalid-feedback"></div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Brand Name</label>
+                                    <input type="text" class="form-control name" id="name" name="name" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Brand Owner Name</label>
+                                    <input type="text" class="form-control owner" id="owner" name="owner" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="slug">Slug</label>
-                                <input type="text" class="form-control slug" id="slug" name="slug">
-                                <div class="invalid-feedback"></div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Company Name</label>
+                                    <input type="text" class="form-control company" id="company" name="company"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control" id="status">
-                                    <option value="1">Active</option>
-                                    <option value="0">In Active</option>
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <select name="company_country" class="form-control select2" id="country"
+                                    style="width: 100%">
+                                    <option value="" selected disabled>Company Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
+                                            {{ $country->name }}</option>
+                                    @endforeach
                                 </select>
-                                <div class="invalid-feedback"></div>
+                                @if ($countries == null)
+                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
+                                @endif
                             </div>
                         </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="image">Image</label>
-                                <input type="file" class="form-control" id="image" name="image">
-                                <div class="invalid-feedback"></div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Contact Details</label>
+                                    <input type="text" class="form-control contact_detail" id="contact_detail"
+                                        name="contact_detail" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="slug">Slug</label>
+                                    <input type="text" class="form-control slug" id="slug" name="slug">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="status">Active Status</label>
+                                    <select name="status" class="form-control" id="status">
+                                        <option value="1">Active</option>
+                                        <option value="0">In Active</option>
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="image">Image</label>
+                                    <input type="file" class="form-control" id="image" name="image">
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -56,7 +101,7 @@
     <!-- Edit Brands Modal -->
     <div class="modal fade" id="editBrandsModal" tabindex="-1" role="dialog" aria-labelledby="editBrandsModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editBrandsModalLabel">Edit Brands</h5>
@@ -66,38 +111,82 @@
                 </div>
                 <div class="modal-body">
                     <form id="editBrands" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control name" name="name" required>
-                                <div class="invalid-feedback"></div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Brand Name</label>
+                                    <input type="text" class="form-control name" name="name" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Brand Owner Name</label>
+                                    <input type="text" class="form-control owner" name="owner" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="slug">Slug</label>
-                                <input type="text" class="form-control slug" name="slug">
-                                <div class="invalid-feedback"></div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Company Name</label>
+                                    <input type="text" class="form-control company" name="company" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control status">
-                                    <option value="1">Active</option>
-                                    <option value="0">In Active</option>
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <select name="company_country" class="form-control select2 company_country"
+                                    style="width: 100%">
+                                    <option value="" selected disabled>Company Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
+                                            {{ $country->name }}</option>
+                                    @endforeach
                                 </select>
-                                <div class="invalid-feedback"></div>
+                                @if ($countries == null)
+                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
+                                @endif
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="image">Image</label>
-                                <input type="file" class="form-control image" name="image">
-                                <label for="imagePreview">Pervious Image:</label>
-                                <img id="imagePreview" src="" alt="Image Preview"
-                                    style="display: none; max-width: 100px; margin-top: 10px;">
-                                <div class="invalid-feedback"></div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="name">Contact Details</label>
+                                    <input type="text" class="form-control contact_detail" name="contact_detail"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="slug">Slug</label>
+                                    <input type="text" class="form-control slug" name="slug">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 col-lg-12">
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="status">Active Status</label>
+                                    <select name="status" class="form-control status">
+                                        <option value="1">Active</option>
+                                        <option value="0">In Active</option>
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="image">Image</label>
+                                    <input type="file" class="form-control image" name="image">
+                                    <label for="imagePreview">Pervious Image:</label>
+                                    <img id="imagePreview" src="" alt="Image Preview"
+                                        style="display: none; max-width: 100px; margin-top: 10px;">
+                                    <div class="invalid-feedback"></div>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -322,6 +411,10 @@
                     $('#editBrands .name').val(response.name);
                     $('#editBrands .slug').val(response.slug);
                     $('#editBrands .status').val(response.status);
+                    $('#editBrands .owner').val(response.owner);
+                    $('#editBrands .company').val(response.company);
+                    $('#editBrands .company_country').val(response.company_country).trigger('change');
+                    $('#editBrands .contact_detail').val(response.contact_detail);
                     var imageUrl = response.image;
                     var baseUrl = 'https://ranglerzwp.xyz/macromed/';
                     var responseImage = baseUrl + response.image;

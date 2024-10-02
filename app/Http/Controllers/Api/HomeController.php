@@ -43,31 +43,32 @@ class HomeController extends Controller
             // Add counts for filters
             $filterCounts = $this->getFilterCounts();
 
-            // Append counts to dropdown data
+            // Append counts to dropdown data in desired structure
             $countryOfManufacture = $countryOfManufacture->map(function ($country) use ($filterCounts) {
                 $count = $filterCounts['countries'][$country->country] ?? 0;
-                return ['country' => $country->country . ' (' . $count . ')'];
+                return ['country' => $country->country, 'count' => $count];
             });
 
             $categories = $categories->map(function ($category) use ($filterCounts) {
                 $count = $filterCounts['categories'][$category->id] ?? 0;
-                return ['id' => $category->id, 'name' => $category->name . ' (' . $count . ')'];
+                return ['id' => $category->id, 'name' => $category->name, 'count' => $count];
             });
 
             $brands = $brands->map(function ($brand) use ($filterCounts) {
                 $count = $filterCounts['brands'][$brand->id] ?? 0;
-                return ['id' => $brand->id, 'name' => $brand->name . ' (' . $count . ')'];
+                return ['id' => $brand->id, 'name' => $brand->name, 'count' => $count];
             });
 
             $certifications = $certifications->map(function ($certification) use ($filterCounts) {
                 $count = $filterCounts['certifications'][$certification->id] ?? 0;
-                return ['id' => $certification->id, 'name' => $certification->name . ' (' . $count . ')'];
+                return ['id' => $certification->id, 'name' => $certification->name, 'count' => $count];
             });
 
             $companies = $company->map(function ($company) use ($filterCounts) {
-                $count = $filterCounts['companies'][$company->name] ?? 0; // Use the company name for count
-                return ['id' => $company->id, 'name' => $company->name . ' (' . $count . ')']; // Append count to company name
+                $count = $filterCounts['companies'][$company->name] ?? 0;
+                return ['id' => $company->id, 'name' => $company->name, 'count' => $count];
             });
+
             return response()->json([
                 'status' => 'success',
                 'data' => [
@@ -76,7 +77,7 @@ class HomeController extends Controller
                     'categories' => $categories,
                     'brands' => $brands,
                     'certifications' => $certifications,
-                    'companies' =>  $companies,
+                    'companies' => $companies,
                     'featureProducts' => $featureProducts,
                 ]
             ], 200);
@@ -88,6 +89,7 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
 
     private function getFilterCounts()
     {

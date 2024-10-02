@@ -6,6 +6,7 @@ use App\Models\Brands;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class BrandsController extends Controller
@@ -19,8 +20,24 @@ class BrandsController extends Controller
 
     public function brandsIndex()
     {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => array(
+                'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+            ),
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $countries = json_decode($response);
+
+        // Decode the JSON response
+        if ($countries == NULL) {
+            $countries = [];
+        }
         $brands = Brands::all();
-        return view('admin.brands.index', compact('brands'));
+        return view('admin.brands.index', compact('brands', 'countries'));
     }
     public function brandsCreate(Request $request)
     {
@@ -32,14 +49,19 @@ class BrandsController extends Controller
                     'max:255',
                     Rule::unique('brands')
                 ],
-                'slug' => 'required',
+                'slug' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('brands')
+                ],
                 'image' => 'required|image|mimes:jpeg,jpg,png|max:1048'
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-            $brand = new Brands($request->only(['name', 'slug', 'status']));
+            $brand = new Brands($request->only(['name', 'slug', 'status', 'owner', 'company', 'company_country', 'contact_detail']));
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
@@ -71,7 +93,13 @@ class BrandsController extends Controller
                 Rule::unique('brands')->ignore($id),
 
             ],
-            'slug' => 'required',
+            'slug' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('brands')->ignore($id),
+
+            ],
 
         ]);
         if ($validator->fails()) {
@@ -79,12 +107,11 @@ class BrandsController extends Controller
         }
         try {
             $brand = Brands::findOrFail($id);
-            $brand->fill($request->only(['name', 'slug', 'status']));
+            $brand->fill($request->only(['name', 'slug', 'status', 'owner', 'company', 'company_country', 'contact_detail']));
             if ($request->hasFile('image')) {
-                $oldImagePath = public_path('admin/assets/images/brands/' .  $brand->image);
-                // Delete old image if it exists
-                if ($brand->image && file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
+                $oldImagePath = $brand->image;
+                if ($brand->image &&  File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
                 }
                 $image = $request->file('image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
@@ -101,6 +128,10 @@ class BrandsController extends Controller
     public function deleteBrands($id)
     {
         $brand = Brands::findOrFail($id);
+        $imagePath = $brand->image;
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
         $brand->delete();
         return response()->json(['alert' => 'success', 'message' => 'Brands Deleted SuccessFully!']);
     }

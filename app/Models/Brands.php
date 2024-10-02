@@ -12,7 +12,11 @@ class Brands extends Model
         'name',
         'image',
         'slug',
-        'status'
+        'status',
+        'owner',
+        'company',
+        'company_country',
+        'contact_detail'
     ];
 
     public function product()
