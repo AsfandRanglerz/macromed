@@ -38,7 +38,7 @@ class CreateBrandRequest extends FormRequest
                 Rule::unique('brands')
             ],
             'image' => 'required|image|mimes:jpeg,jpg,png|max:1048',
-            'contact_detail' => 'required|numeric',
+            'contact_detail' => 'required|numeric|regex:/^\+[1-9]{1}[0-9]{1,14}$/',
             'owner' => 'required',
             'company' => 'required',
             'company_country' => 'required'

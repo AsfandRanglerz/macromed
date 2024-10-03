@@ -40,7 +40,7 @@ class UpdateBrandRequest extends FormRequest
                 Rule::unique('brands')->ignore($brandId),
 
             ],
-            'contact_detail' => 'required|numeric',
+            'contact_detail' => 'required|numeric|regex:/^\+[1-9]{1}[0-9]{1,14}$/',
             'owner' => 'required',
             'company' => 'required',
             'company_country' => 'required'

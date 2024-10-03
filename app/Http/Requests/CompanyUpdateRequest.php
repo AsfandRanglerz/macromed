@@ -32,11 +32,11 @@ class CompanyUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique('companies')->ignore($companyId)
             ],
-            'contact_detail' => 'required|numeric',
+            'contact_detail' => 'required|numeric|regex:/^\+[1-9]{1}[0-9]{1,14}$/',
             'country' => 'required',
             'state' => 'required',
             'city' => 'required',
-            'zip' => 'required|numeric',
+            'zip' => 'required|numeric|digits:5',
             'website' => [
                 'required',
                 'string',

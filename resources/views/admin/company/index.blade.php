@@ -236,6 +236,11 @@
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
+                                            <th>Country</th>
+                                            <th>State</th>
+                                            <th>City</th>
+                                            <th>Website</th>
+                                            <th>ZIP</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -280,6 +285,42 @@
                     },
                     {
                         "data": "name"
+                    },
+                    {
+                        "data": "country",
+                        "render": function(data) {
+                            if (!data || data.trim() === "") {
+                                return "No data found";
+                            }
+                            return data.split(',')[1] ||
+                                data;
+                        }
+                    },
+                    {
+                        "data": "state",
+                        "render": function(data) {
+                            if (!data || data.trim() === "") {
+                                return "No data found";
+                            }
+                            return data.split(',')[1] ||
+                                data;
+                        }
+                    },
+                    {
+                        "data": "city",
+                        "render": function(data) {
+                            if (!data || data.trim() === "") {
+                                return "No data found";
+                            }
+                            return data.split(',')[1] ||
+                                data;
+                        }
+                    },
+                    {
+                        "data":"website"
+                    },
+                    {
+                        "data":"zip"
                     },
                     {
                         "data": null,
