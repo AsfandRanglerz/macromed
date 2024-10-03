@@ -74,12 +74,7 @@ class ProductController extends Controller
                     return $variant;
                 });
 
-            if ($productVariants->isEmpty()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'Product Variants Not Found!'
-                ], 404);
-            }
+          
 
             // Extract category IDs for the product
             $categoryIds = $productDetails->productCategory->pluck('category_id')->toArray();

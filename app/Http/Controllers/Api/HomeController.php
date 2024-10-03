@@ -134,7 +134,6 @@ class HomeController extends Controller
     }
 
 
-
     public function getFilteredProducts(Request $request)
     {
         try {
@@ -150,7 +149,7 @@ class HomeController extends Controller
             $searchByWords = $request->input('key_words');
             $availability = $request->input('available_product');
             $suggestedWords = $request->input('suggested_word');
-            $priceOrder = $request->input('price_order');
+            $priceRange = $request->input('price_order');
             $page = $request->input('page', 1);
             $perPage = 6;
             $offset = ($page - 1) * $perPage;
@@ -165,23 +164,19 @@ class HomeController extends Controller
             }
             $pkrAmount = $currency->pkr_amount;
 
+            // Suggest words based on input
             if ($suggestedWords) {
                 $suggestedWordsList = Product::selectRaw('DISTINCT(short_name)')
                     ->where('short_name', 'like', '%' . $suggestedWords . '%')
                     ->pluck('short_name')
                     ->toArray();
-                if (count($suggestedWordsList) > 0) {
-                    return response()->json([
-                        'suggested_words' => $suggestedWordsList
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'message' => 'No words found!'
-                    ], 404);
-                }
+
+                return count($suggestedWordsList) > 0
+                    ? response()->json(['suggested_words' => $suggestedWordsList], 200)
+                    : response()->json(['message' => 'No words found!'], 404);
             }
 
-            // Build the main query
+            // Build the query with eager loading and filters
             $query = Product::with([
                 'productBrands.brands:id,name',
                 'productCertifications.certification:id,name',
@@ -199,24 +194,15 @@ class HomeController extends Controller
                 'products.product_use_status',
                 'products.short_description',
                 'products.sterilizations'
-            )->leftJoin('product_varaints', 'products.id', '=', 'product_varaints.product_id')
-                ->where('products.status', '1'); // Explicitly specify 'products.status'
+            )
+                ->where('products.status', '1');
 
-            // Handle min and max price filters
+            // Apply filters
             if ($minPrice && $maxPrice) {
                 $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice, $maxPrice) {
                     $variantPrice->whereBetween('selling_price_per_unit', [$minPrice, $maxPrice]);
                 });
             }
-
-            // Handle price sorting
-            if ($priceOrder === 'low_to_high') {
-                $query->orderBy('product_varaints.selling_price_per_unit', 'asc');
-            } elseif ($priceOrder === 'high_to_low') {
-                $query->orderBy('product_varaints.selling_price_per_unit', 'desc');
-            }
-
-            // Handle other filters
             if (!empty($companies)) {
                 $query->whereIn('company', $companies);
             }
@@ -239,22 +225,33 @@ class HomeController extends Controller
                 $query->whereIn('country', $countries);
             }
             if ($searchByWords) {
-                $query->where('short_name', 'like', '%' .  $searchByWords . '%');
+                $query->where('short_name', 'like', '%' . $searchByWords . '%');
             }
             if ($availability) {
                 $query->whereHas('productVaraint');
             }
 
-            $totalProducts = $query->count();
+            // Clone query to get total count
+            $totalProductsQuery = clone $query;
+            $totalProducts = $totalProductsQuery->count();
+
+            // Apply sorting
+            if ($priceRange === 'low_to_high') {
+                $query->leftJoin('product_varaints', 'products.id', '=', 'product_varaints.product_id')
+                    ->orderBy('product_varaints.selling_price_per_unit', 'asc');
+            } elseif ($priceRange === 'high_to_low') {
+                $query->leftJoin('product_varaints', 'products.id', '=', 'product_varaints.product_id')
+                    ->orderBy('product_varaints.selling_price_per_unit', 'desc');
+            }
+
+            // Paginate the results
             $products = $query->orderBy('products.created_at', 'desc')
                 ->skip($offset)
                 ->take($perPage)
                 ->get();
 
             if ($products->isEmpty()) {
-                return response()->json([
-                    'products' => [],
-                ]);
+                return response()->json(['products' => []]);
             }
 
             // Calculate price ranges and other product details
@@ -272,8 +269,8 @@ class HomeController extends Controller
                 unset($product->productVaraint);
             });
 
+            // Get wishlist products
             $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
-
             foreach ($products as $product) {
                 $productLikes = $favoriteProducts->where('product_id', $product->id)->pluck('user_id');
                 $product->likes = $productLikes->isEmpty() ? [] : $productLikes->toArray();
@@ -285,6 +282,7 @@ class HomeController extends Controller
                     $wishlist->save();
                 }
             }
+
             return response()->json([
                 'status' => 'success',
                 'products' => $products,
