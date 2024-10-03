@@ -469,6 +469,16 @@
             $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
         });
 
+        $('#createSupplierModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createSupplierModal').on('show.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ######Get & Update Supplier#########
 
         function editSupplierModal(id) {
@@ -559,6 +569,16 @@
                 }
             });
         }
+        $('#editSupplierModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+
+        $('#editSupplierModal').on('show.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ############# Delete Supplier Data###########
         function deleteSupplierModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);
