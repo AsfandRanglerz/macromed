@@ -55,7 +55,8 @@ class BrandsController extends Controller
                     'max:255',
                     Rule::unique('brands')
                 ],
-                'image' => 'required|image|mimes:jpeg,jpg,png|max:1048'
+                'image' => 'required|image|mimes:jpeg,jpg,png|max:1048',
+                'contact_detail' => 'required|numeric'
             ]);
 
             if ($validator->fails()) {
@@ -100,6 +101,7 @@ class BrandsController extends Controller
                 Rule::unique('brands')->ignore($id),
 
             ],
+            'contact_detail' => 'required|numeric'
 
         ]);
         if ($validator->fails()) {

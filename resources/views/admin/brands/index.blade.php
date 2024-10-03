@@ -2,8 +2,8 @@
 @section('title', 'Brands')
 @section('content')
     {{-- Create Brands Model  --}}
-    <div class="modal fade" id="createBrandsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade createBrandsModal" id="createBrandsModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -40,10 +40,10 @@
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
-                                <label>Country</label>
+                                <label>Company Country</label>
                                 <select name="company_country" class="form-control select2" id="country"
                                     style="width: 100%">
-                                    <option value="" selected disabled>Company Country</option>
+                                    <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
                                             {{ $country->name }}</option>
@@ -91,6 +91,7 @@
                             </div>
                         </div>
                     </form>
+
                 </div>
                 <div class="modal-footer justify-content-center">
                     <button type="button" class="btn btn-success" onclick="createBrands()">Create</button>
@@ -99,8 +100,8 @@
         </div>
     </div>
     <!-- Edit Brands Modal -->
-    <div class="modal fade" id="editBrandsModal" tabindex="-1" role="dialog" aria-labelledby="editBrandsModalLabel"
-        aria-hidden="true">
+    <div class="modal fade editBrandsModal" id="editBrandsModal" tabindex="-1" role="dialog"
+        aria-labelledby="editBrandsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -356,6 +357,7 @@
         });
 
         function createBrands() {
+            $('.select2').select2();
             var formData = new FormData($('#createBrandsForm')[0]);
             var createButton = $('#createBrandsModal').find('.modal-footer').find('button');
             createButton.prop('disabled', true);
