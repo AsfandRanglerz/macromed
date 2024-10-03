@@ -421,7 +421,16 @@
         $('#createBrandsForm input').keyup(function() {
             $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
         });
-
+        $('#createBrandsModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createBrandsModal').on('show.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ######Get & Update Brands#########
 
         function editBrandsModal(id) {
@@ -499,6 +508,16 @@
                 }
             });
         }
+        $('#editBrandsModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+
+        $('#editBrandsModal').on('show.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ############# Delete Brands Data###########
         function deleteBrandsModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);

@@ -317,10 +317,10 @@
                         }
                     },
                     {
-                        "data":"website"
+                        "data": "website"
                     },
                     {
-                        "data":"zip"
+                        "data": "zip"
                     },
                     {
                         "data": null,
@@ -407,6 +407,16 @@
         }
         $('#createCompanyForm input').keyup(function() {
             $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
+        });
+        $('#createCompanyModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createCompanyModal').on('show.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
         });
 
         // ######Get & Update Company#########
@@ -495,6 +505,16 @@
                 }
             });
         }
+        $('#editCompanyModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+
+        $('#editCompanyModal').on('show.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ############# Delete Company Data###########
         function deleteCompanyModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);
