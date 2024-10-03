@@ -23,6 +23,7 @@ class SalesAgentLoginController extends Controller
         if (Auth::guard('sales_agent')->attempt($credentials)) {
             $salesAgent = Auth::guard('sales_agent')->user(); // Ensure you use the correct guard here
             if ($salesAgent->user_type === 'salesmanager' && $salesAgent->status == '1') {
+                $request->session()->regenerate();
                 return redirect('sales-agent/dashboard')->with(['alert' => 'success', 'message' => 'Login Successfully!']);
             } else {
                 Auth::guard('sales_agent')->logout();

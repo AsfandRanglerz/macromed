@@ -109,10 +109,12 @@ class SalesAgentAuthController extends Controller
         }
     }
 
-    public function salesAgentlogout()
+    public function salesAgentlogout(Request $request)
     {
         if (auth()->guard('sales_agent')->check()) {
             auth()->guard('sales_agent')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
             return redirect('/sales-agent')->with(['alert' => 'success', 'message' => 'You Are Logout Successfully!']);
         } else {
             return back()->with(['alert' => 'error', 'error' => 'An error accour during logout!']);
