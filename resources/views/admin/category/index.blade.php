@@ -283,7 +283,16 @@
         $('#createCategoryForm input').keyup(function() {
             $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
         });
-
+        $('#createCategoryModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createCategoryModal').on('show.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ######Get & Update Category#########
 
         function editCategoryModal(id) {
@@ -349,6 +358,16 @@
                 }
             });
         }
+        $('#editCategoryModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+
+        $('#editCategoryModal').on('show.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ############# Delete Category Data###########
         function deleteCategoryModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);
