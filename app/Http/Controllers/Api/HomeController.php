@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\Certification;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
+use App\Models\Condation;
 use App\Models\SilderImages;
 use App\Models\WhishList;
 
@@ -69,6 +70,9 @@ class HomeController extends Controller
                 return ['id' => $company->id, 'name' => $company->name, 'count' => $count];
             });
 
+
+
+
             return response()->json([
                 'status' => 'success',
                 'data' => [
@@ -78,6 +82,7 @@ class HomeController extends Controller
                     'brands' => $brands,
                     'certifications' => $certifications,
                     'companies' => $companies,
+
                     'featureProducts' => $featureProducts,
                 ]
             ], 200);
@@ -224,6 +229,7 @@ class HomeController extends Controller
             if (!empty($countries)) {
                 $query->whereIn('country', $countries);
             }
+
             if ($searchByWords) {
                 $query->where('short_name', 'like', '%' . $searchByWords . '%');
             }

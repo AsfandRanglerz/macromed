@@ -322,11 +322,12 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Condition <span class="text-danger">*</span></label>
-                                <select name="condition" class="form-control select2 condition">
+                                <select name="product_condition" class="form-control select2 product_condition"
+                                    style="width: 100%">
                                     <option value="" disabled selected>Select Conditions</option>
                                     @foreach ($conditions as $condition)
                                         <option value="{{ $condition->name }}"
-                                            {{ old('condition') == $condition->name ? 'selected' : '' }}>
+                                            {{ old('product_condition') == $condition->name ? 'selected' : '' }}>
                                             {{ $condition->name }}
                                         </option>
                                     @endforeach
@@ -756,7 +757,7 @@
                     $('#editModels .tab_3_text').val(response.tab_3_text);
                     $('#editModels .tab_4_heading').val(response.tab_4_heading);
                     $('#editModels .tab_4_text').val(response.tab_4_text);
-                    $('#editModels .condition').val(response.condition);
+                    $('#editModels .product_condition').val(response.product_condition).trigger('change');
                     if (response.long_description !== null) {
                         editors[0].setData(response.long_description);
                     } else {

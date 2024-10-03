@@ -91,8 +91,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Country</label>
-                                <select name="country" class="form-control select2" id="country"
-                                    style="width: 100%">
+                                <select name="country" class="form-control select2" id="country" style="width: 100%">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
@@ -107,23 +106,21 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="form-group col-md-6">
                                 <label for="state">State</label>
-                                <select class="form-control select2" id="state" name="state"
-                                    style="width: 100%" required>
+                                <select class="form-control select2" id="state" name="state" style="width: 100%"
+                                    required>
                                     <option value="" selected disabled>Select State</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="city">City</label>
-                                <select class="form-control select2 " id="city" name="city"
-                                    style="width: 100%" required>
+                                <select class="form-control select2 " id="city" name="city" style="width: 100%"
+                                    required>
                                     <option value="" selected disabled>Select City</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
+                            <div class="form-group col-md-12 col-lg-12">
                                 <label for="status">Active Status</label>
                                 <select name="status" class="form-control" id="status">
                                     <option value="1">Active</option>
@@ -132,7 +129,6 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -257,9 +253,8 @@
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
+
+                            <div class="form-group col-md-12 col-lg-12">
                                 <label for="status">Active Status</label>
                                 <select name="status" class="form-control status">
                                     <option value="1">Active</option>
@@ -268,8 +263,6 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
-
-                    </form>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -322,6 +315,10 @@
                                             <th>Sr.</th>
                                             <th>Name</th>
                                             <th>Supplier Code</th>
+                                            <th>POC</th>
+                                            <th>Email</th>
+                                            <th>Phone Number</th>
+                                            <th>Whats App</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -372,6 +369,18 @@
                         "render": function(data, type, row) {
                             return '#' + data;
                         }
+                    },
+                    {
+                        "data": "poc"
+                    },
+                    {
+                        "data": "email"
+                    },
+                    {
+                        "data": "phone_number"
+                    },
+                    {
+                        "data": "whats_app"
                     },
                     {
                         "data": null,

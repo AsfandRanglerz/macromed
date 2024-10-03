@@ -183,7 +183,7 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
-                'condition'
+                'product_condition'
             ]));
             $product->product_code = $this->generateUniqueProductId();
             if ($request->hasFile('thumbnail_image')) {
@@ -308,7 +308,7 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
-                'condition'
+                'product_condition'
             ]));
             if ($request->hasFile('thumbnail_image')) {
                 // Delete old image if exists
