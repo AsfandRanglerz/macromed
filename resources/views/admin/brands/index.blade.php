@@ -145,6 +145,7 @@
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
                                             {{ $country->name }}</option>
                                     @endforeach
+                                    <div class="invalid-feedback"></div>
                                 </select>
                                 @if ($countries == null)
                                     <div class="internet-error text-danger">No Internet Connection Found!</div>
@@ -241,6 +242,9 @@
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
+                                            <th>Owner Name</th>
+                                            <th>Company Name</th>
+                                            <th>Company Country</th>
                                             <th>Image</th>
                                             <th>Status</th>
                                             <th>Action</th>
@@ -302,6 +306,22 @@
                     },
                     {
                         "data": "name"
+                    },
+                    {
+                        "data": "owner"
+                    },
+                    {
+                        "data": "company"
+                    },
+                    {
+                        "data": "company_country",
+                        "render": function(data) {
+                            if (!data || data.trim() === "") {
+                                return "No data found";
+                            }
+                            return data.split(',')[1] ||
+                                data;
+                        }
                     },
                     {
                         "data": "image",

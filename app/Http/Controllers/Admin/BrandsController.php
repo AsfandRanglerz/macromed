@@ -6,6 +6,8 @@ use App\Models\Brands;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateBrandRequest;
+use App\Http\Requests\UpdateBrandRequest;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
@@ -39,29 +41,9 @@ class BrandsController extends Controller
         $brands = Brands::all();
         return view('admin.brands.index', compact('brands', 'countries'));
     }
-    public function brandsCreate(Request $request)
+    public function brandsCreate(CreateBrandRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('brands')
-                ],
-                'slug' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('brands')
-                ],
-                'image' => 'required|image|mimes:jpeg,jpg,png|max:1048',
-                'contact_detail' => 'required|numeric'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
             $brand = new Brands($request->only(['name', 'slug', 'status', 'owner', 'company', 'company_country', 'contact_detail']));
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
@@ -84,29 +66,8 @@ class BrandsController extends Controller
         }
         return response()->json($brand);
     }
-    public function updateBrands(Request $request, $id)
+    public function updateBrands(UpdateBrandRequest $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('brands')->ignore($id),
-
-            ],
-            'slug' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('brands')->ignore($id),
-
-            ],
-            'contact_detail' => 'required|numeric'
-
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
         try {
             $brand = Brands::findOrFail($id);
             $brand->fill($request->only(['name', 'slug', 'status', 'owner', 'company', 'company_country', 'contact_detail']));
