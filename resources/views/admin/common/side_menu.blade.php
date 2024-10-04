@@ -111,7 +111,7 @@
                             </li>
                         @endif
                         {{-- Modals --}}
-                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Models'))
+                        {{-- @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Models'))
                             <li class="dropdown {{ request()->is('admin/models*') ? 'active' : '' }}">
                                 <a href="{{ route('models.index') }}"
                                     class="nav-link {{ request()->is('admin/models*') ? 'text-white' : '' }}">
@@ -125,7 +125,7 @@
                                     <i data-feather="layers"></i><span>Models</span>
                                 </a>
                             </li>
-                        @endif
+                        @endif --}}
                         {{-- Certifications --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Certification'))
                             <li class="dropdown {{ request()->is('admin/certification*') ? 'active' : '' }}">

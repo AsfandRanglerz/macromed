@@ -137,7 +137,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
-                                <label>Country</label>
+                                <label>Company Country</label>
                                 <select name="company_country" class="form-control select2 company_country"
                                     style="width: 100%">
                                     <option value="" selected disabled>Company Country</option>
