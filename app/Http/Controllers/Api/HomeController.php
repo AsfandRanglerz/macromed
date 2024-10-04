@@ -11,6 +11,7 @@ use App\Models\Certification;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
 use App\Models\Condation;
+use App\Models\ProductVaraint;
 use App\Models\SilderImages;
 use App\Models\WhishList;
 
@@ -243,11 +244,19 @@ class HomeController extends Controller
 
             // Apply sorting
             if ($priceRange === 'low_to_high') {
-                $query->leftJoin('product_varaints', 'products.id', '=', 'product_varaints.product_id')
-                    ->orderBy('product_varaints.selling_price_per_unit', 'asc');
+                $query->addSelect([
+                    'min_variant_price' => ProductVaraint::select('selling_price_per_unit')
+                        ->whereColumn('product_id', 'products.id')
+                        ->orderBy('selling_price_per_unit', 'asc')
+                        ->limit(1)
+                ])->orderBy('min_variant_price', 'asc');
             } elseif ($priceRange === 'high_to_low') {
-                $query->leftJoin('product_varaints', 'products.id', '=', 'product_varaints.product_id')
-                    ->orderBy('product_varaints.selling_price_per_unit', 'desc');
+                $query->addSelect([
+                    'max_variant_price' => ProductVaraint::select('selling_price_per_unit')
+                        ->whereColumn('product_id', 'products.id')
+                        ->orderBy('selling_price_per_unit', 'desc')
+                        ->limit(1)
+                ])->orderBy('max_variant_price', 'desc');
             }
 
             // Paginate the results
