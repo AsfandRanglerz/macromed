@@ -1,15 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\BrandController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\CertificationController;
-use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
-use App\Models\Product;
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +35,7 @@ Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts'])->middleware('throttle:100,1');
 ######### Product ##########
 Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);
+Route::post('/productComparison', [ProductController::class, 'productComparison']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
