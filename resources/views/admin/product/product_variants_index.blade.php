@@ -38,7 +38,7 @@
                         <div class="row col-12 col-md-12">
                             <div class="form-group col-md-12">
                                 <label>Varient Additional Information</label>
-                                <input type="text" class="form-control" name="tooltip_information">
+                                <input type="text" class="form-control tooltip_information" name="tooltip_information">
                             </div>
                         </div>
 
@@ -57,7 +57,7 @@
                             </div>
                         </div>
                         <div class="row col-md-12">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label>Unit</label>
                                 <select class="form-control unit" name="unit">
                                     <option value="" disabled selected>Select Units</option>
@@ -68,9 +68,14 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label>Quantity</label>
                                 <input type="text" class="form-control quantity" name="quantity">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Remianing Quantity</label>
+                                <input type="text" class="form-control remaining_quantity" name="remaining_quantity"
+                                    disabled>
                             </div>
                         </div>
                         <div class="row col-md-12">
@@ -145,7 +150,8 @@
                                                 <th>SKU</th>
                                                 <th>Packing</th>
                                                 <th>Unit</th>
-                                                <th>Quantity</th>
+                                                <th>Total Quantity</th>
+                                                <th>Remaining Quantity</th>
                                                 <th>Price per Unit</th>
                                                 <th>Selling Price per Unit</th>
                                                 <th>Actual Weight</th>
@@ -213,6 +219,9 @@
                     },
                     {
                         "data": "quantity"
+                    },
+                    {
+                        "data": "remaining_quantity"
                     },
                     {
                         "data": "price_per_unit",
@@ -288,6 +297,7 @@
                     $('#editVariants .selling_price_per_unit').val(response.selling_price_per_unit);
                     $('#editVariants .actual_weight').val(response.actual_weight);
                     $('#editVariants .shipping_weight').val(response.shipping_weight);
+                    $('#editVariants .remaining_quantity').val(response.remaining_quantity);
                     $('#editVariants .shipping_chargeable_weight').val(response
                         .shipping_chargeable_weight);
                     $('#editVariants .status').val(response.status);

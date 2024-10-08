@@ -130,7 +130,7 @@ class ProductController extends Controller
                     'message' => 'You need to compare at least 2 products!',
                 ], 400);
             }
-            if ($productCount > 3) {
+            if ($productCount < 3) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'You can only compare up to 3 products!',
