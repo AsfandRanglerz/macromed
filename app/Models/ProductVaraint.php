@@ -12,6 +12,11 @@ class ProductVaraint extends Model
 
     public function products()
     {
-        return $this->belongsTo(Product::class,'product_id');
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'varaint_id');
     }
 }

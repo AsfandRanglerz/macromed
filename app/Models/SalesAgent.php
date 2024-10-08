@@ -36,4 +36,9 @@ class SalesAgent extends Authenticatable
     {
         return $this->hasMany(SalesAgentNotification::class, 'sales_agent_id');
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'sales_agent_id');
+    }
 }
