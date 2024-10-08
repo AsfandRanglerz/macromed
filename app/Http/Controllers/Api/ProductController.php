@@ -69,7 +69,7 @@ class ProductController extends Controller
             // Fetch product variants and calculate the selling price in PKR
             $productVariants = ProductVaraint::where('product_id', $productId)
                 ->where('status', '1')
-                ->select('s_k_u', 'description', 'packing', 'unit', 'quantity', 'selling_price_per_unit', 'tooltip_information')
+                ->select('s_k_u', 'description', 'packing', 'unit', 'remaining_quantity', 'selling_price_per_unit', 'tooltip_information')
                 ->get()
                 ->map(function ($variant) use ($pkrAmount) {
                     $variant->selling_price_per_unit_pkr = $variant->selling_price_per_unit * $pkrAmount;
@@ -130,19 +130,14 @@ class ProductController extends Controller
                     'message' => 'You need to compare at least 2 products!',
                 ], 400);
             }
-
             if ($productCount > 3) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'You can only compare up to 3 products!',
                 ], 400);
             }
-
-            // Get the currency conversion rate
             $currency = $this->getCurrency();
             $pkrAmount = $currency->pkr_amount;
-
-            // Fetch the products along with related brands, certifications, and variants
             $comparisons = Product::with([
                 'productBrands.brands' => function ($query) {
                     $query->where('status', '1')->select('id', 'name');
@@ -178,9 +173,12 @@ class ProductController extends Controller
                 });
                 if ($variantPrices->count() == 1) {
                     $pricePkr = $variantPrices->first();
+                    $minPricePkr = null;
+                    $maxPricePkr = null;
                 } else {
                     $minPricePkr = $variantPrices->min();
                     $maxPricePkr = $variantPrices->max();
+                    $pricePkr = null;
                 }
                 return [
                     'id' => $product->id,
@@ -192,18 +190,18 @@ class ProductController extends Controller
                     'sterilizations' => $product->sterilizations,
                     'brands' => $product->productBrands->pluck('brands.name'),
                     'certifications' => $product->productCertifications->pluck('certification.name'),
-                    'price' => $pricePkr??0,
-                    'min_price_range_pkr' => $minPricePkr ?? 0,
-                    'max_price_range_pkr' => $maxPricePkr ?? 0,
+                    'price' => $pricePkr, // Show only if there is one price
+                    'min_price_range_pkr' => $minPricePkr, // Min price if multiple variants
+                    'max_price_range_pkr' => $maxPricePkr, // Max price if multiple variants
                     'variant_count' => $variantPrices->count(),
                 ];
             });
-
             return response()->json([
                 'status' => 'success',
                 'comparison' => $comparisonData,
             ]);
         } catch (\Exception $e) {
+            // Handle any errors
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while fetching product details: ' . $e->getMessage(),
