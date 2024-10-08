@@ -143,7 +143,7 @@ class ProductController extends Controller
                 ], 400);
             }
 
-            // Fetch products and their related data as before
+            // Fetch products and their related data
             $currency = $this->getCurrency();
             $pkrAmount = $currency->pkr_amount;
 
@@ -155,7 +155,7 @@ class ProductController extends Controller
                     $query->where('status', '1')->select('id', 'name');
                 },
                 'productVaraint' => function ($query) {
-                    $query->where('status', '1')->select('product_id', 'selling_price_per_unit');
+                    $query->where('status', '1')->select('product_id', 'selling_price_per_unit', 'remaining_quantity');
                 }
             ])
                 ->where('status', '1')
@@ -188,6 +188,9 @@ class ProductController extends Controller
                 $minPricePkr = ($variantPrices->count() > 1) ? $variantPrices->min() : null;
                 $maxPricePkr = ($variantPrices->count() > 1) ? $variantPrices->max() : null;
 
+                // Get the remaining quantity for each variant
+                $remainingQuantities = $product->productVaraint->pluck('remaining_quantity');
+
                 return [
                     'id' => $product->id,
                     'thumbnail_image' => $product->thumbnail_image,
@@ -202,6 +205,7 @@ class ProductController extends Controller
                     'min_price_range_pkr' => $minPricePkr,
                     'max_price_range_pkr' => $maxPricePkr,
                     'variant_count' => $variantPrices->count(),
+                    'remaining_quantities' => $remainingQuantities // Include remaining quantities
                 ];
             });
 
