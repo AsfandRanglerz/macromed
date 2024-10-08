@@ -95,7 +95,7 @@ class OrderController extends Controller
                     $orderItem->image = $product['image'];
                     $orderItem->quantity = $product['quantity'];
                     $orderItem->price = $product['price'];
-                    $orderItem->sub_total = $product['quantity'] * $product['price'];
+                    $orderItem->subtotal = $product['quantity'] * $product['price'];
                     $orderItem->save();
                 }
             }
@@ -118,5 +118,5 @@ class OrderController extends Controller
             ], 500);
         }
     }
-  
+
 }
