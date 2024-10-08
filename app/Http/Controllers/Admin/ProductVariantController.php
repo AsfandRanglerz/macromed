@@ -97,6 +97,7 @@ class ProductVariantController extends Controller
                         'packing' => $variant['packing'],
                         'unit' => $variant['unit'],
                         'quantity' => $variant['quantity'],
+                        'remaining_quantity' => $variant['quantity'],
                         'price_per_unit' => $variant['price_per_unit'],
                         'selling_price_per_unit' => $variant['selling_price_per_unit'],
                         'actual_weight' => $variant['actual_weight'],
@@ -125,10 +126,10 @@ class ProductVariantController extends Controller
         }
         return response()->json($productVariant);
     }
-
     public function updateVariant(Request $request, $id)
     {
         try {
+            $product = ProductVaraint::findOrFail($id);
             $validator = Validator::make(
                 $request->all(),
                 [
@@ -142,7 +143,15 @@ class ProductVariantController extends Controller
                     'tooltip_information' => 'required',
                     'packing' => 'required',
                     'unit' => 'required',
-                    'quantity' => 'required|numeric',
+                    'quantity' => [
+                        'required',
+                        'numeric',
+                        function ($attribute, $value, $fail) use ($product) {
+                            if ($value <= $product->quantity) {
+                                $fail('The new quantity must be greater than the previous quantity (' . $product->quantity . ').');
+                            }
+                        }
+                    ],
                     'price_per_unit' => 'required|numeric',
                     'selling_price_per_unit' => 'required|numeric',
                     'actual_weight' => 'required|numeric',
@@ -157,8 +166,8 @@ class ProductVariantController extends Controller
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-
-            $product = ProductVaraint::findOrFail($id);
+            $quantityDifference = $request->quantity - $product->quantity;
+            $product->remaining_quantity += $quantityDifference;
             $product->fill($request->only([
                 'm_p_n',
                 's_k_u',
@@ -174,12 +183,14 @@ class ProductVariantController extends Controller
                 'description',
                 'tooltip_information'
             ]));
+
             $product->save();
             return response()->json(['alert' => 'success', 'message' => 'Product Variant Updated Successfully!']);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while Updating Product Variant!' . $e->getMessage()], 500);
+            return response()->json(['alert' => 'error', 'message' => 'An error occurred while Updating Product Variant! ' . $e->getMessage()], 500);
         }
     }
+
     public function updateVariantsStatus($id)
     {
         try {
