@@ -116,28 +116,37 @@ class ProductController extends Controller
     public function productComparison(CompareRequest $request)
     {
         try {
-            $productIds = json_decode($request->input('product_ids'), true);
-            if (!is_array($productIds)) {
+            // Retrieve product_ids from query parameters
+            $productIds = $request->query('product_ids');
+            if (!$productIds) {
                 return response()->json([
                     'status' => 'failed',
-                    'message' => 'Invalid input. Product IDs must be an array.',
+                    'message' => 'Product IDs are required.',
                 ], 400);
             }
-            $productCount = count($productIds);
+
+            $productIdsArray = explode(',', $productIds); // Convert string to array
+            $productCount = count($productIdsArray);
+
+            // Check product count constraints
             if ($productCount < 2) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'You need to compare at least 2 products!',
                 ], 400);
             }
-            if ($productCount < 3) {
+
+            if ($productCount > 3) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'You can only compare up to 3 products!',
                 ], 400);
             }
+
+            // Fetch products and their related data as before
             $currency = $this->getCurrency();
             $pkrAmount = $currency->pkr_amount;
+
             $comparisons = Product::with([
                 'productBrands.brands' => function ($query) {
                     $query->where('status', '1')->select('id', 'name');
@@ -150,7 +159,7 @@ class ProductController extends Controller
                 }
             ])
                 ->where('status', '1')
-                ->whereIn('id', $productIds)
+                ->whereIn('id', $productIdsArray)
                 ->select(
                     'id',
                     'thumbnail_image',
@@ -161,25 +170,24 @@ class ProductController extends Controller
                     'sterilizations'
                 )
                 ->get();
+
             if ($comparisons->isEmpty()) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'No products found for the provided IDs!',
                 ], 404);
             }
+
+            // Prepare the comparison data
             $comparisonData = $comparisons->map(function ($product) use ($pkrAmount) {
                 $variantPrices = $product->productVaraint->pluck('selling_price_per_unit')->map(function ($price) use ($pkrAmount) {
                     return $price * $pkrAmount;
                 });
-                if ($variantPrices->count() == 1) {
-                    $pricePkr = $variantPrices->first();
-                    $minPricePkr = null;
-                    $maxPricePkr = null;
-                } else {
-                    $minPricePkr = $variantPrices->min();
-                    $maxPricePkr = $variantPrices->max();
-                    $pricePkr = null;
-                }
+
+                $pricePkr = ($variantPrices->count() == 1) ? $variantPrices->first() : null;
+                $minPricePkr = ($variantPrices->count() > 1) ? $variantPrices->min() : null;
+                $maxPricePkr = ($variantPrices->count() > 1) ? $variantPrices->max() : null;
+
                 return [
                     'id' => $product->id,
                     'thumbnail_image' => $product->thumbnail_image,
@@ -190,18 +198,18 @@ class ProductController extends Controller
                     'sterilizations' => $product->sterilizations,
                     'brands' => $product->productBrands->pluck('brands.name'),
                     'certifications' => $product->productCertifications->pluck('certification.name'),
-                    'price' => $pricePkr, // Show only if there is one price
-                    'min_price_range_pkr' => $minPricePkr, // Min price if multiple variants
-                    'max_price_range_pkr' => $maxPricePkr, // Max price if multiple variants
+                    'price' => $pricePkr,
+                    'min_price_range_pkr' => $minPricePkr,
+                    'max_price_range_pkr' => $maxPricePkr,
                     'variant_count' => $variantPrices->count(),
                 ];
             });
+
             return response()->json([
                 'status' => 'success',
                 'comparison' => $comparisonData,
             ]);
         } catch (\Exception $e) {
-            // Handle any errors
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while fetching product details: ' . $e->getMessage(),
