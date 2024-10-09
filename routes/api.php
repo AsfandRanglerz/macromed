@@ -39,6 +39,7 @@ Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProd
 Route::post('/productComparison', [ProductController::class, 'productComparison']);
 ######### Order ##########
 Route::post('/placeOrder', [OrderController::class, 'order']);
+Route::get('/selesAgent', [OrderController::class, 'selesAgent']);
 ######### Roles & Permissison##########
 Route::post('/addPermission', [RolesPermissionController::class, 'addPermission']);
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);

@@ -9,9 +9,30 @@ use App\Models\ProductVaraint;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
+use App\Models\SalesAgent;
 
 class OrderController extends Controller
 {
+    public function selesAgent()
+    {
+        try {
+            $salesAgent = SalesAgent::select('id','name')->get();
+            if ($salesAgent->isEmpty()) {
+                return response()->json([
+                    'message' => [],
+                ], 404);
+            } else {
+                return response()->json([
+                    'salesAgent' =>  $salesAgent,
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
     private function generateRandomString($length = 6)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
