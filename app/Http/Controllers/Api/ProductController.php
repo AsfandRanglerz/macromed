@@ -128,13 +128,7 @@ class ProductController extends Controller
             $productIdsArray = explode(',', $productIds); // Convert string to array
             $productCount = count($productIdsArray);
 
-            // Check product count constraints
-            if ($productCount < 2) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => 'You need to compare at least 2 products!',
-                ], 400);
-            }
+
 
             if ($productCount > 3) {
                 return response()->json([
@@ -142,6 +136,7 @@ class ProductController extends Controller
                     'message' => 'You can only compare up to 3 products!',
                 ], 400);
             }
+
 
             // Fetch products and their related data
             $currency = $this->getCurrency();
