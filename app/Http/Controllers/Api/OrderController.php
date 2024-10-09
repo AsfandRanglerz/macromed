@@ -32,22 +32,22 @@ class OrderController extends Controller
         return Order::where('order_id', $string)->exists();
     }
 
-    public function order(OrderRequest $request)
+    public function order(Request $request)
     {
         try {
             // Check if the user is authenticated
-            if (!auth()->check()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'User is not authenticated',
-                ], 401);
-            }
+            // if (!auth()->check()) {
+            //     return response()->json([
+            //         'status' => 'error',
+            //         'message' => 'User is not authenticated',
+            //     ], 401);
+            // }
 
-            $userId = auth()->id();
+            // $userId = auth()->id();
 
             // Create a new order
             $cart = new Order();
-            $cart->user_id = $userId;
+            $cart->user_id = 15;
             $cart->sales_agent_id = $request->sales_agent_id;
             $cart->address = $request->address;
             $cart->billing_address = $request->billing_address;
@@ -58,7 +58,7 @@ class OrderController extends Controller
             $cart->card_number = $request->card_number;
             $cart->card_date = $request->card_date;
             $cart->cvc = $request->cvc;
-            $cart->code_id = $this->generateRandomString(6);
+            $cart->order_id = $this->generateRandomString(6);
             $cart->total = $request->total;
             $cart->status = 'pending';
             $cart->product_commission = 0;
@@ -72,7 +72,7 @@ class OrderController extends Controller
             }
             $totalCommission = 0;
             foreach ($products as $product) {
-                $productInfo = ProductVaraint::find($product['varaint_id']);
+                $productInfo = ProductVaraint::find($product['variant_id']);
                 if ($productInfo) {
                     // Calculate the product commission
                     $productCommissionRate = $productInfo->products->product_commission;
@@ -90,7 +90,7 @@ class OrderController extends Controller
                     }
                     $orderItem = new OrderItem();
                     $orderItem->order_id = $cart->id;
-                    $orderItem->varaint_id = $product['varaint_id'];
+                    $orderItem->varaint_id = $product['variant_id'];
                     $orderItem->variant_number = $product['variant_number'];
                     $orderItem->image = $product['image'];
                     $orderItem->quantity = $product['quantity'];
