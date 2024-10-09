@@ -103,13 +103,13 @@ class OrderController extends Controller
             // Update the order with the total product commission
             $cart->product_commission = $totalCommission;
             $cart->save();
-
+            $cart->load('orderItem');
             // Success response
             return response()->json([
                 'status' => 'success',
                 'message' => 'Items added to cart successfully',
                 'cart' => $cart,
-            ], 201);
+            ], 200);
         } catch (\Exception $e) {
             // Error response
             return response()->json([
@@ -118,5 +118,4 @@ class OrderController extends Controller
             ], 500);
         }
     }
-
 }
