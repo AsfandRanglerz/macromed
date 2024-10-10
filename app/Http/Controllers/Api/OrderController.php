@@ -16,7 +16,7 @@ class OrderController extends Controller
     public function selesAgent()
     {
         try {
-            $salesAgent = SalesAgent::select('id','name')->get();
+            $salesAgent = SalesAgent::select('id', 'name')->get();
             if ($salesAgent->isEmpty()) {
                 return response()->json([
                     'message' => [],
@@ -108,9 +108,10 @@ class OrderController extends Controller
                         DB::rollBack();
                         return response()->json([
                             'status' => 'error',
-                            'message' => 'Insufficient stock for product variant: ' . $product['variant_number'],
+                            'message' => 'Insufficient stock for product variant: ' . $product['variant_number'] . '. Only ' . $productInfo->remaining_quantity . ' units remaining.',
                         ], 400);
                     }
+
                     $orderItem = new OrderItem();
                     $orderItem->order_id = $cart->id;
                     $orderItem->varaint_id = $product['varaint_id'];
