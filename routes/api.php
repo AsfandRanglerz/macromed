@@ -29,7 +29,9 @@ Route::post('/resendOtp', [AuthController::class, 'resendOtp']);
 Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
 
 Route::group(['middleware' => 'auth:api'], function () {
+    Route::match(['get', 'put'], '/user/{id}', [AuthController::class, 'userProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/updatePassword/{id}', [AuthController::class, 'updatePassword']);
 });
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);

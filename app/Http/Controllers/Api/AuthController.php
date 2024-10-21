@@ -10,9 +10,10 @@ use App\Mail\ResetPasswordMail;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Http\Controllers\Controller;
 use App\Mail\UserResetPasswordMail;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -204,6 +205,63 @@ class AuthController extends Controller
             return response()->json(['error' => 'The token is already invalidated or expired'], 400);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Could not log out the user: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function userProfile(Request $request, $id)
+    {
+        try {
+            $userProfile = User::where('id', $id)
+                ->where('user_type', 'customer')
+                ->select('id', 'name', 'email', 'phone', 'profession', 'location', 'image')
+                ->first();
+            if (!$userProfile) {
+                return response()->json(['error' => 'User not found!'], 404);
+            }
+            if ($request->isMethod('get')) {
+                return response()->json(['user' => $userProfile], 200);
+            } elseif ($request->isMethod('put')) {
+                $validatedData = $request->validate([
+                    'email'      => 'sometimes|email|max:255|unique:users,email,' . $id,
+                ]);
+                $userProfile->update($validatedData);
+                if ($request->hasFile('image')) {
+                    // Delete old image if it exists
+                    $oldImagePath =  $userProfile->image;
+                    if ($userProfile->image && File::exists(public_path($oldImagePath))) {
+                        File::delete(public_path($oldImagePath));
+                    }
+                    $image = $request->file('image');
+                    $filename = time() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('admin/assets/images/users'), $filename);
+                    $userProfile->image = 'admin/assets/images/users/' . $filename;
+                    $userProfile->save();
+                }
+                return response()->json(['success' => 'User updated successfully', 'data' => $userProfile], 200);
+            } else {
+                // If the request method is not GET or PUT/PATCH, return a method not allowed response
+                return response()->json(['error' => 'Method not allowed'], 405);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json(['error' => 'Old password is incorrect'], 400);
+            }
+            if (Hash::check($request->password, $user->password)) {
+                return response()->json(['error' => 'New password cannot be the same as the old password'], 400);
+            }
+            $user->password = Hash::make($request->password);
+            $user->save();
+            return response()->json(['success' => 'Password updated successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
 }
