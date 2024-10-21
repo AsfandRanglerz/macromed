@@ -61,7 +61,7 @@ class WhishlistController extends Controller
                 if ($wishListItem->products) {
                     $product = $wishListItem->products;
                     $variantPrices = $product->productVaraint->pluck('selling_price_per_unit');
-
+                    return  $variantPrices * $pkrAmount;
                     if ($variantPrices->isNotEmpty()) {
                         $product->min_price_range_pkr = $variantPrices->min();
                         $product->max_price_range_pkr = $variantPrices->max();
