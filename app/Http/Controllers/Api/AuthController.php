@@ -213,7 +213,6 @@ class AuthController extends Controller
         try {
             $userProfile = User::where('id', $id)
                 ->where('user_type', 'customer')
-                ->select('id', 'name', 'email', 'phone', 'profession', 'location', 'image')
                 ->first();
             if (!$userProfile) {
                 return response()->json(['error' => 'User not found!'], 404);
