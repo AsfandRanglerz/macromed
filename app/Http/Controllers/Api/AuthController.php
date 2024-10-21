@@ -220,13 +220,9 @@ class AuthController extends Controller
             }
             if ($request->isMethod('get')) {
                 return response()->json(['user' => $userProfile], 200);
-            } elseif ($request->isMethod('put')) {
-                $validatedData = $request->validate([
-                    'email'      => 'sometimes|email|max:255|unique:users,email,' . $id,
-                ]);
-                $userProfile->update($validatedData);
+            } elseif ($request->isMethod('post')) {
+                $userProfile->fill($request->only(['name', 'phone', 'profession', 'location']));
                 if ($request->hasFile('image')) {
-                    // Delete old image if it exists
                     $oldImagePath =  $userProfile->image;
                     if ($userProfile->image && File::exists(public_path($oldImagePath))) {
                         File::delete(public_path($oldImagePath));
@@ -235,11 +231,10 @@ class AuthController extends Controller
                     $filename = time() . '.' . $image->getClientOriginalExtension();
                     $image->move(public_path('admin/assets/images/users'), $filename);
                     $userProfile->image = 'admin/assets/images/users/' . $filename;
-                    $userProfile->save();
                 }
+                $userProfile->save();
                 return response()->json(['success' => 'User updated successfully', 'data' => $userProfile], 200);
             } else {
-                // If the request method is not GET or PUT/PATCH, return a method not allowed response
                 return response()->json(['error' => 'Method not allowed'], 405);
             }
         } catch (\Exception $e) {

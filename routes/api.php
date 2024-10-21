@@ -29,11 +29,11 @@ Route::post('/resendOtp', [AuthController::class, 'resendOtp']);
 Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
 
 Route::group(['middleware' => 'auth:api'], function () {
-    Route::match(['get', 'put'], '/user/{id}', [AuthController::class, 'userProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/updatePassword/{id}', [AuthController::class, 'updatePassword']);
-    Route::get('/getWhishList/{userId}', [WhishlistController::class, 'getWhishList']);
+    Route::match(['get', 'post'], '/user/{id}', [AuthController::class, 'userProfile']);
 });
+Route::get('/getWhishList/{userId}', [WhishlistController::class, 'getWhishList']);
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts'])->middleware('throttle:100,1');
