@@ -46,4 +46,8 @@ class Product extends Model
     {
         return $this->hasMany(ProductImages::class, 'product_id');
     }
+    public function whishList()
+    {
+        return $this->hasMany(WhishList::class, 'product_id');
+    }
 }

@@ -70,4 +70,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Order::class, 'user_id');
     }
+    public function whishList()
+    {
+        return $this->hasMany(WhishList::class, 'user_id');
+    }
 }

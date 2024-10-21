@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
-
+use App\Http\Controllers\Api\WhishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::match(['get', 'put'], '/user/{id}', [AuthController::class, 'userProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/updatePassword/{id}', [AuthController::class, 'updatePassword']);
+    Route::get('/getWhishList/{userId}', [WhishlistController::class, 'getWhishList']);
 });
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
