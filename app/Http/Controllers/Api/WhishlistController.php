@@ -58,8 +58,8 @@ class WhishlistController extends Controller
 
             // Process each wishlist item to calculate prices and add details
             $wishListItems->each(function ($wishListItem) {
-                if ($wishListItem->product) {
-                    $product = $wishListItem->product;
+                if ($wishListItem->products) {
+                    $product = $wishListItem->products;
                     $variantPrices = $product->productVaraint->pluck('selling_price_per_unit');
 
                     if ($variantPrices->isNotEmpty()) {
