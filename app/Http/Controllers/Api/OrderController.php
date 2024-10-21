@@ -59,16 +59,16 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            // if (!auth()->check()) {
-            //     return response()->json([
-            //         'status' => 'error',
-            //         'message' => 'User is not authenticated',
-            //     ], 401);
-            // }
+            if (!auth()->check()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User is not authenticated',
+                ], 401);
+            }
 
-            // $userId = auth()->id();
+            $userId = auth()->id();
             $cart = new Order();
-            $cart->user_id = 15;
+            $cart->user_id = $userId;
             $cart->sales_agent_id = $request->sales_agent_id;
             $cart->address = $request->address;
             $cart->billing_address = $request->billing_address;
