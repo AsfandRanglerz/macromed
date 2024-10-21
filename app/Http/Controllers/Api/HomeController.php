@@ -140,188 +140,16 @@ class HomeController extends Controller
     }
 
 
-    // public function getFilteredProducts(Request $request)
-    // {
-    //     try {
-    //         $minPrice = $request->input('min_price');
-    //         $maxPrice = $request->input('max_price');
-    //         $companies = $request->input('company') ? explode(',', $request->input('company')) : [];
-    //         $brandIds = $request->input('brand_id') ? explode(',', $request->input('brand_id')) : [];
-    //         $categoryIds = $request->input('category_id') ? explode(',', $request->input('category_id')) : [];
-    //         $certificationIds = $request->input('certification_id') ? explode(',', $request->input('certification_id')) : [];
-    //         $countries = $request->input('country') ? explode(',', $request->input('country')) : [];
-    //         $userId = $request->input('user_id');
-    //         $productId = $request->input('product_id');
-    //         $searchByWords = $request->input('key_words');
-    //         $availability = $request->input('available_product');
-    //         $suggestedWords = $request->input('suggested_word');
-    //         $priceRange = $request->input('price_order');
-    //         $page = $request->input('page', 1);
-    //         $perPage = 6;
-    //         $offset = ($page - 1) * $perPage;
-
-    //         // Get currency and handle errors
-    //         $currency = $this->getCurrency();
-    //         if (!$currency) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'No Currency found.',
-    //             ]);
-    //         }
-    //         $pkrAmount = $currency->pkr_amount;
-
-    //         // Suggest words based on input
-    //         if ($suggestedWords) {
-    //             $suggestedWordsList = Product::selectRaw('DISTINCT(short_name)')
-    //                 ->where('short_name', 'like', '%' . $suggestedWords . '%')
-    //                 ->pluck('short_name')
-    //                 ->toArray();
-
-    //             return count($suggestedWordsList) > 0
-    //                 ? response()->json(['suggested_words' => $suggestedWordsList], 200)
-    //                 : response()->json(['message' => 'No words found!'], 404);
-    //         }
-
-    //         // Build the query with eager loading and filters
-    //         $query = Product::with([
-    //             'productBrands.brands:id,name',
-    //             'productCertifications.certification:id,name',
-    //             'productVaraint' => function ($query) {
-    //                 $query->select('product_id', 'selling_price_per_unit', 'status');
-    //             }
-    //         ])->select(
-    //             'products.id',
-    //             'products.product_code',
-    //             'products.thumbnail_image',
-    //             'products.short_name',
-    //             'products.country',
-    //             'products.company',
-    //             'products.models',
-    //             'products.product_use_status',
-    //             'products.short_description',
-    //             'products.sterilizations'
-    //         )
-    //             ->where('products.status', '1');
-
-    //         // Apply filters
-    //         if ($minPrice && $maxPrice) {
-    //             $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice, $maxPrice) {
-    //                 $variantPrice->whereBetween('selling_price_per_unit', [$minPrice, $maxPrice]);
-    //             });
-    //         }
-    //         if (!empty($companies)) {
-    //             $query->whereIn('company', $companies);
-    //         }
-    //         if (!empty($brandIds)) {
-    //             $query->whereHas('productBrands', function ($q) use ($brandIds) {
-    //                 $q->whereIn('brand_id', $brandIds);
-    //             });
-    //         }
-    //         if (!empty($categoryIds)) {
-    //             $query->whereHas('productCategory', function ($q) use ($categoryIds) {
-    //                 $q->whereIn('category_id', $categoryIds);
-    //             });
-    //         }
-    //         if (!empty($certificationIds)) {
-    //             $query->whereHas('productCertifications', function ($q) use ($certificationIds) {
-    //                 $q->whereIn('certification_id', $certificationIds);
-    //             });
-    //         }
-    //         if (!empty($countries)) {
-    //             $query->whereIn('country', $countries);
-    //         }
-
-    //         if ($searchByWords) {
-    //             $query->where('short_name', 'like', '%' . $searchByWords . '%');
-    //         }
-    //         if ($availability) {
-    //             $query->whereHas('productVaraint');
-    //         }
-
-    //         // Clone query to get total count
-    //         $totalProductsQuery = clone $query;
-    //         $totalProducts = $totalProductsQuery->count();
-
-    //         // Apply sorting
-    //         if ($priceRange === 'low_to_high') {
-    //             $query->addSelect([
-    //                 'min_variant_price' => ProductVaraint::select('selling_price_per_unit')
-    //                     ->whereColumn('product_id', 'products.id')
-    //                     ->orderBy('selling_price_per_unit', 'asc')
-    //                     ->limit(1)
-    //             ])->orderBy('min_variant_price', 'asc');
-    //         } elseif ($priceRange === 'high_to_low') {
-    //             $query->addSelect([
-    //                 'max_variant_price' => ProductVaraint::select('selling_price_per_unit')
-    //                     ->whereColumn('product_id', 'products.id')
-    //                     ->orderBy('selling_price_per_unit', 'desc')
-    //                     ->limit(1)
-    //             ])->orderBy('max_variant_price', 'desc');
-    //         }
-
-    //         // Paginate the results
-    //         $products = $query->orderBy('products.created_at', 'desc')
-    //             ->skip($offset)
-    //             ->take($perPage)
-    //             ->get();
-
-    //         if ($products->isEmpty()) {
-    //             return response()->json(['products' => []]);
-    //         }
-
-    //         // Calculate price ranges and other product details
-    //         $products->each(function ($product) use ($pkrAmount) {
-    //             $variantPrices = $product->productVaraint->pluck('selling_price_per_unit')->map(function ($price) use ($pkrAmount) {
-    //                 return $price * $pkrAmount;
-    //             });
-    //             if ($variantPrices->count() == 1) {
-    //                 $product->min_price_range_pkr = $variantPrices->first();
-    //             } else {
-    //                 $product->min_price_range_pkr = $variantPrices->min();
-    //                 $product->max_price_range_pkr = $variantPrices->max();
-    //             }
-    //             $product->variant_count = $product->productVaraint->count();
-    //             unset($product->productVaraint);
-    //         });
-
-    //         // Get wishlist products
-    //         $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
-    //         foreach ($products as $product) {
-    //             $productLikes = $favoriteProducts->where('product_id', $product->id)->pluck('user_id');
-    //             $product->likes = $productLikes->isEmpty() ? [] : $productLikes->toArray();
-    //             if ($userId && $productId && $productId == $product->id) {
-    //                 $wishlist = WhishList::firstOrNew([
-    //                     'user_id' => $userId,
-    //                     'product_id' => $productId,
-    //                 ]);
-    //                 $wishlist->save();
-    //             }
-    //         }
-
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'products' => $products,
-    //             'pkrAmount' => $pkrAmount,
-    //             'totalProducts' => $totalProducts,
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'An error occurred while fetching products: ' . $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
     public function getFilteredProducts(Request $request)
     {
         try {
-            // Input parameters and defaults
             $minPrice = $request->input('min_price');
             $maxPrice = $request->input('max_price');
-            $companies = $this->parseInputArray($request->input('company'));
-            $brandIds = $this->parseInputArray($request->input('brand_id'));
-            $categoryIds = $this->parseInputArray($request->input('category_id'));
-            $certificationIds = $this->parseInputArray($request->input('certification_id'));
-            $countries = $this->parseInputArray($request->input('country'));
+            $companies = $request->input('company') ? explode(',', $request->input('company')) : [];
+            $brandIds = $request->input('brand_id') ? explode(',', $request->input('brand_id')) : [];
+            $categoryIds = $request->input('category_id') ? explode(',', $request->input('category_id')) : [];
+            $certificationIds = $request->input('certification_id') ? explode(',', $request->input('certification_id')) : [];
+            $countries = $request->input('country') ? explode(',', $request->input('country')) : [];
             $userId = $request->input('user_id');
             $productId = $request->input('product_id');
             $searchByWords = $request->input('key_words');
@@ -342,17 +170,24 @@ class HomeController extends Controller
             }
             $pkrAmount = $currency->pkr_amount;
 
-            // Handle suggested words feature
+            // Suggest words based on input
             if ($suggestedWords) {
-                return $this->handleSuggestedWords($suggestedWords);
+                $suggestedWordsList = Product::selectRaw('DISTINCT(short_name)')
+                    ->where('short_name', 'like', '%' . $suggestedWords . '%')
+                    ->pluck('short_name')
+                    ->toArray();
+
+                return count($suggestedWordsList) > 0
+                    ? response()->json(['suggested_words' => $suggestedWordsList], 200)
+                    : response()->json(['message' => 'No words found!'], 404);
             }
 
-            // Build the query with eager loading
+            // Build the query with eager loading and filters
             $query = Product::with([
                 'productBrands.brands:id,name',
                 'productCertifications.certification:id,name',
-                'productVaraint' => function ($variantQuery) {
-                    $variantQuery->select('product_id', 'selling_price_per_unit', 'status');
+                'productVaraint' => function ($query) {
+                    $query->select('product_id', 'selling_price_per_unit', 'status');
                 }
             ])->select(
                 'products.id',
@@ -365,37 +200,104 @@ class HomeController extends Controller
                 'products.product_use_status',
                 'products.short_description',
                 'products.sterilizations'
-            )->where('products.status', '1');
+            )
+                ->where('products.status', '1');
 
             // Apply filters
-            $this->applyFilters($query, $minPrice, $maxPrice, $companies, $brandIds, $categoryIds, $certificationIds, $countries, $searchByWords, $availability);
+            if ($minPrice && $maxPrice) {
+                $query->whereHas('productVaraint', function ($variantPrice) use ($minPrice, $maxPrice) {
+                    $variantPrice->whereBetween('selling_price_per_unit', [$minPrice, $maxPrice]);
+                });
+            }
+            if (!empty($companies)) {
+                $query->whereIn('company', $companies);
+            }
+            if (!empty($brandIds)) {
+                $query->whereHas('productBrands', function ($q) use ($brandIds) {
+                    $q->whereIn('brand_id', $brandIds);
+                });
+            }
+            if (!empty($categoryIds)) {
+                $query->whereHas('productCategory', function ($q) use ($categoryIds) {
+                    $q->whereIn('category_id', $categoryIds);
+                });
+            }
+            if (!empty($certificationIds)) {
+                $query->whereHas('productCertifications', function ($q) use ($certificationIds) {
+                    $q->whereIn('certification_id', $certificationIds);
+                });
+            }
+            if (!empty($countries)) {
+                $query->whereIn('country', $countries);
+            }
 
-            // Get total count for pagination
-            $totalProducts = $query->count();
+            if ($searchByWords) {
+                $query->where('short_name', 'like', '%' . $searchByWords . '%');
+            }
+            if ($availability) {
+                $query->whereHas('productVaraint');
+            }
+
+            // Clone query to get total count
+            $totalProductsQuery = clone $query;
+            $totalProducts = $totalProductsQuery->count();
 
             // Apply sorting
-            $this->applySorting($query, $priceRange);
+            if ($priceRange === 'low_to_high') {
+                $query->addSelect([
+                    'min_variant_price' => ProductVaraint::select('selling_price_per_unit')
+                        ->whereColumn('product_id', 'products.id')
+                        ->orderBy('selling_price_per_unit', 'asc')
+                        ->limit(1)
+                ])->orderBy('min_variant_price', 'asc');
+            } elseif ($priceRange === 'high_to_low') {
+                $query->addSelect([
+                    'max_variant_price' => ProductVaraint::select('selling_price_per_unit')
+                        ->whereColumn('product_id', 'products.id')
+                        ->orderBy('selling_price_per_unit', 'desc')
+                        ->limit(1)
+                ])->orderBy('max_variant_price', 'desc');
+            }
 
-            // Paginate and get results
+            // Paginate the results
             $products = $query->orderBy('products.created_at', 'desc')
                 ->skip($offset)
                 ->take($perPage)
                 ->get();
 
-            // If no products, return empty response
             if ($products->isEmpty()) {
                 return response()->json(['products' => []]);
             }
 
-            // Process product prices and variants
+            // Calculate price ranges and other product details
             $products->each(function ($product) use ($pkrAmount) {
-                $this->processProductPrices($product, $pkrAmount);
+                $variantPrices = $product->productVaraint->pluck('selling_price_per_unit')->map(function ($price) use ($pkrAmount) {
+                    return $price * $pkrAmount;
+                });
+                if ($variantPrices->count() == 1) {
+                    $product->min_price_range_pkr = $variantPrices->first();
+                } else {
+                    $product->min_price_range_pkr = $variantPrices->min();
+                    $product->max_price_range_pkr = $variantPrices->max();
+                }
+                $product->variant_count = $product->productVaraint->count();
+                unset($product->productVaraint);
             });
 
-            // Handle wishlist for the user
-            $this->handleWishlist($products, $userId, $productId);
+            // Get wishlist products
+            $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
+            foreach ($products as $product) {
+                $productLikes = $favoriteProducts->where('product_id', $product->id)->pluck('user_id');
+                $product->likes = $productLikes->isEmpty() ? [] : $productLikes->toArray();
+                if ($userId && $productId && $productId == $product->id) {
+                    $wishlist = WhishList::firstOrNew([
+                        'user_id' => $userId,
+                        'product_id' => $productId,
+                    ]);
+                    $wishlist->save();
+                }
+            }
 
-            // Return the final response
             return response()->json([
                 'status' => 'success',
                 'products' => $products,
@@ -407,128 +309,6 @@ class HomeController extends Controller
                 'status' => 'error',
                 'message' => 'An error occurred while fetching products: ' . $e->getMessage()
             ], 500);
-        }
-    }
-
-    /**
-     * Parse comma-separated input into array.
-     */
-    private function parseInputArray($input)
-    {
-        return $input ? explode(',', $input) : [];
-    }
-
-    /**
-     * Handle suggested words functionality.
-     */
-    private function handleSuggestedWords($suggestedWords)
-    {
-        $suggestedWordsList = Product::selectRaw('DISTINCT(short_name)')
-            ->where('short_name', 'like', '%' . $suggestedWords . '%')
-            ->pluck('short_name')
-            ->toArray();
-
-        return count($suggestedWordsList) > 0
-            ? response()->json(['suggested_words' => $suggestedWordsList], 200)
-            : response()->json(['message' => 'No words found!'], 404);
-    }
-
-    /**
-     * Apply filters to the product query.
-     */
-    private function applyFilters(&$query, $minPrice, $maxPrice, $companies, $brandIds, $categoryIds, $certificationIds, $countries, $searchByWords, $availability)
-    {
-        if ($minPrice && $maxPrice) {
-            $query->whereHas('productVaraint', function ($variantQuery) use ($minPrice, $maxPrice) {
-                $variantQuery->whereBetween('selling_price_per_unit', [$minPrice, $maxPrice]);
-            });
-        }
-        if (!empty($companies)) {
-            $query->whereIn('company', $companies);
-        }
-        if (!empty($brandIds)) {
-            $query->whereHas('productBrands', function ($q) use ($brandIds) {
-                $q->whereIn('brand_id', $brandIds);
-            });
-        }
-        if (!empty($categoryIds)) {
-            $query->whereHas('productCategory', function ($q) use ($categoryIds) {
-                $q->whereIn('category_id', $categoryIds);
-            });
-        }
-        if (!empty($certificationIds)) {
-            $query->whereHas('productCertifications', function ($q) use ($certificationIds) {
-                $q->whereIn('certification_id', $certificationIds);
-            });
-        }
-        if (!empty($countries)) {
-            $query->whereIn('country', $countries);
-        }
-        if ($searchByWords) {
-            $query->where('short_name', 'like', '%' . $searchByWords . '%');
-        }
-        if ($availability) {
-            $query->whereHas('productVaraint');
-        }
-    }
-
-    /**
-     * Apply sorting based on price range.
-     */
-    private function applySorting(&$query, $priceRange)
-    {
-        if ($priceRange === 'low_to_high') {
-            $query->addSelect([
-                'min_variant_price' => ProductVaraint::select('selling_price_per_unit')
-                    ->whereColumn('product_id', 'products.id')
-                    ->orderBy('selling_price_per_unit', 'asc')
-                    ->limit(1)
-            ])->orderBy('min_variant_price', 'asc');
-        } elseif ($priceRange === 'high_to_low') {
-            $query->addSelect([
-                'max_variant_price' => ProductVaraint::select('selling_price_per_unit')
-                    ->whereColumn('product_id', 'products.id')
-                    ->orderBy('selling_price_per_unit', 'desc')
-                    ->limit(1)
-            ])->orderBy('max_variant_price', 'desc');
-        }
-    }
-
-    /**
-     * Process product prices and variants.
-     */
-    private function processProductPrices(&$product, $pkrAmount)
-    {
-        $variantPrices = $product->productVaraint->pluck('selling_price_per_unit')->map(function ($price) use ($pkrAmount) {
-            return $price * $pkrAmount;
-        });
-
-        if ($variantPrices->count() == 1) {
-            $product->min_price_range_pkr = $variantPrices->first();
-        } else {
-            $product->min_price_range_pkr = $variantPrices->min();
-            $product->max_price_range_pkr = $variantPrices->max();
-        }
-        $product->variant_count = $product->productVaraint->count();
-        unset($product->productVaraint);
-    }
-
-    /**
-     * Handle wishlist functionality.
-     */
-    private function handleWishlist(&$products, $userId, $productId)
-    {
-        $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
-        foreach ($products as $product) {
-            $productLikes = $favoriteProducts->where('product_id', $product->id)->pluck('user_id');
-            $product->likes = $productLikes->isEmpty() ? [] : $productLikes->toArray();
-
-            if ($userId && $productId && $productId == $product->id) {
-                WhishList::firstOrNew([
-                    'user_id' => $userId,
-                    'product_id' => $productId,
-                ])->save();
-            }
         }
     }
 }
