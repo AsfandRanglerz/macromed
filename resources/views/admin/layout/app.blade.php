@@ -100,11 +100,7 @@
         document.getElementById('printInvoice').addEventListener('click', function() {
             // Create a new window for printing
             var printWindow = window.open('', '_blank', 'width=900,height=600');
-
-            // Get the invoice content
             var invoiceContent = document.querySelector('.invoice').innerHTML;
-
-            // Write the invoice content to the new window
             printWindow.document.write(`
             <html>
                 <head>

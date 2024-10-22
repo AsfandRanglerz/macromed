@@ -139,11 +139,12 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="text-center">
-                        <button class="btn btn-danger btn-icon icon-left" id="printInvoice"><i class="fas fa-print"></i>
-                            Print</button>
-                    </div>
+
                 </div>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-danger btn-icon icon-left" id="printInvoice"><i class="fas fa-print"></i>
+                    Print</button>
             </div>
         </section>
     </div>
