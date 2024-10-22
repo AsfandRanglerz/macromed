@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\SalesAgent;
 use Illuminate\Http\Request;
 use App\Models\ProductVaraint;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
-use App\Models\SalesAgent;
 
 class OrderController extends Controller
 {
@@ -59,14 +60,8 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            if (!auth()->check()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'User is not authenticated',
-                ], 401);
-            }
 
-            $userId = auth()->id();
+            $userId = $request->input('user_id');
             $cart = new Order();
             $cart->user_id = $userId;
             $cart->sales_agent_id = $request->sales_agent_id;
