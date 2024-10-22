@@ -80,6 +80,22 @@
 
     @yield('js')
     <script>
+            function updateOrderCounter() {
+                $.ajax({
+                    url: "{{ route('orders.count') }}",
+                    type: 'GET',
+                    success: function(response) {
+                        $('#orderCounter').text(response.count);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
+            updateOrderCounter();
+            setInterval(updateOrderCounter, 1000);
+    </script>
+    <script>
         toastr.options = {
             "closeButton": false,
             "progressBar": true,

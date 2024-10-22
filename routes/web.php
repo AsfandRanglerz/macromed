@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\ModalsController;
 use App\Http\Controllers\Admin\PolicyController;
@@ -300,6 +301,19 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         // Route::get('/privateNotes/{id}',  'showPrivateNotes')->name('privateNotes.show');
         // Route::post('/privateNotesUpdate/{id}',  'updatePrivateNotes')->name('privateNotes.update');
         // Route::get('/privateNotes/delete/{id}',  'deletePrivateNotes')->name('privateNotes.delete');
+    });
+
+     // ############## Orders ############
+     Route::controller(OrderController::class)->group(function () {
+        Route::get('/orderData',  'orderData')->name('order.get')->middleware('permission:Pending Orders');
+        Route::get('/order',  'orderIndex')->name('order.index')->middleware('permission:Pending Orders');
+        Route::get('/orders/{id}/status',  'getStatus')->name('orders.status')->middleware('permission:Pending Orders');
+        Route::post('/orders/{id}/update-status',  'updateStatus')->name('orders.update-status')->middleware('permission:Pending Orders');
+        Route::get('/order/delete/{id}',  'deleteOrder')->name('order.delete')->middleware('permission:Pending Orders');
+        Route::get('/order/counter',  'getOrderCount')->name('orders.count')->middleware('permission:Pending Orders');
+        Route::get('/order/details/{id}',  'getOrderDetails')->name('order.details')->middleware('permission:Pending Orders');
+        ### InVoice ####
+        Route::get('/order/invoice/{id}',  'getInVoiceDetails')->name('invoice.index')->middleware('permission:Pending Orders');
     });
 });
 //################################ Sales Agent Routes #############################
