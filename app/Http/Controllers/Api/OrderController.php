@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -140,4 +141,16 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+    // public function getOrderDetail($userId)
+    // {
+    //     try {
+    //         $getUserOrder=Order::where('user_id',$userId)->with('orderItem:')->get();
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong: ' . $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 }
