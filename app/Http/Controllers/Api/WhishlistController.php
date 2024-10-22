@@ -57,11 +57,12 @@ class WhishlistController extends Controller
             }
 
             // Process each wishlist item to calculate prices and add details
-            $wishListItems->each(function ($wishListItem) {
+            $wishListItems->each(function ($wishListItem) use ($pkrAmount) {
                 if ($wishListItem->products) {
                     $product = $wishListItem->products;
-                    $variantPrices = $product->productVaraint->pluck('selling_price_per_unit');
-                    return  $variantPrices * $pkrAmount;
+                    $variantPrices =  $product->productVaraint->pluck('selling_price_per_unit')->map(function ($price) use ($pkrAmount) {
+                        return $price * $pkrAmount;
+                    });
                     if ($variantPrices->isNotEmpty()) {
                         $product->min_price_range_pkr = $variantPrices->min();
                         $product->max_price_range_pkr = $variantPrices->max();
