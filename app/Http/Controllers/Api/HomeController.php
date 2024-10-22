@@ -285,18 +285,32 @@ class HomeController extends Controller
             });
 
             // Get wishlist products
-            $favoriteProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
+            $favoritesProducts = WhishList::whereIn('product_id', $products->pluck('id'))->get();
             foreach ($products as $product) {
-                $productLikes = $favoriteProducts->where('product_id', $product->id)->pluck('user_id');
+                $productLikes = $favoritesProducts->where('product_id', $product->id)->pluck('user_id');
                 $product->likes = $productLikes->isEmpty() ? [] : $productLikes->toArray();
                 if ($userId && $productId && $productId == $product->id) {
-                    $wishlist = WhishList::firstOrNew([
+                    $wishlist = WhishList::where([
                         'user_id' => $userId,
                         'product_id' => $productId,
-                    ]);
-                    $wishlist->save();
+                    ])->first();
+                    if ($wishlist) {
+                        $wishlist->delete();
+                        return response()->json([
+                            'success' => 'Wishlist item removed successfully!',
+                        ], 200);
+                    } else {
+                        $wishlist = WhishList::create([
+                            'user_id' => $userId,
+                            'product_id' => $productId,
+                        ]);
+                        return response()->json([
+                            'success' => 'Wishlist added successfully!',
+                        ], 200);
+                    }
                 }
             }
+
 
             return response()->json([
                 'status' => 'success',

@@ -229,7 +229,7 @@ class AuthController extends Controller
                     $image = $request->file('image');
                     $filename = time() . '.' . $image->getClientOriginalExtension();
                     $image->move(public_path('admin/assets/images/users'), $filename);
-                    $userProfile->image = 'admin/assets/images/users/' . $filename;
+                    $userProfile->image = 'public/admin/assets/images/users/' . $filename;
                 }
                 $userProfile->save();
                 return response()->json(['success' => 'User updated successfully', 'data' => $userProfile], 200);

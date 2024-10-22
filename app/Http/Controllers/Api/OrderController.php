@@ -60,7 +60,6 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-
             $userId = $request->input('user_id');
             $cart = new Order();
             $cart->user_id = $userId;

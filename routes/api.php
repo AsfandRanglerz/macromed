@@ -32,8 +32,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/updatePassword/{id}', [AuthController::class, 'updatePassword']);
     Route::match(['get', 'post'], '/user/{id}', [AuthController::class, 'userProfile']);
+    Route::get('/getWhishList/{userId}', [WhishlistController::class, 'getWhishList']);
+    Route::get('getOrderDetail/{userId}',[])
 });
-Route::get('/getWhishList/{userId}', [WhishlistController::class, 'getWhishList']);
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts'])->middleware('throttle:100,1');
