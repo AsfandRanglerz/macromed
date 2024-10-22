@@ -76,15 +76,15 @@ class OrderController extends Controller
     }
     public function getOrderCount()
     {
-        $orderCount = Order::where('status', 'inProcess')->count();
+        $orderCount = Order::where('status', 'pending')->count();
         return response()->json(['count' => $orderCount]);
     }
     public function getInVoiceDetails($id)
     {
         try {
-            // $orderDetails = Order::with('users', 'Items.products', '')->findOrFail($id);
-            return view('admin.order.invoice');
-
+            $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem')->where('id', $id)->findOrFail($id);
+            
+            return view('admin.order.invoice', compact('orders'));
         } catch (\Exception $e) {
             return response()->json([
                 'alert' => 'error',

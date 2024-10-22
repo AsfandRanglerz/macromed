@@ -80,21 +80,60 @@
 
     @yield('js')
     <script>
-            function updateOrderCounter() {
-                $.ajax({
-                    url: "{{ route('orders.count') }}",
-                    type: 'GET',
-                    success: function(response) {
-                        $('#orderCounter').text(response.count);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(error);
-                    }
-                });
-            }
-            updateOrderCounter();
-            setInterval(updateOrderCounter, 1000);
+        function updateOrderCounter() {
+            $.ajax({
+                url: "{{ route('orders.count') }}",
+                type: 'GET',
+                success: function(response) {
+                    $('#orderCounter').text(response.count);
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+        updateOrderCounter();
+        setInterval(updateOrderCounter, 1000);
     </script>
+
+    <script>
+        document.getElementById('printInvoice').addEventListener('click', function() {
+            // Create a new window for printing
+            var printWindow = window.open('', '_blank', 'width=900,height=600');
+
+            // Get the invoice content
+            var invoiceContent = document.querySelector('.invoice').innerHTML;
+
+            // Write the invoice content to the new window
+            printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Invoice Print</title>
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                    <style>
+                        @media print {
+                            .no-print {
+                                display: none;
+                            }
+                            body {
+                                margin: 20px;
+                                font-family: Arial, sans-serif;
+                            }
+                        }
+                    </style>
+                </head>
+                <body onload="window.print();window.close();">
+                    <div class="invoice">${invoiceContent}</div>
+                </body>
+            </html>
+        `);
+
+            // Close the document for rendering
+            printWindow.document.close();
+        });
+    </script>
+
+
     <script>
         toastr.options = {
             "closeButton": false,
