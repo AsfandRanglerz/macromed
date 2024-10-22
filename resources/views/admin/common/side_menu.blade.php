@@ -308,7 +308,7 @@
                         <i data-feather="shopping-cart"></i>
                         <span>Orders</span>
                         <div id="orderCounter"
-                            class="badge {{ request()->is('admin/order*') ? 'bg-white text-danger' : 'bg-danger text-white' }} rounded-circle ">
+                            class="badge {{ request()->is('admin/order*') ? 'bg-white text-primary' : 'bg-primary text-white' }} rounded-circle ">
                         </div>
                     </a>
                 </li>
@@ -318,7 +318,7 @@
                         <i data-feather="shopping-cart"></i>
                         <span>Orders</span>
                         <div id="orderCounter"
-                            class="badge {{ request()->is('admin/order*') ? 'bg-white text-danger' : 'bg-danger text-white' }} rounded-circle ">
+                            class="badge {{ request()->is('admin/order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
                         </div>
                     </a>
                 </li>

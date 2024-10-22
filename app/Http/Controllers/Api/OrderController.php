@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\SalesAgent;
 use Illuminate\Http\Request;
 use App\Models\ProductVaraint;
+use App\Traits\ProductHelperTrait;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 
 class OrderController extends Controller
 {
+    use ProductHelperTrait;
     public function selesAgent()
     {
         try {
@@ -61,6 +63,14 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
+            $currency = $this->getCurrency();
+            if (!$currency) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No Currency found.',
+                ]);
+            }
+            $pkrAmount = $currency->pkr_amount;
             $userId = $request->input('user_id');
             $cart = new Order();
             $cart->user_id = $userId;
@@ -75,7 +85,7 @@ class OrderController extends Controller
             $cart->card_date = $request->card_date;
             $cart->cvc = $request->cvc;
             $cart->order_id = $this->generateRandomString(6);
-            $cart->total = $request->total;
+            $cart->total = $request->total / $pkrAmount;
             $cart->status = 'pending';
             $cart->product_commission = 0;
             $cart->save();
@@ -113,8 +123,8 @@ class OrderController extends Controller
                     $orderItem->variant_number = $product['variant_number'];
                     $orderItem->image = $product['image'];
                     $orderItem->quantity = $product['quantity'];
-                    $orderItem->price = $product['price'];
-                    $orderItem->subtotal = $product['quantity'] * $product['price'];
+                    $orderItem->price = $product['price'] / $pkrAmount;
+                    $orderItem->subtotal = $product['quantity'] * $product['price'] / $pkrAmount;
                     $orderItem->save();
                 } else {
                     DB::rollBack();
@@ -124,7 +134,7 @@ class OrderController extends Controller
                     ], 400);
                 }
             }
-            $cart->product_commission = $totalCommission;
+            $cart->product_commission = $totalCommission / $pkrAmount;
             $cart->save();
             DB::commit();
             $cart->load('orderItem');
