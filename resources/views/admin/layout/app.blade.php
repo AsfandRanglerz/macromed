@@ -95,25 +95,29 @@
         updateOrderCounter();
         setInterval(updateOrderCounter, 1000);
     </script>
-
     <script>
         document.getElementById('printInvoice').addEventListener('click', function() {
             // Create a new window for printing
             var printWindow = window.open('', '_blank', 'width=900,height=600');
+
+            // Get the invoice content
             var invoiceContent = document.querySelector('.invoice').innerHTML;
+
+            // Write the invoice content to the new window
             printWindow.document.write(`
             <html>
                 <head>
                     <title>Invoice Print</title>
                     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
                     <style>
+                        body {
+                            margin: 20px;
+                            font-family: Arial, sans-serif;
+                        }
+                        /* Custom styles for print */
                         @media print {
-                            .no-print {
-                                display: none;
-                            }
-                            body {
-                                margin: 20px;
-                                font-family: Arial, sans-serif;
+                            button {
+                                display: none; /* Hide buttons when printing */
                             }
                         }
                     </style>
@@ -128,6 +132,7 @@
             printWindow.document.close();
         });
     </script>
+
 
 
     <script>
