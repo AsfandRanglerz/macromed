@@ -548,6 +548,7 @@ class ComposerStaticInita31faf40ff9b8773d514dda0170fd133
         'App\\Http\\Controllers\\Admin\\ModalsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ModalsController.php',
         'App\\Http\\Controllers\\Admin\\NumberOfUseController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/NumberOfUseController.php',
         'App\\Http\\Controllers\\Admin\\OfficerController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/OfficerController.php',
+        'App\\Http\\Controllers\\Admin\\OrderController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/OrderController.php',
         'App\\Http\\Controllers\\Admin\\PivateNoteController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PivateNoteController.php',
         'App\\Http\\Controllers\\Admin\\PolicyController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PolicyController.php',
         'App\\Http\\Controllers\\Admin\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ProductController.php',

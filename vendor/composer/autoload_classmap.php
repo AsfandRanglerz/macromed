@@ -22,6 +22,7 @@ return array(
     'App\\Http\\Controllers\\Admin\\ModalsController' => $baseDir . '/app/Http/Controllers/Admin/ModalsController.php',
     'App\\Http\\Controllers\\Admin\\NumberOfUseController' => $baseDir . '/app/Http/Controllers/Admin/NumberOfUseController.php',
     'App\\Http\\Controllers\\Admin\\OfficerController' => $baseDir . '/app/Http/Controllers/Admin/OfficerController.php',
+    'App\\Http\\Controllers\\Admin\\OrderController' => $baseDir . '/app/Http/Controllers/Admin/OrderController.php',
     'App\\Http\\Controllers\\Admin\\PivateNoteController' => $baseDir . '/app/Http/Controllers/Admin/PivateNoteController.php',
     'App\\Http\\Controllers\\Admin\\PolicyController' => $baseDir . '/app/Http/Controllers/Admin/PolicyController.php',
     'App\\Http\\Controllers\\Admin\\ProductController' => $baseDir . '/app/Http/Controllers/Admin/ProductController.php',
