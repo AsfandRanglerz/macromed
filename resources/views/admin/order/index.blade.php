@@ -183,12 +183,20 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success btn-sm mr-1  text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger btn-sm mr-1 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            return `
+        <div class="dropdown d-inline">
+            <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="dropdownMenuButton${row.id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton${row.id}">
+                <a class="dropdown-item has-icon editSubadminBtn" href="#" data-id="${row.id}"><i class="fas fa-edit"></i>Edit</a>
+                <a class="dropdown-item has-icon deleteSubadminBtn" href="#" data-id="${row.id}"><i class="fas fa-trash-alt"></i>Delete</a>
+            </div>
+        </div>
+        `;
                         }
                     }
+
 
                 ]
             });
@@ -225,10 +233,7 @@
                 },
                 error: function(jqXHR) {
                     var response = jqXHR.responseJSON;
-                    Toast.fire({
-                        icon: response.alert,
-                        title: response.message
-                    });
+                    toastr.error('An error occur!');
                 }
             });
         });
@@ -303,10 +308,7 @@
                 url: "{{ route('order.delete', ['id' => ':id']) }}".replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    Toast.fire({
-                        icon: response.alert,
-                        title: response.message
-                    });
+                    toastr.success('Order Deleted Successfully!');
                     $('#deleteProductModal').modal('hide');
                     reloadDataTable();
                 },
