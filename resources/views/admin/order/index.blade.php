@@ -152,12 +152,9 @@
                     {
                         "data": "created_at",
                         "render": function(data, type, row) {
-                            // Parse the created_at date from the row object
                             const createdAtDate = new Date(data);
-                            // Format date and time
                             const formattedDate = createdAtDate.toLocaleDateString();
                             const formattedTime = createdAtDate.toLocaleTimeString();
-                            // Return formatted date and time in separate lines
                             return `<div>${formattedDate}</div><div>${formattedTime}</div>`;
                         }
                     },
@@ -318,6 +315,5 @@
                 }
             });
         }
-
     </script>
 @endsection

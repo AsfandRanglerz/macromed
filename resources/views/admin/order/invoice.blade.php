@@ -37,7 +37,8 @@
                                     <div class="col-md-6">
                                         <address>
                                             <strong>Payment Method:</strong><br>
-                                            Visa ending **** {{ substr($orders->card_number, -4) }}<br>
+                                            {{ $orders->payment_type === 'cash on delivery' ? 'Cash on Delivery' : 'Online' }}
+                                            ending **** {{ substr($orders->card_number, -4) }}<br>
                                             {{ $orders->users->email }}
                                             <!-- Assuming 'users' relation contains the email -->
                                         </address>
