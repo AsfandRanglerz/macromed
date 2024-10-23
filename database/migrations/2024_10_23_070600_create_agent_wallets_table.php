@@ -15,10 +15,9 @@ class CreateAgentWalletsTable extends Migration
     {
         Schema::create('agent_wallets', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('agent_id')->unsigned();
-            $table->foreign('agent_id')->references('id')->on('sales_agents')->onDelete('cascade')->nullable();
-            $table->string('remaning_commission_amount')->default(0);
-            $table->string('total_commission_amount')->default(0);
+            $table->decimal('recevied_commission')->nullable();
+            $table->decimal('pending_commission')->nullable();
+            $table->decimal('total_commission')->nullable();
             $table->timestamps();
         });
     }
