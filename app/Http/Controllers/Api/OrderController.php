@@ -152,15 +152,51 @@ class OrderController extends Controller
         }
     }
 
-    // public function getOrderDetail($userId)
-    // {
-    //     try {
-    //         $getUserOrder=Order::where('user_id',$userId)->with('orderItem:')->get();
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Something went wrong: ' . $e->getMessage(),
-    //         ], 500);
-    //     }
-    // }
+    public function getOrderDetail($userId)
+    {
+        try {
+            $getUserOrders = Order::where('user_id', $userId)->select('id', 'order_id', 'payment_type', 'status')
+                ->with('orderItem:order_id,variant_number,image')
+                ->get();
+            $totalOrders = $getUserOrders->count();
+            $pendingOrders = $getUserOrders->where('status', 'pending')->count();
+            $deliveredOrders = $getUserOrders->where('status', 'delivered')->count();
+            return response()->json([
+                'status' => 'success',
+                'total_orders' => $totalOrders,
+                'pending_orders' => $pendingOrders,
+                'delivered_orders' => $deliveredOrders,
+                'order_details' => $getUserOrders,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getOrderCount($userId)
+    {
+        try {
+            $totalOrders = Order::where('user_id', $userId)->count();
+            $pendingOrders = Order::where('user_id', $userId)
+                ->where('status', 'pending')
+                ->count();
+            $deliveredOrders = Order::where('user_id', $userId)
+                ->where('status', 'delivered')
+                ->count();
+            return response()->json([
+                'status' => 'success',
+                'total_orders' => $totalOrders,
+                'pending_orders' => $pendingOrders,
+                'delivered_orders' => $deliveredOrders,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

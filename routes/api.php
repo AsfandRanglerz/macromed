@@ -33,8 +33,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/updatePassword/{id}', [AuthController::class, 'updatePassword']);
     Route::match(['get', 'post'], '/user/{id}', [AuthController::class, 'userProfile']);
     Route::get('/getWhishList/{userId}', [WhishlistController::class, 'getWhishList']);
+    Route::get('getOrderDetail/{userId}', [OrderController::class, 'getOrderDetail']);
+    Route::get('getOrderCount/{userId}', [OrderController::class, 'getOrderCount']);
 });
-Route::get('getOrderDetail/{userId}', [OrderController::class, 'getOrderDetail']);
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts'])->middleware('throttle:100,1');
