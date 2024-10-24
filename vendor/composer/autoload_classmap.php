@@ -118,6 +118,7 @@ return array(
     'App\\Models\\UserNotification' => $baseDir . '/app/Models/UserNotification.php',
     'App\\Models\\WhishList' => $baseDir . '/app/Models/WhishList.php',
     'App\\Models\\admin' => $baseDir . '/app/Models/admin.php',
+    'App\\Notifications\\UserNotification' => $baseDir . '/app/Notifications/UserNotification.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',
     'App\\Providers\\BroadcastServiceProvider' => $baseDir . '/app/Providers/BroadcastServiceProvider.php',

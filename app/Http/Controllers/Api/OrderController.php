@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
+use App\Mail\orderConfirmation;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -135,7 +137,13 @@ class OrderController extends Controller
                 }
             }
             $cart->product_commission = $totalCommission / $pkrAmount;
+            $cart->order_confirmation_message = 'Your order #' . $cart->order_id . ' is pending. The admin will review it shortly. Please check back later for updates.';
             $cart->save();
+            $data['useremail'] =  $cart->users->email;
+            $data['username'] =  $cart->users->name;
+            $data['ordercode'] = $cart->order_id;
+            $data['total'] = $cart->total;
+            Mail::to($data['useremail'])->send(new orderConfirmation($data));
             DB::commit();
             $cart->load('orderItem');
             return response()->json([

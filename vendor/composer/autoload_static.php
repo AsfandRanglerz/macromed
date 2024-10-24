@@ -644,6 +644,7 @@ class ComposerStaticInita31faf40ff9b8773d514dda0170fd133
         'App\\Models\\UserNotification' => __DIR__ . '/../..' . '/app/Models/UserNotification.php',
         'App\\Models\\WhishList' => __DIR__ . '/../..' . '/app/Models/WhishList.php',
         'App\\Models\\admin' => __DIR__ . '/../..' . '/app/Models/admin.php',
+        'App\\Notifications\\UserNotification' => __DIR__ . '/../..' . '/app/Notifications/UserNotification.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
