@@ -35,7 +35,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/getWhishList/{userId}', [WhishlistController::class, 'getWhishList']);
     Route::get('getOrderCount/{userId}', [OrderController::class, 'getOrderCount']);
     Route::get('getOrderDetail/{userId}', [OrderController::class, 'getOrderDetail']);
+    Route::get('getOrderNotification/{userId}', [OrderController::class, 'getOrderNotification']);
 });
+
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts'])->middleware('throttle:100,1');

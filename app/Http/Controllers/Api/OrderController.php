@@ -142,7 +142,7 @@ class OrderController extends Controller
             $data['useremail'] =  $cart->users->email;
             $data['username'] =  $cart->users->name;
             $data['ordercode'] = $cart->order_id;
-            $data['total'] = $cart->total;
+            $data['total'] = $cart->total * $pkrAmount;
             Mail::to($data['useremail'])->send(new orderConfirmation($data));
             DB::commit();
             $cart->load('orderItem');
@@ -165,7 +165,7 @@ class OrderController extends Controller
         try {
             $getUserOrders = Order::where('user_id', $userId)->select('id', 'order_id', 'payment_type', 'status')
                 ->with('orderItem:order_id,variant_number,image')
-                ->get();
+                ->latest()->get();
             $totalOrders = $getUserOrders->count();
             $pendingOrders = $getUserOrders->where('status', 'pending')->count();
             $deliveredOrders = $getUserOrders->where('status', 'delivered')->count();
@@ -199,6 +199,27 @@ class OrderController extends Controller
                 'total_orders' => $totalOrders,
                 'pending_orders' => $pendingOrders,
                 'delivered_orders' => $deliveredOrders,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function getOrderNotification($userId)
+    {
+        try {
+            $seenCount = Order::where('user_id', $userId)->where('seen_by', 0)->count();
+            $notificationMessage = Order::where('user_id', $userId)
+                ->select('status', 'order_confirmation_message')
+                ->get();
+            return response()->json([
+                'status' => 'success',
+                'seen_notification' => $seenCount,
+                'notifcation_message' => $notificationMessage,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

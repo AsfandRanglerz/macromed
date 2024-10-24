@@ -17,7 +17,7 @@
             </ul>
             <div>
                 <p style="font-size: 16px; margin-top: 10px;">
-                    Your Order Total: Rs: {{ $data['total_amount'] }}
+                    Your Order Total: Rs: {{ $data['total'] }}
                 </p>
             </div>
         </div>
