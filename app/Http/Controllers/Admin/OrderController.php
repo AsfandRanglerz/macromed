@@ -27,12 +27,6 @@ class OrderController extends Controller
         $json_data["data"] = $orders;
         return json_encode($json_data);
     }
-    public function orderDeliverIndex()
-    {
-        $orders = Order::with('users', 'Items.products', 'cashBack')->latest()->get();
-        // return  $orders;
-        return view('admin.deliveredorder.index', compact('orders'));
-    }
     public function getStatus($id)
     {
         try {
@@ -83,7 +77,7 @@ class OrderController extends Controller
     {
         try {
             $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem')->where('id', $id)->findOrFail($id);
-            
+
             return view('admin.order.invoice', compact('orders'));
         } catch (\Exception $e) {
             return response()->json([

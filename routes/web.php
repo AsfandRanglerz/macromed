@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\DeliveryOrderController;
 use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
 use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
 use App\Http\Controllers\SalesAgent\SalesAgentNotificationController;
@@ -314,6 +315,14 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/order/details/{id}',  'getOrderDetails')->name('order.details')->middleware('permission:Pending Orders');
         ### InVoice ####
         Route::get('/order/invoice/{id}',  'getInVoiceDetails')->name('invoice.index')->middleware('permission:Pending Orders');
+    });
+
+      // ############## Orders ############
+      Route::controller(DeliveryOrderController::class)->group(function () {
+        Route::get('/orderDeliverData',  'orderDeliverData')->name('orderDeliver.get');
+        Route::get('/delivered-orders',  'orderDeliverIndex')->name('orderDeliver.index');
+        ### InVoice ####
+        Route::get('/delivered-orders/invoice/{id}',  'getInVoiceDeliverDetails')->name('invoiceDeliver.index');
     });
 });
 //################################ Sales Agent Routes #############################

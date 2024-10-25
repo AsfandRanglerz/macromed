@@ -323,6 +323,23 @@
                     </a>
                 </li>
             @endif
+
+            {{-- Deliver Orders --}}
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
+                <li class="dropdown {{ request()->is('admin/delivered-orders*') ? 'active' : '' }}">
+                    <a href="{{ route('orderDeliver.index') }}" class="nav-link padding" style="padding-left: 27px">
+                        <i data-feather="shopping-cart"></i>
+                        <span>Delivered Orders</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/delivered-orders*') ? 'active' : '' }}">
+                    <a href="{{ route('orderDeliver.index') }}" class="nav-link padding" style="padding-left: 27px">
+                        <i data-feather="shopping-cart"></i>
+                        <span>Delivered Orders</span>
+                    </a>
+                </li>
+            @endif
             {{-- Currency --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Currency'))
                 <li class="dropdown {{ request()->is('admin/currency*') ? 'active' : '' }}">
