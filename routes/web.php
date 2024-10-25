@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\AboutusController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -24,11 +25,11 @@ use App\Http\Controllers\Admin\NumberOfUseController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\MainMaterialController;
 use App\Http\Controllers\Admin\CertificationController;
+use App\Http\Controllers\Admin\DeliveryOrderController;
 use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\AdminNotificationController;
-use App\Http\Controllers\Admin\DeliveryOrderController;
 use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
 use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
 use App\Http\Controllers\SalesAgent\SalesAgentNotificationController;
@@ -304,8 +305,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         // Route::get('/privateNotes/delete/{id}',  'deletePrivateNotes')->name('privateNotes.delete');
     });
 
-     // ############## Orders ############
-     Route::controller(OrderController::class)->group(function () {
+    // ############## Orders ############
+    Route::controller(OrderController::class)->group(function () {
         Route::get('/orderData',  'orderData')->name('order.get')->middleware('permission:Pending Orders');
         Route::get('/order',  'orderIndex')->name('order.index')->middleware('permission:Pending Orders');
         Route::get('/orders/{id}/status',  'getStatus')->name('orders.status')->middleware('permission:Pending Orders');
@@ -317,12 +318,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/order/invoice/{id}',  'getInVoiceDetails')->name('invoice.index')->middleware('permission:Pending Orders');
     });
 
-      // ############## Orders ############
-      Route::controller(DeliveryOrderController::class)->group(function () {
+    // ############## Orders ############
+    Route::controller(DeliveryOrderController::class)->group(function () {
         Route::get('/orderDeliverData',  'orderDeliverData')->name('orderDeliver.get');
         Route::get('/delivered-orders',  'orderDeliverIndex')->name('orderDeliver.index');
         ### InVoice ####
         Route::get('/delivered-orders/invoice/{id}',  'getInVoiceDeliverDetails')->name('invoiceDeliver.index');
+    });
+    Route::controller(ReportsController::class)->group(function () {
+        Route::get('/reports',  'reportsIndex')->name('reports.index');
+        Route::get('reports/data/{period}', 'getReportsData')->name('admin.reports.data');
     });
 });
 //################################ Sales Agent Routes #############################

@@ -327,16 +327,35 @@
             {{-- Deliver Orders --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
                 <li class="dropdown {{ request()->is('admin/delivered-orders*') ? 'active' : '' }}">
-                    <a href="{{ route('orderDeliver.index') }}" class="nav-link padding" style="padding-left: 27px">
+                    <a href="{{ route('orderDeliver.index') }}" class="nav-link padding"
+                        style="padding-left: 27px">
                         <i data-feather="shopping-cart"></i>
                         <span>Delivered Orders</span>
                     </a>
                 </li>
             @elseif (auth()->guard('admin')->check())
                 <li class="dropdown {{ request()->is('admin/delivered-orders*') ? 'active' : '' }}">
-                    <a href="{{ route('orderDeliver.index') }}" class="nav-link padding" style="padding-left: 27px">
+                    <a href="{{ route('orderDeliver.index') }}" class="nav-link padding"
+                        style="padding-left: 27px">
                         <i data-feather="shopping-cart"></i>
                         <span>Delivered Orders</span>
+                    </a>
+                </li>
+            @endif
+
+            {{-- Reports --}}
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
+                <li class="dropdown {{ request()->is('admin/reports*') ? 'active' : '' }}">
+                    <a href="{{ route('reports.index') }}" class="nav-link">
+                        <span><i data-feather="file-text"></i></span>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/reports*') ? 'active' : '' }}">
+                    <a href="{{ route('reports.index') }}" class="nav-link">
+                        <i data-feather="file-text"></i>
+                        <span>Reports</span>
                     </a>
                 </li>
             @endif

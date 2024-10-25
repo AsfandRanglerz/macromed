@@ -220,7 +220,7 @@ class AuthController extends Controller
             if ($request->isMethod('get')) {
                 return response()->json(['user' => $userProfile], 200);
             } elseif ($request->isMethod('post')) {
-                $userProfile->fill($request->only(['name', 'phone', 'profession', 'location']));
+                $userProfile->fill($request->only(['name', 'phone', 'profession', 'location', 'country', 'state', 'city', 'work_space_name', 'work_space_email', 'work_space_address', 'work_space_number']));
                 if ($request->hasFile('image')) {
                     $oldImagePath =  $userProfile->image;
                     if ($userProfile->image && File::exists(public_path($oldImagePath))) {
