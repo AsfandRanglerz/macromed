@@ -29,7 +29,7 @@ class SalesAgent extends Authenticatable
 
     public function agentWallet()
     {
-        return $this->hasOne(AgentWallet::class, 'agent_id');
+        return $this->hasOne(AgentWallet::class, 'sales_agent_id');
     }
 
     public function adminNotification()

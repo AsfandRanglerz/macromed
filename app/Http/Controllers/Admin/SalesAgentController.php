@@ -12,6 +12,7 @@ use App\Models\UserAccount;
 use App\Models\AgentAccount;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Mail\SalesAgentRegistration;
 use Illuminate\Support\Facades\File;
@@ -110,6 +111,7 @@ class SalesAgentController extends Controller
     public function salesagentCreate(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'name' => [
                     'required',
@@ -132,6 +134,7 @@ class SalesAgentController extends Controller
             ]);
 
             if ($validator->fails()) {
+                DB::rollBack();
                 return response()->json(['errors' => $validator->errors()], 422);
             }
             $data = $request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location']);
@@ -154,7 +157,7 @@ class SalesAgentController extends Controller
                 $account->save();
                 //######### Wallet  ###########
                 $wallet = new AgentWallet();
-                $wallet->agent_id = $salesManager->id;
+                $wallet->sales_agent_id = $salesManager->id;
                 $wallet->recevied_commission = 0;
                 $wallet->pending_commission = 0;
                 $wallet->total_commission = 0;
@@ -167,10 +170,14 @@ class SalesAgentController extends Controller
                 $data['account_holder_name'] = $salesManager->email;
                 $data['account_number'] = $request->password;
                 Mail::to($salesManager->email)->send(new SalesAgentRegistration($data));
+                DB::commit();
                 return response()->json(['alert' => 'success', 'message' => 'Sales Managers Created Successfully!']);
+            } else {
+                DB::rollBack();
+                return response()->json(['alert' => 'error', 'message' => 'Sales Managers Not Created!']);
             }
-            return response()->json(['alert' => 'error', 'message' => 'Sales Managers Not Created!']);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating Sales Managers: ' . $e->getMessage()], 500);
         }
     }

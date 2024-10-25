@@ -9,4 +9,8 @@ class AgentWallet extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    public function saleAgent()
+    {
+        return $this->belongsTo(SalesAgent::class);
+    }
 }

@@ -468,7 +468,7 @@
 
                         });
                     } else {
-                        console.log("Error:", xhr);
+                        toastr.error('An error occurred while Creating Sales Managers');
                     }
                 },
                 complete: function() {
