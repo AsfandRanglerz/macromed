@@ -25,7 +25,7 @@
                                             <th>Country</th>
                                             <th>State</th>
                                             <th>City</th>
-                                            <th>Product Commission</th>
+                                            <th>Sales Agent Commission</th>
                                             <th>Total Amount</th>
                                             <th>Order Date</th>
                                             <th>Order Detail</th>
