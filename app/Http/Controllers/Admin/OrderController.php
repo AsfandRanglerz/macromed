@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\SalesAgentNotification;
 
 class OrderController extends Controller
 {
@@ -47,13 +48,17 @@ class OrderController extends Controller
             $order = Order::findOrFail($id);
             $order->status = $request->status;
             $order->save();
-            if ($request->status == 'completed') {
+            if ($order->status == 'completed') {
                 $totalCommission = $order->product_commission;
                 $agentWallet = AgentWallet::where('sales_agent_id', $order->sales_agent_id)->first();
                 if ($agentWallet) {
                     $agentWallet->total_commission += $totalCommission;
                     $agentWallet->save();
                 }
+                SalesAgentNotification::create([
+                    'sales_agent_id' => $order->sales_agent_id,
+                    'message' => 'You received a commission of $' . $totalCommission . '!',
+                ]);
             }
             DB::commit();
             return response()->json(['alert' => 'success', 'message' => 'Status updated successfully']);

@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-danger" id="updateStatusBtn">Update</button>
+                    <button type="button" class="btn btn-primary" id="updateStatusBtn">Update</button>
                 </div>
             </div>
         </div>
