@@ -231,9 +231,9 @@
                     id: orderId
                 },
                 success: function(response) {
-                    if (response.status === 'completed') {
+                    if (response.status == 'completed') {
                         $('#deliveredCheckbox').prop('checked', true);
-                    } else if (response.status === 'pending') {
+                    } else if (response.status == 'pending') {
                         $('#pendingCheckbox').prop('checked', true);
                     }
                 },
@@ -282,12 +282,16 @@
                         $('#editProduct').modal('hide');
                         reloadDataTable();
                     },
-                    error: function(jqXHR) {
+                    error: function(jqXHR, xhr) {
                         var response = jqXHR.responseJSON;
-                        Toast.fire({
-                            icon: response.alert,
-                            title: response.message
-                        });
+
+                        // Check if there is an error message in the response
+                        if (response && response.error) {
+                            toastr.error(response.error); // Display the server error message
+                        } else {
+                            toastr.error(
+                                'An error occurred!'); // Fallback for unexpected errors
+                        }
                     }
                 });
             });

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\AgentWallet;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 class OrderController extends Controller
 {
@@ -36,31 +39,29 @@ class OrderController extends Controller
             return response()->json(['error' => 'Failed To Get' . $e->getMessage()], 500);
         }
     }
+
     public function updateStatus(Request $request, $id)
     {
         try {
-            $order = Order::with('users')->findOrFail($id);
+            DB::beginTransaction();
+            $order = Order::findOrFail($id);
             $order->status = $request->status;
             $order->save();
-
-            // if ($request->status == 'completed') {
-            //     $title = 'Order Delivered';
-            //     $description = "Your order has been successfully delivered. Thank you for shopping with us!";
-            //     EzaaShopNotificationHelper::sendFcmNotification($order->users->fcm_token, $title, $description);
-            //     Notification::create([
-            //         'title' => $title,
-            //         'descriptions' => $description,
-            //         'receiver_user_id' => $order->users->id,
-            //         'admin' => 'EzaaShop',
-            //     ]);
-            // }
-
+            if ($request->status == 'completed') {
+                $totalCommission = $order->product_commission;
+                $agentWallet = AgentWallet::where('sales_agent_id', $order->sales_agent_id)->first();
+                if ($agentWallet) {
+                    $agentWallet->total_commission += $totalCommission;
+                    $agentWallet->save();
+                }
+            }
+            DB::commit();
             return response()->json(['alert' => 'success', 'message' => 'Status updated successfully']);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['error' => 'Failed to update status: ' . $e->getMessage()], 500);
         }
     }
-
 
     public function deleteOrder($id)
     {
