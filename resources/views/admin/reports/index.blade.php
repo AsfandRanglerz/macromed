@@ -19,7 +19,8 @@
                             </div>
                             <div class="row col-12 mt-3 d-flex justify-content-center">
                                 <div class="form-group col-sm-12 mb-2 d-flex align-items-start">
-                                    <button class="btn btn-danger" onclick="clearFilters()">Clear Filters</button>
+                                    <button class="btn btn-danger" id="filterButton" onclick="clearFilters()">Clear
+                                        Filters</button>
                                 </div>
                                 <div class="form-group col-sm-4 mb-2">
                                     <label for="periodSelect">Select Period</label>
@@ -71,7 +72,6 @@
                                 </div> --}}
                             </div>
 
-
                             <div class="card-body table-responsive">
                                 <h4 id="totalAmount" class="mb-2"></h4>
                                 <table id="example" class="responsive table table-striped table-bordered">
@@ -104,17 +104,15 @@
 @section('js')
     <script>
         function clearFilters() {
-            // Reset all filter fields to their default values
-            document.getElementById('periodSelect').value = 'daily'; // Reset to default value
-            document.getElementById('startDate').value = ''; // Clear start date
-            document.getElementById('endDate').value = ''; // Clear end date
-            document.getElementById('areaSelect').selectedIndex = 0; // Reset to "Select Area"
-            document.getElementById('supplierSelect').selectedIndex = 0; // Reset to "Select Supplier"
-            document.getElementById('productSelect').selectedIndex = 0; // Reset to "Select Product"
-
-            // Call loadData function to refresh the data after clearing filters
+            document.getElementById('periodSelect').value = 'daily';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            $('#areaSelect').val('').trigger('change');
+            $('#supplierSelect').val(null).trigger('change');
+            $('#productSelect').val('').trigger('change');
             loadData();
         }
+
         $(document).ready(function() {
             var dataTable = $('#example').DataTable({
                 "ajax": {
@@ -169,7 +167,9 @@
                         "render": function(data) {
                             let totalProfit = 0;
                             data.order_item.forEach(item => {
-                                totalProfit += (item.selling_price_per_unit - item
+                                console.log("data", item);
+                                totalProfit += (item.product_variant
+                                    .selling_price_per_unit - item.product_variant
                                     .price_per_unit) * item.quantity;
                             });
                             return '$: ' + totalProfit.toFixed(2);
@@ -203,12 +203,22 @@
                 dataTable.ajax.reload();
             };
 
-            $('#periodSelect, #startDate, #endDate, #areaSelect, #supplierSelect, #productSelect').change(
-                function() {
-                    loadData();
-                });
+            // Modify change event to handle date filters
+            $('#startDate, #endDate').change(function() {
+                if ($('#startDate').val() || $('#endDate').val()) {
+                    $('#periodSelect').val(''); // Clear period selection
+                } else {
+                    $('#periodSelect').val('daily'); // Reset to default if no dates
+                }
+                loadData();
+            });
+
+            $('#periodSelect, #areaSelect, #supplierSelect, #productSelect').change(function() {
+                loadData();
+            });
         });
     </script>
+
 
 
 

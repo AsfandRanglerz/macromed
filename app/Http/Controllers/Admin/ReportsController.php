@@ -13,15 +13,17 @@ class ReportsController extends Controller
     public function reportsIndex()
     {
         $suppliers = Supplier::where('status', '1')->get();
+        // $query = Order::with(['users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem.productVariant.products'])->where('status', 'completed')
+        // ->latest()->get();
+        // return $query;
         return view('admin.reports.index', compact('suppliers'));
     }
 
-
     public function getReportsData(Request $request)
     {
-        $query = Order::with(['users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem'])->where('status', 'completed')
+        $query = Order::with(['users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem.productVariant'])->where('status', 'completed')
             ->latest();
-        $period = $request->input('period', 'daily');
+
         if ($request->filled('startDate') && $request->filled('endDate')) {
             $query->whereBetween('created_at', [$request->startDate, $request->endDate]);
         } elseif ($request->filled('startDate')) {
@@ -29,6 +31,8 @@ class ReportsController extends Controller
         } elseif ($request->filled('endDate')) {
             $query->whereDate('created_at', '<=', $request->endDate);
         } else {
+            // If no dates are provided, then check for period
+            $period = $request->input('period', 'daily');
             switch ($period) {
                 case 'daily':
                     $query->whereDate('created_at', Carbon::today());
@@ -45,30 +49,15 @@ class ReportsController extends Controller
             }
         }
 
-
-
-        // Date range filter
-        if ($request->filled('startDate') && $request->filled('endDate')) {
-            $query->whereBetween('created_at', [$request->startDate, $request->endDate]);
-        } elseif ($request->filled('startDate')) {
-            $query->whereDate('created_at', '>=', $request->startDate);
-        } elseif ($request->filled('endDate')) {
-            $query->whereDate('created_at', '<=', $request->endDate);
-        }
-
-        // Area filter
+        // Area, supplier, and product filters
         if ($request->filled('area')) {
             $query->where('area_id', $request->area);
         }
-
-        // Supplier filter
         if ($request->filled('supplier')) {
             $query->whereHas('orderItem.productVariant.products', function ($q) use ($request) {
                 $q->where('supplier_name', $request->supplier);
             });
         }
-
-        // Product filter
         if ($request->filled('product')) {
             $query->whereHas('orderItem', function ($q) use ($request) {
                 $q->where('product_id', $request->product);
