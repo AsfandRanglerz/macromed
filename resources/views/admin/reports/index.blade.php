@@ -18,36 +18,59 @@
                                 <h4>Reports</h4>
                             </div>
                             <div class="row col-12 mt-3 d-flex justify-content-center">
-                                <!-- Period Selection Dropdown -->
-                                <select id="periodSelect" class="form-control col-sm-2 mr-2 mb-2 mb-md-0"
-                                    onchange="loadData()">
-                                    <option value="daily" selected>Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
-                                    <option value="yearly">Yearly</option>
-                                </select>
+                                <div class="form-group col-sm-12 mb-2 d-flex align-items-start">
+                                    <button class="btn btn-danger" onclick="clearFilters()">Clear Filters</button>
+                                </div>
+                                <div class="form-group col-sm-4 mb-2">
+                                    <label for="periodSelect">Select Period</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="daily" selected>Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="yearly">Yearly</option>
+                                    </select>
+                                </div>
 
-                                <!-- Date Range for Custom Filtering -->
-                                <input type="date" id="startDate" class="form-control col-sm-2 mr-2 mb-2 mb-md-0"
-                                    placeholder="Start Date">
-                                <input type="date" id="endDate" class="form-control col-sm-2 mr-2 mb-2 mb-md-0"
-                                    placeholder="End Date">
+                                <div class="form-group col-sm-4 mb-2">
+                                    <label for="startDate">Start Date</label>
+                                    <input type="date" id="startDate" class="form-control" placeholder="Start Date">
+                                </div>
+                                <div class="form-group col-sm-4 mb-2">
+                                    <label for="endDate">End Date</label>
+                                    <input type="date" id="endDate" class="form-control" placeholder="End Date">
+                                </div>
 
-                                <!-- Area, Supplier, and Product Dropdowns -->
-                                <select id="areaSelect" class="form-control col-sm-2 mr-2 mb-2 mb-md-0">
-                                    <option value="">Select Area</option>
-                                    <!-- Populate this dynamically with areas -->
-                                </select>
-                                <select id="supplierSelect" class="form-control col-sm-2 mr-2 mb-2 mb-md-0">
-                                    <option value="">Select Supplier</option>
-                                    <!-- Populate this dynamically with suppliers -->
-                                </select>
-                                <select id="productSelect" class="mt-3 form-control col-sm-2 mb-2 mb-md-0">
-                                    <option value="">Select Product</option>
-                                    <!-- Populate this dynamically with products -->
-                                </select>
-                                <button class="mt-3 btn btn-primary ml-2" onclick="loadData()">Apply Filters</button>
+                                <div class="form-group col-sm-4 mb-2">
+                                    <label for="areaSelect">Select Area</label>
+                                    <select id="areaSelect" class="form-control select2">
+                                        <option value="">Select Area</option>
+                                        <!-- Populate this dynamically with areas -->
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-sm-4 mb-2">
+                                    <label for="supplierSelect">Select Supplier</label>
+                                    <select id="supplierSelect" class="form-control select2">
+                                        <option value="" selected disabled>Select Supplier</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->name }}">{{ $supplier->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-sm-4 mb-2">
+                                    <label for="productSelect">Select Product</label>
+                                    <select id="productSelect" class="form-control select2">
+                                        <option value="">Select Product</option>
+                                        <!-- Populate this dynamically with products -->
+                                    </select>
+                                </div>
+
+                                {{-- <div class="form-group col-sm-3 mb-2 d-flex align-items-end">
+                                    <button class="btn btn-primary" onclick="loadData()">Apply Filters</button>
+                                </div> --}}
                             </div>
+
 
                             <div class="card-body table-responsive">
                                 <h4 id="totalAmount" class="mb-2"></h4>
@@ -80,10 +103,22 @@
 
 @section('js')
     <script>
+        function clearFilters() {
+            // Reset all filter fields to their default values
+            document.getElementById('periodSelect').value = 'daily'; // Reset to default value
+            document.getElementById('startDate').value = ''; // Clear start date
+            document.getElementById('endDate').value = ''; // Clear end date
+            document.getElementById('areaSelect').selectedIndex = 0; // Reset to "Select Area"
+            document.getElementById('supplierSelect').selectedIndex = 0; // Reset to "Select Supplier"
+            document.getElementById('productSelect').selectedIndex = 0; // Reset to "Select Product"
+
+            // Call loadData function to refresh the data after clearing filters
+            loadData();
+        }
         $(document).ready(function() {
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('admin.reports.data', ['period' => 'daily']) }}",
+                    "url": "{{ route('admin.reports.data') }}",
                     "type": "GET",
                     "data": function(d) {
                         d.period = $('#periodSelect').val();
@@ -97,12 +132,10 @@
                         $('#totalAmount').text('Total Amount: Rs ' + (json.totalAmount || 0).toFixed(
                             2));
                         return json.salesData;
-                    },
+                    }
                 },
                 "dom": 'Bfrtip',
-                "buttons": [
-                    'excel', 'print'
-                ],
+                "buttons": ['excel', 'print'],
                 "columns": [{
                         "data": null,
                         "render": (data, type, row, meta) => meta.row + 1
@@ -135,7 +168,7 @@
                         "data": null,
                         "render": function(data) {
                             let totalProfit = 0;
-                            data.items.forEach(item => {
+                            data.order_item.forEach(item => {
                                 totalProfit += (item.selling_price_per_unit - item
                                     .price_per_unit) * item.quantity;
                             });
@@ -166,19 +199,17 @@
                 ]
             });
 
-            // window.loadData = function() {
-            //     var period = $('#periodSelect').val(); // Get the selected period
-            //     if (period) { // Check if period is not empty
-            //         dataTable.ajax.url("{{ route('admin.reports.data', ['period' => '']) }}/" + period).load();
-            //     } else {
-            //         console.error("Period is not defined.");
-            //     }
-            // };
-            // $('#periodSelect').change(function() {
-            //     loadData(); // Load data when the period changes
-            // });
-            // Load default data on page load
-            loadData();
+            window.loadData = function() {
+                dataTable.ajax.reload();
+            };
+
+            $('#periodSelect, #startDate, #endDate, #areaSelect, #supplierSelect, #productSelect').change(
+                function() {
+                    loadData();
+                });
         });
     </script>
+
+
+
 @endsection

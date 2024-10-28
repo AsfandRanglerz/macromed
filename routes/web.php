@@ -327,7 +327,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     });
     Route::controller(ReportsController::class)->group(function () {
         Route::get('/reports',  'reportsIndex')->name('reports.index');
-        Route::get('reports/data/{period}', 'getReportsData')->name('admin.reports.data');
+        Route::get('reports/data/', 'getReportsData')->name('admin.reports.data');
     });
 });
 //################################ Sales Agent Routes #############################
