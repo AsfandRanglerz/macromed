@@ -11,19 +11,19 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\SalesAgentNotification;
 
+
 class OrderController extends Controller
 {
-    public function orderData()
+    public function orderData(Request $request)
     {
-        $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem')->where('status', 'pending')->latest()->get();
+        $status = $request->query('status', 'pending');
+        $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem')->where('status', $status)->latest()->get();
         $json_data["data"] = $orders;
         return json_encode($json_data);
     }
     public function orderIndex()
     {
-        $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem')->where('status', 'pending')->latest()->get();
-        // return  $orders;
-        return view('admin.order.index', compact('orders'));
+        return view('admin.order.index');
     }
     public function orderDeliveredData()
     {

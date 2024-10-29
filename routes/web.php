@@ -318,13 +318,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/order/invoice/{id}',  'getInVoiceDetails')->name('invoice.index')->middleware('permission:Pending Orders');
     });
 
-    // ############## Orders ############
-    Route::controller(DeliveryOrderController::class)->group(function () {
-        Route::get('/orderDeliverData',  'orderDeliverData')->name('orderDeliver.get');
-        Route::get('/delivered-orders',  'orderDeliverIndex')->name('orderDeliver.index');
-        ### InVoice ####
-        Route::get('/delivered-orders/invoice/{id}',  'getInVoiceDeliverDetails')->name('invoiceDeliver.index');
-    });
     Route::controller(ReportsController::class)->group(function () {
         Route::get('/reports',  'reportsIndex')->name('reports.index');
         Route::get('reports/data/', 'getReportsData')->name('admin.reports.data');

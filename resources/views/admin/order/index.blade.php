@@ -13,6 +13,15 @@
                                     <h4>Orders</h4>
                                 </div>
                             </div>
+                            <div class="row col-12 mt-3 d-flex justify-content-start">
+                                <div class="form-group col-sm-3 mb-2">
+                                    <label for="periodSelect">Order Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="pending" selected>Pending</option>
+                                        <option value="completed">Delivered</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="card-body table-responsive">
 
                                 <table class="responsive table table-striped table-bordered" id="example">
@@ -99,6 +108,11 @@
 @section('js')
     {{-- Data Table --}}
     <script>
+          function loadData() {
+        var status = $('#periodSelect').val(); // Get the selected status
+        var dataTable = $('#example').DataTable();
+        dataTable.ajax.url("{{ route('order.get') }}?status=" + status).load();
+    }
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -107,7 +121,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('order.get') }}",
+                    "url": "{{ route('order.get') }}?status=pending",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
