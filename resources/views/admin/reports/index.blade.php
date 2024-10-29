@@ -59,7 +59,7 @@
                                     </select>
                                 </div>
 
-                                {{-- <div class="form-group col-sm-3 mb-2">
+                                {{-- <div class="form-group col-sm-4 mb-2">
                                     <label for="productSelect">Select Product</label>
                                     <select id="productSelect" class="form-control select2">
                                         <option value="">Select Product</option>
@@ -166,13 +166,48 @@
                         "data": null,
                         "render": function(data) {
                             let totalProfit = 0;
-                            data.order_item.forEach(item => {
-                                console.log("data", item);
-                                totalProfit += (item.product_variant
-                                    .selling_price_per_unit - item.product_variant
-                                    .price_per_unit) * item.quantity;
-                            });
-                            return '$: ' + totalProfit.toFixed(2);
+                            let profitDetails = '';
+
+                            // Check if there are order items
+                            if (data.order_item && data.order_item.length > 0) {
+                                data.order_item.forEach(function(item, index) {
+                                    const sellingPrice = parseFloat(item.product_variant
+                                        .selling_price_per_unit);
+                                    const costPrice = parseFloat(item.product_variant
+                                        .price_per_unit);
+                                    const quantity = parseInt(item.quantity);
+                                    const profit = (sellingPrice - costPrice) * quantity;
+
+                                    // Accumulate total profit
+                                    totalProfit += profit;
+
+                                    // Build profit details for each item in a professional way
+                                    profitDetails += `
+                    <div style="margin-bottom: 5px;">
+                        <strong>Item ${index + 1}:</strong><br>
+                        Selling Price: $${sellingPrice.toFixed(2)}<br>
+                        Cost Price: $${costPrice.toFixed(2)}<br>
+                        Quantity: ${quantity}<br>
+                        Profit: $${profit.toFixed(2)}
+                    </div>
+                `;
+
+                                    // Add a line break between items if not the last one
+                                    if (index < data.order_item.length - 1) {
+                                        profitDetails += '<br>';
+                                    }
+                                });
+                            } else {
+                                profitDetails = '<div>No order items found</div>';
+                            }
+
+                            // Return total profit with detailed breakdown
+                            return `
+            <div>
+                ${profitDetails}
+                <strong>Total Profit: $</strong>${totalProfit.toFixed(2)}
+            </div>
+        `;
                         }
                     },
                     {
