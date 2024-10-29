@@ -17,7 +17,7 @@
                                 <div class="form-group col-sm-3 mb-2">
                                     <label for="periodSelect">Order Status</label>
                                     <select id="periodSelect" class="form-control" onchange="loadData()">
-                                        <option value="pending" selected>Pending</option>
+                                        <option value="pending" selected><span class="text-danger">Pending</span></option>
                                         <option value="completed">Delivered</option>
                                     </select>
                                 </div>
