@@ -108,11 +108,12 @@
 @section('js')
     {{-- Data Table --}}
     <script>
-          function loadData() {
-        var status = $('#periodSelect').val(); // Get the selected status
-        var dataTable = $('#example').DataTable();
-        dataTable.ajax.url("{{ route('order.get') }}?status=" + status).load();
-    }
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('order.get') }}?status=" + status).load();
+        }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -201,9 +202,10 @@
                     },
 
                     {
-                        "data": null,
+                        "data": "status",
                         "render": function(data, type, row) {
-                            return `
+                            if (data === "pending") {
+                                return `
         <div class="dropdown d-inline">
             <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="dropdownMenuButton${row.id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-cog"></i>
@@ -214,6 +216,9 @@
             </div>
         </div>
         `;
+                            }else{
+                                return '<span class="text-muted">No actions available for delivered orders</span>';
+                            }
                         }
                     }
 

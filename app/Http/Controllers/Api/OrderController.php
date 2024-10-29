@@ -163,9 +163,31 @@ class OrderController extends Controller
     public function getOrderDetail($userId)
     {
         try {
-            $getUserOrders = Order::where('user_id', $userId)->select('id', 'order_id','billing_address','total','address','payment_type', 'status')
-                ->with('orderItem:order_id,variant_number,image,price,quantity,subtotal')
-                ->latest()->get();
+            $currency = $this->getCurrency();
+            if (!$currency) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No Currency found.',
+                ]);
+            }
+
+            $pkrAmount = $currency->pkr_amount;
+            $getUserOrders = Order::where('user_id', $userId)
+                ->select('id','user_id','order_id', 'billing_address', 'total', 'address', 'payment_type','card_number','created_at','status')
+                ->with([
+                    'users:id,name,phone,email',
+                    'orderItem' => function ($query) {
+                    $query->select('order_id', 'variant_number', 'image', 'price', 'quantity', 'subtotal');
+                }])
+                ->latest()
+                ->get();
+            $getUserOrders->each(function ($order) use ($pkrAmount) {
+                $order->total_in_pkr = $order->total * $pkrAmount;
+                $order->orderItem->each(function ($item) use ($pkrAmount) {
+                    $item->price_in_pkr = $item->price * $pkrAmount;
+                    $item->subtotal_in_pkr = $item->subtotal * $pkrAmount;
+                });
+            });
             $totalOrders = $getUserOrders->count();
             $pendingOrders = $getUserOrders->where('status', 'pending')->count();
             $deliveredOrders = $getUserOrders->where('status', 'delivered')->count();
@@ -183,6 +205,7 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
 
     public function getOrderCount($userId)
     {

@@ -23,6 +23,7 @@ class OrderController extends Controller
     }
     public function orderIndex()
     {
+        
         return view('admin.order.index');
     }
     public function orderDeliveredData()
