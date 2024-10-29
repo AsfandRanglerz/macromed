@@ -164,7 +164,7 @@ class OrderController extends Controller
     {
         try {
             $getUserOrders = Order::where('user_id', $userId)->select('id', 'order_id','billing_address','total','address','payment_type', 'status')
-                ->with('orderItem:order_id,variant_number,image','price','quantity','subtotal')
+                ->with('orderItem:order_id,variant_number,image,price,quantity,subtotal')
                 ->latest()->get();
             $totalOrders = $getUserOrders->count();
             $pendingOrders = $getUserOrders->where('status', 'pending')->count();
