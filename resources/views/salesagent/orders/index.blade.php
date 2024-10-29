@@ -17,7 +17,7 @@
                                 <div class="form-group col-sm-3 mb-2">
                                     <label for="periodSelect">Order Status</label>
                                     <select id="periodSelect" class="form-control" onchange="loadData()">
-                                        <option value="pending" selected><span class="text-danger">Pending</span></option>
+                                        <option value="pending" selected>Pending</option>
                                         <option value="completed">Delivered</option>
                                     </select>
                                 </div>
@@ -30,16 +30,11 @@
                                             <th>Sr.</th>
                                             <th>Order Id</th>
                                             <th>User Name</th>
-                                            <th>Sales Agent Name</th>
-                                            <th>Country</th>
-                                            <th>State</th>
-                                            <th>City</th>
-                                            <th>Sales Agent Commission</th>
-                                            <th>Total Amount</th>
+                                            <th>User Email</th>
+                                            <th>Commission</th>
                                             <th>Order Date</th>
-                                            <th>Order Detail</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+
                                         </tr>
                                     </thead>
                                     <tbody style="justify-content: center">
@@ -52,57 +47,7 @@
             </div>
         </section>
     </div>
-    <!-- Change Status Order Modal -->
-    <div class="modal fade" id="editProduct" tabindex="-1" role="dialog" aria-labelledby="editProductLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content ">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProductLabel">Change Order Status</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="delivered" id="deliveredCheckbox">
-                        <label class="form-check-label" for="deliveredCheckbox">
-                            Delivered
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="pending" id="pendingCheckbox">
-                        <label class="form-check-label" for="pendingCheckbox">
-                            Pending
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-primary" id="updateStatusBtn">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Delete Order Modal -->
-    <div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content ">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteProductModalLabel">Delete Order</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h5>Are You Sure You Want To Delete This Order?</h5>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-danger" id="confirmDeleteSubadmin">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
 @endsection
 @section('js')
@@ -111,7 +56,7 @@
         function loadData() {
             var status = $('#periodSelect').val(); // Get the selected status
             var dataTable = $('#example').DataTable();
-            dataTable.ajax.url("{{ route('order.get') }}?status=" + status).load();
+            dataTable.ajax.url("{{ route('user-order.get') }}?status=" + status).load();
         }
 
         function reloadDataTable() {
@@ -122,7 +67,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('order.get') }}?status=pending",
+                    "url": "{{ route('user-order.get') }}?status=pending",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -146,30 +91,17 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return data.sales_agent.name;
+                            return data.users.email;
                         }
                     },
-                    {
-                        "data": "country"
-                    },
-                    {
-                        "data": "state"
-                    },
-                    {
-                        "data": "city"
-                    },
+
                     {
                         "data": "product_commission",
                         "render": function(data, type, row) {
                             return '$' + data;
                         }
                     },
-                    {
-                        "data": "total",
-                        "render": function(data, type, row) {
-                            return '$' + data;
-                        }
-                    },
+
                     {
                         "data": "created_at",
                         "render": function(data, type, row) {
@@ -178,15 +110,6 @@
                             const formattedTime = createdAtDate.toLocaleTimeString();
                             return `<div>${formattedDate}</div><div>${formattedTime}</div>`;
                         }
-                    },
-
-                    {
-                        "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('invoice.index', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-primary text-white"><i class="fas fa-user"></i></a>';
-                        },
                     },
                     {
                         "data": "status",
@@ -201,26 +124,7 @@
                         }
                     },
 
-                    {
-                        "data": "status",
-                        "render": function(data, type, row) {
-                            if (data === "pending") {
-                                return `
-        <div class="dropdown d-inline">
-            <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="dropdownMenuButton${row.id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-cog"></i>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton${row.id}">
-                <a class="dropdown-item has-icon editSubadminBtn" href="#" data-id="${row.id}"><i class="fas fa-edit"></i>Edit</a>
-                <a class="dropdown-item has-icon deleteSubadminBtn" href="#" data-id="${row.id}"><i class="fas fa-trash-alt"></i>Delete</a>
-            </div>
-        </div>
-        `;
-                            }else{
-                                return '<span class="text-muted">No actions available for delivered orders</span>';
-                            }
-                        }
-                    }
+
 
 
                 ]

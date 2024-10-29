@@ -188,6 +188,21 @@
         @endif
     </script>
     <script>
+        function updateOrderCounter() {
+            $.ajax({
+                url: "{{ route('user-orders.count') }}",
+                type: 'GET',
+                success: function(response) {
+                    $('#orderUserCounter').text(response.count);
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+        updateOrderCounter();
+        setInterval(updateOrderCounter, 1000);
+
         function fetchNotifications() {
 
             $.ajax({

@@ -41,16 +41,10 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::get('/agentNotes/delete/{id}',  'deleteAgentNotes')->name('agentNotes.delete');
     });
 
-       // ############## SalesAgent Orders ############
-       Route::controller(OrderController::class)->group(function () {
-        Route::get('/orderData',  'orderData')->name('order.get')->middleware('permission:Pending Orders');
-        Route::get('/order',  'orderIndex')->name('order.index')->middleware('permission:Pending Orders');
-        Route::get('/orders/{id}/status',  'getStatus')->name('orders.status')->middleware('permission:Pending Orders');
-        Route::post('/orders/{id}/update-status',  'updateStatus')->name('orders.update-status')->middleware('permission:Pending Orders');
-        Route::get('/order/delete/{id}',  'deleteOrder')->name('order.delete')->middleware('permission:Pending Orders');
-        Route::get('/order/counter',  'getOrderCount')->name('orders.count')->middleware('permission:Pending Orders');
-        Route::get('/order/details/{id}',  'getOrderDetails')->name('order.details')->middleware('permission:Pending Orders');
-        ### InVoice ####
-        Route::get('/order/invoice/{id}',  'getInVoiceDetails')->name('invoice.index')->middleware('permission:Pending Orders');
+    // ############## SalesAgent Orders ############
+    Route::controller(OrderController::class)->group(function () {
+        Route::get('/orderUserData',  'orderUserData')->name('user-order.get');
+        Route::get('/user-order',  'orderUserIndex')->name('user-order.index');
+        Route::get('/user-order/counter',  'getUserOrderCount')->name('user-orders.count');
     });
 });

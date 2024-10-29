@@ -12,6 +12,16 @@
                 <a href="{{ url('/sales-agent/dashboard') }}" class="nav-link"><i
                         data-feather="home"></i><span>Dashboard</span></a>
             </li>
+            {{-- Orders --}}
+            <li class="dropdown {{ request()->is('sales-agent/user-order*') ? 'active' : '' }}">
+            <a href="{{ route('user-order.index') }}" class="nav-link padding" style="padding-left: 27px">
+                <i data-feather="shopping-cart"></i>
+                <span>Orders</span>
+                <div id="orderUserCounter"
+                    class="badge {{ request()->is('sales-agent/user-order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
+                </div>
+            </a>
+            </li>
             {{-- Private Notes --}}
             <li class="dropdown {{ request()->is('sales-agent/agentNotes*') ? 'active' : '' }}">
                 <a href="{{ route('agentNotes.index') }}"
