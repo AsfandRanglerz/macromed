@@ -30,7 +30,11 @@ use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\AdminNotificationController;
-
+use App\Http\Controllers\SalesAgent\OrderController as SalesAgentOrderController;
+use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
+use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
+use App\Http\Controllers\SalesAgent\SalesAgentNotificationController;
+use App\Http\Controllers\SalesAgent\SalesAgentPrivateNotesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -322,4 +326,5 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 });
 
 require __DIR__ . '/agent.php';
+
 // ############ React routes ############
