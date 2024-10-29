@@ -22,7 +22,7 @@
                                     <button class="btn btn-danger" id="filterButton" onclick="clearFilters()">Clear
                                         Filters</button>
                                 </div>
-                                <div class="form-group col-sm-4 mb-2">
+                                <div class="form-group col-sm-3 mb-2">
                                     <label for="periodSelect">Select Period</label>
                                     <select id="periodSelect" class="form-control" onchange="loadData()">
                                         <option value="daily" selected>Daily</option>
@@ -32,24 +32,24 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-sm-4 mb-2">
+                                <div class="form-group col-sm-3 mb-2">
                                     <label for="startDate">Start Date</label>
                                     <input type="date" id="startDate" class="form-control" placeholder="Start Date">
                                 </div>
-                                <div class="form-group col-sm-4 mb-2">
+                                <div class="form-group col-sm-3 mb-2">
                                     <label for="endDate">End Date</label>
                                     <input type="date" id="endDate" class="form-control" placeholder="End Date">
                                 </div>
 
-                                <div class="form-group col-sm-4 mb-2">
+                                {{-- <div class="form-group col-sm-3 mb-2">
                                     <label for="areaSelect">Select Area</label>
                                     <select id="areaSelect" class="form-control select2">
                                         <option value="">Select Area</option>
                                         <!-- Populate this dynamically with areas -->
                                     </select>
-                                </div>
+                                </div> --}}
 
-                                <div class="form-group col-sm-4 mb-2">
+                                <div class="form-group col-sm-3 mb-2">
                                     <label for="supplierSelect">Select Supplier</label>
                                     <select id="supplierSelect" class="form-control select2">
                                         <option value="" selected disabled>Select Supplier</option>
@@ -59,13 +59,13 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-sm-4 mb-2">
+                                {{-- <div class="form-group col-sm-3 mb-2">
                                     <label for="productSelect">Select Product</label>
                                     <select id="productSelect" class="form-control select2">
                                         <option value="">Select Product</option>
                                         <!-- Populate this dynamically with products -->
                                     </select>
-                                </div>
+                                </div> --}}
 
                                 {{-- <div class="form-group col-sm-3 mb-2 d-flex align-items-end">
                                     <button class="btn btn-primary" onclick="loadData()">Apply Filters</button>

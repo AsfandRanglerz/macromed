@@ -23,15 +23,17 @@ class ReportsController extends Controller
     {
         $query = Order::with(['users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem.productVariant'])->where('status', 'completed')
             ->latest();
-
         if ($request->filled('startDate') && $request->filled('endDate')) {
-            $query->whereBetween('created_at', [$request->startDate, $request->endDate]);
+
+            $query->whereBetween('created_at', [
+                Carbon::parse($request->startDate)->startOfDay(),
+                Carbon::parse($request->endDate)->endOfDay()
+            ]);
         } elseif ($request->filled('startDate')) {
-            $query->whereDate('created_at', '>=', $request->startDate);
+            $query->whereDate('created_at', '>=', Carbon::parse($request->startDate));
         } elseif ($request->filled('endDate')) {
-            $query->whereDate('created_at', '<=', $request->endDate);
+            $query->whereDate('created_at', '<=', Carbon::parse($request->endDate));
         } else {
-            // If no dates are provided, then check for period
             $period = $request->input('period', 'daily');
             switch ($period) {
                 case 'daily':
