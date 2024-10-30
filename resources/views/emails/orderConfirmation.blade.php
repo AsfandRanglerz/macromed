@@ -11,7 +11,7 @@
             Your order has been placed!
         </p>
         <div>
-            Here Is Your Order Code:
+            Here Is Your Order Id:
             <ul style="padding-left: 16px;">
                 <li><strong>Order Id:</strong> {{ $data['ordercode'] }}</li>
             </ul>
