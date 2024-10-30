@@ -49,7 +49,6 @@ class OrderController extends Controller
             $order = Order::findOrFail($id);
             $order->status = $request->status;
             $order->order_confirmation_message = 'Your order #' . $order->order_id . ' has been delivered.Thank you for shipping with us!';
-
             $order->save();
             if ($order->status == 'completed') {
                 $totalCommission = $order->product_commission;
