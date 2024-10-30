@@ -310,6 +310,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/order/delete/{id}',  'deleteOrder')->name('order.delete')->middleware('permission:Pending Orders');
         Route::get('/order/counter',  'getOrderCount')->name('orders.count')->middleware('permission:Pending Orders');
         Route::get('/order/details/{id}',  'getOrderDetails')->name('order.details')->middleware('permission:Pending Orders');
+        Route::post('/order/salesAganet/{id}',  'saveSalesAgent')->name('salesAgent.status')->middleware('permission:Pending Orders');
         ### InVoice ####
         Route::get('/order/invoice/{id}',  'getInVoiceDetails')->name('invoice.index')->middleware('permission:Pending Orders');
     });

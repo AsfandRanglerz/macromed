@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Mail\orderDelivery;
+use App\Models\SalesAgent;
 use Illuminate\Support\Facades\Mail;
 use App\Models\SalesAgentNotification;
 use App\Traits\ProductHelperTrait;
@@ -26,8 +27,8 @@ class OrderController extends Controller
     }
     public function orderIndex()
     {
-
-        return view('admin.order.index');
+        $salesAgents = SalesAgent::all();
+        return view('admin.order.index', compact('salesAgents'));
     }
     public function orderDeliveredData()
     {
@@ -58,6 +59,9 @@ class OrderController extends Controller
             }
             $pkrAmount = $currency->pkr_amount;
             $order = Order::findOrFail($id);
+            if ($order->sales_agent_id === null) {
+                return response()->json(['status' => 'error', 'message' => 'Please select a sales agent before marking as delivered.']);
+            }
             $order->status = $request->status;
             $order->order_confirmation_message = 'Your order #' . $order->order_id . ' has been delivered.Thank you for shipping with us!';
             $order->save();
@@ -86,6 +90,28 @@ class OrderController extends Controller
             return response()->json(['error' => 'Failed to update status: ' . $e->getMessage()], 500);
         }
     }
+    public function saveSalesAgent(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $order = Order::findOrFail($id);
+            $order->sales_agent_id = $request->sales_agent_id;
+            $order->save();
+            $totalCommission = $order->product_commission;
+            $agentWallet = AgentWallet::where('sales_agent_id', $order->sales_agent_id)->first();
+            if ($agentWallet) {
+                $agentWallet->pending_commission += $totalCommission;
+                $agentWallet->total_commission += $totalCommission;
+                $agentWallet->save();
+            }
+            DB::commit();
+            return response()->json(['alert' => 'success', 'message' => 'Status updated successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to update status: ' . $e->getMessage()], 500);
+        }
+    }
+
 
     public function deleteOrder($id)
     {

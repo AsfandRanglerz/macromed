@@ -103,6 +103,32 @@
             </div>
         </div>
     </div>
+    {{-- Agent Modal --}}
+    <!-- Modal -->
+    <div class="modal fade" id="selectSalesAgentModal" tabindex="-1" aria-labelledby="selectSalesAgentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="selectSalesAgentModalLabel">Select Sales Agent</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="salesAgentSelect">Choose a Sales Agent:</label>
+                    <select id="salesAgentSelect" class="form-control">
+                        @foreach ($salesAgents as $agent)
+                            <option value="{{ $agent->id }}">{{ $agent->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="modal-footer text-center justify-content-center">
+                    <button type="button" class="btn btn-primary" id="confirmSalesAgent">Confirm Agent</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 @section('js')
@@ -146,7 +172,12 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return data.sales_agent.name;
+                            if (data.sales_agent) {
+                                return data.sales_agent.name;
+                            } else {
+                                return 'No Agent Found!';
+                            }
+
                         }
                     },
                     {
@@ -216,7 +247,7 @@
             </div>
         </div>
         `;
-                            }else{
+                            } else {
                                 return '<span class="text-muted">No actions available for delivered orders</span>';
                             }
                         }
@@ -263,21 +294,16 @@
             });
         });
         $(document).ready(function() {
-            // Event listener for delivered checkbox
             $('#deliveredCheckbox').change(function() {
                 if ($(this).prop('checked')) {
-                    $('#pendingCheckbox').prop('checked', false); // Uncheck pending checkbox
+                    $('#pendingCheckbox').prop('checked', false);
                 }
             });
-
-            // Event listener for pending checkbox
             $('#pendingCheckbox').change(function() {
                 if ($(this).prop('checked')) {
-                    $('#deliveredCheckbox').prop('checked', false); // Uncheck delivered checkbox
+                    $('#deliveredCheckbox').prop('checked', false);
                 }
             });
-
-            // Event handler for updating status
             $('#updateStatusBtn').click(function() {
                 var status;
                 if ($('#deliveredCheckbox').prop('checked')) {
@@ -285,7 +311,6 @@
                 } else if ($('#pendingCheckbox').prop('checked')) {
                     status = 'pending';
                 }
-
                 var token = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     url: "{{ route('orders.update-status', ['id' => ':id']) }}".replace(':id',
@@ -297,26 +322,54 @@
                         _token: token
                     },
                     success: function(response) {
-                        toastr.success('Order Status Updated Successfully!');
-                        $('#editProduct').modal('hide');
-                        reloadDataTable();
+                        if (response.status === 'error') {
+                            $('#selectSalesAgentModal').modal('show');
+                            $('#editProduct').modal('hide');
+                        } else {
+                            toastr.success('Order Status Updated Successfully!');
+                            $('#editProduct').modal('hide');
+                            reloadDataTable();
+                        }
                     },
                     error: function(jqXHR, xhr) {
                         var response = jqXHR.responseJSON;
-
-                        // Check if there is an error message in the response
                         if (response && response.error) {
-                            toastr.error(response.error); // Display the server error message
+                            toastr.error(response.error);
                         } else {
                             toastr.error(
-                                'An error occurred!'); // Fallback for unexpected errors
+                                'An error occurred!');
                         }
                     }
                 });
             });
+
+
         });
 
-
+        $('#confirmSalesAgent').on('click', function() {
+            const selectedAgentId = $('#salesAgentSelect').val();
+            if (selectedAgentId) {
+                $.ajax({
+                    url: "{{ route('salesAgent.status', ['id' => ':id']) }}".replace(':id',
+                        orderId),
+                    type: 'POST',
+                    data: {
+                        id: orderId,
+                        sales_agent_id: selectedAgentId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.alert === 'success') {
+                            $('#selectSalesAgentModal').modal('hide');
+                            toastr.success('Agent assigned successfully');
+                            $('#editProduct').modal('show');
+                        }
+                    }
+                });
+            } else {
+                toastr.error('Please select a sales agent.');
+            }
+        });
         // ############# Delete Order ###########
         function deleteProductModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);
