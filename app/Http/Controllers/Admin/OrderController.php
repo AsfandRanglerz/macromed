@@ -23,7 +23,7 @@ class OrderController extends Controller
     }
     public function orderIndex()
     {
-        
+
         return view('admin.order.index');
     }
     public function orderDeliveredData()
@@ -48,12 +48,15 @@ class OrderController extends Controller
             DB::beginTransaction();
             $order = Order::findOrFail($id);
             $order->status = $request->status;
+            $order->order_confirmation_message = 'Your order #' . $order->order_id . ' has been delivered.Thank you for shipping with us!';
+
             $order->save();
             if ($order->status == 'completed') {
                 $totalCommission = $order->product_commission;
                 $agentWallet = AgentWallet::where('sales_agent_id', $order->sales_agent_id)->first();
                 if ($agentWallet) {
-                    $agentWallet->total_commission += $totalCommission;
+                    $agentWallet->pending_commission -= $totalCommission;
+                    $agentWallet->received_commission += $totalCommission;
                     $agentWallet->save();
                 }
                 SalesAgentNotification::create([
@@ -61,6 +64,7 @@ class OrderController extends Controller
                     'message' => 'You received a commission of $' . $totalCommission . '!',
                 ]);
             }
+
             DB::commit();
             return response()->json(['alert' => 'success', 'message' => 'Status updated successfully']);
         } catch (\Exception $e) {

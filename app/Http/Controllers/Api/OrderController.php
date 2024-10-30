@@ -6,15 +6,17 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\SalesAgent;
+use App\Models\AgentWallet;
 use Illuminate\Http\Request;
 use App\Models\ProductVaraint;
+use App\Mail\orderConfirmation;
 use App\Traits\ProductHelperTrait;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
-use App\Mail\orderConfirmation;
 use Illuminate\Support\Facades\Mail;
+use App\Models\SalesAgentNotification;
 
 class OrderController extends Controller
 {
@@ -139,6 +141,15 @@ class OrderController extends Controller
             $cart->product_commission = $totalCommission / $pkrAmount;
             $cart->order_confirmation_message = 'Your order #' . $cart->order_id . ' is pending. The admin will review it shortly. Please check back later for updates.';
             $cart->save();
+            if ($cart->status == 'pending') {
+                $totalCommission = $cart->product_commission;
+                $agentWallet = AgentWallet::where('sales_agent_id', $cart->sales_agent_id)->first();
+                if ($agentWallet) {
+                    $agentWallet->pending_commission += $totalCommission;
+                    $agentWallet->total_commission += $totalCommission;
+                    $agentWallet->save();
+                };
+            }
             $data['useremail'] =  $cart->users->email;
             $data['username'] =  $cart->users->name;
             $data['ordercode'] = $cart->order_id;
@@ -173,12 +184,13 @@ class OrderController extends Controller
 
             $pkrAmount = $currency->pkr_amount;
             $getUserOrders = Order::where('user_id', $userId)
-                ->select('id','user_id','order_id', 'billing_address', 'total', 'address', 'payment_type','card_number','created_at','status')
+                ->select('id', 'user_id', 'order_id', 'billing_address', 'total', 'address', 'payment_type', 'card_number', 'created_at', 'status')
                 ->with([
                     'users:id,name,phone,email',
                     'orderItem' => function ($query) {
-                    $query->select('order_id', 'variant_number', 'image', 'price', 'quantity', 'subtotal');
-                }])
+                        $query->select('order_id', 'variant_number', 'image', 'price', 'quantity', 'subtotal');
+                    }
+                ])
                 ->latest()
                 ->get();
             $getUserOrders->each(function ($order) use ($pkrAmount) {
