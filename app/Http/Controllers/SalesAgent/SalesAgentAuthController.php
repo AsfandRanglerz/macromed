@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Mail\PasswordResetMail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\AgentWallet;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -16,12 +17,19 @@ class SalesAgentAuthController extends Controller
 {
     public function getSalesAgentdashboard()
     {
-        return view('salesagent.index');
+        if (Auth::guard('sales_agent')->check()) {
+            $data = Auth::guard('sales_agent')->user();
+            $data['salesAgent']  = AgentWallet::where('sales_agent_id', auth()->guard('sales_agent')->id())->first();
+        } else {
+            return redirect('/sales-agent')->with(['alert' => 'error', 'message' => 'You are not logged in!']);
+        }
+        return view('salesagent.index', compact('data'));
     }
     public function getSalesAgentProfile()
     {
         if (Auth::guard('sales_agent')->check()) {
             $data = Auth::guard('sales_agent')->user();
+            $data['salesAgent']  = AgentWallet::where('sales_agent_id', auth()->guard('sales_agent')->id())->get();
         } else {
             return redirect('/sales-agent')->with(['alert' => 'error', 'message' => 'You are not logged in!']);
         }
