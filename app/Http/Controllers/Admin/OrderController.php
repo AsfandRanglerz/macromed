@@ -55,7 +55,7 @@ class OrderController extends Controller
                 $agentWallet = AgentWallet::where('sales_agent_id', $order->sales_agent_id)->first();
                 if ($agentWallet) {
                     $agentWallet->pending_commission -= $totalCommission;
-                    $agentWallet->received_commission += $totalCommission;
+                    $agentWallet->recevied_commission += $totalCommission;
                     $agentWallet->save();
                 }
                 SalesAgentNotification::create([

@@ -202,7 +202,7 @@ class OrderController extends Controller
             });
             $totalOrders = $getUserOrders->count();
             $pendingOrders = $getUserOrders->where('status', 'pending')->count();
-            $deliveredOrders = $getUserOrders->where('status', 'delivered')->count();
+            $deliveredOrders = $getUserOrders->where('status', 'completed')->count();
             return response()->json([
                 'status' => 'success',
                 'total_orders' => $totalOrders,
