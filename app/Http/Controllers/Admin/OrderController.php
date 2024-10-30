@@ -12,10 +12,11 @@ use App\Http\Controllers\Controller;
 use App\Mail\orderDelivery;
 use Illuminate\Support\Facades\Mail;
 use App\Models\SalesAgentNotification;
-
+use App\Traits\ProductHelperTrait;
 
 class OrderController extends Controller
 {
+    use ProductHelperTrait;
     public function orderData(Request $request)
     {
         $status = $request->query('status', 'pending');
@@ -48,6 +49,14 @@ class OrderController extends Controller
     {
         try {
             DB::beginTransaction();
+            $currency = $this->getCurrency();
+            if (!$currency) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No Currency found.',
+                ]);
+            }
+            $pkrAmount = $currency->pkr_amount;
             $order = Order::findOrFail($id);
             $order->status = $request->status;
             $order->order_confirmation_message = 'Your order #' . $order->order_id . ' has been delivered.Thank you for shipping with us!';
@@ -67,6 +76,7 @@ class OrderController extends Controller
                 $data['useremail'] =  $order->users->email;
                 $data['username'] =  $order->users->name;
                 $data['ordercode'] = $order->order_id;
+                $data['total'] = $order->total * $pkrAmount;
                 Mail::to($data['useremail'])->send(new orderDelivery($data));
             }
             DB::commit();
