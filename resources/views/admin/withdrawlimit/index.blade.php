@@ -18,14 +18,14 @@
                             <div class="col-md-12 col-sm-12 col-lg-12">
                                 <div class="form-group">
                                     <label for="name">Enter Wallet WithDraw Minimum Limit</label>
-                                    <input type="text" class="form-control" id="min_limits" name="min_limits" required>
+                                    <input type="text" class="form-control" id="min_limits" name="min_limits" placeholder="$" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12 col-lg-12">
                                 <div class="form-group">
                                     <label for="name">Enter Wallet WithDraw Maximum Limit</label>
-                                    <input type="text" class="form-control" id="max_limits" name="max_limits" required>
+                                    <input type="text" class="form-control" id="max_limits" name="max_limits" placeholder="$" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -33,7 +33,7 @@
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-danger" onclick="createWithDrawWalletLimit()">Create</button>
+                    <button type="button" class="btn btn-primary" onclick="createWithDrawWalletLimit()">Create</button>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-danger" onclick="updateWithDrawWalletLimits()">Update</button>
+                    <button type="button" class="btn btn-primary" onclick="updateWithDrawWalletLimits()">Update</button>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
-                                {{-- <a class="btn btn-success mb-3 text-white" data-toggle="modal"
+                                {{-- <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createWithDrawWalletLimitModal">
                                     Create WithDraw Wallet Limit
                                 </a> --}}
@@ -162,7 +162,7 @@
                         "data": "min_limits",
                         "render": function(data) {
                             if (data != null && typeof data !== 'undefined') {
-                                return 'Rs : '+ data;
+                                return '$ ' + data;
                             } else {
 
                                 return '';
@@ -173,7 +173,7 @@
                         "data": "max_limits",
                         "render": function(data) {
                             if (data != null && typeof data !== 'undefined') {
-                                return 'Rs : '+ data;
+                                return '$ ' + data;
                             } else {
 
                                 return '';
@@ -195,10 +195,10 @@
                 var id = $(this).data('id');
                 editWithDrawWalletLimitModal(id);
             });
-            // $('#example').on('click', '.deleteSubadminBtn', function() {
-            //     var id = $(this).data('id');
-            //     deleteWithDrawWalletLimitModal(id);
-            // });
+            $('#example').on('click', '.deleteSubadminBtn', function() {
+                var id = $(this).data('id');
+                deleteWithDrawWalletLimitModal(id);
+            });
         });
     </script>
 
@@ -222,10 +222,7 @@
         //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         //         },
         //         success: function(response) {
-        //             Toast.fire({
-        //                 icon: response.alert,
-        //                 title: response.message
-        //             });
+        //             toastr.success('Created Successfully!');
         //             $('#createWithDrawWalletLimitModal').modal('hide');
         //             reloadDataTable();
         //             $('#createWithDrawWalletLimitForm')[0].reset();
@@ -283,10 +280,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    Toast.fire({
-                        icon: response.alert,
-                        title: response.message
-                    });
+                    toastr.success('Updated Successfully!');
+
                     $('#editWithDrawWalletLimitModal').modal('hide');
                     reloadDataTable();
                 },
@@ -319,10 +314,8 @@
         //         url: "{{ route('withDrawLimit.delete', ['id' => ':id']) }}".replace(':id', id),
         //         type: 'GET',
         //         success: function(response) {
-        //             Toast.fire({
-        //                 icon: response.alert,
-        //                 title: response.message
-        //             });
+        //             toastr.success('Deleted Successfully!');
+
         //             $('#deleteWithDrawWalletLimitModal').modal('hide');
         //             reloadDataTable();
         //         },
