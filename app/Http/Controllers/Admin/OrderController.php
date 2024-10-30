@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Mail\orderDelivery;
+use Illuminate\Support\Facades\Mail;
 use App\Models\SalesAgentNotification;
 
 
@@ -62,8 +64,11 @@ class OrderController extends Controller
                     'sales_agent_id' => $order->sales_agent_id,
                     'message' => 'You received a commission of $' . $totalCommission . '!',
                 ]);
+                $data['useremail'] =  $order->users->email;
+                $data['username'] =  $order->users->name;
+                $data['ordercode'] = $order->order_id;
+                Mail::to($data['useremail'])->send(new orderDelivery($data));
             }
-
             DB::commit();
             return response()->json(['alert' => 'success', 'message' => 'Status updated successfully']);
         } catch (\Exception $e) {
