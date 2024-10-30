@@ -25,8 +25,7 @@
             {{-- Reports --}}
             <li class="dropdown {{ request()->is('admin/user-reports*') ? 'active' : '' }}">
                 <a href="{{ route('user-reports.index') }}" class="nav-link">
-                    <span><i data-feather="file-text"></i></span>
-                    <span>Reports</span>
+                    <span><i data-feather="file-text"></i>Reports</span>
                 </a>
             </li>
             {{-- Private Notes --}}
