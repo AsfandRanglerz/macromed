@@ -29,7 +29,7 @@ use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\AdminNotificationController;
-
+use App\Http\Controllers\Admin\WithDrawLimitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -317,6 +317,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::controller(ReportsController::class)->group(function () {
         Route::get('/reports',  'reportsIndex')->name('reports.index');
         Route::get('reports/data/', 'getReportsData')->name('admin.reports.data');
+    });
+
+       // ############## Wallet WithDraw Limit ############
+       Route::controller(WithDrawLimitController::class)->group(function () {
+        Route::post('/withdrawLimitData',  'withdrawLimitData')->name('withdrawLimit.get')->middleware('permission:Wallet WithDrawal Limit');
+        Route::get('/withdrawLimit',  'withdrawLimitIndex')->name('withdrawLimit.index')->middleware('permission:Wallet WithDrawal Limit');
+        Route::post('/withdrawLimit-create',  'withDrawLimitCreate')->name('withDrawLimit.create')->middleware('permission:Wallet WithDrawal Limit');
+        Route::get('/withdrawLimit/{id}',  'showwithDrawLimit')->name('withDrawLimit.show')->middleware('permission:Wallet WithDrawal Limit');
+        Route::post('/withDrawLimitUpdate/{id}',  'updatewithDrawLimit')->name('withDrawLimit.update')->middleware('permission:Wallet WithDrawal Limit');
+        Route::get('/withdrawLimit/delete/{id}',  'deletewithDrawLimit')->name('withDrawLimit.delete')->middleware('permission:Wallet WithDrawal Limit');
     });
 });
 

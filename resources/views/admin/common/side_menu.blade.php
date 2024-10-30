@@ -304,9 +304,9 @@
             {{-- Orders --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
                 <li class="dropdown {{ request()->is('admin/order*') ? 'active' : '' }}">
-                    <a href="{{ route('order.index') }}" class="nav-link padding" style="padding-left: 27px">
-                        <i data-feather="shopping-cart"></i>
-                        <span>Orders</span>
+                    <a href="{{ route('order.index') }}" class="nav-link padding" style="padding-left: 37px">
+                        <span><i data-feather="shopping-cart"></i>
+                            Orders</span>
                         <div id="orderCounter"
                             class="badge {{ request()->is('admin/order*') ? 'bg-white text-primary' : 'bg-primary text-white' }} rounded-circle ">
                         </div>
@@ -314,9 +314,9 @@
                 </li>
             @elseif (auth()->guard('admin')->check())
                 <li class="dropdown {{ request()->is('admin/order*') ? 'active' : '' }}">
-                    <a href="{{ route('order.index') }}" class="nav-link padding" style="padding-left: 27px">
-                        <i data-feather="shopping-cart"></i>
-                        <span>Orders</span>
+                    <a href="{{ route('order.index') }}" class="nav-link padding" style="padding-left: 23px">
+                        <span> <i data-feather="shopping-cart"></i>
+                            Orders</span>
                         <div id="orderCounter"
                             class="badge {{ request()->is('admin/order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
                         </div>
@@ -324,20 +324,36 @@
                 </li>
             @endif
 
-           
+
             {{-- Reports --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
                 <li class="dropdown {{ request()->is('admin/reports*') ? 'active' : '' }}">
-                    <a href="{{ route('reports.index') }}" class="nav-link">
-                        <span><i data-feather="file-text"></i></span>
-                        <span>Reports</span>
+                    <a href="{{ route('reports.index') }}" class="nav-link" style="padding-left:23px">
+                        <span><i data-feather="file-text"></i>Reports</span>
                     </a>
                 </li>
             @elseif (auth()->guard('admin')->check())
                 <li class="dropdown {{ request()->is('admin/reports*') ? 'active' : '' }}">
-                    <a href="{{ route('reports.index') }}" class="nav-link">
-                        <i data-feather="file-text"></i>
-                        <span>Reports</span>
+                    <a href="{{ route('reports.index') }}" class="nav-link" style="padding-left:23px">
+                        <span> <i data-feather="file-text"></i>
+                            Reports</span>
+                    </a>
+                </li>
+            @endif
+            {{-- WithDarw Limit --}}
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Wallet WithDrawal Limit'))
+                <li class="{{ request()->is('admin/withdrawLimit*') ? 'active' : '' }} ">
+                    <a href="{{ route('withdrawLimit.index') }}"
+                        class="nav-link {{ request()->is('admin/withdrawLimit*') ? 'text-white' : '' }}"style="padding-left:13px">
+                        <span> <i class="fas fa-coins"></i>Wallet WithDrawal Limit</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="{{ request()->is('admin/withdrawLimit*') ? 'active' : '' }}">
+                    <a href="{{ route('withdrawLimit.index') }}"
+                        class="nav-link {{ request()->is('admin/withdrawLimit*') ? 'text-white' : '' }}"
+                        style="padding-left:13px">
+                        <span> <i class="fas fa-coins"></i>Wallet WithDrawal Limit</span>
                     </a>
                 </li>
             @endif
@@ -346,14 +362,14 @@
                 <li class="dropdown {{ request()->is('admin/currency*') ? 'active' : '' }}">
                     <a href="{{ route('currency.index') }}"
                         class="nav-link {{ request()->is('admin/currency*') ? 'text-white' : '' }}">
-                        <i data-feather="dollar-sign"></i><span>Currency</span>
+                        <span> <i data-feather="dollar-sign"></i>Currency</span>
                     </a>
                 </li>
             @elseif (auth()->guard('admin')->check())
                 <li class="dropdown {{ request()->is('admin/currency*') ? 'active' : '' }}">
                     <a href="{{ route('currency.index') }}"
                         class="nav-link {{ request()->is('admin/currency*') ? 'text-white' : '' }}">
-                        <i data-feather="dollar-sign"></i><span>Currency</span>
+                        <span><i data-feather="dollar-sign"></i>Currency</span>
                     </a>
                 </li>
             @endif
@@ -362,14 +378,14 @@
                 <li class="dropdown {{ request()->is('admin/privateNotes*') ? 'active' : '' }}">
                     <a href="{{ route('privateNotes.index') }}"
                         class="nav-link {{ request()->is('admin/privateNotes*') ? 'text-white' : '' }}">
-                        <i data-feather="file"></i><span>Private Notes</span>
+                        <span><i data-feather="file"></i>Private Notes</span>
                     </a>
                 </li>
             @elseif (auth()->guard('admin')->check())
                 <li class="dropdown {{ request()->is('admin/privateNotes*') ? 'active' : '' }}">
                     <a href="{{ route('privateNotes.index') }}"
                         class="nav-link {{ request()->is('admin/privateNotes*') ? 'text-white' : '' }}">
-                        <i data-feather="file"></i><span>Private Notes</span>
+                        <span><i data-feather="file"></i>Private Notes</span>
                     </a>
                 </li>
             @endif
@@ -378,14 +394,14 @@
                 <li class="dropdown {{ request()->is('admin/adminNotification*') ? 'active' : '' }}">
                     <a href="{{ route('adminNotification.index') }}"
                         class="nav-link {{ request()->is('admin/adminNotification*') ? 'text-white' : '' }}">
-                        <i data-feather="bell"></i><span>Notification</span>
+                        <span><i data-feather="bell"></i>Notification</span>
                     </a>
                 </li>
             @elseif (auth()->guard('admin')->check())
                 <li class="dropdown {{ request()->is('admin/adminNotification*') ? 'active' : '' }}">
                     <a href="{{ route('adminNotification.index') }}"
                         class="nav-link {{ request()->is('admin/adminNotification*') ? 'text-white' : '' }}">
-                        <i data-feather="bell"></i><span>Notification</span>
+                        <span><i data-feather="bell"></i>Notification</span>
                     </a>
                 </li>
             @endif
