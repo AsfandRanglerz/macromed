@@ -127,7 +127,7 @@
                         d.product = $('#productSelect').val();
                     },
                     "dataSrc": function(json) {
-                        $('#totalAmount').text('Total Amount: Rs ' + (json.totalAmount || 0).toFixed(
+                        $('#totalAmount').text('Total Amount: $ ' + (json.totalAmount || 0).toFixed(
                             2));
                         return json.salesData;
                     }
@@ -212,7 +212,7 @@
                     },
                     {
                         "data": "total",
-                        "render": (data) => '$: ' + parseFloat(data).toFixed(2)
+                        "render": (data) => '$' + parseFloat(data).toFixed(2)
                     },
                     {
                         "data": "created_at",
