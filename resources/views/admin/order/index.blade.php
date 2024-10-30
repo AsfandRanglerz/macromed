@@ -175,7 +175,7 @@
                             if (data.sales_agent) {
                                 return data.sales_agent.name;
                             } else {
-                                return 'No Agent Found!';
+                                return '<span class="text-danger">No Agent Found!</span>';
                             }
 
                         }

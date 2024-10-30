@@ -9,21 +9,21 @@
             <li class="menu-header">Main</li>
             {{-- DashBoard --}}
             <li class="dropdown {{ request()->is('sales-agent/dashboard') ? 'active' : '' }}">
-                <a href="{{ url('/sales-agent/dashboard') }}" class="nav-link"><i
-                        data-feather="home"></i><span>Dashboard</span></a>
+                <a href="{{ url('/sales-agent/dashboard') }}" class="nav-link"><span><i
+                            data-feather="home"></i>Dashboard</span></a>
             </li>
             {{-- Orders --}}
             <li class="dropdown {{ request()->is('sales-agent/user-order*') ? 'active' : '' }}">
                 <a href="{{ route('user-order.index') }}" class="nav-link padding" style="padding-left: 27px">
-                    <i data-feather="shopping-cart"></i>
-                    <span>Orders</span>
+                    <span> <i data-feather="shopping-cart"></i>
+                        Orders</span>
                     <div id="orderUserCounter"
                         class="badge {{ request()->is('sales-agent/user-order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
                     </div>
                 </a>
             </li>
             {{-- Reports --}}
-            <li class="dropdown {{ request()->is('admin/user-reports*') ? 'active' : '' }}">
+            <li class="dropdown {{ request()->is('sales-agent/user-reports*') ? 'active' : '' }}">
                 <a href="{{ route('user-reports.index') }}" class="nav-link">
                     <span><i data-feather="file-text"></i>Reports</span>
                 </a>
@@ -32,7 +32,7 @@
             <li class="dropdown {{ request()->is('sales-agent/agentNotes*') ? 'active' : '' }}">
                 <a href="{{ route('agentNotes.index') }}"
                     class="nav-link {{ request()->is('sales-agent/agentNotes*') ? 'text-white' : '' }}">
-                    <i data-feather="file"></i><span>Private Notes</span>
+                    <span> <i data-feather="file"></i>Private Notes</span>
                 </a>
             </li>
             {{-- <li class="dropdown {{ request()->is('admin/company*') ? 'active' : '' }}">
