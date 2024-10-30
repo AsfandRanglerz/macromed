@@ -88,6 +88,7 @@
             var dataTable = $('#example').DataTable();
             dataTable.ajax.url("{{ route('user-request.get') }}?status=" + status).load();
         }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -174,7 +175,7 @@
                 error: function(xhr) {
                     createButton.prop('disabled', false);
 
-                    if (xhr.status === 400 || xhr.status === 500 || 422) {
+                    if (xhr.status === 400 || xhr.status === 500 || xhr.status === 422) {
 
                         toastr.error(xhr.responseJSON.message || "An error occurred." || xhr.responseJSON
                             .message);

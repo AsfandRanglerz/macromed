@@ -48,7 +48,6 @@ class WithDrawRequestController extends Controller
                 ], 422);
             }
             $agentWallet = AgentWallet::where('sales_agent_id', $salesAgentId)->first();
-
             if (!$agentWallet || $agentWallet->recevied_commission < $amount) {
                 return response()->json([
                     'alert' => 'error',
