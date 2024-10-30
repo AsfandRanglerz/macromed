@@ -8,6 +8,7 @@ use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
 use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
 use App\Http\Controllers\SalesAgent\SalesAgentNotificationController;
 use App\Http\Controllers\SalesAgent\SalesAgentPrivateNotesController;
+use App\Http\Controllers\SalesAgent\WithDrawRequestController;
 
 //################################ Sales Agent Routes #############################
 Route::get('/sales-agent', [SalesAgentLoginController::class, 'getAgentLoginPage']);
@@ -54,5 +55,12 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
     Route::controller(ReportController::class)->group(function () {
         Route::get('/user-reports',  'reportsUserIndex')->name('user-reports.index');
         Route::get('user-reports/data/', 'getUserReportsData')->name('user.reports.data');
+    });
+
+    // ############## SalesAgent Withdrwal request ############
+    Route::controller(WithDrawRequestController::class)->group(function () {
+        Route::get('/withdraw-requestData',  'requestIndexData')->name('user-request.get');
+        Route::get('/withdraw-request',  'requestIndex')->name('user-request.index');
+        Route::post('/withdraw-request/data',  'requestCreate')->name('user-request.create');
     });
 });

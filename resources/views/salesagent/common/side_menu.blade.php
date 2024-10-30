@@ -28,6 +28,13 @@
                     <span><i data-feather="file-text"></i>Reports</span>
                 </a>
             </li>
+
+             {{-- With draw request --}}
+             <li class="dropdown {{ request()->is('sales-agent/withdraw-request*') ? 'active' : '' }}">
+                <a href="{{ route('user-request.index') }}" class="nav-link" style="padding-left:10px;">
+                    <span><i class="fas fa-coins"></i>With Drawal Request</span>
+                </a>
+            </li>
             {{-- Private Notes --}}
             <li class="dropdown {{ request()->is('sales-agent/agentNotes*') ? 'active' : '' }}">
                 <a href="{{ route('agentNotes.index') }}"
