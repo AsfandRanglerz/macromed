@@ -25,16 +25,11 @@ use App\Http\Controllers\Admin\NumberOfUseController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\MainMaterialController;
 use App\Http\Controllers\Admin\CertificationController;
-use App\Http\Controllers\Admin\DeliveryOrderController;
 use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\AdminNotificationController;
-use App\Http\Controllers\SalesAgent\OrderController as SalesAgentOrderController;
-use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
-use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
-use App\Http\Controllers\SalesAgent\SalesAgentNotificationController;
-use App\Http\Controllers\SalesAgent\SalesAgentPrivateNotesController;
+
 
 /*
 |--------------------------------------------------------------------------

@@ -14,13 +14,20 @@
             </li>
             {{-- Orders --}}
             <li class="dropdown {{ request()->is('sales-agent/user-order*') ? 'active' : '' }}">
-            <a href="{{ route('user-order.index') }}" class="nav-link padding" style="padding-left: 27px">
-                <i data-feather="shopping-cart"></i>
-                <span>Orders</span>
-                <div id="orderUserCounter"
-                    class="badge {{ request()->is('sales-agent/user-order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
-                </div>
-            </a>
+                <a href="{{ route('user-order.index') }}" class="nav-link padding" style="padding-left: 27px">
+                    <i data-feather="shopping-cart"></i>
+                    <span>Orders</span>
+                    <div id="orderUserCounter"
+                        class="badge {{ request()->is('sales-agent/user-order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
+                    </div>
+                </a>
+            </li>
+            {{-- Reports --}}
+            <li class="dropdown {{ request()->is('admin/user-reports*') ? 'active' : '' }}">
+                <a href="{{ route('user-reports.index') }}" class="nav-link">
+                    <span><i data-feather="file-text"></i></span>
+                    <span>Reports</span>
+                </a>
             </li>
             {{-- Private Notes --}}
             <li class="dropdown {{ request()->is('sales-agent/agentNotes*') ? 'active' : '' }}">

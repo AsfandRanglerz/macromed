@@ -1,27 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\SalesAgent;
 
 use Carbon\Carbon;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Supplier;
 
-class ReportsController extends Controller
+class ReportController extends Controller
 {
-    public function reportsIndex()
+    public function reportsUserIndex()
     {
-        $suppliers = Supplier::where('status', '1')->get();
-        return view('admin.reports.index', compact('suppliers'));
+
+        return view('salesagent.reports.index');
     }
 
-    public function getReportsData(Request $request)
+    public function getUserReportsData(Request $request)
     {
-        $query = Order::with(['users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem.productVariant'])->where('status', 'completed')
+        $query = Order::with('users:id,name,phone,email')->where('status', 'completed')->where('sales_agent_id', auth()->guard('sales_agent')->id())
             ->latest();
         if ($request->filled('startDate') && $request->filled('endDate')) {
-
             $query->whereBetween('created_at', [
                 Carbon::parse($request->startDate)->startOfDay(),
                 Carbon::parse($request->endDate)->endOfDay()
@@ -48,24 +46,10 @@ class ReportsController extends Controller
             }
         }
 
-        // Area, supplier, and product filters
-        if ($request->filled('area')) {
-            $query->where('area_id', $request->area);
-        }
-        if ($request->filled('supplier')) {
-            $query->whereHas('orderItem.productVariant.products', function ($q) use ($request) {
-                $q->where('supplier_name', $request->supplier);
-            });
-        }
-        if ($request->filled('product')) {
-            $query->whereHas('orderItem', function ($q) use ($request) {
-                $q->where('product_id', $request->product);
-            });
-        }
 
         // Fetch results
         $salesData = $query->get();
-        $totalAmount = $salesData->sum('total');
+        $totalAmount = $salesData->sum('product_commission');
 
         // Return JSON response
         return response()->json([

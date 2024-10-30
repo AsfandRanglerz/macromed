@@ -1,7 +1,9 @@
 <?php
 
-use App\Http\Controllers\SalesAgent\OrderController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\SalesAgent\OrderController;
+use App\Http\Controllers\SalesAgent\ReportController;
 use App\Http\Controllers\SalesAgent\SalesAgentAuthController;
 use App\Http\Controllers\SalesAgent\SalesAgentLoginController;
 use App\Http\Controllers\SalesAgent\SalesAgentNotificationController;
@@ -46,5 +48,11 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::get('/orderUserData',  'orderUserData')->name('user-order.get');
         Route::get('/user-order',  'orderUserIndex')->name('user-order.index');
         Route::get('/user-order/counter',  'getUserOrderCount')->name('user-orders.count');
+    });
+
+    // ############## SalesAgent Reports ############
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('/user-reports',  'reportsUserIndex')->name('user-reports.index');
+        Route::get('user-reports/data/', 'getUserReportsData')->name('user.reports.data');
     });
 });
