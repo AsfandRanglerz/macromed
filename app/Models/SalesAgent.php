@@ -41,4 +41,9 @@ class SalesAgent extends Authenticatable
     {
         return $this->hasMany(Order::class, 'sales_agent_id');
     }
+
+    public function withDrwalRequest()
+    {
+        return $this->hasMany(WithDrawRequest::class, 'sales_agent_id');
+    }
 }

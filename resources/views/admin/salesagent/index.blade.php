@@ -347,6 +347,7 @@
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Active & Deactivate Status</th>
+                                            <th>Withdrawal History</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -400,6 +401,14 @@
                                 .id + '">' + buttonText + '</button>';
                         },
 
+                    },
+                    {
+                        "render": function(data, type, row) {
+                            return '<a href="' +
+                                "{{ route('userPaymentHistory.index', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-file-invoice-dollar"></i></a>';
+                        },
                     },
                     {
                         "data": null,

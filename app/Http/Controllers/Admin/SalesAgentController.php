@@ -108,6 +108,20 @@ class SalesAgentController extends Controller
         $salesManager = SalesAgent::findOrFail($id);
         return view('admin.salesagent.profile', compact('salesManager'));
     }
+
+    public function getPaymentHistory(Request $request, $id)
+    {
+        try {
+            $user = SalesAgent::findOrFail($id);
+            $paymentRequests = $user->withDrwalRequest()->where('status', 'approved')->get();
+            return view('admin.salesagent.paymentHistory', compact('paymentRequests'));
+        } catch (\Exception $e) {
+            return response()->json([
+                'alert' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function salesagentCreate(Request $request)
     {
         try {

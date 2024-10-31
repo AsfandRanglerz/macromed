@@ -102,6 +102,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/salesagent-profile/{id}',  'salesagentProfile')->name('salesagent.profile')->middleware('permission:Sales Agent');
         Route::get('/fetch-states', 'fetchStates')->name('fetchStates');
         Route::get('/fetch-cities', 'fetchCities')->name('fetchCities');
+        // ######### Payment History###########
+        Route::get('/salesagent/history/{id}',  'getPaymentHistory')->name('userPaymentHistory.index');
     });
 
     // ############## Customer ############
@@ -330,7 +332,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/withDrawLimitUpdate/{id}',  'updatewithDrawLimit')->name('withDrawLimit.update')->middleware('permission:Wallet WithDrawal Limit');
         Route::get('/withdrawLimit/delete/{id}',  'deletewithDrawLimit')->name('withDrawLimit.delete')->middleware('permission:Wallet WithDrawal Limit');
     });
-
 
     // ############## Wallet WithDraw Limit ############
     Route::controller(WithDrawRequestController::class)->group(function () {
