@@ -62,8 +62,8 @@
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Amount</th>
-                                            <th>View</th>
                                             <th>Status</th>
+                                            <th>View</th>
                                         </tr>
                                     </thead>
                                     <tbody>
