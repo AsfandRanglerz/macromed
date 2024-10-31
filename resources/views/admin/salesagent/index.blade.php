@@ -439,6 +439,15 @@
         });
 
         // ##############Create Sales Manager################
+        function initializeSelect2(modal) {
+            modal.find('.select2').select2({
+                dropdownParent: modal,
+                width: '100%'
+            });
+        }
+        $('#createSalesAgentModal, #editSalesAgentModal').on('shown.bs.modal', function() {
+            initializeSelect2($(this));
+        });
         $(document).ready(function() {
             $('#createSalesAgentForm input, #createSalesAgentForm select, #createSalesAgentForm textarea').on(
                 'input change',
