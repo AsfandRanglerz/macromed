@@ -54,17 +54,12 @@
                                                         <label>Name</label>
                                                         <input type="text" name="name" value="{{ $data->name }}"
                                                             class="form-control">
-                                                        @error('name')
-                                                            <div class="text-danger">Please fill in the Name</div>
-                                                        @enderror
                                                     </div>
                                                     <div class="form-group col-md-6 col-12">
                                                         <label>Email</label>
                                                         <input type="email" name="email" value="{{ $data->email }}"
                                                             class="form-control">
-                                                        @error('email')
-                                                            <div class="text-danger">Please fill in the email</div>
-                                                        @enderror
+
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -84,22 +79,22 @@
                                                         <label>Phone</label>
                                                         <input type="tel" name="phone" value="{{ $data->phone }}"
                                                             class="form-control">
-                                                        @error('phone')
-                                                            <div class="text-danger">Please fill in the phone number</div>
-                                                        @enderror
+
                                                     </div>
                                                 </div>
 
                                                 <div class="row">
                                                     <div class="form-group col-md-6 col-12">
                                                         <label>Country</label>
-                                                        <input type="text" name="country" value="{{ explode(',', $data->country)[1] }}"
+                                                        <input type="text" name="country"
+                                                            value="{{ explode(',', $data->country)[1] }}"
                                                             class="form-control" disabled>
                                                     </div>
                                                     <div class="form-group col-md-6 col-12">
                                                         <label>State</label>
-                                                        <input type="text" name="state" value="{{ explode(',', $data->state)[1] }}"
-                                                            class="form-control" disabled>
+                                                        <input type="text" name="state"
+                                                            value="{{ explode(',', $data->state)[1] }}" class="form-control"
+                                                            disabled>
                                                     </div>
                                                 </div>
 
@@ -113,6 +108,7 @@
                                                         <label>Location</label>
                                                         <input type="text" name="location" value="{{ $data->location }}"
                                                             class="form-control">
+
                                                     </div>
                                                 </div>
 
@@ -126,17 +122,20 @@
                                                                     value="{{ $agent->account_name }}"
                                                                     class="form-control">
                                                             </div>
+
                                                             <div class="form-group col-md-4 col-12">
                                                                 <label>Account Holder Name</label>
                                                                 <input type="text" name="account_holder_name"
                                                                     value="{{ $agent->account_holder_name }}"
                                                                     class="form-control">
                                                             </div>
+
                                                             <div class="form-group col-md-4 col-12">
                                                                 <label>Account Number</label>
                                                                 <input type="text" name="account_number"
                                                                     value="{{ $agent->account_number }}"
                                                                     class="form-control">
+
                                                             </div>
                                                         </div>
                                                     @endforeach
@@ -158,3 +157,13 @@
     </div>
 @endsection
 
+@section('js')
+    <script>
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error('{{ $error }}');
+            @endforeach
+        @endif
+    </script>
+
+@endsection

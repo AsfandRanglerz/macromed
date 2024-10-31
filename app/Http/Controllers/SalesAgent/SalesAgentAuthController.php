@@ -41,20 +41,25 @@ class SalesAgentAuthController extends Controller
 
     public function sales_agent_update_profile(Request $request)
     {
+        $salesAgentId = auth()->guard('sales_agent')->id();
+
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
+            'name' => 'required|unique:sales_agents,name,' . $salesAgentId,
+            'email' => 'required|email|unique:sales_agents,email,' . $salesAgentId,
             'phone' => 'required',
+            'location' => 'required',
+            'account_number' => 'required|numeric|unique:agent_accounts,account_number,' . $salesAgentId . ',agent_id|min:16',
+            'account_name' => 'required|string|max:255',
+            'account_holder_name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
-
         if (auth()->guard('sales_agent')->check()) {
-            $salesAgent = SalesAgent::find(auth()->guard('sales_agent')->id());
-
+            $salesAgent = SalesAgent::find($salesAgentId);
             if (!$salesAgent) {
                 return back()->with(['alert' => 'error', 'error' => 'Sales Agent not found.']);
             }
 
-            // Fill the sales agent data
+            // Update sales agent details
             $salesAgent->fill($request->only([
                 'name',
                 'email',
@@ -65,20 +70,25 @@ class SalesAgentAuthController extends Controller
                 'city',
                 'location'
             ]));
+
+            // Handle image upload
             if ($request->hasFile('image')) {
-                $oldImagePath =  $salesAgent->image;
-                if ($salesAgent->image && File::exists($oldImagePath)) {
-                    File::delete($oldImagePath);
+                // Delete old image if it exists
+                $oldImagePath = $salesAgent->image;
+                if ($oldImagePath && File::exists(public_path($oldImagePath))) {
+                    File::delete(public_path($oldImagePath));
                 }
+
+                // Save new image
                 $image = $request->file('image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('admin/assets/images/users'), $filename);
-                $salesAgent->image = 'public/admin/assets/images/users/' . $filename;
+                $salesAgent->image = 'admin/assets/images/users/' . $filename;
             }
 
             $salesAgent->save();
 
-            // Update Account Info
+            // Update account information for the agent
             $accountData = $request->only(['account_number', 'account_name', 'account_holder_name']);
             AgentAccount::updateOrCreate(
                 ['agent_id' => $salesAgent->id],
@@ -90,6 +100,7 @@ class SalesAgentAuthController extends Controller
             return back()->with(['alert' => 'error', 'error' => 'Not authorized.']);
         }
     }
+
 
 
 
