@@ -8,11 +8,12 @@ use App\Mail\userBlocked;
 use App\Mail\userUnBlocked;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateCustomer;
 use App\Mail\SalesAgentRegistration;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\CreateCustomer;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
@@ -107,6 +108,7 @@ class CustomerController extends Controller
     public function customerCreate(CreateCustomer $request)
     {
         try {
+            DB::beginTransaction();
             $data = $request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location', 'profession', 'work_space_name', 'work_space_email', 'work_space_address', 'work_space_number']);
             $data['user_type'] = 'customer';
             $data['password'] = bcrypt($request->input('password'));
@@ -126,10 +128,12 @@ class CustomerController extends Controller
                 $data['account_holder_name'] = $customer->email;
                 $data['account_number'] = $request->password;
                 Mail::to($customer->email)->send(new SalesAgentRegistration($data));
+                DB::commit();
                 return response()->json(['alert' => 'success', 'message' => 'Customers Created Successfully!']);
             }
             return response()->json(['alert' => 'error', 'message' => 'Customers Not Created!']);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating Customers: ' . $e->getMessage()], 500);
         }
     }
