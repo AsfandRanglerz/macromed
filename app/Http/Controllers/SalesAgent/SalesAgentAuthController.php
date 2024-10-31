@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\SalesAgent;
 
+use Exception;
 use App\Models\SalesAgent;
+use App\Models\AgentWallet;
 use Illuminate\Support\Str;
+use App\Models\AgentAccount;
 use Illuminate\Http\Request;
 use App\Mail\PasswordResetMail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\AgentWallet;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,11 +32,84 @@ class SalesAgentAuthController extends Controller
     {
         if (Auth::guard('sales_agent')->check()) {
             $data = Auth::guard('sales_agent')->user();
-            $data['salesAgent']  = AgentWallet::where('sales_agent_id', auth()->guard('sales_agent')->id())->get();
+            $data['salesAgent']  = AgentAccount::where('agent_id', auth()->guard('sales_agent')->id())->get();
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => array(
+                    'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+                ),
+            ));
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $countries = json_decode($response);
+
+            // Decode the JSON response
+            if ($countries == NULL) {
+                $countries = [];
+            }
         } else {
             return redirect('/sales-agent')->with(['alert' => 'error', 'message' => 'You are not logged in!']);
         }
-        return view('salesagent.auth.profile', compact('data'));
+        // return $countries;
+        return view('salesagent.auth.profile', compact('data', 'countries'));
+    }
+
+    public function fetchStates(Request $request)
+    {
+        $countryCode = $request->input('country_code');
+
+        try {
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries/' . $countryCode . '/states',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => array(
+                    'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+                ),
+            ));
+            $response = curl_exec($curl);
+
+            if ($response === false) {
+                throw new Exception('Error occurred while fetching states: ' . curl_error($curl));
+            }
+
+            curl_close($curl);
+            $states = json_decode($response);
+
+            return response()->json($states);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function fetchCities(Request $request)
+    {
+        $stateCode = $request->input('state_code');
+        $countryCode = $request->input('country_code');
+        try {
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries/' . $countryCode . '/states/' . $stateCode . '/cities',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => array(
+                    'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
+                ),
+            ));
+            $response = curl_exec($curl);
+
+            if ($response === false) {
+                throw new Exception('Error occurred while fetching cities: ' . curl_error($curl));
+            }
+
+            curl_close($curl);
+            $cities = json_decode($response);
+
+            return response()->json($cities);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
     public function sales_agent_update_profile(Request $request)
     {
@@ -42,26 +118,51 @@ class SalesAgentAuthController extends Controller
             'email' => 'required|email',
             'phone' => 'required',
         ]);
-        $data = $request->only(['name', 'email', 'phone']);
+
         if (auth()->guard('sales_agent')->check()) {
             $salesAgent = SalesAgent::find(auth()->guard('sales_agent')->id());
+
             if (!$salesAgent) {
                 return back()->with(['alert' => 'error', 'error' => 'Sales Agent not found.']);
             }
+
+            // Fill the sales agent data
+            $salesAgent->fill($request->only([
+                'name',
+                'email',
+                'phone',
+                'status',
+                'country',
+                'state',
+                'city',
+                'location'
+            ]));
             if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $extension = $file->getClientOriginalExtension();
-                $filename = time() . '.' . $extension;
-                $file->move(public_path('admin/assets/images/users/'), $filename);
-                $data['image'] = 'public/admin/assets/images/users/' . $filename;
+                $oldImagePath =  $salesAgent->image;
+                if ($salesAgent->image && File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
+                $image = $request->file('image');
+                $filename = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('admin/assets/images/users'), $filename);
+                $salesAgent->image = 'public/admin/assets/images/users/' . $filename;
             }
 
-            $salesAgent->update($data);
+            $salesAgent->save();
+
+            // Update Account Info
+            $accountData = $request->only(['account_number', 'account_name', 'account_holder_name']);
+            AgentAccount::updateOrCreate(
+                ['agent_id' => $salesAgent->id],
+                $accountData
+            );
+
+            return back()->with(['alert' => 'success', 'message' => 'Profile Updated Successfully!']);
         } else {
             return back()->with(['alert' => 'error', 'error' => 'Not authorized.']);
         }
-        return back()->with(['alert' => 'success', 'message' => 'Profile Updated Successfully!']);
     }
+
 
 
     public function salesAgentforgetPassword()

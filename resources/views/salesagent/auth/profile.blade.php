@@ -55,9 +55,7 @@
                                                         <input type="text" name="name" value="{{ $data->name }}"
                                                             class="form-control">
                                                         @error('name')
-                                                            <div class="text-danger">
-                                                                Please fill in the Name
-                                                            </div>
+                                                            <div class="text-danger">Please fill in the Name</div>
                                                         @enderror
                                                     </div>
                                                     <div class="form-group col-md-6 col-12">
@@ -65,9 +63,7 @@
                                                         <input type="email" name="email" value="{{ $data->email }}"
                                                             class="form-control">
                                                         @error('email')
-                                                            <div class="text-danger">
-                                                                Please fill in the email
-                                                            </div>
+                                                            <div class="text-danger">Please fill in the email</div>
                                                         @enderror
                                                     </div>
                                                 </div>
@@ -80,27 +76,77 @@
                                                             <label class="custom-file-label" for="customFile">Choose
                                                                 file</label>
                                                         </div>
-
-                                                        <div class="invalid-feedback">
-
-                                                        </div>
+                                                        <img src="{{ asset($data->image) }}" alt="Profile Image"
+                                                            width="100" class="mt-2">
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                     <div class="form-group col-md-6 col-12">
                                                         <label>Phone</label>
                                                         <input type="tel" name="phone" value="{{ $data->phone }}"
-                                                            class="form-control" value="">
+                                                            class="form-control">
                                                         @error('phone')
-                                                            <div class="text-danger">
-                                                                Please fill in the email
-                                                            </div>
+                                                            <div class="text-danger">Please fill in the phone number</div>
                                                         @enderror
                                                     </div>
                                                 </div>
+
+                                                <div class="row">
+                                                    <div class="form-group col-md-6 col-12">
+                                                        <label>Country</label>
+                                                        <input type="text" name="country" value="{{ explode(',', $data->country)[1] }}"
+                                                            class="form-control" disabled>
+                                                    </div>
+                                                    <div class="form-group col-md-6 col-12">
+                                                        <label>State</label>
+                                                        <input type="text" name="state" value="{{ explode(',', $data->state)[1] }}"
+                                                            class="form-control" disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group col-md-6 col-12">
+                                                        <label>City</label>
+                                                        <input type="text" name="city" value="{{ $data->city }}"
+                                                            class="form-control" disabled>
+                                                    </div>
+                                                    <div class="form-group col-md-6 col-12">
+                                                        <label>Location</label>
+                                                        <input type="text" name="location" value="{{ $data->location }}"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+
+                                                <h4>Account Details</h4>
+                                                @if (isset($data->salesAgent) && count($data->salesAgent) > 0)
+                                                    @foreach ($data->salesAgent as $agent)
+                                                        <div class="row">
+                                                            <div class="form-group col-md-4 col-12">
+                                                                <label>Account Name</label>
+                                                                <input type="text" name="account_name"
+                                                                    value="{{ $agent->account_name }}"
+                                                                    class="form-control">
+                                                            </div>
+                                                            <div class="form-group col-md-4 col-12">
+                                                                <label>Account Holder Name</label>
+                                                                <input type="text" name="account_holder_name"
+                                                                    value="{{ $agent->account_holder_name }}"
+                                                                    class="form-control">
+                                                            </div>
+                                                            <div class="form-group col-md-4 col-12">
+                                                                <label>Account Number</label>
+                                                                <input type="text" name="account_number"
+                                                                    value="{{ $agent->account_number }}"
+                                                                    class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
                                             </div>
                                             <div class="card-footer text-center">
                                                 <button type="submit" class="btn btn-primary">Save Changes</button>
                                             </div>
                                         </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -113,3 +159,6 @@
 
 @endsection
 
+@section('js')
+
+@endsection

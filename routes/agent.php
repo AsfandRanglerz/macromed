@@ -23,8 +23,11 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
     Route::controller(SalesAgentAuthController::class)->group(function () {
         Route::get('dashboard', 'getSalesAgentdashboard')->name('dashboard.salesAgent');
         Route::get('profile', 'getSalesAgentProfile');
+        Route::get('/fetch-states', 'fetchStates')->name('fetchStates');
+        Route::get('/fetch-cities', 'fetchCities')->name('fetchCities');
         Route::post('update-profile', 'sales_agent_update_profile');
         Route::get('logout', 'salesAgentlogout');
+
     });
 
     // ############## Sales Agent Notification Controller ############
