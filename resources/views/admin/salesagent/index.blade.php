@@ -448,14 +448,6 @@
         $('#createSalesAgentModal, #editSalesAgentModal').on('shown.bs.modal', function() {
             initializeSelect2($(this));
         });
-        $(document).ready(function() {
-            $('#createSalesAgentForm input, #createSalesAgentForm select, #createSalesAgentForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
 
         function submitSalesAgentForm() {
             var formData = new FormData($('#createSalesAgentForm')[0]);
@@ -481,9 +473,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('[name="' + key + '"]').addClass('is-invalid').siblings(
-                                '.invalid-feedback').text(value);
-
+                            toastr.error(value[0]);
                         });
                     } else {
                         toastr.error('An error occurred while Creating Sales Managers');
@@ -499,17 +489,6 @@
             $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
         });
         // ######Get & Update Sales Manager#########
-
-        // #############Update SalesAgent#############
-        $(document).ready(function() {
-            $('#editSalesAgentForm input, #editSalesAgentForm select, #editSalesAgentForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
-
         function submitEditSalesAgentForm() {
             var salesAgentUpdateRoute = '{{ route('salesagent.update', ':id') }}';
             var salesAgentId = $('#editSalesAgentModal').data('salesAgentId');
@@ -534,8 +513,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('[name="' + key + '"]').addClass('is-invalid').siblings(
-                                '.invalid-feedback').text(value);
+                            toastr.error(value[0]);
 
                         });
                     } else {
