@@ -16,16 +16,14 @@ class WithDrawRequestController extends Controller
 {
     public function paymentRequestData()
     {
-        $paymentRequests = WithDrawRequest::with('salesAgent.agentWallet')->latest()->get();
+        $paymentRequests = WithDrawRequest::with('salesAgent.agentWallet')->where('status', 'requested')->latest()->get();
         $json_data["data"] =  $paymentRequests;
         return json_encode($json_data);
     }
 
     public function paymentRequestIndex()
     {
-        $paymentRequests = WithDrawRequest::with('salesAgent.agentAccounts')->where('status', 'requested')->latest()->get();
-        // return  $paymentRequests;
-        return view('admin.withdrawrequest.index', compact('paymentRequests'));
+        return view('admin.withdrawrequest.index');
     }
 
     public function getAccountDetails(Request $request, $userId)
@@ -78,7 +76,7 @@ class WithDrawRequestController extends Controller
             $paymentRequest->status = 'approved';
             $paymentRequest->save();
             if ($paymentRequest) {
-                $data['username'] =  $paymentRequest->salesAgent->name ;
+                $data['username'] =  $paymentRequest->salesAgent->name;
                 $data['useremail'] =  $paymentRequest->salesAgent->email;
                 $data['amount'] =  $paymentRequest->amount;
                 $data['image'] =  $paymentRequest->image;
