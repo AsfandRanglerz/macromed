@@ -62,6 +62,7 @@
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Amount</th>
+                                            <th>View</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -126,6 +127,14 @@
                                 return data;
                             }
                         }
+                    },
+                    {
+                        "render": function(data, type, row) {
+                            return '<a href="' +
+                                "{{ route('agentPaymentHistory.index', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-file-invoice-dollar"></i></a>';
+                        },
                     },
 
                 ]

@@ -25,10 +25,13 @@ class WithDrawRequestController extends Controller
 
     public function requestIndex()
     {
-        // $categories = WithDrawRequest::where('sales_agent_id', $this->getSalesAgentId())->get();
         return view('salesagent.withdrawrequest.index');
     }
-
+    public function requestViewIndex($id)
+    {
+        $paymentRequests = WithDrawRequest::findOrFail($id);
+        return view('salesagent.withdrawrequest.agentPayment', compact('paymentRequests'));
+    }
 
 
     public function requestCreate(Request $request)

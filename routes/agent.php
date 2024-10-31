@@ -25,7 +25,6 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::get('profile', 'getSalesAgentProfile');
         Route::post('update-profile', 'sales_agent_update_profile');
         Route::get('logout', 'salesAgentlogout');
-
     });
 
     // ############## Sales Agent Notification Controller ############
@@ -63,5 +62,7 @@ Route::prefix('sales-agent')->middleware('sales_agent')->group(function () {
         Route::get('/withdraw-requestData',  'requestIndexData')->name('user-request.get');
         Route::get('/withdraw-request',  'requestIndex')->name('user-request.index');
         Route::post('/withdraw-request/data',  'requestCreate')->name('user-request.create');
+        // ######### Payment History###########
+        Route::get('/withdraw-request/history/{id}',  'requestViewIndex')->name('agentPaymentHistory.index');
     });
 });
