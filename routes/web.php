@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UnitController;
@@ -27,10 +28,10 @@ use App\Http\Controllers\Admin\MainMaterialController;
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\TermConditionController;
-use App\Http\Controllers\Admin\ProductVariantController;
-use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\WithDrawLimitController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\WithDrawRequestController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +46,14 @@ use App\Http\Controllers\Admin\WithDrawRequestController;
 /*
 Admin routes
  * */
+Route::get('/cache_clear', function () {
+    Artisan::call('config:cache');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('optimize:clear');
+    Artisan::call('route:clear');
+    return 'Application cache cleared!';
+});
 
 Route::get('/', function () {
     return redirect('/admin');
