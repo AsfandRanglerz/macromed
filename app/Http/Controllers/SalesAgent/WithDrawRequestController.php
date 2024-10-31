@@ -54,8 +54,6 @@ class WithDrawRequestController extends Controller
                     'message' => 'Insufficient balance in the wallet for this request.'
                 ], 422);
             }
-            $agentWallet->recevied_commission -= $amount;
-            $agentWallet->save();
             $withDrawRequest = new WithDrawRequest();
             $withDrawRequest->sales_agent_id = $salesAgentId;
             $withDrawRequest->amount = $amount;

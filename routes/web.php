@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\WithDrawLimitController;
+use App\Http\Controllers\Admin\WithDrawRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -320,14 +321,28 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('reports/data/', 'getReportsData')->name('admin.reports.data');
     });
 
-       // ############## Wallet WithDraw Limit ############
-       Route::controller(WithDrawLimitController::class)->group(function () {
+    // ############## Wallet WithDraw Limit ############
+    Route::controller(WithDrawLimitController::class)->group(function () {
         Route::post('/withdrawLimitData',  'withdrawLimitData')->name('withdrawLimit.get')->middleware('permission:Wallet WithDrawal Limit');
         Route::get('/withdrawLimit',  'withdrawLimitIndex')->name('withdrawLimit.index')->middleware('permission:Wallet WithDrawal Limit');
         Route::post('/withdrawLimit-create',  'withDrawLimitCreate')->name('withDrawLimit.create')->middleware('permission:Wallet WithDrawal Limit');
         Route::get('/withdrawLimit/{id}',  'showwithDrawLimit')->name('withDrawLimit.show')->middleware('permission:Wallet WithDrawal Limit');
         Route::post('/withDrawLimitUpdate/{id}',  'updatewithDrawLimit')->name('withDrawLimit.update')->middleware('permission:Wallet WithDrawal Limit');
         Route::get('/withdrawLimit/delete/{id}',  'deletewithDrawLimit')->name('withDrawLimit.delete')->middleware('permission:Wallet WithDrawal Limit');
+    });
+
+
+    // ############## Wallet WithDraw Limit ############
+    Route::controller(WithDrawRequestController::class)->group(function () {
+        Route::post('/paymentRequestData',  'paymentRequestData')->name('paymentRequest.get')->middleware('permission:WithDrawal Request');
+        Route::get('/paymentRequest',  'paymentRequestIndex')->name('paymentRequest.index')->middleware('permission:WithDrawal Request');
+        Route::post('/paymentRequest-create',  'paymentRequestCreate')->name('paymentRequest.create')->middleware('permission:WithDrawal Request');
+        Route::get('/paymentRequest/{id}',  'showPaymentRequest')->name('paymentRequest.show')->middleware('permission:WithDrawal Request');
+        Route::post('/paymentRequestUpdate/{id}',  'updatePaymentRequest')->name('paymentRequest.update')->middleware('permission:WithDrawal Request');
+        Route::get('/paymentRequest/delete/{id}',  'deletePaymentRequest')->name('paymentRequest.delete')->middleware('permission:WithDrawal Request');
+        Route::get('/paymentRequestCounter',  'getPaymentRequestCount')->name('paymentRequest.count')->middleware('permission:WithDrawal Request');
+        // User Account Details
+        Route::get('/paymentRequest/bankInfo/{userId}',  'getAccountDetails')->name('paymentAccount.index')->middleware('permission:WithDrawal Request');
     });
 });
 

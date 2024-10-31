@@ -94,6 +94,22 @@
         }
         updateOrderCounter();
         setInterval(updateOrderCounter, 1000);
+
+        function updatePaymentRequestCounter() {
+            $.ajax({
+                url: "{{ route('paymentRequest.count') }}",
+                type: 'GET',
+                success: function(response) {
+
+                    $('.paymentRequestCounter').text(response.paymentRequest);
+                },
+                error: function(xhr, status, error) {
+                    console.log("error", xhr);
+                }
+            });
+        }
+        updatePaymentRequestCounter();
+        setInterval(updatePaymentRequestCounter, 1000);
     </script>
     <script>
         document.getElementById('printInvoice').addEventListener('click', function() {

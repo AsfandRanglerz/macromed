@@ -340,6 +340,29 @@
                     </a>
                 </li>
             @endif
+            {{-- WithDarw Request --}}
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Wallet WithDrawal Limit'))
+                <li class="{{ request()->is('admin/paymentRequest*') ? 'active' : '' }} ">
+                    <a href="{{ route('paymentRequest.index') }}"
+                        class="nav-link {{ request()->is('admin/paymentRequest*') ? 'text-white' : '' }}"style="padding-left:13px">
+                        <span> <i class="fas fa-coins"></i>Withdrawal Requests</span>
+                        <div
+                            class="badge paymentRequestCounter  {{ request()->is('admin/paymentRequest*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
+                        </div>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="{{ request()->is('admin/paymentRequest*') ? 'active' : '' }}">
+                    <a href="{{ route('paymentRequest.index') }}"
+                        class="nav-link {{ request()->is('admin/paymentRequest*') ? 'text-white' : '' }}"
+                        style="padding-left:13px">
+                        <span> <i class="fas fa-coins"></i>Withdrawal Requests</span>
+                        <div
+                            class="badge paymentRequestCounter  {{ request()->is('admin/paymentRequest*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
+                        </div>
+                    </a>
+                </li>
+            @endif
             {{-- WithDarw Limit --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Wallet WithDrawal Limit'))
                 <li class="{{ request()->is('admin/withdrawLimit*') ? 'active' : '' }} ">

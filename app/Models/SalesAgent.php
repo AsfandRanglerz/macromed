@@ -24,7 +24,7 @@ class SalesAgent extends Authenticatable
 
     public function agentAccounts()
     {
-        return $this->hasOne(AgentAccount::class, 'agent_id');
+        return $this->hasOne(AgentAccount::class, 'agent_id','id');
     }
 
     public function agentWallet()
