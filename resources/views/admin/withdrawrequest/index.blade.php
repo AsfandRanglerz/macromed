@@ -93,7 +93,7 @@
                                             <th>Email</th>
                                             <th>Total Remaining Amount</th>
                                             <th>Requested Amount</th>
-                                            <th>Account Details</th>
+                                            {{-- <th>Account Details</th> --}}
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -172,14 +172,14 @@
                         }
                     },
 
-                    {
-                        "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('paymentAccount.index', ['userId' => ':id']) }}"
-                                .replace(':id', row.user_id) +
-                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-user"></i></a>';
-                        },
-                    },
+                    // {
+                    //     "render": function(data, type, row) {
+                    //         return '<a href="' +
+                    //             "{{ route('paymentAccount.index', ['userId' => ':id']) }}"
+                    //             .replace(':id', row.user_id) +
+                    //             '" class="btn btn-primary mb-0 text-white"><i class="fas fa-user"></i></a>';
+                    //     },
+                    // },
                     {
                         "data": "status",
                         "render": function(data, type, row) {

@@ -78,11 +78,11 @@ class WithDrawRequestController extends Controller
             $paymentRequest->status = 'approved';
             $paymentRequest->save();
             if ($paymentRequest) {
-                $data['username'] =  $paymentRequest->users->fname . ' ' .  $paymentRequest->users->lname;
-                $data['useremail'] =  $paymentRequest->users->email;
+                $data['username'] =  $paymentRequest->salesAgent->name ;
+                $data['useremail'] =  $paymentRequest->salesAgent->email;
                 $data['amount'] =  $paymentRequest->amount;
                 $data['image'] =  $paymentRequest->image;
-                Mail::to($paymentRequest->users->email)->send(new paymentProof($data));
+                Mail::to($paymentRequest->salesAgent->email)->send(new paymentProof($data));
             }
             DB::commit();
             return response()->json([
