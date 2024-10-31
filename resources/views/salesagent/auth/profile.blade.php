@@ -156,9 +156,5 @@
             </div>
         </section>
     </div>
-
 @endsection
 
-@section('js')
-
-@endsection

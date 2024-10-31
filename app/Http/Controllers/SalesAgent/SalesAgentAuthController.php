@@ -33,84 +33,12 @@ class SalesAgentAuthController extends Controller
         if (Auth::guard('sales_agent')->check()) {
             $data = Auth::guard('sales_agent')->user();
             $data['salesAgent']  = AgentAccount::where('agent_id', auth()->guard('sales_agent')->id())->get();
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER => array(
-                    'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
-                ),
-            ));
-            $response = curl_exec($curl);
-            curl_close($curl);
-            $countries = json_decode($response);
-
-            // Decode the JSON response
-            if ($countries == NULL) {
-                $countries = [];
-            }
         } else {
             return redirect('/sales-agent')->with(['alert' => 'error', 'message' => 'You are not logged in!']);
         }
-        // return $countries;
-        return view('salesagent.auth.profile', compact('data', 'countries'));
+        return view('salesagent.auth.profile', compact('data'));
     }
 
-    public function fetchStates(Request $request)
-    {
-        $countryCode = $request->input('country_code');
-
-        try {
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries/' . $countryCode . '/states',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER => array(
-                    'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
-                ),
-            ));
-            $response = curl_exec($curl);
-
-            if ($response === false) {
-                throw new Exception('Error occurred while fetching states: ' . curl_error($curl));
-            }
-
-            curl_close($curl);
-            $states = json_decode($response);
-
-            return response()->json($states);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    public function fetchCities(Request $request)
-    {
-        $stateCode = $request->input('state_code');
-        $countryCode = $request->input('country_code');
-        try {
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries/' . $countryCode . '/states/' . $stateCode . '/cities',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER => array(
-                    'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
-                ),
-            ));
-            $response = curl_exec($curl);
-
-            if ($response === false) {
-                throw new Exception('Error occurred while fetching cities: ' . curl_error($curl));
-            }
-
-            curl_close($curl);
-            $cities = json_decode($response);
-
-            return response()->json($cities);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
     public function sales_agent_update_profile(Request $request)
     {
         $request->validate([
