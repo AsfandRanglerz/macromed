@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Mail\paymentProof;
 use App\Models\SalesAgent;
 use App\Models\AgentWallet;
 use Illuminate\Http\Request;
 use App\Models\WithDrawRequest;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class WithDrawRequestController extends Controller
@@ -51,7 +54,7 @@ class WithDrawRequestController extends Controller
     public function updatePaymentRequest(Request $request, $id)
     {
         try {
-            // Validate the request
+            DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'image' => 'required|image|mimes:jpg,jpeg,png|max:1024', // Max size in KB (1MB)
             ]);
@@ -74,17 +77,20 @@ class WithDrawRequestController extends Controller
             }
             $paymentRequest->status = 'approved';
             $paymentRequest->save();
+            if ($paymentRequest) {
+                $data['username'] =  $paymentRequest->users->fname . ' ' .  $paymentRequest->users->lname;
+                $data['useremail'] =  $paymentRequest->users->email;
+                $data['amount'] =  $paymentRequest->amount;
+                $data['image'] =  $paymentRequest->image;
+                Mail::to($paymentRequest->users->email)->send(new paymentProof($data));
+            }
+            DB::commit();
             return response()->json([
                 'alert' => 'success',
                 'message' => 'Payment Proof Sent Successfully.',
-                'data' => [
-                    'username' => $paymentRequest->salesAgent->name,
-                    'useremail' => $paymentRequest->salesAgent->email,
-                    'amount' => $paymentRequest->amount,
-                    'image' => $paymentRequest->image,
-                ],
             ], 200);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
