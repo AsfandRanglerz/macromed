@@ -13,7 +13,7 @@ class UpdateCustomer extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -27,13 +27,13 @@ class UpdateCustomer extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'phone' => 'required|numeric|min:11,' . $id,
-            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
+            'phone' => 'required|numeric|digits:11|unique:users,phone,' . $id,
+            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1024',
             'profession' => 'required|string|max:255',
             'work_space_name' => 'required|string|max:255',
             'work_space_address' => 'required|string|max:255',
-            'work_space_number' => 'required|numeric|digits:11|unique:users,work_space_number',
-            'work_space_email' => 'required|email|unique:users,work_space_email|max:255' . $id,
+            'work_space_number' => 'required|numeric|digits:11|unique:users,work_space_number,' . $id,
+            'work_space_email' => 'required|email|unique:users,work_space_email,' . $id . '|max:255',
             'location' => 'required|string|max:255',
         ];
     }

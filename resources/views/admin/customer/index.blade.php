@@ -88,14 +88,16 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="name">Workplace Name</label>
-                                    <input type="text" class="form-control" id="work_space_name" name="work_space_name" required>
+                                    <input type="text" class="form-control" id="work_space_name" name="work_space_name"
+                                        required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="phone">Workplace Phone Number</label>
-                                    <input type="text" class="form-control" id="work_space_number" name="work_space_number">
+                                    <input type="text" class="form-control" id="work_space_number"
+                                        name="work_space_number">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -104,14 +106,16 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="name">Workplace Email</label>
-                                    <input type="email" class="form-control" id="work_space_email" name="work_space_email" required>
+                                    <input type="email" class="form-control" id="work_space_email"
+                                        name="work_space_email" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="phone">Workplace Address</label>
-                                    <input type="text" class="form-control" id="work_space_address" name="work_space_address">
+                                    <input type="text" class="form-control" id="work_space_address"
+                                        name="work_space_address">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -179,7 +183,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="editCustomerForm" enctype="multipart/form-data">
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="name">Name</label>
@@ -251,13 +255,141 @@
                             </div>
                         </div>
                         <div class="row">
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
                                     <input type="file" class="form-control image" name="image">
                                     <img id="imagePreview" src="" alt="Image Preview"
                                         style="display: none; max-width: 100px; margin-top: 10px;">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div> --}}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control name" name="name" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="text" class="form-control phone" name="phone">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control email" name="email" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="confirmpassword">Active Status</label>
+                                    <select name="status" class="form-control">
+                                        <option value="1">Active</option>
+                                        <option value="0">In Active</option>
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control location" name="location">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="image">Image</label>
+                                    <input type="file" class="form-control image" name="image">
+                                    <img id="imagePreview" src="" alt="Image Preview"
+                                        style="display: none; max-width: 100px; margin-top: 10px;">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <h4 class="mb-2">Workplace info</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">Workplace Name</label>
+                                    <input type="text" class="form-control work_space_name" name="work_space_name"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">Workplace Phone Number</label>
+                                    <input type="text" class="form-control work_space_number"
+                                        name="work_space_number">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">Workplace Email</label>
+                                    <input type="email" class="form-control work_space_email" name="work_space_email"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">Workplace Address</label>
+                                    <input type="text" class="form-control work_space_address"
+                                        name="work_space_address">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <select name="country" class="form-control select2 country" style="width: 100%">
+                                    <option value="" selected disabled>Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
+                                            {{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($countries == null)
+                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
+                                @endif
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="state">State</label>
+                                <select class="form-control select2 state" name="state" style="width: 100%" required>
+                                    <option value="" selected disabled>Select State</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="city">City</label>
+                                <select class="form-control select2 city" name="city" style="width: 100%" required>
+                                    <option value="" selected disabled>Select City</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="address">Profession</label>
+                                    <input type="text" class="form-control profession" name="profession">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -690,6 +822,10 @@
                     $('#editCustomerForm .status').val(response.status);
                     $('#editCustomerForm .location').val(response.location);
                     $('#editCustomerForm .profession').val(response.profession);
+                    $('#editCustomerForm .work_space_name').val(response.work_space_name);
+                    $('#editCustomerForm .work_space_email').val(response.work_space_email);
+                    $('#editCustomerForm .work_space_address').val(response.work_space_address);
+                    $('#editCustomerForm .work_space_number').val(response.work_space_number);
 
                     var imageUrl = response.image;
                     var baseUrl = 'https://ranglerzwp.xyz/macromed/';
