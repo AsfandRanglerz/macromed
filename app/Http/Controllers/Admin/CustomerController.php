@@ -14,6 +14,7 @@ use App\Mail\SalesAgentRegistration;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\CreateCustomer;
+use App\Http\Requests\UpdateCustomer;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
@@ -145,26 +146,13 @@ class CustomerController extends Controller
         }
         return response()->json($customer);
     }
-    public function updateCustomer(Request $request, $id)
+    public function updateCustomer(UpdateCustomer $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'phone' => 'required|numeric|min:11,' . $id,
-            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
-            'profession' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
         try {
             $customer = User::findOrFail($id);
-            $customer->fill($request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location', 'profession']));
-
+            $customer->fill($request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location', 'profession', 'work_space_name', 'work_space_email', 'work_space_address', 'work_space_number']));
             if ($request->hasFile('image')) {
-                // Delete old image if exists
                 $oldImagePath =  $customer->image;
-                // Delete old image if it exists
                 if ($customer->image &&  File::exists($oldImagePath)) {
                     File::delete($oldImagePath);
                 }
@@ -174,7 +162,6 @@ class CustomerController extends Controller
                 $customer->image = 'public/admin/assets/images/users/' . $filename;
             }
             $customer->save();
-
             return response()->json(['alert' => 'success', 'message' => 'Customers Updated Successfully!']);
         } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating Sub Admin: ' . $e->getMessage()], 500);
