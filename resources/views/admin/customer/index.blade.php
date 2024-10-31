@@ -67,6 +67,56 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control" id="location" name="location">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="image">Image</label>
+                                    <input type="file" class="form-control" id="image" name="image">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <h4 class="mb-2">Workplace info</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">Workplace Name</label>
+                                    <input type="text" class="form-control" id="work_space_name" name="work_space_name" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">Workplace Phone Number</label>
+                                    <input type="text" class="form-control" id="work_space_number" name="work_space_number">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">Workplace Email</label>
+                                    <input type="email" class="form-control" id="work_space_email" name="work_space_email" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">Workplace Address</label>
+                                    <input type="text" class="form-control" id="work_space_address" name="work_space_address">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Country</label>
                                 <select name="country" class="form-control select2" id="country" style="width: 100%">
@@ -100,29 +150,14 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="address">Address</label>
-                                    <input type="text" class="form-control" id="location" name="location">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label for="address">Profession</label>
                                     <input type="text" class="form-control profession" id="profession"
                                         name="profession">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="image">Image</label>
-                                    <input type="file" class="form-control" id="image" name="image">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
                         </div>
+
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -176,16 +211,6 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirmpassword">Active Status</label>
-                                    <select name="status" class="form-control status">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div> --}}
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">

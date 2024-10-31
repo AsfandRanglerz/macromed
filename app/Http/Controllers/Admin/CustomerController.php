@@ -9,6 +9,7 @@ use App\Mail\userUnBlocked;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateCustomer;
 use App\Mail\SalesAgentRegistration;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
@@ -103,27 +104,10 @@ class CustomerController extends Controller
         $customer = User::findOrFail($id);
         return view('admin.salesagent.profile', compact('customer'));
     }
-    public function customerCreate(Request $request)
+    public function customerCreate(CreateCustomer $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users|max:255',
-                'password' => 'required|string|min:8|max:255',
-                'phone' => 'required|numeric|unique:users|min:11',
-                'country' => 'required',
-                'state' => 'required',
-                'city' => 'required',
-                'location' => 'required',
-                'confirmpassword' => 'required|same:password',
-                'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048',
-                'profession' => 'required'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-            $data = $request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location', 'profession']);
+            $data = $request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location', 'profession', 'work_space_name', 'work_space_email', 'work_space_address', 'work_space_number']);
             $data['user_type'] = 'customer';
             $data['password'] = bcrypt($request->input('password'));
             if ($request->hasFile('image')) {
@@ -134,9 +118,6 @@ class CustomerController extends Controller
             }
             $customer = User::create($data);
             if ($customer) {
-                //#########Create Account ###########
-                //######### Wallet  ###########
-
                 //######### Send Mail  ###########
                 $data['subadminname'] = $customer->name;
                 $data['subadminemail'] = $customer->email;
