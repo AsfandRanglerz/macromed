@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
+use App\Http\Controllers\Api\SecurityController;
 use App\Http\Controllers\Api\WhishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,3 +53,8 @@ Route::post('/addPermission', [RolesPermissionController::class, 'addPermission'
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
 Route::post('/addRole', [RolesPermissionController::class, 'addRole']);
 Route::post('/updateRole/{id}', [RolesPermissionController::class, 'updateRole']);
+######### Security Controller ##########
+Route::get('about-us',[SecurityController::class,'getAboutUs']);
+Route::get('privacy-policy',[SecurityController::class,'getPrivacyPolicy']);
+Route::get('terms-condations',[SecurityController::class,'getTermsCondation']);
+
