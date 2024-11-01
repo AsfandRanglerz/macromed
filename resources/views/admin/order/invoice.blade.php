@@ -114,7 +114,7 @@
                                         <div class="invoice-detail-item">
                                             <div class="invoice-detail-name">Shipping</div>
                                             <div class="invoice-detail-value">
-                                                ${{ number_format($orders->shipping_amount ?? 15, 2) }}
+                                                ${{ number_format($orders->shipping_amount ?? 0, 2) }}
                                                 <!-- Default to $15 if no shipping amount is stored -->
                                             </div>
                                         </div>
@@ -128,7 +128,7 @@
                                                     $orders->orderItem->sum(function ($item) {
                                                         return $item->quantity * $item->price;
                                                     }) +
-                                                        ($orders->shipping_amount ?? 15),
+                                                        ($orders->shipping_amount ?? 0),
                                                     2,
                                                 ) }}
                                             </div>
