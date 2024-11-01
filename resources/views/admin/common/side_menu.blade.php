@@ -429,21 +429,26 @@
                 </li>
             @endif
             {{-- About Us --}}
-            {{-- <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
-                <a href="{{ route('about.index') }}" class="nav-link"><i data-feather="monitor"></i><span>About
-                        Us</span></a>
-            </li> --}}
-            {{-- Privacy Policy --}}
-            {{-- <li class="dropdown {{ request()->is('admin/policy*') ? 'active' : '' }}">
-                <a href="{{ route('policy.index') }}" class="nav-link"><i data-feather="monitor"></i><span>Privacy
-                        Policy</span></a>
-            </li> --}}
-            {{-- Terms & Cond --}}
-            {{-- <li class="dropdown {{ request()->is('admin/terms*') ? 'active' : '' }}">
-                <a href="{{ route('terms.index') }}" class="nav-link"><i
-                        data-feather="monitor"></i><span>Term&Condition</span></a>
+            <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
+                <a href="{{ route('about.index') }}" class="nav-link">
+                    <span><i data-feather="info"></i>About Us</span>
+                </a>
+            </li>
 
-            </li> --}}
+            {{-- Privacy Policy --}}
+            <li class="dropdown {{ request()->is('admin/policy*') ? 'active' : '' }}">
+                <a href="{{ route('policy.index') }}" class="nav-link">
+                    <span> <i data-feather="shield"></i>Privacy Policy</span>
+                </a>
+            </li>
+
+            {{-- Terms & Cond --}}
+            <li class="dropdown {{ request()->is('admin/terms*') ? 'active' : '' }}">
+                <a href="{{ route('terms.index') }}" class="nav-link">
+                    <span> <i data-feather="file-text"></i>Terms & Conditions</span>
+                </a>
+            </li>
+
         </ul>
     </aside>
 </div>
