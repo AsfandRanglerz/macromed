@@ -13,8 +13,27 @@
                                 <div class="col-12">
                                     <h4>Withdrawal History</h4>
                                 </div>
+
                             </div>
+
                             <div class="card-body table-responsive">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h5 class="text-muted">Total Amount</h5>
+                                        <p class="font-weight-bold">
+                                            ${{ number_format($walletHistory->total_commission, 2) }}</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h5 class="text-muted">Pending Amount</h5>
+                                        <p class="font-weight-bold">
+                                            ${{ number_format($walletHistory->pending_commission, 2) }}</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h5 class="text-muted">Received Amount</h5>
+                                        <p class="font-weight-bold">
+                                            ${{ number_format($walletHistory->recevied_commission, 2) }}</p>
+                                    </div>
+                                </div>
 
                                 <table class="responsive datatables-basic table border-top  table" id="table-1">
                                     <thead>

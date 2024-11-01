@@ -113,8 +113,10 @@ class SalesAgentController extends Controller
     {
         try {
             $user = SalesAgent::findOrFail($id);
-            $paymentRequests = $user->withDrwalRequest()->where('status', 'approved')->get();
-            return view('admin.salesagent.paymentHistory', compact('paymentRequests'));
+            $paymentRequests = $user->withDrwalRequest()->where('status', 'approved')->latest()->get();
+            $walletHistory=$user->agentWallet()->first();
+            // return $walletHistory;
+            return view('admin.salesagent.paymentHistory', compact('paymentRequests','walletHistory'));
         } catch (\Exception $e) {
             return response()->json([
                 'alert' => 'error',
