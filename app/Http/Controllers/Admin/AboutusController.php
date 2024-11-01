@@ -74,7 +74,7 @@ class AboutusController extends Controller
     {
         About::find($id)->update(['description'=>$request->description]);
         return redirect()->route('about.index')->with(['status' => true, 'message' => 'Update Sucessfully']);
-        
+
     }
 
     /**
