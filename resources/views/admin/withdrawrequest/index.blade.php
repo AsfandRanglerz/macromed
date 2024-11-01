@@ -263,6 +263,7 @@
                     reloadDataTable();
                 },
                 error: function(xhr, status, error) {
+                    $('#editPaymentRequestModal').modal('hide');
                     console.log(xhr.responseText);
                     var errors = xhr.responseJSON.errors;
                     $.each(errors, function(key, value) {

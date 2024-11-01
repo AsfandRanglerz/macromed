@@ -64,8 +64,10 @@ class WithDrawRequestController extends Controller
             $agentWallet = AgentWallet::where('sales_agent_id', $paymentRequest->salesAgent->id)->first();
             if ($agentWallet) {
                 $agentWallet->recevied_commission -= $paymentRequest->amount;
+                $agentWallet->with_drawal_amount += $paymentRequest->amount;
                 $agentWallet->save();
             }
+
             if ($request->hasFile('image')) {
                 $filename = time() . '.' . $request->file('image')->getClientOriginalExtension();
                 $request->file('image')->move(public_path('admin/assets/images/users/'), $filename);
