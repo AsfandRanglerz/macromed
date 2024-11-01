@@ -17,10 +17,10 @@
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label>Description</label>
-                                        <textarea name="description" class="form-control">{{$data->description}}</textarea>
+                                        <textarea name="description" class="form-control long_description">{{$data->description}}</textarea>
                                     </div>
                                 </div>
-                                <div class="card-footer text-right">
+                                <div class="card-footer text-center">
                                     <button type="submit" class="btn btn-primary mr-1" type="submit">Update</button>
                                 </div>
                             </div>
@@ -33,10 +33,20 @@
 
 @endsection
 @section('js')
-    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
-    <script>
-        CKEDITOR.replace( 'description');
-    </script>
+<script>
+    let editors = [];
+
+    document.querySelectorAll('.long_description').forEach((textarea, index) => {
+        ClassicEditor
+            .create(textarea)
+            .then(editor => {
+                editors[index] = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+</script>
 @endsection
 
 
