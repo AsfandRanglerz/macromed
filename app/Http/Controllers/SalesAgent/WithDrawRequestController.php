@@ -6,6 +6,7 @@ use App\Models\AgentWallet;
 use Illuminate\Http\Request;
 use App\Models\WithDrawLimit;
 use App\Models\WithDrawRequest;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -37,7 +38,7 @@ class WithDrawRequestController extends Controller
     public function requestCreate(Request $request)
     {
         try {
-
+            DB::beginTransaction();
             $salesAgentId = $this->getSalesAgentId();
             $withdrawLimit = WithDrawLimit::first();
             if (!$withdrawLimit) {
@@ -45,13 +46,16 @@ class WithDrawRequestController extends Controller
             }
             $amount = $request->amount;
             if ($amount < $withdrawLimit->min_limits || $amount > $withdrawLimit->max_limits) {
+                DB::rollBack();
                 return response()->json([
                     'alert' => 'error',
-                    'message' => 'Requested amount must be between ' . $withdrawLimit->min_limits . ' and ' . $withdrawLimit->max_limits . '.'
+                    'message' => 'Requested amount must be between $' . $withdrawLimit->min_limits . ' and $' . $withdrawLimit->max_limits . '.'
                 ], 422);
             }
+
             $agentWallet = AgentWallet::where('sales_agent_id', $salesAgentId)->first();
             if (!$agentWallet || $agentWallet->recevied_commission < $amount) {
+                DB::rollBack();
                 return response()->json([
                     'alert' => 'error',
                     'message' => 'Insufficient balance in the wallet for this request.'
@@ -61,6 +65,7 @@ class WithDrawRequestController extends Controller
             $withDrawRequest->sales_agent_id = $salesAgentId;
             $withDrawRequest->amount = $amount;
             $withDrawRequest->save();
+            DB::commit();
             return response()->json(['alert' => 'success', 'message' => 'Withdrawal Request Sent Successfully!']);
         } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'message' => 'An error occurred while creating the request: ' . $e->getMessage()], 500);

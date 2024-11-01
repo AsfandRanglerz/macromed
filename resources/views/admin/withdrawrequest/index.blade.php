@@ -91,7 +91,7 @@
                                             <th>Sr.</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Total Remaining Amount</th>
+                                            <th>Total Amount</th>
                                             <th>Requested Amount</th>
                                             {{-- <th>Account Details</th> --}}
                                             <th>Status</th>
