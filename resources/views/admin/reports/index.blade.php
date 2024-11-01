@@ -89,6 +89,7 @@
                                             <th>Total Amount</th>
                                             <th>Order Date</th>
                                             <th>Status</th>
+                                            <th>Details</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -195,7 +196,15 @@
                                 '<span style="color: green;">Delivered</span>' :
                                 data;
                         }
-                    }
+                    },
+                    {
+                        "render": function(data, type, row) {
+                            return '<a href="' +
+                                "{{ route('reportsinvoice.index', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-primary text-white"><i class="fas fa-user"></i></a>';
+                        },
+                    },
                 ]
             });
 

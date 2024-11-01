@@ -15,7 +15,19 @@ class ReportsController extends Controller
         $suppliers = Supplier::where('status', '1')->get();
         return view('admin.reports.index', compact('suppliers'));
     }
+    public function getReportInVoiceDetails($id)
+    {
+        try {
+            $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem')->where('id', $id)->findOrFail($id);
 
+            return view('admin.reports.reportdetail', compact('orders'));
+        } catch (\Exception $e) {
+            return response()->json([
+                'alert' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function getReportsData(Request $request)
     {
         $query = Order::with(['users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem.productVariant'])->where('status', 'completed')
