@@ -46,6 +46,7 @@ use App\Http\Controllers\Admin\AdminNotificationController;
 /*
 Admin routes
  * */
+
 Route::get('/cache_clear', function () {
     Artisan::call('config:cache');
     Artisan::call('config:clear');
@@ -330,8 +331,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::controller(ReportsController::class)->group(function () {
         Route::get('/reports',  'reportsIndex')->name('reports.index');
         Route::get('reports/data/', 'getReportsData')->name('admin.reports.data');
-             ### InVoice ####
-             Route::get('/reports/invoice/{id}',  'getReportInVoiceDetails')->name('reportsinvoice.index')->middleware('permission:Pending Orders');
+        ### InVoice ####
+        Route::get('/reports/invoice/{id}',  'getReportInVoiceDetails')->name('reportsinvoice.index')->middleware('permission:Pending Orders');
     });
 
     // ############## Wallet WithDraw Limit ############
