@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\WithDrawLimitController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\CategoryDiscountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -138,6 +139,24 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/categoryUpdate/{id}', 'updateCategory')->name('category.update')->middleware('permission:Category');
         Route::get('/category/delete/{id}', 'deleteCategory')->name('category.delete')->middleware('permission:Category');
         Route::post('/update-category-status/{id}',  'updateCategoryStatus')->name('categoryBlock.update')->middleware('permission:Category');
+        // ###### Discounts #####
+        Route::get('/category/discounts/{id}', 'discountsIndex')->name('discounts.index')->middleware('permission:Category');
+        Route::get('/category/discounts-data/{id}', 'discountsIndex')->name('discounts.get')->middleware('permission:Category');
+        Route::get('/category/discounts-create/{id}', 'discountsIndex')->name('discounts.index')->middleware('permission:Category');
+        Route::get('/category/discounts-show/{id}', 'discountsIndex')->name('discounts.show')->middleware('permission:Category');
+        Route::get('/category/discounts-update/{id}', 'discountsIndex')->name('discounts.update')->middleware('permission:Category');
+        Route::get('/category/discounts-delete/{id}', 'discountsIndex')->name('discounts.delete')->middleware('permission:Category');
+        Route::post('/update-discount-status/{id}',  'updateCategoryStatus')->name('discountsBlock.update')->middleware('permission:Category');
+    });
+    // ############## Category Discounts ############
+    Route::controller(CategoryDiscountController::class)->group(function () {
+        Route::get('/category/discounts/{id}', 'discountsIndex')->name('discounts.index')->middleware('permission:Category');
+        Route::get('/category/discounts-data/{id}', 'getDiscounts')->name('discounts.get')->middleware('permission:Category');
+        Route::post('/category/discounts-create/{id}', 'discountsCreate')->name('discounts.create')->middleware('permission:Category');
+        Route::get('/category/discounts-show/{id}', 'discountsShow')->name('discounts.show')->middleware('permission:Category');
+        Route::post('/category/discounts-update/{id}', 'discountsUpdate')->name('discounts.update')->middleware('permission:Category');
+        Route::get('/category/discounts-delete/{id}', 'discountsDelete')->name('discounts.delete')->middleware('permission:Category');
+        Route::post('/update-discount-status/{id}',  'updateDiscountStatus')->name('discountsBlock.update')->middleware('permission:Category');
     });
 
     // ############## Sub Category ############

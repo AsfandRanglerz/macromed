@@ -48,16 +48,16 @@
                         class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') || request()->is('admin/supplier*') || request()->is('admin/mainMaterial*') ? 'show' : '' }}">
                         {{-- Category --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Category'))
-                            <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
+                            <li class="dropdown {{ request()->is('admin/category*') ? 'active' : '' }}">
                                 <a href="{{ route('category.index') }}"
-                                    class="nav-link {{ request()->is('admin/category') ? 'text-white' : '' }}">
+                                    class="nav-link {{ request()->is('admin/category*') ? 'text-white' : '' }}">
                                     <i data-feather="layers"></i><span>Category</span>
                                 </a>
                             </li>
                         @elseif (auth()->guard('admin')->check())
-                            <li class="dropdown {{ request()->is('admin/category') ? 'active' : '' }}">
+                            <li class="dropdown {{ request()->is('admin/category*') ? 'active' : '' }}">
                                 <a href="{{ route('category.index') }}"
-                                    class="nav-link {{ request()->is('admin/category') ? 'text-white' : '' }}">
+                                    class="nav-link {{ request()->is('admin/category*') ? 'text-white' : '' }}">
                                     <i data-feather="layers"></i><span>Category</span>
                                 </a>
                             </li>

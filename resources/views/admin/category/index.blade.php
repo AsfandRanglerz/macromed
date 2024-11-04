@@ -134,6 +134,7 @@
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
+                                            <th>Discounts</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -194,6 +195,15 @@
                     },
                     {
                         "data": "name"
+                    },
+
+                    {
+                        "render": function(data, type, row) {
+                            return '<a href="' +
+                                "{{ route('discounts.index', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-tag"></i></a>';
+                        },
                     },
                     {
                         "data": null,

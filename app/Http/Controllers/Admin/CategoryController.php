@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Models\Discount;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
@@ -115,4 +116,6 @@ class CategoryController extends Controller
             return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
         }
     }
+
+  
 }
