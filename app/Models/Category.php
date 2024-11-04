@@ -25,4 +25,8 @@ class Category extends Model
     {
         $this->hasMany(ProductCatgeory::class, 'category_id');
     }
+    public function discounts()
+    {
+        return $this->morphMany(Discount::class, 'discountable');
+    }
 }

@@ -23,4 +23,8 @@ class Brands extends Model
     {
         $this->hasMany(ProductBrands::class, 'brand_id');
     }
+    public function discounts()
+    {
+        return $this->morphMany(Discount::class, 'discountable');
+    }
 }
