@@ -1,6 +1,27 @@
 @extends('admin.layout.app')
 @section('title', 'Product')
 @section('content')
+    <style>
+        .blinking-text {
+            color: red;
+            font-weight: bold;
+            animation: blink-animation 1s infinite;
+        }
+
+        @keyframes blink-animation {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
     {{--  Create Discounts --}}
     <div class="modal fade" id="createDiscountsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -27,12 +48,12 @@
 
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
-                            <input type="date" name="start_date" class="form-control">
+                            <input type="datetime-local" name="start_date" class="form-control">
                         </div>
 
                         <div class="form-group">
                             <label for="end_date">End Date:</label>
-                            <input type="date" name="end_date" class="form-control">
+                            <input type="datetime-local" name="end_date" class="form-control">
                         </div>
                         <div class="form-group">
                             <label>Status <span class="text-danger">*</span></label>
@@ -96,17 +117,17 @@
 
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
-                            <input type="date" name="start_date" class="form-control start_date">
+                            <input type="datetime-local" name="start_date" class="form-control start_date">
                         </div>
 
                         <div class="form-group">
                             <label for="end_date">End Date:</label>
-                            <input type="date" name="end_date" class="form-control end_date">
+                            <input type="datetime-local" name="end_date" class="form-control end_date">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center mb-0">
-                    <button type="button" class="btn btn-success" onclick="updateDiscounts()">Update</button>
+                    <button type="button" class="btn btn-primary" onclick="updateDiscounts()">Update</button>
                 </div>
             </div>
         </div>
@@ -136,6 +157,7 @@
                                                 <th>#</th>
                                                 <th>Name</th>
                                                 <th>Discount Percentage </th>
+                                                <th>Discount Expiration</th>
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>Status</th>
@@ -170,15 +192,13 @@
             dataTable.ajax.reload();
         }
         $(document).ready(function() {
-
-            // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
                     "url": "{{ route('discounts.get', ['id' => $id]) }}",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
-                    },
+                    }
                 },
                 "columns": [{
                         "data": null,
@@ -190,24 +210,53 @@
                         "data": "name"
                     },
                     {
-                        "data": "discount_percentage"
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return row.discount_percentage + "%"; // Display discount percentage
+                        }
                     },
                     {
-                        "data": "start_date"
+                        "data": null,
+                        "render": function(data, type, row) {
+                            var endDate = new Date(row.end_date);
+                            var currentDate = new Date();
+                            var timeDiff = endDate - currentDate;
+
+                            if (timeDiff <= 0) {
+                                return '<span class="blinking-text">Expired</span>';
+                            } else {
+                                // Calculate days, hours, and minutes left
+                                var daysLeft = Math.floor(timeDiff / (1000 * 3600 * 24));
+                                var hoursLeft = Math.floor((timeDiff % (1000 * 3600 * 24)) / (1000 *
+                                    3600));
+                                var minutesLeft = Math.floor((timeDiff % (1000 * 3600)) / (1000 *
+                                    60));
+                                return `<span class="blinking-text">${row.discount_percentage}% off - ${daysLeft} days ${hoursLeft} hours ${minutesLeft} minutes left</span>`;
+
+                            }
+                        }
+                    },
+
+                    {
+                        "data": "start_date",
+                        "render": function(data, type, row) {
+                            return formatToLocalDateTime(data);
+                        }
                     },
                     {
-                        "data": "end_date"
+                        "data": "end_date",
+                        "render": function(data, type, row) {
+                            return formatToLocalDateTime(data);
+                        }
                     },
                     {
                         "data": null,
                         "render": function(data, type, row) {
                             var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                            var buttonText = row.status == '1' ? 'Active' : 'Inactive';
                             return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                                '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                        }
                     },
                     {
                         "data": null,
@@ -216,21 +265,24 @@
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
-
                         }
                     }
-                    // { "data": "description" }
                 ]
             });
+
+            // Event listeners for edit and delete buttons
             $('#example').on('click', '.editSubadminBtn', function() {
                 var id = $(this).data('id');
                 editDiscountsModal(id);
             });
+
             $('#example').on('click', '.deleteSubadminBtn', function() {
                 var subadminId = $(this).data('id');
                 deleteSubadminModal(subadminId);
             });
         });
+
+
 
         function createDiscounts() {
             var formData = new FormData($('#createDiscountsForm')[0]);
@@ -285,6 +337,10 @@
             $(this).find('.invalid-feedback').html('');
         });
         // ######Get & Update Discounts#########
+        function formatToLocalDateTime(dateString) {
+            const date = new Date(dateString);
+            return date.toISOString().slice(0, 16); // Remove seconds and timezone
+        }
 
         function editDiscountsModal(id) {
             var showDiscounts = '{{ route('discounts.show', ':id') }}';
@@ -292,10 +348,11 @@
                 url: showDiscounts.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
+                    console.log("data", response);
                     $('#editDiscounts .name').val(response.name);
                     $('#editDiscounts .discount_percentage').val(response.discount_percentage);
-                    $('#editDiscounts .start_date').val(response.start_date);
-                    $('#editDiscounts .end_date').val(response.end_date);
+                    $('#editDiscountsModal .start_date').val(formatToLocalDateTime(response.start_date));
+                    $('#editDiscountsModal .end_date').val(formatToLocalDateTime(response.end_date));
                     $('#editDiscountsModal').modal('show');
                     $('#editDiscountsModal').data('id', id);
                 },
@@ -407,7 +464,7 @@
                     subadminId),
                 type: 'GET',
                 success: function(response) {
-                    toastr.success('Product Variant Deleted Successfully!');
+                    toastr.success('Discount Deleted Successfully!');
                     $('#deleteSubadminModal').modal('hide');
                     reloadDataTable();
                 },

@@ -20,8 +20,8 @@ class CategoryController extends Controller
 
     public function categoryIndex()
     {
-        $categories = Category::all();
-        return view('admin.category.index', compact('categories'));
+        // $categories = Category::with('discounts')all();
+        return view('admin.category.index');
     }
     public function categoryCreate(Request $request)
     {
@@ -117,5 +117,5 @@ class CategoryController extends Controller
         }
     }
 
-  
+
 }

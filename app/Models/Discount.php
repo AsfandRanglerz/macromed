@@ -9,6 +9,10 @@ class Discount extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
     public function discountable()
     {
         return $this->morphTo();

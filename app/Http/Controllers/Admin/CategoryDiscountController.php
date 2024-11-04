@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use App\Models\Category;
 use App\Models\Discount;
 use Illuminate\Http\Request;
@@ -21,7 +22,6 @@ class CategoryDiscountController extends Controller
     public function discountsIndex($id)
     {
         $discounts = Discount::where('discountable_id', $id)->get();
-        // return  $discounts;
         $categories = Category::where('id', $id)->first();
         return view('admin.category.discounts.index', compact('discounts', 'id', 'categories'));
     }
@@ -30,8 +30,8 @@ class CategoryDiscountController extends Controller
     {
         try {
             DB::beginTransaction();
-            $category = Category::findOrFail($id);
-            $category->discounts()->create([
+            $discount = Category::findOrFail($id);
+            $discount->discounts()->create([
                 'name' => $request->name,
                 'discount_percentage' => $request->discount_percentage,
                 'start_date' => $request->start_date,
@@ -49,10 +49,13 @@ class CategoryDiscountController extends Controller
     public function discountsShow($id)
     {
         $discount = Discount::find($id);
-        if (!$discount) {
-            return response()->json(['alert' => 'error', 'message' => 'Discounts Not Found'], 500);
+        if ($discount) {
+            $discount->start_date = Carbon::parse($discount->start_date)->format('Y-m-d\TH:i');
+            $discount->end_date = Carbon::parse($discount->end_date)->format('Y-m-d\TH:i');
+            return response()->json($discount);
+        } else {
+            return response()->json(['error' => 'Discount not found'], 404);
         }
-        return response()->json($discount);
     }
 
     public function discountsUpdate(UpdateCategoryDiscount $request, $id)
@@ -68,6 +71,31 @@ class CategoryDiscountController extends Controller
             return redirect()->back()->with('success', 'Discount updated successfully!');
         } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'error' => 'An error occurred .', $e->getMessage()]);
+        }
+    }
+    public function discountsDelete($id)
+    {
+        $discount = Discount::findOrFail($id);
+        $discount->delete();
+        return response()->json(['alert' => 'success', 'message' => 'Category Deleted SuccessFully!']);
+    }
+    public function updateDiscountStatus(Request $request, $id)
+    {
+        try {
+            $discount = Discount::findOrFail($id);
+            if ($discount->status == '0') {
+                $discount->status = '1';
+                $message = 'Discouts Active Successfully';
+            } else if ($discount->status == '1') {
+                $discount->status = '0';
+                $message = 'Discouts In Active Successfully';
+            } else {
+                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
+            }
+            $discount->save();
+            return response()->json(['alert' => 'success', 'message' => $message]);
+        } catch (\Exception $e) {
+            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
         }
     }
 }
