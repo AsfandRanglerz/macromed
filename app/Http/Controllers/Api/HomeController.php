@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use App\Models\Brands;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Discount;
+use App\Models\Condation;
+use App\Models\WhishList;
+use App\Models\SilderImages;
 use Illuminate\Http\Request;
 use App\Models\Certification;
+use App\Models\ProductVaraint;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
-use App\Models\Condation;
-use App\Models\ProductVaraint;
-use App\Models\SilderImages;
-use App\Models\WhishList;
 
 class HomeController extends Controller
 {
@@ -23,7 +25,8 @@ class HomeController extends Controller
         try {
             // Get the distinct dropdown data
             $countryOfManufacture = Product::where('status', '1')->select('country')->distinct()->get();
-            $categories = Category::where('status', '1')->select('id', 'name')->get();
+            $categories = Category::with('discounts')->where('status', '1')->select('id', 'name')->get();
+            return $categories;
             $brands = Brands::where('status', '1')->select('id', 'name')->get();
             $certifications = Certification::where('status', '1')->select('id', 'name')->get();
             $company = Company::where('status', '1')->select('id', 'name')->get();
@@ -42,18 +45,36 @@ class HomeController extends Controller
                 ], 404);
             }
 
-            // Add counts for filters
-            $filterCounts = $this->getFilterCounts();
 
-            // Append counts to dropdown data in desired structure
+            $filterCounts = $this->getFilterCounts();
+            $discounts = Discount::where('status', '1')->where('discount_expiration_status', 'active')->get();
+            return  $discounts;
+            $discountMessages = [];
+            foreach ($discounts as $discount) {
+
+                $discountMessages[$discount->discountable_id] = [
+                    'percentage' => $discount->discount_percentage,
+                    'start_date' => $discount->start_date,
+                    'end_date' => $discount->end_date,
+                    'message' => $this->getDiscountMessage($discount)
+                ];
+            }
+
             $countryOfManufacture = $countryOfManufacture->map(function ($country) use ($filterCounts) {
                 $count = $filterCounts['countries'][$country->country] ?? 0;
                 return ['country' => $country->country, 'count' => $count];
             });
 
-            $categories = $categories->map(function ($category) use ($filterCounts) {
+            $categories = $categories->map(function ($category) use ($filterCounts, $discountMessages) {
                 $count = $filterCounts['categories'][$category->id] ?? 0;
-                return ['id' => $category->id, 'name' => $category->name, 'count' => $count];
+                $discountMessage = $discountMessages[$category->id]['message'] ?? 'No Discount Found!';
+                // dd($discountMessage);
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'count' => $count,
+                    'discount_message' => $discountMessage
+                ];
             });
 
             $brands = $brands->map(function ($brand) use ($filterCounts) {
@@ -70,9 +91,6 @@ class HomeController extends Controller
                 $count = $filterCounts['companies'][$company->name] ?? 0;
                 return ['id' => $company->id, 'name' => $company->name, 'count' => $count];
             });
-
-
-
 
             return response()->json([
                 'status' => 'success',
@@ -96,7 +114,26 @@ class HomeController extends Controller
         }
     }
 
+    // Discount Code
+    private function getDiscountMessage($discount)
+    {
+        $startDate = Carbon::parse($discount->start_date);
+        $endDate = Carbon::parse($discount->end_date);
+        $now = Carbon::now();
 
+        if ($now->isBetween($startDate, $endDate)) {
+            $duration = $endDate->diff($now);
+            return sprintf(
+                '%s%% off for %d days %d hours %d minutes left',
+                $discount->discount_percentage,
+                $duration->d,
+                $duration->h,
+                $duration->i
+            );
+        }
+
+        return 'No active discount'; // No active discount message
+    }
     private function getFilterCounts()
     {
         return [

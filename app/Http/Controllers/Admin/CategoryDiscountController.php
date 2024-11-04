@@ -36,7 +36,8 @@ class CategoryDiscountController extends Controller
                 'discount_percentage' => $request->discount_percentage,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'status' => $request->status
+                'status' => $request->status,
+                'discount_expiration_status' => 'active'
             ]);
             DB::commit();
             return response()->json(['alert' => 'success', 'message' => 'Discount Created Successfully!']);
