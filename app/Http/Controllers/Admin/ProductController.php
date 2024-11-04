@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
+use App\Models\Condation;
 use App\Models\ProductTax;
 use App\Models\NumberOfUse;
 use App\Models\SubCategory;
@@ -24,13 +25,13 @@ use App\Models\ProductCatgeory;
 use App\Models\ProductMaterial;
 use Illuminate\Validation\Rule;
 use App\Models\ProductSubCatgeory;
+use Illuminate\Support\Facades\DB;
 use App\Models\ProductCertifcation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\Condation;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
@@ -100,7 +101,7 @@ class ProductController extends Controller
             'productSubCategory.subCategories',
             'productTax'
         )->where('status', '1')->latest()->get();
-        return view('admin.product.index', compact('conditions','mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
+        return view('admin.product.index', compact('conditions', 'mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
     public function productCreateIndex()
@@ -151,6 +152,7 @@ class ProductController extends Controller
     public function productStore(StoreProductRequest $request)
     {
         try {
+            DB::beginTransaction();
             $product = new Product($request->only([
                 'product_hts',
                 'product_name',
@@ -249,8 +251,10 @@ class ProductController extends Controller
                     );
                 }
             }
+            DB::commit();
             return redirect()->route('product.index')->with('message', 'Product Created Successfully!');
         } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'Failed to save Product. Please try again later.' . $e->getMessage());
         }
     }
