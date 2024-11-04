@@ -218,35 +218,27 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            var endDate = new Date(row.end_date);
-                            var currentDate = new Date();
-                            var timeDiff = endDate - currentDate;
-
-                            if (timeDiff <= 0) {
-                                return '<span class="blinking-text">Expired</span>';
-                            } else {
-                                // Calculate days, hours, and minutes left
-                                var daysLeft = Math.floor(timeDiff / (1000 * 3600 * 24));
-                                var hoursLeft = Math.floor((timeDiff % (1000 * 3600 * 24)) / (1000 *
-                                    3600));
-                                var minutesLeft = Math.floor((timeDiff % (1000 * 3600)) / (1000 *
-                                    60));
-                                return `<span class="blinking-text">${row.discount_percentage}% off - ${daysLeft} days ${hoursLeft} hours ${minutesLeft} minutes left</span>`;
-
-                            }
+                            return renderTimeLeft(row); // Call the render function
                         }
                     },
 
                     {
                         "data": "start_date",
                         "render": function(data, type, row) {
-                            return formatToLocalDateTime(data);
+                            const createdAtDate = new Date(data);
+                            const formattedDate = createdAtDate.toLocaleDateString();
+                            const formattedTime = createdAtDate.toLocaleTimeString();
+                            return `<div>${formattedDate}</div><div>${formattedTime}</div>`;
                         }
                     },
+
                     {
                         "data": "end_date",
                         "render": function(data, type, row) {
-                            return formatToLocalDateTime(data);
+                            const endDate = new Date(data); // Create a Date object
+                            const formattedDate = endDate.toLocaleDateString(); // Format the date
+                            const formattedTime = endDate.toLocaleTimeString(); // Format the time
+                            return `<div>${formattedDate}</div><div>${formattedTime}</div>`; // Return formatted date and time
                         }
                     },
                     {
@@ -270,6 +262,30 @@
                 ]
             });
 
+            function renderTimeLeft(row) {
+                var endDate = new Date(row.end_date);
+                var currentDate = new Date();
+                var timeDiff = endDate - currentDate;
+
+                if (timeDiff <= 0) {
+                    return '<span class="blinking-text">Expired</span>'; // Display 'Expired' if the discount is no longer valid
+                } else {
+                    // Calculate days, hours, and minutes left
+                    var daysLeft = Math.floor(timeDiff / (1000 * 3600 * 24));
+                    var hoursLeft = Math.floor((timeDiff % (1000 * 3600 * 24)) / (1000 * 3600));
+                    var minutesLeft = Math.floor((timeDiff % (1000 * 3600)) / (1000 * 60));
+
+                    return `<span class="blinking-text">${row.discount_percentage}% off - ${daysLeft} days ${hoursLeft} hours ${minutesLeft} minutes left</span>`;
+                }
+            }
+            setInterval(function() {
+                dataTable.rows().every(function() {
+                    var rowData = this.data();
+                    var updatedTimeLeft = renderTimeLeft(rowData); // Update the time left
+                    this.cell(':eq(3)').data(
+                        updatedTimeLeft);
+                });
+            }, 60000)
             // Event listeners for edit and delete buttons
             $('#example').on('click', '.editSubadminBtn', function() {
                 var id = $(this).data('id');
