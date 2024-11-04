@@ -34,7 +34,7 @@
                             <label for="end_date">End Date:</label>
                             <input type="date" name="end_date" class="form-control">
                         </div>
-                        <div class="form-group ">
+                        <div class="form-group">
                             <label>Status <span class="text-danger">*</span></label>
                             <select name="status" class="form-control status">
                                 <option value="1">Active</option>
@@ -73,7 +73,7 @@
     <!-- Edit Discounts Modal -->
     <div class="modal fade" id="editDiscountsModal" tabindex="-1" role="dialog" aria-labelledby="editDiscountsModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editDiscountsModalLabel">Edit Discounts</h5>
@@ -84,19 +84,24 @@
                 <div class="modal-body">
                     <form id="editDiscounts" enctype="multipart/form-data">
                         <div class="form-group">
+                            <label for="discount_percentage">Discount Name:</label>
+                            <input type="text" name="name" class="form-control name" min="0" max="100"
+                                required>
+                        </div>
+                        <div class="form-group">
                             <label for="discount_percentage">Discount Percentage:</label>
-                            <input type="number" name="discount_percentage" id="discount_percentage" class="form-control"
+                            <input type="number" name="discount_percentage" class="form-control discount_percentage"
                                 min="0" max="100" required>
                         </div>
 
                         <div class="form-group">
                             <label for="start_date">Start Date:</label>
-                            <input type="date" name="start_date" id="start_date" class="form-control">
+                            <input type="date" name="start_date" class="form-control start_date">
                         </div>
 
                         <div class="form-group">
                             <label for="end_date">End Date:</label>
-                            <input type="date" name="end_date" id="end_date" class="form-control">
+                            <input type="date" name="end_date" class="form-control end_date">
                         </div>
                     </form>
                 </div>
@@ -145,7 +150,8 @@
                         @else
                             <div class="inactive-product">
                                 <h4 class="alert-heading text-danger">Warning!</h4>
-                                <p class="text-danger">This product is not active. You cannot view product Discounts to it.
+                                <p class="text-danger">This Category is not active. You cannot view Category Discounts to
+                                    it.
                                 </p>
                             </div>
                         @endif
@@ -206,7 +212,7 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success mb-1 mr-1 text-white editSubadminBtn" data-id="' +
+                            return '<button class="btn btn-success mb-0 mr-1 text-white editSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-edit"></i></button>' +
                                 '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
                                 row.id + '"><i class="fas fa-trash-alt"></i></button>';
@@ -286,25 +292,10 @@
                 url: showDiscounts.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editDiscounts .tooltip_information').val(response.tooltip_information);
-                    $('#editDiscounts .m_p_n').val(response.m_p_n);
-                    $('#editDiscounts .s_k_u').val(response.s_k_u);
-                    $('#editDiscounts .packing').val(response.packing);
-                    $('#editDiscounts .unit').val(response.unit);
-                    $('#editDiscounts .quantity').val(response.quantity);
-                    $('#editDiscounts .price_per_unit').val(response.price_per_unit);
-                    $('#editDiscounts .selling_price_per_unit').val(response.selling_price_per_unit);
-                    $('#editDiscounts .actual_weight').val(response.actual_weight);
-                    $('#editDiscounts .shipping_weight').val(response.shipping_weight);
-                    $('#editDiscounts .remaining_quantity').val(response.remaining_quantity);
-                    $('#editDiscounts .shipping_chargeable_weight').val(response
-                        .shipping_chargeable_weight);
-                    $('#editDiscounts .status').val(response.status);
-                    if (response.description !== null) {
-                        geteditor.setData(response.description);
-                    } else {
-                        geteditor.setData(''); // Or set it to an empty string
-                    }
+                    $('#editDiscounts .name').val(response.name);
+                    $('#editDiscounts .discount_percentage').val(response.discount_percentage);
+                    $('#editDiscounts .start_date').val(response.start_date);
+                    $('#editDiscounts .end_date').val(response.end_date);
                     $('#editDiscountsModal').modal('show');
                     $('#editDiscountsModal').data('id', id);
                 },
@@ -327,36 +318,11 @@
         function updateDiscounts() {
             var updateDiscounts = '{{ route('discounts.update', ':id') }}';
             var id = $('#editDiscountsModal').data('id');
-            var form = document.getElementById("editDiscounts");
-            var tooltip_information = form["tooltip_information"].value;
-            var m_p_n = form["m_p_n"].value;
-            var s_k_u = form["s_k_u"].value;
-            var packing = form["packing"].value;
-            var unit = form["unit"].value;
-            var quantity = form["quantity"].value;
-            var price_per_unit = form["price_per_unit"].value;
-            var selling_price_per_unit = form["selling_price_per_unit"].value;
-            var actual_weight = form["actual_weight"].value;
-            var shipping_weight = form["shipping_weight"].value;
-            var shipping_chargeable_weight = form["shipping_chargeable_weight"].value;
-            var status = form["status"].value;
-            var description = geteditor.getData();
-            // ########### Form Data ###########
-            var formData = new FormData();
-            formData.append('tooltip_information', tooltip_information);
-            formData.append('m_p_n', m_p_n);
-            formData.append('s_k_u', s_k_u);
-            formData.append('packing', packing);
-            formData.append('unit', unit);
-            formData.append('quantity', quantity);
-            formData.append('price_per_unit', price_per_unit);
-            formData.append('selling_price_per_unit', selling_price_per_unit);
-            formData.append('actual_weight', actual_weight);
-            formData.append('shipping_chargeable_weight', shipping_chargeable_weight);
-            formData.append('shipping_weight', shipping_weight);
-            formData.append('status', status);
-            formData.append('description', description);
-
+            var formData = new FormData($('#editDiscounts')[0]);
+            var formDataObject = {};
+            formData.forEach(function(value, key) {
+                formDataObject[key] = value;
+            });
             $.ajax({
                 url: updateDiscounts.replace(':id', id),
                 type: 'POST',
