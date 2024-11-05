@@ -18,7 +18,7 @@ trait DiscountTrait
     protected function createDiscount($discountableModel, Request $request, $id)
     {
         try {
-            DB::beginTransaction();
+            // DB::beginTransaction();
             $discountable = $discountableModel::findOrFail($id);
             $discountable->discounts()->create([
                 'name' => $request->name,
@@ -28,10 +28,10 @@ trait DiscountTrait
                 'status' => $request->status,
                 'discount_expiration_status' => 'active',
             ]);
-            DB::commit();
+            // DB::commit();
             return response()->json(['alert' => 'success', 'message' => 'Discount Created Successfully!']);
         } catch (\Exception $e) {
-            DB::rollBack();
+            // DB::rollBack();
             return response()->json(['alert' => 'error', 'error' => 'An error occurred: ' . $e->getMessage()]);
         }
     }

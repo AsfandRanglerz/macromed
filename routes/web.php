@@ -308,12 +308,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     });
     // ############## Products Discounts ############
     Route::controller(ProductDiscountController::class)->group(function () {
-        Route::get('//product/discounts/{id}', 'discountsIndex')->name('productDiscounts.index')->middleware('permission:Category');
-        Route::get('//product/discounts-data/{id}', 'getDiscounts')->name('productDiscounts.get')->middleware('permission:Category');
-        Route::post('//product/discounts-create/{id}', 'discountsCreate')->name('productDiscounts.create')->middleware('permission:Category');
-        Route::get('//product/discounts-show/{id}', 'discountsShow')->name('productDiscounts.show')->middleware('permission:Category');
-        Route::post('//product/discounts-update/{id}', 'discountsUpdate')->name('productDiscounts.update')->middleware('permission:Category');
-        Route::get('//product/discounts-delete/{id}', 'discountsDelete')->name('productDiscounts.delete')->middleware('permission:Category');
+        Route::get('/product/discounts/{id}', 'discountsIndex')->name('productDiscounts.index')->middleware('permission:Category');
+        Route::get('/product/discounts-data/{id}', 'getDiscounts')->name('productDiscounts.get')->middleware('permission:Category');
+        Route::post('/product/discounts-create/{id}', 'discountsProductCreate')->name('productDiscounts.create')->middleware('permission:Category');
+        Route::get('/product/discounts-show/{id}', 'discountsShow')->name('productDiscounts.show')->middleware('permission:Category');
+        Route::post('/product/discounts-update/{id}', 'discountsUpdate')->name('productDiscounts.update')->middleware('permission:Category');
+        Route::get('/product/discounts-delete/{id}', 'discountsDelete')->name('productDiscounts.delete')->middleware('permission:Category');
         Route::post('/update-productdiscount-status/{id}',  'updateDiscountStatus')->name('productDiscountsBlock.update')->middleware('permission:Category');
     });
     // ############## Currency ############

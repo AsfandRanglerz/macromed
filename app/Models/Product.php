@@ -54,6 +54,5 @@ class Product extends Model
     {
         return $this->morphToMany(Discount::class, 'discountable');
     }
-    // Discounts code
 
 }

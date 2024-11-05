@@ -461,6 +461,7 @@
                                             <th>Product Status</th>
                                             <th>Status</th>
                                             <th>Variants</th>
+                                            <th>Discounts</th>
                                             <th>Uploads Images</th>
                                             <th>Action</th>
                                         </tr>
@@ -615,6 +616,14 @@
                     </div>
                 `.replace(/:id/g, row.id);
                         }
+                    },
+                    {
+                        "render": function(data, type, row) {
+                            return '<a href="' +
+                                "{{ route('productDiscounts.index', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-tag"></i></a>';
+                        },
                     },
                     {
                         "render": function(data, type, row) {

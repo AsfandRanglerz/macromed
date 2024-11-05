@@ -27,7 +27,10 @@ class HomeController extends Controller
             $brands = Brands::with('discounts')->where('status', '1')->select('id', 'name')->get();
             $certifications = Certification::where('status', '1')->select('id', 'name')->get();
             $company = Company::where('status', '1')->select('id', 'name')->get();
-            $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')
+            $featureProducts = Product::with([
+                'productBrands.brands:id,name',
+                'productCategory.categories:id,name'
+            ])->select('id', 'thumbnail_image', 'short_name', 'short_description')
                 ->where('product_status', 'Featured Product')
                 ->where('status', '1')
                 ->latest()
