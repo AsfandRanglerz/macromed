@@ -24,7 +24,7 @@ class HomeController extends Controller
             // Get the distinct dropdown data
             $countryOfManufacture = Product::where('status', '1')->select('country')->distinct()->get();
             $categories = Category::with('discounts')->where('status', '1')->select('id', 'name')->get();
-            $brands = Brands::where('status', '1')->select('id', 'name')->get();
+            $brands = Brands::with('discounts')->where('status', '1')->select('id', 'name')->get();
             $certifications = Certification::where('status', '1')->select('id', 'name')->get();
             $company = Company::where('status', '1')->select('id', 'name')->get();
             $featureProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')
@@ -87,7 +87,36 @@ class HomeController extends Controller
 
             $brands = $brands->map(function ($brand) use ($filterCounts) {
                 $count = $filterCounts['brands'][$brand->id] ?? 0;
-                return ['id' => $brand->id, 'name' => $brand->name, 'count' => $count];
+
+                $discountMessage = null;
+                foreach ($brand->discounts as $discount) {
+                    if ($discount->discount_expiration_status === 'active') {
+                        $now = now();
+                        $endDate = $discount->end_date;
+                        $remainingTime = $endDate->diff($now);
+                        $days = $remainingTime->d;
+                        $hours = $remainingTime->h;
+                        $minutes = $remainingTime->i;
+
+                        $discountMessage = "{$discount->discount_percentage}% discount for ";
+                        if ($days > 0) {
+                            $discountMessage .= "{$days} days ";
+                        }
+                        if ($hours > 0 || $days > 0) { // Show hours if days are > 0 or if any hours remain
+                            $discountMessage .= "{$hours} hours ";
+                        }
+                        $discountMessage .= "{$minutes} minutes remaining!";
+                        break; // Stop after the first active discount
+                    }
+                }
+
+                return [
+                    'id' => $brand->id,
+                    'name' => $brand->name,
+                    'count' => $count,
+                    'discount_percentage' => $discount->discount_percentage ?? null,
+                    'discount_message' => $discountMessage,
+                ];
             });
 
             $certifications = $certifications->map(function ($certification) use ($filterCounts) {
