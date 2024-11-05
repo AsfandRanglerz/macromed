@@ -413,6 +413,8 @@
 
                 },
                 error: function(xhr, status, error) {
+                    console.log("data",xhr);
+
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
