@@ -455,6 +455,8 @@
                     reloadDataTable();
                 },
                 error: function(xhr, status, error) {
+                    console.log("dtaa",xhr);
+
                     console.error(xhr.responseText);
                 },
                 complete: function() {

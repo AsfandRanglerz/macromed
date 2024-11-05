@@ -70,16 +70,23 @@ trait DiscountTrait
         return response()->json(['alert' => 'success', 'message' => 'Discount Deleted Successfully!']);
     }
 
-    protected function updateDiscountStatus(Request $request, $id)
+    protected function updateStatus(Request $request, $id)
     {
         try {
             $discount = Discount::findOrFail($id);
-            $discount->status = $discount->status == '0' ? '1' : '0';
-            $message = $discount->status == '1' ? 'Discounts Activated Successfully' : 'Discounts Deactivated Successfully';
+            if ($discount->status == '0') {
+                $discount->status = '1';
+                $message = 'Discount Active Successfully';
+            } else if ($discount->status == '1') {
+                $discount->status = '0';
+                $message = 'Discount In Active Successfully';
+            } else {
+                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
+            }
             $discount->save();
             return response()->json(['alert' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating discount status.']);
+            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.' . $e->getMessage()]);
         }
     }
 }

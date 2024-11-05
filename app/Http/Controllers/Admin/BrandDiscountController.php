@@ -42,6 +42,6 @@ class BrandDiscountController extends Controller
 
     public function updateDiscountStatus(Request $request, $id)
     {
-        return $this->updateDiscountStatus($request, $id);
+        return $this->updateStatus($request, $id);
     }
 }
