@@ -41,8 +41,6 @@ class HomeController extends Controller
                     'message' => 'Feature Product Not Found!'
                 ], 404);
             }
-
-            // Add counts for filters
             $filterCounts = $this->getFilterCounts();
 
             // Append counts to dropdown data in desired structure
@@ -53,69 +51,27 @@ class HomeController extends Controller
 
             $categories = $categories->map(function ($category) use ($filterCounts) {
                 $count = $filterCounts['categories'][$category->id] ?? 0;
-
-                $discountMessage = null;
-                foreach ($category->discounts as $discount) {
-                    if ($discount->discount_expiration_status === 'active') {
-                        $now = now();
-                        $endDate = $discount->end_date;
-                        $remainingTime = $endDate->diff($now);
-                        $days = $remainingTime->d;
-                        $hours = $remainingTime->h;
-                        $minutes = $remainingTime->i;
-
-                        $discountMessage = "{$discount->discount_percentage}% discount for ";
-                        if ($days > 0) {
-                            $discountMessage .= "{$days} days ";
-                        }
-                        if ($hours > 0 || $days > 0) { // Show hours if days are > 0 or if any hours remain
-                            $discountMessage .= "{$hours} hours ";
-                        }
-                        $discountMessage .= "{$minutes} minutes remaining!";
-                        break; // Stop after the first active discount
-                    }
-                }
-
+                $discountMessage = $this->getDiscountMessage($category->discounts);
                 return [
                     'id' => $category->id,
                     'name' => $category->name,
                     'count' => $count,
-                    'discount_percentage' => $discount->discount_percentage ?? null,
-                    'discount_message' => $discountMessage,
+                    'discount_percentage' => $discountMessage ? $discountMessage['percentage'] : null,
+                    'discount_message' => $discountMessage ? $discountMessage['message'] : null,
                 ];
             });
 
+            // Process brands with discounts
             $brands = $brands->map(function ($brand) use ($filterCounts) {
                 $count = $filterCounts['brands'][$brand->id] ?? 0;
-
-                $discountMessage = null;
-                foreach ($brand->discounts as $discount) {
-                    if ($discount->discount_expiration_status === 'active') {
-                        $now = now();
-                        $endDate = $discount->end_date;
-                        $remainingTime = $endDate->diff($now);
-                        $days = $remainingTime->d;
-                        $hours = $remainingTime->h;
-                        $minutes = $remainingTime->i;
-
-                        $discountMessage = "{$discount->discount_percentage}% discount for ";
-                        if ($days > 0) {
-                            $discountMessage .= "{$days} days ";
-                        }
-                        if ($hours > 0 || $days > 0) { // Show hours if days are > 0 or if any hours remain
-                            $discountMessage .= "{$hours} hours ";
-                        }
-                        $discountMessage .= "{$minutes} minutes remaining!";
-                        break; // Stop after the first active discount
-                    }
-                }
+                $discountMessage = $this->getDiscountMessage($brand->discounts);
 
                 return [
                     'id' => $brand->id,
                     'name' => $brand->name,
                     'count' => $count,
-                    'discount_percentage' => $discount->discount_percentage ?? null,
-                    'discount_message' => $discountMessage,
+                    'discount_percentage' => $discountMessage ? $discountMessage['percentage'] : null,
+                    'discount_message' => $discountMessage ? $discountMessage['message'] : null,
                 ];
             });
 
@@ -151,7 +107,20 @@ class HomeController extends Controller
     }
 
 
-
+    private function getDiscountMessage($discounts)
+    {
+        foreach ($discounts as $discount) {
+            if ($discount->discount_expiration_status === 'active') {
+                $now = now();
+                $remainingTime = $discount->end_date->diff($now);
+                return [
+                    'percentage' => $discount->discount_percentage,
+                    'message' => "{$discount->discount_percentage}% discount for {$remainingTime->d} days {$remainingTime->h} hours {$remainingTime->i} minutes remaining!"
+                ];
+            }
+        }
+        return null;
+    }
     private function getFilterCounts()
     {
         return [
