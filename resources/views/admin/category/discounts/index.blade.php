@@ -413,7 +413,7 @@
 
                 },
                 error: function(xhr, status, error) {
-                    console.log("data",xhr);
+                    console.log("data", xhr);
 
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
@@ -421,7 +421,7 @@
                             toastr.error(value[0]);
                         });
                     } else {
-                        toastr.error('An error occurred while updating the product.');
+                        toastr.error('An error occurred while updating the discounts.');
                     }
                 }
             });
