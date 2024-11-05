@@ -1,5 +1,5 @@
 @extends('admin.layout.app')
-@section('title', 'Category Discounts')
+@section('title', 'Product')
 @section('content')
     <style>
         .blinking-text {
@@ -76,7 +76,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteSubadminModalLabel">Delete Category Discount </h5>
+                    <h5 class="modal-title" id="deleteSubadminModalLabel">Delete Brand Discount </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -194,7 +194,7 @@
         $(document).ready(function() {
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('discounts.get', ['id' => $id]) }}",
+                    "url": "{{ route('brandDiscounts.get', ['id' => $id]) }}",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -309,7 +309,7 @@
                 formDataObject[key] = value;
             });
             $.ajax({
-                url: '{{ route('discounts.create', ['id' => $id]) }}',
+                url: '{{ route('brandDiscounts.create', ['id' => $id]) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -359,7 +359,7 @@
         }
 
         function editDiscountsModal(id) {
-            var showDiscounts = '{{ route('discounts.show', ':id') }}';
+            var showDiscounts = '{{ route('brandDiscounts.show', ':id') }}';
             $.ajax({
                 url: showDiscounts.replace(':id', id),
                 type: 'GET',
@@ -389,7 +389,7 @@
         });
 
         function updateDiscounts() {
-            var updateDiscounts = '{{ route('discounts.update', ':id') }}';
+            var updateDiscounts = '{{ route('brandDiscounts.update', ':id') }}';
             var id = $('#editDiscountsModal').data('id');
             var formData = new FormData($('#editDiscounts')[0]);
             var formDataObject = {};
@@ -433,7 +433,7 @@
             var newStatus = currentStatus === 'active' ? '1' : '0';
             button.prop('disabled', true);
             $.ajax({
-                url: '{{ route('discountsBlock.update', ['id' => ':userId']) }}'.replace(
+                url: '{{ route('brandDiscountsBlock.update', ['id' => ':userId']) }}'.replace(
                     ':userId', userId),
                 type: 'POST',
                 data: {
@@ -477,7 +477,7 @@
 
         function deleteSubadmin(subadminId) {
             $.ajax({
-                url: "{{ route('discounts.delete', ['id' => ':subadminId']) }}".replace(':subadminId',
+                url: "{{ route('brandDiscounts.delete', ['id' => ':subadminId']) }}".replace(':subadminId',
                     subadminId),
                 type: 'GET',
                 success: function(response) {

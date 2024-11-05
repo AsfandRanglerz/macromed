@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\WithDrawLimitController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\BrandDiscountController;
 use App\Http\Controllers\Admin\CategoryDiscountController;
 
 /*
@@ -170,6 +171,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/brandsUpdate/{id}',  'updateBrands')->name('brands.update')->middleware('permission:Brands');
         Route::get('/brands/delete/{id}',  'deleteBrands')->name('brands.delete')->middleware('permission:Brands');
         Route::post('/update-brands-status/{id}',  'updateBrandsStatus')->name('brandsBlock.update')->middleware('permission:Brands');
+    });
+    // ############## Brands Discounts ############
+    Route::controller(BrandDiscountController::class)->group(function () {
+        Route::get('/brands/discounts/{id}', 'discountsIndex')->name('brandDiscounts.index')->middleware('permission:Category');
+        Route::get('/brands/discounts-data/{id}', 'getDiscounts')->name('brandDiscounts.get')->middleware('permission:Category');
+        Route::post('/brands/discounts-create/{id}', 'discountsCreate')->name('brandDiscounts.create')->middleware('permission:Category');
+        Route::get('/brands/discounts-show/{id}', 'discountsShow')->name('brandDiscounts.show')->middleware('permission:Category');
+        Route::post('/brands/discounts-update/{id}', 'discountsUpdate')->name('brandDiscounts.update')->middleware('permission:Category');
+        Route::get('/brands/discounts-delete/{id}', 'discountsDelete')->name('brandDiscounts.delete')->middleware('permission:Category');
+        Route::post('/update-discount-status/{id}',  'updateDiscountStatus')->name('brandDiscountsBlock.update')->middleware('permission:Category');
     });
     // ############## Comapny ############
     Route::controller(CompanyController::class)->group(function () {

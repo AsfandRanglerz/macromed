@@ -55,25 +55,5 @@ class Product extends Model
         return $this->morphToMany(Discount::class, 'discountable');
     }
     // Discounts code
-    public function getEffectiveDiscountAttribute()
-    {
-        if ($this->discounts()->exists()) {
-            return $this->discounts()->latest()->first()->discount_percentage;
-        }
-        if ($this->productBrands->discounts()->exists()) {
-            return $this->productBrands->discounts()->latest()->first()->discount_percentage;
-        }
 
-        if ($this->productCategory->discounts()->exists()) {
-            return $this->productCategory->discounts()->latest()->first()->discount_percentage;
-        }
-
-        return 0;
-    }
-
-    public function getDiscountedPriceAttribute()
-    {
-        $discount = $this->getEffectiveDiscountAttribute();
-        return $this->productVaraint->selling_price_per_unit - ($this->productVaraint->selling_price_per_unit * $discount / 100);
-    }
 }
