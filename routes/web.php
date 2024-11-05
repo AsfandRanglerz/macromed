@@ -180,7 +180,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/brands/discounts-show/{id}', 'discountsShow')->name('brandDiscounts.show')->middleware('permission:Category');
         Route::post('/brands/discounts-update/{id}', 'discountsUpdate')->name('brandDiscounts.update')->middleware('permission:Category');
         Route::get('/brands/discounts-delete/{id}', 'discountsDelete')->name('brandDiscounts.delete')->middleware('permission:Category');
-        Route::post('/update-discount-status/{id}',  'updateDiscountStatus')->name('brandDiscountsBlock.update')->middleware('permission:Category');
+        Route::post('/update-branddiscount-status/{id}',  'updateDiscountStatus')->name('brandDiscountsBlock.update')->middleware('permission:Category');
     });
     // ############## Comapny ############
     Route::controller(CompanyController::class)->group(function () {

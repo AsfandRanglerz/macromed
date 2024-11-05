@@ -1,5 +1,5 @@
 @extends('admin.layout.app')
-@section('title', 'Product')
+@section('title', 'Brands Discounts')
 @section('content')
     <style>
         .blinking-text {
@@ -139,7 +139,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <a class="btn btn-primary mb-3" href="{{ route('category.index') }}">Back</a>
-                        @if ($categories->status == '1')
+                        @if ($brands->status == '1')
                             <div class="card">
                                 <div class="card-header">
                                     <div class="col-12">

@@ -246,6 +246,7 @@
                                             <th>Company Name</th>
                                             <th>Company Country</th>
                                             <th>Image</th>
+                                            <th>Discounts</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -333,6 +334,14 @@
                                 return '<img src="https://ranglerzwp.xyz/macromed/public/admin/assets/images/users/admin.png" alt="Image" style="width: 50px; height: 50px;">';
                             }
                         }
+                    },
+                    {
+                        "render": function(data, type, row) {
+                            return '<a href="' +
+                                "{{ route('brandDiscounts.index', ['id' => ':id']) }}"
+                                .replace(':id', row.id) +
+                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-tag"></i></a>';
+                        },
                     },
                     {
                         "data": null,

@@ -22,8 +22,8 @@ class BrandDiscountController extends Controller
     public function discountsIndex($id)
     {
         $discounts = Discount::where('discountable_id', $id)->get();
-        $categories = Brands::where('id', $id)->first();
-        return view('admin.brands.discounts.index', compact('discounts', 'id', 'categories'));
+        $brands = Brands::where('id', $id)->first();
+        return view('admin.brands.discounts.index', compact('discounts', 'id', 'brands'));
     }
 
     public function discountsCreate(CreateCategoryDiscount $request,   $id)

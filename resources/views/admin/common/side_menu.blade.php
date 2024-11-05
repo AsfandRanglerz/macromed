@@ -1,7 +1,7 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="index.html"> <img alt="image" src="{{ asset('public/admin/assets/images/logo-macromed.png') }}"
+            <a href="#"> <img alt="image" src="{{ asset('public/admin/assets/images/logo-macromed.png') }}"
                     style="width: 40%" />
             </a>
         </div>
