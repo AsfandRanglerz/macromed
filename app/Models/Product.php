@@ -52,7 +52,7 @@ class Product extends Model
     }
     public function discounts()
     {
-        return $this->morphToMany(Discount::class, 'discountable');
+        return $this->morphMany(Discount::class, 'discountable');
     }
 
 }
