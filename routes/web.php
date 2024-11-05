@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\BrandDiscountController;
 use App\Http\Controllers\Admin\CategoryDiscountController;
+use App\Http\Controllers\Admin\ProductDiscountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -305,7 +306,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/variants/delete/{id}',  'deleteProductVariant')->name('variant.delete')->middleware('permission:Products');
         Route::post('/update-variants-status/{id}',  'updateVariantsStatus')->name('variantsBlock.update')->middleware('permission:Products');
     });
-
+    // ############## Products Discounts ############
+    Route::controller(ProductDiscountController::class)->group(function () {
+        Route::get('//product/discounts/{id}', 'discountsIndex')->name('productDiscounts.index')->middleware('permission:Category');
+        Route::get('//product/discounts-data/{id}', 'getDiscounts')->name('productDiscounts.get')->middleware('permission:Category');
+        Route::post('//product/discounts-create/{id}', 'discountsCreate')->name('productDiscounts.create')->middleware('permission:Category');
+        Route::get('//product/discounts-show/{id}', 'discountsShow')->name('productDiscounts.show')->middleware('permission:Category');
+        Route::post('//product/discounts-update/{id}', 'discountsUpdate')->name('productDiscounts.update')->middleware('permission:Category');
+        Route::get('//product/discounts-delete/{id}', 'discountsDelete')->name('productDiscounts.delete')->middleware('permission:Category');
+        Route::post('/update-productdiscount-status/{id}',  'updateDiscountStatus')->name('productDiscountsBlock.update')->middleware('permission:Category');
+    });
     // ############## Currency ############
     Route::controller(CurrencyController::class)->group(function () {
         Route::get('/currency',  'currencyIndex')->name('currency.index')->middleware('permission:Currency');
