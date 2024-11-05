@@ -76,25 +76,7 @@ trait DiscountTrait
         return response()->json(['alert' => 'success', 'message' => 'Discount Deleted Successfully!']);
     }
 
-    // protected function updateStatus(Request $request, $id)
-    // {
-    //     try {
-    //         $discount = Discount::findOrFail($id);
-    //         if ($discount->status == '0') {
-    //             $discount->status = '1';
-    //             $message = 'Discount Active Successfully';
-    //         } else if ($discount->status == '1') {
-    //             $discount->status = '0';
-    //             $message = 'Discount In Active Successfully';
-    //         } else {
-    //             return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
-    //         }
-    //         $discount->save();
-    //         return response()->json(['alert' => 'success', 'message' => $message]);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.' . $e->getMessage()]);
-    //     }
-    // }
+ 
     protected function updateStatus(Request $request, $id)
     {
         try {
@@ -104,7 +86,7 @@ trait DiscountTrait
                 Discount::where('discountable_id', $discount->discountable_id)
                     ->where('discountable_type', $discount->discountable_type)
                     ->where('id', '!=', $id)
-                    ->where('status', '1')  
+                    ->where('status', '1')
                     ->update([
                         'status' => '0',
                         'discount_expiration_status' => 'inactive'
