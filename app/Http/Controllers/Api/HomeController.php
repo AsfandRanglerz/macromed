@@ -211,6 +211,7 @@ class HomeController extends Controller
             // Build the query with eager loading and filters
             $query = Product::with([
                 'productBrands.brands:id,name',
+                'productCategory.categories:id,name',
                 'productCertifications.certification:id,name',
                 'productVaraint' => function ($query) {
                     $query->select('product_id', 'selling_price_per_unit', 'status');
