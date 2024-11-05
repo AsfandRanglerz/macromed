@@ -18,6 +18,20 @@ use App\Models\WhishList;
 class HomeController extends Controller
 {
     use ProductHelperTrait;
+    protected function getDiscountMessage($discounts)
+    {
+        foreach ($discounts as $discount) {
+            if ($discount->discount_expiration_status === 'active') {
+                $now = now();
+                $remainingTime = $discount->end_date->diff($now);
+                return [
+                    'percentage' => $discount->discount_percentage,
+                    'message' => "{$discount->discount_percentage}% discount for {$remainingTime->d} days {$remainingTime->h} hours {$remainingTime->i} minutes remaining!"
+                ];
+            }
+        }
+        return null;
+    }
     public function getDropDownData()
     {
         try {
@@ -107,22 +121,6 @@ class HomeController extends Controller
                 'message' => 'An error occurred while fetching data: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-
-    private function getDiscountMessage($discounts)
-    {
-        foreach ($discounts as $discount) {
-            if ($discount->discount_expiration_status === 'active') {
-                $now = now();
-                $remainingTime = $discount->end_date->diff($now);
-                return [
-                    'percentage' => $discount->discount_percentage,
-                    'message' => "{$discount->discount_percentage}% discount for {$remainingTime->d} days {$remainingTime->h} hours {$remainingTime->i} minutes remaining!"
-                ];
-            }
-        }
-        return null;
     }
     private function getFilterCounts()
     {
@@ -287,12 +285,18 @@ class HomeController extends Controller
                 ])->orderBy('max_variant_price', 'desc');
             }
 
+
             // Paginate the results
             $products = $query->orderBy('products.created_at', 'desc')
                 ->skip($offset)
                 ->take($perPage)
                 ->get();
-
+            $products = $products->map(function ($product) {
+                $discountMessage = $this->getDiscountMessage($product->discounts);
+                $product->discount_percentage = $discountMessage ? $discountMessage['percentage'] : null;
+                $product->discount_message = $discountMessage ? $discountMessage['message'] : null;
+                return $product;
+            });
             if ($products->isEmpty()) {
                 return response()->json(['products' => []]);
             }
@@ -338,8 +342,6 @@ class HomeController extends Controller
                     }
                 }
             }
-
-
             return response()->json([
                 'status' => 'success',
                 'products' => $products,

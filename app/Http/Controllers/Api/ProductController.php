@@ -17,7 +17,20 @@ use App\Http\Requests\CompareRequest;
 class ProductController extends Controller
 {
     use ProductHelperTrait;
-
+    protected function getDiscountMessage($discounts)
+    {
+        foreach ($discounts as $discount) {
+            if ($discount->discount_expiration_status === 'active') {
+                $now = now();
+                $remainingTime = $discount->end_date->diff($now);
+                return [
+                    'percentage' => $discount->discount_percentage,
+                    'message' => "{$discount->discount_percentage}% discount for {$remainingTime->d} days {$remainingTime->h} hours {$remainingTime->i} minutes remaining!"
+                ];
+            }
+        }
+        return null;
+    }
     public function getProductDetail($productId)
     {
         try {
@@ -221,8 +234,26 @@ class ProductController extends Controller
     public function getCategoryBrand()
     {
         try {
-            $categories = Category::with('discounts:discountable_id,discount_percentage')->where('status', '1')->select('id', 'name')->get();
-            $brands = Brands::with('discounts:discountable_id,discount_percentage')->where('status', '1')->select('id', 'name')->get();
+            $categories = Category::with('discounts')->where('status', '1')->select('id', 'name')->get();
+            $brands = Brands::with('discounts')->where('status', '1')->select('id', 'name')->get();
+            $categories = $categories->map(function ($category) {
+                $discountMessage = $this->getDiscountMessage($category->discounts);
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'discount_percentage' => $discountMessage ? $discountMessage['percentage'] : null,
+                    'discount_message' => $discountMessage ? $discountMessage['message'] : null,
+                ];
+            });
+            $brands = $brands->map(function ($brand) {
+                $discountMessage = $this->getDiscountMessage($brand->discounts);
+                return [
+                    'id' => $brand->id,
+                    'name' => $brand->name,
+                    'discount_percentage' => $discountMessage ? $discountMessage['percentage'] : null,
+                    'discount_message' => $discountMessage ? $discountMessage['message'] : null,
+                ];
+            });
             return response()->json([
                 'status' => 'success',
                 'categories' => $categories,
