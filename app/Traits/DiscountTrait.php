@@ -18,8 +18,14 @@ trait DiscountTrait
     protected function createDiscount($discountableModel, Request $request, $id)
     {
         try {
-            // DB::beginTransaction();
+            DB::beginTransaction();
             $discountable = $discountableModel::findOrFail($id);
+            $discountable->discounts()
+                ->where('status', '1')
+                ->update([
+                    'status' => '0',
+                    'discount_expiration_status' => 'inactive',
+                ]);
             $discountable->discounts()->create([
                 'name' => $request->name,
                 'discount_percentage' => $request->discount_percentage,
@@ -28,10 +34,10 @@ trait DiscountTrait
                 'status' => $request->status,
                 'discount_expiration_status' => 'active',
             ]);
-            // DB::commit();
+            DB::commit();
             return response()->json(['alert' => 'success', 'message' => 'Discount Created Successfully!']);
         } catch (\Exception $e) {
-            // DB::rollBack();
+            DB::rollBack();
             return response()->json(['alert' => 'error', 'error' => 'An error occurred: ' . $e->getMessage()]);
         }
     }
@@ -70,23 +76,55 @@ trait DiscountTrait
         return response()->json(['alert' => 'success', 'message' => 'Discount Deleted Successfully!']);
     }
 
+    // protected function updateStatus(Request $request, $id)
+    // {
+    //     try {
+    //         $discount = Discount::findOrFail($id);
+    //         if ($discount->status == '0') {
+    //             $discount->status = '1';
+    //             $message = 'Discount Active Successfully';
+    //         } else if ($discount->status == '1') {
+    //             $discount->status = '0';
+    //             $message = 'Discount In Active Successfully';
+    //         } else {
+    //             return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
+    //         }
+    //         $discount->save();
+    //         return response()->json(['alert' => 'success', 'message' => $message]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.' . $e->getMessage()]);
+    //     }
+    // }
     protected function updateStatus(Request $request, $id)
     {
         try {
             $discount = Discount::findOrFail($id);
+
             if ($discount->status == '0') {
+                Discount::where('discountable_id', $discount->discountable_id)
+                    ->where('discountable_type', $discount->discountable_type)
+                    ->where('id', '!=', $id)
+                    ->where('status', '1')  
+                    ->update([
+                        'status' => '0',
+                        'discount_expiration_status' => 'inactive'
+                    ]);
+
                 $discount->status = '1';
-                $message = 'Discount Active Successfully';
+                $discount->discount_expiration_status = 'active';
+                $message = 'Discount Activated Successfully';
             } else if ($discount->status == '1') {
                 $discount->status = '0';
-                $message = 'Discount In Active Successfully';
+                $discount->discount_expiration_status = 'inactive';
+                $message = 'Discount Deactivated Successfully';
             } else {
-                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
+                return response()->json(['alert' => 'info', 'error' => 'Discount status is already updated or cannot be updated.']);
             }
+
             $discount->save();
             return response()->json(['alert' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.' . $e->getMessage()]);
+            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating discount status: ' . $e->getMessage()]);
         }
     }
 }
