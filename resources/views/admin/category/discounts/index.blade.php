@@ -414,8 +414,7 @@
                 },
                 error: function(xhr, status, error) {
                     console.log("data", xhr);
-
-                    if (xhr.status === 422) { // If validation errors
+                    if (xhr.status === 422) {
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
                             toastr.error(value[0]);
