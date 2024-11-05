@@ -45,6 +45,7 @@ Route::post('/getProducts', [HomeController::class, 'getFilteredProducts'])->mid
 ######### Product ##########
 Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);
 Route::post('/productComparison', [ProductController::class, 'productComparison']);
+Route::get('/getCategoryBrand', [ProductController::class, 'getCategoryBrand']);
 ######### Order ##########
 Route::post('/placeOrder', [OrderController::class, 'order']);
 Route::get('/selesAgent', [OrderController::class, 'selesAgent']);

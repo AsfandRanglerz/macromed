@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Api;
 
 
 
+use App\Models\Brands;
 use App\Models\Product;
+use App\Models\Category;
+use GuzzleHttp\Psr7\Request;
 use App\Models\ProductVaraint;
 use App\Traits\ProductHelperTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompareRequest;
-use GuzzleHttp\Psr7\Request;
 
 class ProductController extends Controller
 {
@@ -69,7 +71,7 @@ class ProductController extends Controller
             // Fetch product variants and calculate the selling price in PKR
             $productVariants = ProductVaraint::where('product_id', $productId)
                 ->where('status', '1')
-                ->select('id','s_k_u', 'description', 'packing', 'unit', 'remaining_quantity', 'selling_price_per_unit', 'tooltip_information')
+                ->select('id', 's_k_u', 'description', 'packing', 'unit', 'remaining_quantity', 'selling_price_per_unit', 'tooltip_information')
                 ->get()
                 ->map(function ($variant) use ($pkrAmount) {
                     $variant->selling_price_per_unit_pkr = $variant->selling_price_per_unit * $pkrAmount;
@@ -207,6 +209,24 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 'success',
                 'comparison' => $comparisonData,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while fetching product details: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getCategoryBrand()
+    {
+        try {
+            $categories = Category::with('discounts:discountable_id,discount_percentage')->where('status', '1')->select('id', 'name')->get();
+            $brands = Brands::with('discounts:discountable_id,discount_percentage')->where('status', '1')->select('id', 'name')->get();
+            return response()->json([
+                'status' => 'success',
+                'categories' => $categories,
+                'brands' => $brands,
             ]);
         } catch (\Exception $e) {
             return response()->json([
