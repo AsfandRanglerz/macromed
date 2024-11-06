@@ -38,7 +38,10 @@ class DiscountCodeController extends Controller
         try {
             DB::beginTransaction();
             if ($request->status == 1) {
-                DiscountCode::where('status', 1)->update(['status' => 0]);
+                DiscountCode::where('status', '1')->update([
+                    'status' => '0',
+                    'expiration_status' => 'inactive'
+                ]);
             }
             $discountCode = $this->generateUniqueDiscountCode();
             DiscountCode::create([
@@ -75,7 +78,10 @@ class DiscountCodeController extends Controller
             DB::beginTransaction();
             $discountCode = DiscountCode::findOrFail($id);
             if ($request->status == 1) {
-                DiscountCode::where('status', 1)->where('id', '!=', $id)->update(['status' => 0]);
+                DiscountCode::where('status', '1')->where('id', '!=', $id)->update([
+                    'status' => '0',
+                    'expiration_status' => 'inactive'
+                ]);
             }
             $discountCode->update([
                 'discount_percentage' => $request->discount_percentage,
@@ -114,11 +120,11 @@ class DiscountCodeController extends Controller
                         'expiration_status' => 'inactive'
                     ]);
                 $discount->status = '1';
-                $discount->discount_expiration_status = 'active';
+                $discount->expiration_status = 'active';
                 $message = 'Discount Code Activated Successfully';
             } else if ($discount->status == '1') {
                 $discount->status = '0';
-                $discount->discount_expiration_status = 'inactive';
+                $discount->expiration_status = 'inactive';
                 $message = 'Discount Code Deactivated Successfully';
             } else {
                 return response()->json(['alert' => 'info', 'error' => 'Discount status is already updated or cannot be updated.']);

@@ -399,7 +399,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/discountsCode/{id}',  'showDiscountsCode')->name('discountsCode.show')->middleware('permission:WithDrawal Request');
         Route::post('/discountsCodeUpdate/{id}',  'updateDiscountsCode')->name('discountsCode.update')->middleware('permission:WithDrawal Request');
         Route::get('/discountsCode/delete/{id}',  'deleteDiscountsCode')->name('discountsCode.delete')->middleware('permission:WithDrawal Request');
-        Route::post('/update-discountcode-status/{id}',  'updateDiscountCodeStatus')->name('discountsCodeUpdate.update')->middleware('permission:Category');
+        Route::post('/update-discountcode-status/{id}',  'updateDiscountCodeStatus')->name('discountsCodedBlock.update')->middleware('permission:Category');
     });
 });
 

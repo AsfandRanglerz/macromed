@@ -141,7 +141,7 @@
                                 <label for="usage_limit">Usage Limit:</label>
                                 <input type="number" name="usage_limit" class="form-control usage_limit">
                             </div>
-                      >
+                            >
                         </div>
                     </form>
                 </div>
@@ -451,7 +451,7 @@
             var newStatus = currentStatus === 'active' ? '1' : '0';
             button.prop('disabled', true);
             $.ajax({
-                url: '{{ route('discountsBlock.update', ['id' => ':userId']) }}'.replace(
+                url: '{{ route('discountsCodedBlock.update', ['id' => ':userId']) }}'.replace(
                     ':userId', userId),
                 type: 'POST',
                 data: {
