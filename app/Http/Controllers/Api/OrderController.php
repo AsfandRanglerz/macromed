@@ -159,8 +159,8 @@ class OrderController extends Controller
             $data['ordercode'] = $cart->order_id;
             $data['total'] = $cart->total * $pkrAmount;
             Mail::to($data['useremail'])->send(new orderConfirmation($data));
-            DB::commit();
             $cart->load('orderItem');
+            DB::commit();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Items added to cart successfully',

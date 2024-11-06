@@ -268,12 +268,24 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success mb-0 mr-1 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger mb-0 mr-1 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            return `
+            <div class="btn-group">
+                <button class="btn btn-primary dropdown-toggle mb-0 text-white" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item editSubadminBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a class="dropdown-item deleteSubadminBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </a>
+                </div>
+            </div>`;
                         }
                     }
+
+
                 ]
             });
 
