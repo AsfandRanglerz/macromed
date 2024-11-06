@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
+use App\Models\DiscountCode;
 use Illuminate\Support\Facades\Mail;
 use App\Models\SalesAgentNotification;
 
@@ -76,6 +77,30 @@ class OrderController extends Controller
             }
             $pkrAmount = $currency->pkr_amount;
             $userId = $request->input('user_id');
+            $discountCode = $request->input('discount_code');
+
+            // Step 1: Validate Discount Code
+            if ($discountCode) {
+                $discount = DiscountCode::where('discount_code', $discountCode)->first();
+                if (!$discount) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid discount code.',
+                    ], 400);
+                }
+                if ($discount->expiration_status !== 'active') {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'The discount code is expired.',
+                    ], 400);
+                }
+                if ($discount->remaining_usage_limit <= 0) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'The discount code has reached its usage limit.',
+                    ], 400);
+                }
+            }
             $cart = new Order();
             $cart->user_id = $userId;
             $cart->sales_agent_id = $request->sales_agent_id;
@@ -103,6 +128,7 @@ class OrderController extends Controller
             }
 
             $totalCommission = 0;
+            $validDiscount = false;
             foreach ($products as $product) {
                 $productInfo = ProductVaraint::find($product['varaint_id']);
                 if ($productInfo) {
@@ -120,7 +146,9 @@ class OrderController extends Controller
                             'message' => 'Insufficient stock for product variant: ' . $product['variant_number'] . '. Only ' . $productInfo->remaining_quantity . ' units remaining.',
                         ], 400);
                     }
-
+                    if ($discount && $product['quantity'] >= $discount->min_quantity && $product['quantity'] <= $discount->max_quantity) {
+                        $validDiscount = true;
+                    }
                     $orderItem = new OrderItem();
                     $orderItem->order_id = $cart->id;
                     $orderItem->varaint_id = $product['varaint_id'];
@@ -129,10 +157,10 @@ class OrderController extends Controller
                     $orderItem->quantity = $product['quantity'];
                     $orderItem->price = $product['price'] / $pkrAmount;
                     $orderItem->subtotal = $product['quantity'] * $product['price'] / $pkrAmount;
-                    $orderItem->product_discount = $product['product_discount'];
-                    $orderItem->brand_discount = $product['brand_discount'];
-                    $orderItem->category_discount = $product['category_discount'];
-                    $orderItem->total_discount = $product['total_discount'];
+                    $orderItem->product_discount = $product['product_discount'] ?? NULL;
+                    $orderItem->brand_discount = $product['brand_discount'] ?? NULL;
+                    $orderItem->category_discount = $product['category_discount'] ?? NULL;
+                    $orderItem->total_discount = $product['total_discount'] ?? NULL;
                     $orderItem->save();
                 } else {
                     DB::rollBack();
@@ -141,6 +169,18 @@ class OrderController extends Controller
                         'message' => 'Product variant not found: ' . $product['variant_number'],
                     ], 400);
                 }
+            }
+            if ($discount && !$validDiscount) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'The discount code does not apply to the products in your order. To use this discount, product quantities must be between ' . $discount->min_quantity . ' and ' . $discount->max_quantity . '.',
+                ], 400);
+            } elseif ($discount && $validDiscount) {
+                $cart->total -= ($discount->amount / 100);
+                $cart->total = $cart->total / $pkrAmount;
+                $discount->remaining_usage_limit -= 1;
+                $discount->save();
             }
             $cart->product_commission = $totalCommission / $pkrAmount;
             $cart->order_confirmation_message = 'Your order #' . $cart->order_id . ' is pending. The admin will review it shortly. Please check back later for updates.';
@@ -192,7 +232,7 @@ class OrderController extends Controller
                 ->with([
                     'users:id,name,phone,email',
                     'orderItem' => function ($query) {
-                        $query->select('order_id', 'variant_number', 'image', 'price', 'quantity', 'subtotal');
+                        $query->select('order_id', 'variant_number', 'image', 'price', 'quantity', 'subtotal', 'product_discount', 'brand_discount', 'category_discount', 'total_discount');
                     }
                 ])
                 ->latest()
@@ -201,6 +241,7 @@ class OrderController extends Controller
                 $order->total_in_pkr = $order->total * $pkrAmount;
                 $order->orderItem->each(function ($item) use ($pkrAmount) {
                     $item->price_in_pkr = $item->price * $pkrAmount;
+                    $item->subtotal_in_pkr = $item->subtotal * $pkrAmount;
                     $item->subtotal_in_pkr = $item->subtotal * $pkrAmount;
                 });
             });
@@ -260,6 +301,29 @@ class OrderController extends Controller
                 'seen_notification' => $seenCount,
                 'notifcation_message' => $notificationMessage,
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function orderDiscount()
+    {
+        try {
+            $discountCode = DiscountCode::select('id', 'discount_code', 'discount_percentage', 'status')->where('status', '1')->get();
+            if ($discountCode->isEmpty()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No Discount Code Found',
+                ], 404);
+            } else {
+                return response()->json([
+                    'status' => 'success',
+                    'discountCode' => $discountCode,
+                ], 404);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
