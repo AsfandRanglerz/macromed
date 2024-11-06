@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\BrandDiscountController;
 use App\Http\Controllers\Admin\CategoryDiscountController;
+use App\Http\Controllers\Admin\DiscountCodeController;
 use App\Http\Controllers\Admin\ProductDiscountController;
 
 /*
@@ -388,6 +389,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/paymentRequestCounter',  'getPaymentRequestCount')->name('paymentRequest.count')->middleware('permission:WithDrawal Request');
         // User Account Details
         Route::get('/paymentRequest/bankInfo/{userId}',  'getAccountDetails')->name('paymentAccount.index')->middleware('permission:WithDrawal Request');
+    });
+
+    // ############## Discounts Code  ############
+    Route::controller(DiscountCodeController::class)->group(function () {
+        Route::get('/discountsCodeData',  'discountsCodeData')->name('discountsCode.get')->middleware('permission:WithDrawal Request');
+        Route::get('/discountsCode',  'discountsCodeIndex')->name('discountsCode.index')->middleware('permission:WithDrawal Request');
+        Route::post('/discountsCode-create',  'discountsCodeCreate')->name('discountsCode.create')->middleware('permission:WithDrawal Request');
+        Route::get('/discountsCode/{id}',  'showDiscountsCode')->name('discountsCode.show')->middleware('permission:WithDrawal Request');
+        Route::post('/discountsCodeUpdate/{id}',  'updateDiscountsCode')->name('discountsCode.update')->middleware('permission:WithDrawal Request');
+        Route::get('/discountsCode/delete/{id}',  'deleteDiscountsCode')->name('discountsCode.delete')->middleware('permission:WithDrawal Request');
     });
 });
 

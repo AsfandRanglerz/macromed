@@ -324,6 +324,21 @@
                 </li>
             @endif
 
+            {{-- Discounts Code  --}}
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
+                <li class="dropdown {{ request()->is('admin/discountsCode*') ? 'active' : '' }}">
+                    <a href="{{ route('discountsCode.index') }}" class="nav-link" style="padding-left:23px">
+                        <span><i data-feather="percent"></i>Discount Codes</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/discountsCode*') ? 'active' : '' }}">
+                    <a href="{{ route('discountsCode.index') }}" class="nav-link" style="padding-left:23px">
+                        <span> <i data-feather="percent"></i>
+                            Discount Codes</span>
+                    </a>
+                </li>
+            @endif
 
             {{-- Reports --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
