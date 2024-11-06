@@ -13,7 +13,7 @@ class DiscountCodeCreate extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class DiscountCodeCreate extends FormRequest
     public function rules()
     {
         return [
-            //
+            'discount_percentage' => 'required|numeric|min:0|max:100',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'min_quantity'=>'required|numeric',
+            'max_quantity'=>'required|numeric',
+            'usage_limit'=>'required|numeric'
         ];
     }
 }

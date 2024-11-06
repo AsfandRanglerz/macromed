@@ -129,6 +129,10 @@ class OrderController extends Controller
                     $orderItem->quantity = $product['quantity'];
                     $orderItem->price = $product['price'] / $pkrAmount;
                     $orderItem->subtotal = $product['quantity'] * $product['price'] / $pkrAmount;
+                    $orderItem->product_discount = $product['product_discount'];
+                    $orderItem->brand_discount = $product['brand_discount'];
+                    $orderItem->category_discount = $product['category_discount'];
+                    $orderItem->total_discount = $product['total_discount'];
                     $orderItem->save();
                 } else {
                     DB::rollBack();

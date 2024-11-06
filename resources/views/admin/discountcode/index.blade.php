@@ -103,7 +103,7 @@
     <!-- Edit Discounts Modal -->
     <div class="modal fade" id="editDiscountsModal" tabindex="-1" role="dialog" aria-labelledby="editDiscountsModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editDiscountsModalLabel">Edit Discounts</h5>
@@ -113,25 +113,35 @@
                 </div>
                 <div class="modal-body">
                     <form id="editDiscounts" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="discount_percentage">Discount Name:</label>
-                            <input type="text" name="name" class="form-control name" min="0"
-                                max="100" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="discount_percentage">Discount Percentage:</label>
-                            <input type="number" name="discount_percentage" class="form-control discount_percentage"
-                                min="0" max="100" required>
-                        </div>
+                        <div class="row col-12 col-md-12">
+                            <div class="form-group col-md-6">
+                                <label for="discount_percentage">Discount Percentage:</label>
+                                <input type="number" name="discount_percentage" class="form-control discount_percentage"
+                                    min="0" max="100" required>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="start_date">Start Date:</label>
-                            <input type="datetime-local" name="start_date" class="form-control start_date">
-                        </div>
+                            <div class="form-group col-md-6">
+                                <label for="start_date">Start Date:</label>
+                                <input type="datetime-local" name="start_date" class="form-control start_date">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="end_date">End Date:</label>
-                            <input type="datetime-local" name="end_date" class="form-control end_date">
+                            <div class="form-group col-md-6">
+                                <label for="end_date">End Date:</label>
+                                <input type="datetime-local" name="end_date" class="form-control end_date">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="min_quantity">Min Quantity:</label>
+                                <input type="number" name="min_quantity" class="form-control min_quantity">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="max_quantity">Max Quantity:</label>
+                                <input type="number" name="max_quantity" class="form-control max_quantity">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="usage_limit">Usage Limit:</label>
+                                <input type="number" name="usage_limit" class="form-control usage_limit">
+                            </div>
+                      >
                         </div>
                     </form>
                 </div>
@@ -221,7 +231,19 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
+                            return renderTimeLeft(row); // Call the render function
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
                             return row.usage_limit;
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return row.remaining_usage_limit;
                         }
                     },
                     {
@@ -354,7 +376,7 @@
         function editDiscountsModal(id) {
             var showDiscounts = '{{ route('discountsCode.show', ':id') }}';
             $.ajax({
-                url: showdiscountsCode.replace(':id', id),
+                url: showDiscounts.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
                     console.log("data", response);
@@ -362,6 +384,9 @@
                     $('#editDiscounts .discount_percentage').val(response.discount_percentage);
                     $('#editDiscountsModal .start_date').val(formatToLocalDateTime(response.start_date));
                     $('#editDiscountsModal .end_date').val(formatToLocalDateTime(response.end_date));
+                    $('#editDiscounts .min_quantity').val(response.min_quantity);
+                    $('#editDiscounts .max_quantity').val(response.max_quantity);
+                    $('#editDiscounts .usage_limit').val(response.usage_limit);
                     $('#editDiscountsModal').modal('show');
                     $('#editDiscountsModal').data('id', id);
                 },
@@ -390,7 +415,7 @@
                 formDataObject[key] = value;
             });
             $.ajax({
-                url: updatediscountsCode.replace(':id', id),
+                url: updateDiscounts.replace(':id', id),
                 type: 'POST',
                 data: formData,
                 processData: false,

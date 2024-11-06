@@ -76,12 +76,11 @@ trait DiscountTrait
         return response()->json(['alert' => 'success', 'message' => 'Discount Deleted Successfully!']);
     }
 
- 
+
     protected function updateStatus(Request $request, $id)
     {
         try {
             $discount = Discount::findOrFail($id);
-
             if ($discount->status == '0') {
                 Discount::where('discountable_id', $discount->discountable_id)
                     ->where('discountable_type', $discount->discountable_type)
