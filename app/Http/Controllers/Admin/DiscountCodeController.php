@@ -127,13 +127,13 @@ class DiscountCodeController extends Controller
                 $discount->expiration_status = 'inactive';
                 $message = 'Discount Code Deactivated Successfully';
             } else {
-                return response()->json(['alert' => 'info', 'error' => 'Discount status is already updated or cannot be updated.']);
+                return response()->json(['alert' => 'info', 'error' => 'Discount status is already updated or cannot be updated.'],200);
             }
 
             $discount->save();
             return response()->json(['alert' => 'success', 'message' => $message]);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating discount status: ' . $e->getMessage()]);
+            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating discount status: ' . $e->getMessage()],500);
         }
     }
 }
