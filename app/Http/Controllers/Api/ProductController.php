@@ -111,8 +111,9 @@ class ProductController extends Controller
                 ->latest()
                 ->get();
 
-            // It's not necessary to return an error if no related products are found
-            // as it's optional data. Instead, return an empty array.
+            $discountMessage = $this->getDiscountMessage($productDetails->discounts);
+            $productDetails->discount_percentage = $discountMessage ? $discountMessage['percentage'] : null;
+            $productDetails->discount_message = $discountMessage ? $discountMessage['message'] : null;
             return response()->json([
                 'status' => 'success',
                 'productDetails' => $productDetails,
