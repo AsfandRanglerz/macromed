@@ -72,10 +72,8 @@ class AuthController extends Controller
                 return response()->json(['error' => 'Password is not matched'], 401);
             }
 
-            // Attempt to create a token with valid credentials
-            if (!$token = JWTAuth::attempt($request->only(['email', 'password']))) {
-                return response()->json(['error' => 'Invalid email or password'], 401);
-            }
+            $token = $user->createToken('API Token')->plainTextToken;
+            $user->update(['is_active' => 1]);
             if ($user) {
                 $user->update(['is_active' => 1]);
                 return response()->json([
@@ -192,19 +190,29 @@ class AuthController extends Controller
             return response()->json(['message' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
-    public function logout()
+    public function logout(Request $request)
     {
         try {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            $user = Auth::user();
+            $user = $request->user();
             if ($user) {
                 $user->update(['is_active' => 0]);
+                $request->user()->currentAccessToken()->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Logout Successfully!',
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid Token.',
+                ], 401);
             }
-            return response()->json(['success' => 'Logout successful'], 200);
-        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return response()->json(['error' => 'The token is already invalidated or expired'], 400);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Could not log out the user: ' . $e->getMessage()], 500);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Logout failed. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 

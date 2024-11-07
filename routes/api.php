@@ -29,7 +29,7 @@ Route::post('/verifyOtp', [AuthController::class, 'verifyOtp']);
 Route::post('/resendOtp', [AuthController::class, 'resendOtp']);
 Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
 
-Route::group(['middleware' => 'auth:api'], function () {
+Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/updatePassword/{id}', [AuthController::class, 'updatePassword']);
     Route::match(['get', 'post'], '/user/{id}', [AuthController::class, 'userProfile']);
