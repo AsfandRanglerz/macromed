@@ -99,7 +99,11 @@ class ProductController extends Controller
                 ], 404);
             }
 
-            $relatedProducts = Product::with(['productBrands.brands:id,name', 'productCertifications.certification:id,name'])
+            $relatedProducts = Product::with([
+                'productBrands.brands:id,name',
+                'productCategory.categories:id,name',
+                'productCertifications.certification:id,name'
+            ])
                 ->select('id', 'thumbnail_image', 'short_name', 'short_description')
                 ->where('status', '1')
                 ->where('id', '!=', $productId)
