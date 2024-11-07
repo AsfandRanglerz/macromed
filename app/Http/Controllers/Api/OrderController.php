@@ -103,6 +103,10 @@ class OrderController extends Controller
                         'status' => 'error',
                         'message' => 'The discount code has reached its usage limit.',
                     ], 400);
+                } else if ($discount->remaining_usage_limit == 0) {
+                    $discount->update([
+                        'expiration_status' => 'inactive',
+                    ]);
                 }
             }
 
@@ -149,11 +153,6 @@ class OrderController extends Controller
                     ], 400);
                 }
 
-                // Calculate product commission
-                $productCommissionRate = $productInfo->products->product_commission;
-                $productCommissionAmount = ($product['price'] * $product['quantity'] * ($productCommissionRate / 100));
-                $totalCommission += $productCommissionAmount;
-
                 // Check stock availability
                 if ($productInfo->remaining_quantity < $product['quantity']) {
                     DB::rollBack();
@@ -162,14 +161,18 @@ class OrderController extends Controller
                         'message' => 'Insufficient stock for product variant: ' . $product['variant_number'] . '. Only ' . $productInfo->remaining_quantity . ' units remaining.',
                     ], 400);
                 }
-
-                // Deduct quantity from stock
                 $productInfo->remaining_quantity -= $product['quantity'];
                 $productInfo->save();
 
                 // Validate discount based on product quantity
                 if ($discount && $product['quantity'] >= $discount->min_quantity && $product['quantity'] <= $discount->max_quantity) {
+                    $effectivePrice = $product['price'];
+                    $effectivePrice -= ($effectivePrice * ($discount->discount_percentage / 100));
                     $validDiscount = true;
+                } else {
+                    $productCommissionRate = $productInfo->products->product_commission;
+                    $productCommissionAmount = ($product['price'] * $product['quantity'] * ($productCommissionRate / 100));
+                    $totalCommission += $productCommissionAmount;
                 }
 
                 // Create order item
