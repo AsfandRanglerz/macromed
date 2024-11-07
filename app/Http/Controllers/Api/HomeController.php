@@ -43,12 +43,18 @@ class HomeController extends Controller
             $company = Company::where('status', '1')->select('id', 'name')->get();
             $featureProducts = Product::with([
                 'productBrands.brands:id,name',
-                'productCategory.categories:id,name'
+                'productCategory.categories:id,name',
             ])->select('id', 'thumbnail_image', 'short_name', 'short_description')
                 ->where('product_status', 'Featured Product')
                 ->where('status', '1')
                 ->latest()
                 ->get();
+            $featureProducts =  $featureProducts->map(function ($featureProduct) {
+                $discountMessage = $this->getDiscountMessage($featureProduct->discounts);
+                $featureProduct->discount_percentage = $discountMessage ? $discountMessage['percentage'] : null;
+                $featureProduct->discount_message = $discountMessage ? $discountMessage['message'] : null;
+                return $featureProduct;
+            });
             $silders = SilderImages::where('status', '0')->select('id', 'images')->latest()->get();
 
             // If no featured products found, return a failure response

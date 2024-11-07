@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\SalesAgent;
 use App\Models\AgentWallet;
+use App\Models\DiscountCode;
 use Illuminate\Http\Request;
 use App\Models\ProductVaraint;
 use App\Mail\orderConfirmation;
@@ -15,7 +17,6 @@ use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
-use App\Models\DiscountCode;
 use Illuminate\Support\Facades\Mail;
 use App\Models\SalesAgentNotification;
 
@@ -68,18 +69,21 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
+            // Step 1: Retrieve currency
             $currency = $this->getCurrency();
             if (!$currency) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'No Currency found.',
-                ]);
+                ], 400);
             }
+
             $pkrAmount = $currency->pkr_amount;
             $userId = $request->input('user_id');
             $discountCode = $request->input('discount_code');
 
-            // Step 1: Validate Discount Code
+            // Step 2: Validate Discount Code
+            $discount = null;
             if ($discountCode) {
                 $discount = DiscountCode::where('discount_code', $discountCode)->first();
                 if (!$discount) {
@@ -101,106 +105,123 @@ class OrderController extends Controller
                     ], 400);
                 }
             }
+
             $cart = new Order();
             $cart->user_id = $userId;
-            $cart->sales_agent_id = $request->sales_agent_id;
-            $cart->address = $request->address;
-            $cart->billing_address = $request->billing_address;
-            $cart->country = $request->country;
-            $cart->state = $request->state;
-            $cart->city = $request->city;
-            $cart->payment_type = $request->payment_type;
-            $cart->card_number = $request->card_number;
-            $cart->card_date = $request->card_date;
-            $cart->cvc = $request->cvc;
+            $cart->sales_agent_id = $request->input('sales_agent_id');
+            $cart->address = $request->input('address');
+            $cart->billing_address = $request->input('billing_address');
+            $cart->country = $request->input('country');
+            $cart->state = $request->input('state');
+            $cart->city = $request->input('city');
+            $cart->payment_type = $request->input('payment_type');
+            $cart->card_number = $request->input('card_number');
+            $cart->card_date = $request->input('card_date');
+            $cart->cvc = $request->input('cvc');
             $cart->order_id = $this->generateRandomString(6);
-            $cart->total = $request->total / $pkrAmount;
+            $cart->total = $request->input('total') / $pkrAmount;
+            $cart->discount_code = $discountCode;
+            $cart->dicount_code_percentage = $discount ? $discount->discount_percentage : null;
             $cart->status = 'pending';
             $cart->product_commission = 0;
             $cart->save();
-            $products = json_decode($request->products, true);
+
+            // Step 4: Process products in the order
+            $products = json_decode($request->input('products'), true);
             if (!$products || !is_array($products)) {
                 DB::rollBack();
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Invalid or missing products data',
+                    'message' => 'Invalid or missing products data.',
                 ], 400);
             }
 
             $totalCommission = 0;
             $validDiscount = false;
+
             foreach ($products as $product) {
                 $productInfo = ProductVaraint::find($product['varaint_id']);
-                if ($productInfo) {
-                    // Calculate the product commission
-                    $productCommissionRate = $productInfo->products->product_commission;
-                    $productCommissionAmount = ($product['price'] * $product['quantity'] * ($productCommissionRate / 100));
-                    $totalCommission += $productCommissionAmount;
-                    if ($productInfo->remaining_quantity >= $product['quantity']) {
-                        $productInfo->remaining_quantity -= $product['quantity'];
-                        $productInfo->save();
-                    } else {
-                        DB::rollBack();
-                        return response()->json([
-                            'status' => 'error',
-                            'message' => 'Insufficient stock for product variant: ' . $product['variant_number'] . '. Only ' . $productInfo->remaining_quantity . ' units remaining.',
-                        ], 400);
-                    }
-                    if ($discount && $product['quantity'] >= $discount->min_quantity && $product['quantity'] <= $discount->max_quantity) {
-                        $validDiscount = true;
-                    }
-                    $orderItem = new OrderItem();
-                    $orderItem->order_id = $cart->id;
-                    $orderItem->varaint_id = $product['varaint_id'];
-                    $orderItem->variant_number = $product['variant_number'];
-                    $orderItem->image = $product['image'];
-                    $orderItem->quantity = $product['quantity'];
-                    $orderItem->price = $product['price'] / $pkrAmount;
-                    $orderItem->subtotal = $product['quantity'] * $product['price'] / $pkrAmount;
-                    $orderItem->product_discount = $product['product_discount'] ?? NULL;
-                    $orderItem->brand_discount = $product['brand_discount'] ?? NULL;
-                    $orderItem->category_discount = $product['category_discount'] ?? NULL;
-                    $orderItem->total_discount = $product['total_discount'] ?? NULL;
-                    $orderItem->save();
-                } else {
+                if (!$productInfo) {
                     DB::rollBack();
                     return response()->json([
                         'status' => 'error',
                         'message' => 'Product variant not found: ' . $product['variant_number'],
                     ], 400);
                 }
+
+                // Calculate product commission
+                $productCommissionRate = $productInfo->products->product_commission;
+                $productCommissionAmount = ($product['price'] * $product['quantity'] * ($productCommissionRate / 100));
+                $totalCommission += $productCommissionAmount;
+
+                // Check stock availability
+                if ($productInfo->remaining_quantity < $product['quantity']) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Insufficient stock for product variant: ' . $product['variant_number'] . '. Only ' . $productInfo->remaining_quantity . ' units remaining.',
+                    ], 400);
+                }
+
+                // Deduct quantity from stock
+                $productInfo->remaining_quantity -= $product['quantity'];
+                $productInfo->save();
+
+                // Validate discount based on product quantity
+                if ($discount && $product['quantity'] >= $discount->min_quantity && $product['quantity'] <= $discount->max_quantity) {
+                    $validDiscount = true;
+                }
+
+                // Create order item
+                $orderItem = new OrderItem();
+                $orderItem->order_id = $cart->id;
+                $orderItem->varaint_id = $product['varaint_id'];
+                $orderItem->variant_number = $product['variant_number'];
+                $orderItem->image = $product['image'];
+                $orderItem->quantity = $product['quantity'];
+                $orderItem->price = $product['price'] / $pkrAmount;
+                $orderItem->subtotal = $product['quantity'] * $product['price'] / $pkrAmount;
+                $orderItem->product_discount = $product['product_discount'] ?? null;
+                $orderItem->brand_discount = $product['brand_discount'] ?? null;
+                $orderItem->category_discount = $product['category_discount'] ?? null;
+                $orderItem->total_discount = $product['total_discount'] ?? null;
+                $orderItem->save();
             }
-            if ($discount && !$validDiscount) {
-                DB::rollBack();
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'The discount code does not apply to the products in your order. To use this discount, product quantities must be between ' . $discount->min_quantity . ' and ' . $discount->max_quantity . '.',
-                ], 400);
-            } elseif ($discount && $validDiscount) {
-                $cart->total -= ($discount->amount / 100);
-                $cart->total = $cart->total / $pkrAmount;
+            if ($discount) {
+                if (!$validDiscount) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'The discount code does not apply to the products in your order. Product quantities must be between ' . $discount->min_quantity . ' and ' . $discount->max_quantity . '.',
+                    ], 400);
+                }
+
+                $discountAmount = $cart->total * ($discount->discount_percentage / 100);
+                $cart->total -= $discountAmount;
                 $discount->remaining_usage_limit -= 1;
                 $discount->save();
             }
             $cart->product_commission = $totalCommission / $pkrAmount;
             $cart->order_confirmation_message = 'Your order #' . $cart->order_id . ' is pending. The admin will review it shortly. Please check back later for updates.';
             $cart->save();
-            if ($cart->status == 'pending') {
-                $totalCommission = $cart->product_commission;
+            if ($cart->status === 'pending') {
                 $agentWallet = AgentWallet::where('sales_agent_id', $cart->sales_agent_id)->first();
                 if ($agentWallet) {
                     $agentWallet->pending_commission += $totalCommission;
                     $agentWallet->total_commission += $totalCommission;
                     $agentWallet->save();
-                };
+                }
             }
-            $data['useremail'] =  $cart->users->email;
-            $data['username'] =  $cart->users->name;
-            $data['ordercode'] = $cart->order_id;
-            $data['total'] = $cart->total * $pkrAmount;
-            Mail::to($data['useremail'])->send(new orderConfirmation($data));
+            $data = [
+                'useremail' => $cart->users->email,
+                'username' => $cart->users->name,
+                'ordercode' => $cart->order_id,
+                'total' => $cart->total * $pkrAmount,
+            ];
+            Mail::to($data['useremail'])->send(new OrderConfirmation($data));
             $cart->load('orderItem');
             DB::commit();
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Items added to cart successfully',
@@ -214,6 +235,7 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
 
     public function getOrderDetail($userId)
     {
@@ -309,20 +331,38 @@ class OrderController extends Controller
         }
     }
 
+
     public function orderDiscount()
     {
         try {
-            $discountCode = DiscountCode::select('id', 'discount_code', 'discount_percentage', 'status')->where('status', '1')->get();
-            if ($discountCode->isEmpty()) {
+            $discountCodes = DiscountCode::select('id', 'discount_code', 'discount_percentage', 'start_date', 'end_date', 'status', 'expiration_status')
+                ->where('status', '1')
+                ->get();
+
+            if ($discountCodes->isEmpty()) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'No Discount Code Found',
                 ], 404);
             } else {
+                $discountCodes->transform(function ($discount) {
+                    if ($discount->expiration_status === 'active') {
+                        $now = now();
+                        $endDate = Carbon::parse($discount->end_date);
+                        $remainingTime = $endDate->diff($now);
+
+                        $discount->discount_message = "{$remainingTime->d} DAY ONLY";
+                    } else {
+                        $discount->discount_message = "Discount is not active.";
+                    }
+
+                    return $discount;
+                });
+
                 return response()->json([
                     'status' => 'success',
-                    'discountCode' => $discountCode,
-                ], 404);
+                    'discountCodes' => $discountCodes,
+                ], 200);
             }
         } catch (\Exception $e) {
             return response()->json([

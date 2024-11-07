@@ -36,8 +36,6 @@ class ProductController extends Controller
         try {
             $currency = $this->getCurrency();
             $pkrAmount = $currency->pkr_amount;
-
-            // Fetch product details with related data in a single query
             $productDetails = Product::with([
                 'productImages' => function ($query) {
                     $query->where('status', '0')->select('id', 'image', 'product_id');
@@ -101,15 +99,19 @@ class ProductController extends Controller
                 ], 404);
             }
 
-            // Find related products based on category IDs
-            $relatedProducts = Product::select('id', 'thumbnail_image', 'short_name', 'short_description')
+            $relatedProducts = Product::with(['productBrands.brands:id,name', 'productCertifications.certification:id,name'])
+                ->select('id', 'thumbnail_image', 'short_name', 'short_description')
                 ->where('status', '1')
                 ->where('id', '!=', $productId)
-                ->whereHas('productCategory', function ($query) use ($categoryIds) {
-                    $query->whereIn('category_id', $categoryIds);
-                })
+                ->whereHas('productCategory', fn($query) => $query->whereIn('category_id', $categoryIds))
                 ->latest()
-                ->get();
+                ->get()
+                ->map(function ($relatedProduct) {
+                    $discountMessage = $this->getDiscountMessage($relatedProduct->discounts);
+                    $relatedProduct->discount_percentage = $discountMessage['percentage'] ?? null;
+                    $relatedProduct->discount_message = $discountMessage['message'] ?? null;
+                    return $relatedProduct;
+                });
 
             $discountMessage = $this->getDiscountMessage($productDetails->discounts);
             $productDetails->discount_percentage = $discountMessage ? $discountMessage['percentage'] : null;
@@ -143,9 +145,6 @@ class ProductController extends Controller
 
             $productIdsArray = explode(',', $productIds); // Convert string to array
             $productCount = count($productIdsArray);
-
-
-
             if ($productCount > 3) {
                 return response()->json([
                     'status' => 'failed',
