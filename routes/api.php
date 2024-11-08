@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 });
 
 ######### Home ##########
+
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
 Route::post('/getProducts', [HomeController::class, 'getFilteredProducts']);
 ######### Product ##########
