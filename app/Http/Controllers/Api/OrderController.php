@@ -173,7 +173,7 @@ class OrderController extends Controller
             $cart->order_id = $this->generateRandomString(6);
             $cart->total = $request->input('total') / $pkrAmount;
             $cart->discount_code = $discountCode;
-            $cart->discounted_total = $request->input('discounted_total');
+            $cart->discounted_total = $request->input('discounted_total')/ $pkrAmount;
             $cart->dicount_code_percentage = $discount ? $discount->discount_percentage : null;
             $cart->status = 'pending';
             $cart->product_commission = 0;
