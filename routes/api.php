@@ -41,7 +41,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 ######### Home ##########
 Route::get('/getDropDownData', [HomeController::class, 'getDropDownData']);
-Route::post('/getProducts', [HomeController::class, 'getFilteredProducts'])->middleware('throttle:100,1');
+Route::post('/getProducts', [HomeController::class, 'getFilteredProducts']);
 ######### Product ##########
 Route::get('/getProductdetails/{productId}', [ProductController::class, 'getProductdetail']);
 Route::post('/productComparison', [ProductController::class, 'productComparison']);
