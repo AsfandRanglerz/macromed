@@ -60,11 +60,11 @@ Route::get('/cache_clear', function () {
     return 'Application cache cleared!';
 });
 
-Route::get('/', function () {
-    return redirect('/admin');
+Route::get('/admin', function () {
+    return redirect('/admin-login');
 });
 
-Route::get('/admin', [AuthController::class, 'getLoginPage'])->name('login');
+Route::get('/admin-login', [AuthController::class, 'getLoginPage'])->name('login');
 Route::post('admin/login', [AuthController::class, 'Login']);
 Route::get('/admin-forgot-password', [AdminController::class, 'forgetPassword']);
 Route::post('/admin-reset-password-link', [AdminController::class, 'adminResetPasswordLink']);

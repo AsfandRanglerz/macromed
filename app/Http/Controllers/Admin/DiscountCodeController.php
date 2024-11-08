@@ -76,6 +76,7 @@ class DiscountCodeController extends Controller
     {
         try {
             DB::beginTransaction();
+            
             $discountCode = DiscountCode::findOrFail($id);
             if ($request->status == 1) {
                 DiscountCode::where('status', '1')->where('id', '!=', $id)->update([

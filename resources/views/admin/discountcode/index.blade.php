@@ -141,7 +141,7 @@
                                 <label for="usage_limit">Usage Limit:</label>
                                 <input type="number" name="usage_limit" class="form-control usage_limit">
                             </div>
-                            >
+                        
                         </div>
                     </form>
                 </div>
