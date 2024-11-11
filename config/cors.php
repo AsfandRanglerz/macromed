@@ -38,8 +38,9 @@ return [
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
     'allowed_methods' => ['*'],
     'allowed_origins' => [
-        'https://macromed.com.pk',  // Allow only the specific domain
-    ], // Replace '*' with your frontend's exact origin
+        'https://macromed.com.pk',
+        'http://localhost:3000'
+    ],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     'exposed_headers' => [],
