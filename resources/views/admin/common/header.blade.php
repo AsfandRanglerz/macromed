@@ -18,10 +18,10 @@
                     src="{{ Auth::guard('admin')->check()
                         ? (Auth::guard('admin')->user()->image
                             ? asset(Auth::guard('admin')->user()->image)
-                            : asset('public/admin/assets/images/users/admin.png'))
+                            : asset('public/admin/assets/images/admin-image.jpg'))
                         : (Auth::guard('web')->user()->image
                             ? asset(Auth::guard('web')->user()->image)
-                            : asset('public/admin/assets/images/users/admin.png')) }}"
+                            : asset('public/admin/assets/images/admin-image.jpg')) }}"
                     class="user-img-radious-style mt-2">
                 <span class="d-sm-none d-lg-inline-block">
                 </span>
