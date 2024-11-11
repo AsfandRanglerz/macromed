@@ -40,16 +40,13 @@
                                             {{ $orders->payment_type === 'cash on delivery' ? 'Cash on Delivery' : 'Online' }}
                                             ending **** {{ substr($orders->card_number, -4) }}<br>
                                             {{ $orders->users->email }}
-                                            <!-- Assuming 'users' relation contains the email -->
                                         </address>
-
                                     </div>
                                     <div class="col-md-6 text-md-right">
                                         <address>
                                             <strong>Order Date:</strong><br>
                                             {{ $orders->created_at->format('F d, Y') }}<br><br>
                                         </address>
-
                                     </div>
                                 </div>
                             </div>
@@ -63,7 +60,12 @@
                                         <tr>
                                             <th data-width="40">#</th>
                                             <th>Item</th>
-                                            <th class="text-center">Price</th>
+                                            <th class="text-center">Actual Price</th>
+                                            <th class="text-center">Product Discount</th>
+                                            <th class="text-center">Category Discount</th>
+                                            <th class="text-center">Brand Discount</th>
+                                            <th class="text-center">Total Discount</th>
+                                            <th class="text-center">Discount Price</th>
                                             <th class="text-center">Quantity</th>
                                             <th class="text-right">Totals</th>
                                         </tr>
@@ -73,21 +75,59 @@
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $item->variant_number }}</td>
                                                 <td class="text-center">${{ number_format($item->price, 2) }}</td>
+
+                                                <td class="text-center">
+                                                    @if ($item->product_discount !== null)
+                                                        %{{ number_format($item->product_discount, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @if ($item->category_discount !== null)
+                                                        %{{ number_format($item->category_discount, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @if ($item->brand_discount !== null)
+                                                        %{{ number_format($item->brand_discount, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @if ($item->total_discount !== null)
+                                                        %{{ number_format($item->total_discount, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+
+
+                                                <!-- Check if discounted_price is not null -->
+                                                <td class="text-center">
+                                                    @if ($item->discounted_price !== null)
+                                                        ${{ number_format($item->discounted_price, 2) }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+
                                                 <td class="text-center">{{ $item->quantity }}</td>
                                                 <td class="text-right">
-                                                    ${{ number_format($item->quantity * $item->price, 2) }}</td>
+                                                    ${{ number_format($item->subtotal, 2) }}
+                                                </td>
                                             </tr>
                                         @endforeach
-
                                     </table>
-
                                 </div>
                                 <div class="row mt-4">
                                     <div class="col-lg-8">
                                         <div class="section-title">Payment Method</div>
                                         <p class="section-lead">The payment method that we provide is to make it easier for
-                                            you to pay
-                                            invoices.</p>
+                                            you to pay invoices.</p>
                                         <div class="images">
                                             <img src="{{ asset('public/admin/assets/img/cards/visa.png') }}"
                                                 alt="visa">
@@ -103,19 +143,42 @@
                                             <div class="invoice-detail-name">Subtotal</div>
                                             <div class="invoice-detail-value">
                                                 ${{ number_format(
-                                                    $orders->orderItem->sum(function ($item) {
-                                                        return $item->quantity * $item->price;
+                                                    $subtotal = $orders->orderItem->sum(function ($item) {
+                                                        return $item->subtotal;
                                                     }),
                                                     2,
                                                 ) }}
                                             </div>
                                         </div>
 
+                                        @if ($orders->discount_code)
+                                            <div class="invoice-detail-item">
+                                                <div class="invoice-detail-name">Coupon Code Discount
+                                                    ({{ $orders->dicount_code_percentage }}%)</div>
+                                                <div class="invoice-detail-value">
+                                                    -${{ number_format($subtotal * ($orders->dicount_code_percentage / 100), 2) }}
+                                                </div>
+                                            </div>
+                                            <div class="invoice-detail-item">
+                                                <div class="invoice-detail-name">Total after Discount</div>
+                                                <div class="invoice-detail-value">
+                                                    ${{ number_format($subtotal - $subtotal * ($orders->dicount_code_percentage / 100), 2) }}
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="invoice-detail-item">
+
+                                                <div class="invoice-detail-value">
+                                                    No Coupoun Code Discound Found!
+                                                </div>
+                                            </div>
+                                        @endif
+
+
                                         <div class="invoice-detail-item">
                                             <div class="invoice-detail-name">Shipping</div>
                                             <div class="invoice-detail-value">
                                                 ${{ number_format($orders->shipping_amount ?? 0, 2) }}
-                                                <!-- Default to $15 if no shipping amount is stored -->
                                             </div>
                                         </div>
 
@@ -125,22 +188,18 @@
                                             <div class="invoice-detail-name">Total</div>
                                             <div class="invoice-detail-value invoice-detail-value-lg">
                                                 ${{ number_format(
-                                                    $orders->orderItem->sum(function ($item) {
-                                                        return $item->quantity * $item->price;
-                                                    }) +
-                                                        ($orders->shipping_amount ?? 0),
+                                                    ($orders->discounted_total !== null ? $orders->discounted_total : $orders->total) + ($orders->shipping_amount ?? 0),
                                                     2,
                                                 ) }}
                                             </div>
+
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                     <hr>
-
                 </div>
             </div>
             <div class="text-center">
@@ -149,4 +208,5 @@
             </div>
         </section>
     </div>
+
 @endsection

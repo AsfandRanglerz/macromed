@@ -295,7 +295,7 @@ class OrderController extends Controller
 
             $pkrAmount = $currency->pkr_amount;
             $getUserOrders = Order::where('user_id', $userId)
-                ->select('id', 'user_id', 'order_id', 'billing_address', 'total','discounted_total','address', 'payment_type', 'card_number', 'created_at', 'status')
+                ->select('id', 'user_id', 'order_id', 'billing_address', 'total','discounted_total','address', 'payment_type', 'card_number','dicount_code_percentage','discount_code', 'created_at', 'status')
                 ->with([
                     'users:id,name,phone,email',
                     'orderItem'
