@@ -169,7 +169,7 @@
                                             <div class="invoice-detail-item">
 
                                                 <div class="invoice-detail-value">
-                                                    No Coupoun Code Discound Found!
+                                                    No Coupon Code Discound Found!
                                                 </div>
                                             </div>
                                         @endif
