@@ -36,6 +36,7 @@
                                             <th>City</th>
                                             <th>Sales Agent Commission</th>
                                             <th>Total Amount</th>
+                                            <th>Discounted Total</th>
                                             <th>Order Date</th>
                                             <th>Order Detail</th>
                                             <th>Status</th>
@@ -199,6 +200,17 @@
                         "data": "total",
                         "render": function(data, type, row) {
                             return '$' + data;
+                        }
+                    },
+                    {
+                        "data": "discounted_total",
+                        "render": function(data, type, row) {
+                            if (data) {
+                                return '$' + data;
+                            } else {
+                                return '<span class="text-danger">No Discount Total Found!</span>'
+                            }
+
                         }
                     },
                     {
