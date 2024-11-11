@@ -328,10 +328,10 @@
                         "data": "image",
                         "render": function(data, type, row) {
                             if (data) {
-                                return '<img src="https://ranglerzwp.xyz/macromed/' + data +
+                                return '<img src="https://macromed.com.pk/admin/' + data +
                                     '" alt="Image" style="width: 50px; height: 50px;">';
                             } else {
-                                return '<img src="https://ranglerzwp.xyz/macromed/public/admin/assets/images/users/admin.png" alt="Image" style="width: 50px; height: 50px;">';
+                                return '<img src="https://macromed.com.pk/admin/public/admin/assets/images/users/admin.png" alt="Image" style="width: 50px; height: 50px;">';
                             }
                         }
                     },
@@ -456,7 +456,7 @@
                     $('#editBrands .company_country').val(response.company_country).trigger('change');
                     $('#editBrands .contact_detail').val(response.contact_detail);
                     var imageUrl = response.image;
-                    var baseUrl = 'https://ranglerzwp.xyz/macromed/';
+                    var baseUrl = 'https://macromed.com.pk/admin/';
                     var responseImage = baseUrl + response.image;
                     if (imageUrl) {
                         $('#imagePreview').attr('src', responseImage).show();

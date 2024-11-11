@@ -727,7 +727,7 @@
                         return;
                     }
                     var imageUrl = response.thumbnail_image;
-                    var baseUrl = 'https://ranglerzwp.xyz/macromed/';
+                    var baseUrl = 'https://macromed.com.pk/admin/';
                     var responseImage = baseUrl + response.thumbnail_image;
                     if (imageUrl) {
                         $('.admin-img').attr('src', responseImage).show();
