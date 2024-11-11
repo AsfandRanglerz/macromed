@@ -173,7 +173,7 @@ class OrderController extends Controller
             $cart->order_id = $this->generateRandomString(6);
             $cart->total = $request->input('total') / $pkrAmount;
             $cart->discount_code = $discountCode;
-            $cart->discounted_total = $request->input('discounted_total')/ $pkrAmount;
+            $cart->discounted_total = $request->input('discounted_total') / $pkrAmount;
             $cart->dicount_code_percentage = $discount ? $discount->discount_percentage : null;
             $cart->status = 'pending';
             $cart->product_commission = 0;
@@ -298,9 +298,7 @@ class OrderController extends Controller
                 ->select('id', 'user_id', 'order_id', 'billing_address', 'total', 'address', 'payment_type', 'card_number', 'created_at', 'status')
                 ->with([
                     'users:id,name,phone,email',
-                    'orderItem' => function ($query) {
-                        $query->select('order_id', 'variant_number', 'image', 'price', 'quantity', 'subtotal', 'product_discount', 'brand_discount', 'category_discount', 'total_discount');
-                    }
+                    'orderItem'
                 ])
                 ->latest()
                 ->get();
@@ -309,7 +307,7 @@ class OrderController extends Controller
                 $order->orderItem->each(function ($item) use ($pkrAmount) {
                     $item->price_in_pkr = $item->price * $pkrAmount;
                     $item->subtotal_in_pkr = $item->subtotal * $pkrAmount;
-                    $item->subtotal_in_pkr = $item->subtotal * $pkrAmount;
+                    $item->discounted_price_in_pkr = $item->discounted_price * $pkrAmount;
                 });
             });
             $totalOrders = $getUserOrders->count();
