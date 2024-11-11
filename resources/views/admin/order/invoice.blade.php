@@ -188,7 +188,7 @@
                                             <div class="invoice-detail-name">Total</div>
                                             <div class="invoice-detail-value invoice-detail-value-lg">
                                                 ${{ number_format(
-                                                    ($orders->discounted_total !== null ? $orders->discounted_total : $orders->total) + ($orders->shipping_amount ?? 0),
+                                                    ($orders->discounted_total != 0 ? $orders->discounted_total : $orders->total) + ($orders->shipping_amount ?? 0),
                                                     2,
                                                 ) }}
                                             </div>
