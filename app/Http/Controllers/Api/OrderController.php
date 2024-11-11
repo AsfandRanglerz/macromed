@@ -216,7 +216,7 @@ class OrderController extends Controller
                     $validDiscount = true;
                 }
                 $productCommissionRate = $productInfo->products->product_commission;
-                $price = $product['discounted_price'] ?? $product['price'];
+                $price = ($product['discounted_price'] != 0) ? $product['discounted_price'] : $product['price'];
                 $productCommissionAmount = ($price * $product['quantity'] * ($productCommissionRate / 100));
                 $totalCommission += $productCommissionAmount;
                 // Create order item
@@ -228,7 +228,7 @@ class OrderController extends Controller
                 $orderItem->quantity = $product['quantity'];
                 $orderItem->price = $product['price'] / $pkrAmount;
                 $orderItem->discounted_price = ($product['discounted_price'] ?? $product['price']) / $pkrAmount;
-                $orderItem->subtotal = $product['quantity'] * ($product['discounted_price'] ?? $product['price']) / $pkrAmount;
+                $orderItem->subtotal = $product['quantity'] * $price / $pkrAmount;
                 $orderItem->product_discount = $product['product_discount'] ?? null;
                 $orderItem->brand_discount = $product['brand_discount'] ?? null;
                 $orderItem->category_discount = $product['category_discount'] ?? null;
@@ -425,9 +425,9 @@ class OrderController extends Controller
 
         // Update expired discount codes whose end_date is less than or equal to the current UTC time
         $expiredDiscountCodes = DiscountCode::where('end_date', '<=', $now)
-        ->where('expiration_status', 'active')
-        ->where('status', 0) // Use an integer here
-        ->get();
+            ->where('expiration_status', 'active')
+            ->where('status', 0) // Use an integer here
+            ->get();
 
         // ->update([
         //     'expiration_status' => 'inactive',
