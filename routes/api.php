@@ -29,6 +29,8 @@ Route::post('/verifyOtp', [AuthController::class, 'verifyOtp']);
 Route::post('/resendOtp', [AuthController::class, 'resendOtp']);
 Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
 
+
+Route::get('/checkCronJob', [OrderController::class, 'checkCronJob']);
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/updatePassword/{id}', [AuthController::class, 'updatePassword']);

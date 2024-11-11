@@ -295,7 +295,7 @@ class OrderController extends Controller
 
             $pkrAmount = $currency->pkr_amount;
             $getUserOrders = Order::where('user_id', $userId)
-                ->select('id', 'user_id', 'order_id', 'billing_address', 'total','discounted_total','address', 'payment_type', 'card_number','dicount_code_percentage','discount_code', 'created_at', 'status')
+                ->select('id', 'user_id', 'order_id', 'billing_address', 'total', 'discounted_total', 'address', 'payment_type', 'card_number', 'dicount_code_percentage', 'discount_code', 'created_at', 'status')
                 ->with([
                     'users:id,name,phone,email',
                     'orderItem'
@@ -414,5 +414,26 @@ class OrderController extends Controller
                 'message' => 'Something went wrong: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+
+
+    public function checkCronJob()
+    {
+        DB::enableQueryLog();
+        $now = Carbon::now('UTC')->toDateTimeString();
+
+        // Update expired discount codes whose end_date is less than or equal to the current UTC time
+        $expiredDiscountCodes = DiscountCode::where('end_date', '<=', $now)
+        ->where('expiration_status', 'active')
+        ->where('status', 0) // Use an integer here
+        ->get();
+
+        // ->update([
+        //     'expiration_status' => 'inactive',
+        //     'status' => '0'
+        // ]);
+        // dd(DB::getQueryLog());
+        return   $expiredDiscountCodes;
     }
 }

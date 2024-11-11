@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
@@ -15,7 +14,7 @@ class DeactivateExpiredDiscountCodes extends Command
      * @var string
      */
     protected $signature = 'discounts:deactivate-expired';
-    protected $description = 'Deactivate discount codes whose end date has passed';
+    protected $description = 'Deactivate discount codes whose end date and time have passed';
 
     /**
      * Create a new command instance.
@@ -34,12 +33,13 @@ class DeactivateExpiredDiscountCodes extends Command
      */
     public function handle()
     {
-        $now = Carbon::now();
+        // Get the current UTC date and time
+        $now = Carbon::now('UTC');
 
-        // Log the current time to verify it’s correct
-        Log::info('Running DeactivateExpiredDiscountCodes at: ' . $now);
+        // Log the current time for debugging purposes
+        Log::info('Running DeactivateExpiredDiscountCodes at: ' . $now->toIso8601String());
 
-        // Attempt to update expired discount codes
+        // Update expired discount codes whose end_date is less than or equal to the current UTC time
         $affectedRows = DiscountCode::where('end_date', '<=', $now)
             ->where('expiration_status', 'active')
             ->update([
