@@ -60,12 +60,10 @@ Route::get('/cache_clear', function () {
     return 'Application cache cleared!';
 });
 
-// Route::get('/admin', function () {
-//     return redirect('/admin-login');
-// });
-Route::get('/{any}', function () {
-    return view('react.index.html');
-})->where('any', '.*');
+Route::get('/admin', function () {
+    return redirect('/admin-login');
+});
+
 
 Route::get('/admin-login', [AuthController::class, 'getLoginPage'])->name('login');
 Route::post('admin/login', [AuthController::class, 'Login']);

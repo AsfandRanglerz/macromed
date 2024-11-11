@@ -8,8 +8,10 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Mail\UserResetPasswordMail;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -69,8 +71,9 @@ class AuthController extends Controller
                 return response()->json(['error' => 'Password is not matched'], 401);
             }
 
-            $token = $user->createToken('API Token')->plainTextToken;
-            $user->update(['is_active' => 1]);
+            if (!$token = JWTAuth::attempt($request->only(['email', 'password']))) {
+                return response()->json(['error' => 'Invalid email or password'], 401);
+            }
             if ($user) {
                 $user->update(['is_active' => 1]);
                 return response()->json([
@@ -190,10 +193,11 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            $user = $request->user();
-            if ($user) {
+            $token = $request->bearerToken();
+            if ($token) {
+                $user = Auth::guard('api')->setToken($token)->user();
                 $user->update(['is_active' => 0]);
-                $request->user()->currentAccessToken()->delete();
+                JWTAuth::setToken($token)->invalidate();
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Logout Successfully!',
