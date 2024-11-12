@@ -99,7 +99,7 @@ class SecurityController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to send message. Please try again later.',
+                'message' => 'Failed to send message. Please try again later.' . $e->getMessage(),
             ], 500);
         }
     }
