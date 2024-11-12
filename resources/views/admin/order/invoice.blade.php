@@ -77,28 +77,28 @@
                                                 <td class="text-center">${{ number_format($item->price, 2) }}</td>
 
                                                 <td class="text-center">
-                                                    @if ($item->product_discount !== null)
+                                                    @if ($item->product_discount != 0.0)
                                                         %{{ number_format($item->product_discount, 2) }}
                                                     @else
                                                         -
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($item->category_discount !== null)
+                                                    @if ($item->category_discount != 0.0)
                                                         %{{ number_format($item->category_discount, 2) }}
                                                     @else
                                                         -
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($item->brand_discount !== null)
+                                                    @if ($item->brand_discount != 0.0)
                                                         %{{ number_format($item->brand_discount, 2) }}
                                                     @else
                                                         -
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($item->total_discount !== null)
+                                                    @if ($item->total_discount != 0.0)
                                                         %{{ number_format($item->total_discount, 2) }}
                                                     @else
                                                         -
@@ -108,7 +108,7 @@
 
                                                 <!-- Check if discounted_price is not null -->
                                                 <td class="text-center">
-                                                    @if ($item->discounted_price !== null)
+                                                    @if ($item->discounted_price != 0.0)
                                                         ${{ number_format($item->discounted_price, 2) }}
                                                     @else
                                                         -
