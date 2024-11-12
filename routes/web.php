@@ -84,7 +84,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::resource('about', AboutusController::class);
     Route::resource('policy', PolicyController::class);
     Route::resource('terms', TermConditionController::class);
-    Route::resource('faq', FaqController::class);
     // ############## Silder ############
     Route::controller(SliderController::class)->group(function () {
         Route::get('/silder-image',  'showSilderImage')->name('silder.image')->middleware('permission:Sliders');
@@ -401,6 +400,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/discountsCodeUpdate/{id}',  'updateDiscountsCode')->name('discountsCode.update')->middleware('permission:WithDrawal Request');
         Route::get('/discountsCode/delete/{id}',  'deleteDiscountsCode')->name('discountsCode.delete')->middleware('permission:WithDrawal Request');
         Route::post('/update-discountcode-status/{id}',  'updateDiscountCodeStatus')->name('discountsCodedBlock.update')->middleware('permission:Category');
+    });
+    //  ######################### FAQ #########################
+    Route::controller(FaqController::class)->group(function () {
+        Route::get('/faq',  'faqIndex')->name('faq.index');
+        Route::post('/faq-create',  'faqCreate')->name('faq.create');
+        Route::get('/faqData',  'faqData')->name('faq.get');
+        Route::get('/faq/{id}',  'showFaq')->name('faq.show');
+        Route::post('/faqUpdate/{id}',  'updateFaq')->name('faq.update');
+        Route::get('/faq/delete/{id}',  'deleteFaq')->name('faq.delete');
+        Route::post('/faq/reorder',  'faqReorder')->name('faq.updateOrder');
     });
 });
 

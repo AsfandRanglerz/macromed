@@ -2,101 +2,88 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Faq;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\FAQS;
+use Illuminate\Support\Facades\Validator;
 
 class FaqController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function faqData()
     {
-        $data = Faq::orderby('id', 'DESC')->get();
-        return view('admin.faq.index', compact(['data']));
+        $faqs = FAQS::orderBy('position')->get();
+        $json_data["data"] = $faqs;
+        return json_encode($json_data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function faqIndex()
     {
-        return view('admin.faq.create');
+        $faqs = FAQS::all();
+        return view('admin.faqs.index', compact('faqs'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function faqCreate(Request $request)
     {
-        {
-            $request->validate([
-                'question' => 'required',
-                'answer' => 'required',
+        try {
+            $validator = Validator::make($request->all(), [
+                'questions' => 'required',
+                'answers' => 'required',
             ]);
-            
-            $data = $request->only(['question', 'answer']);
-            Faq::create($data);
-            return redirect()->route('faq.index')->with(['status' => true, 'message' => 'Faq Created Sucessfully']);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+            $faq = new FAQS($request->only(['questions', 'answers']));
+
+            $faq->save();
+            return response()->json(['alert' => 'success', 'message' => 'faq Created Successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating faq!' . $e->getMessage()], 500);
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function showfaq($id)
     {
-        //
+        $faq = FAQS::find($id);
+        if (!$faq) {
+            return response()->json(['alert' => 'error', 'message' => 'faq Not Found'], 500);
+        }
+        return response()->json($faq);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function updatefaq(Request $request, $id)
     {
-        $data = Faq::find($id);
-        return view('admin.faq.edit', compact('data'));
-    }
+        $validator = Validator::make($request->all(), [
+            'questions' => 'required',
+            'answers' => 'required',
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        Faq::find($id)->update([
-            'question' => $request->question,
-            'answer' => $request->answer,
         ]);
-        return redirect()->route('faq.index');
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        try {
+            $faq = FAQS::findOrFail($id);
+            $faq->fill($request->only(['questions', 'answers']));
+            $faq->save();
+            return response()->json(['alert' => 'success', 'message' => 'faq Updated Successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating Sub Admin' . $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function deletefaq($id)
     {
-        Faq::destroy($id);
-        return redirect()->back()->with(['status' => true, 'message' => 'Faq Deleted sucessfully']);
+        $faq = FAQS::findOrFail($id);
+        $faq->delete();
+        return response()->json(['alert' => 'success', 'message' => 'faq Deleted SuccessFully!']);
+    }
+
+    public function faqReorder(Request $request)
+    {
+
+
+        foreach ($request->order as $item) {
+            FAQS::where('id', $item['id'])->update(['position' => $item['position']]);
+        }
+
+        return response()->json(['message' => 'Order updated successfully']);
     }
 }

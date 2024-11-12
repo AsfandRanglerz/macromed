@@ -463,7 +463,24 @@
                     <span> <i data-feather="file-text"></i>Terms & Conditions</span>
                 </a>
             </li>
-
+            {{-- FAQS --}}
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Faqs'))
+                <li class="{{ request()->is('admin/faq*') ? 'active' : '' }}">
+                    <a href="{{ route('faq.index') }}"
+                        class="nav-link {{ request()->is('admin/faq*') ? 'text-white' : '' }}">
+                        <i data-feather="help-circle"></i>
+                        <span>FAQ`s</span>
+                    </a>
+                </li>
+            @elseif(auth()->guard('admin')->check())
+                <li class="{{ request()->is('admin/faq*') ? 'active' : '' }}">
+                    <a href="{{ route('faq.index') }}"
+                        class="nav-link {{ request()->is('admin/faq*') ? 'text-white' : '' }}">
+                        <i data-feather="help-circle"></i>
+                        <span>FAQ`s</span>
+                    </a>
+                </li>
+            @endif
         </ul>
     </aside>
 </div>
