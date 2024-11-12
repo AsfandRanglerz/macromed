@@ -60,7 +60,7 @@ Route::get('/cache_clear', function () {
     return 'Application cache cleared!';
 });
 
-Route::get('/admin', function () {
+Route::get('/', function () {
     return redirect('/admin-login');
 });
 
