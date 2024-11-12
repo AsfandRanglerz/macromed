@@ -252,8 +252,8 @@ class OrderController extends Controller
             if ($cart->status === 'pending') {
                 $agentWallet = AgentWallet::where('sales_agent_id', $cart->sales_agent_id)->first();
                 if ($agentWallet) {
-                    $agentWallet->pending_commission += $totalCommission;
-                    $agentWallet->total_commission += $totalCommission;
+                    $agentWallet->pending_commission +=  $cart->product_commission;
+                    $agentWallet->total_commission +=  $cart->product_commission;
                     $agentWallet->save();
                 }
             }
