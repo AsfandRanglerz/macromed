@@ -16,9 +16,11 @@ class adminContactUs extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    protected $contact;
+    public function __construct($contact)
     {
         //
+        $this->contact = $contact;
     }
 
     /**
@@ -28,6 +30,6 @@ class adminContactUs extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.adminContactUs');
+        return $this->markdown('emails.adminContactUs')->subject('New Contact Us Message')->with('data', $this->contact);
     }
 }
