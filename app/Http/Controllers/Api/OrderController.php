@@ -416,7 +416,32 @@ class OrderController extends Controller
         }
     }
 
+    public function seenBy($id)
+    {
+        try {
+            $seenBy = Order::where('id', $id)->first();
 
+            if (is_null($seenBy)) {  // Check if the record is null instead of using isEmpty()
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Error in seen notification!',
+                ], 404);
+            } else {
+                $seenBy->seen_by = 1;
+                $seenBy->save();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Notification has been seen!',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 
     public function checkCronJob()
     {
