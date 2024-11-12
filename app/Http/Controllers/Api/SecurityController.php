@@ -63,7 +63,7 @@ class SecurityController extends Controller
     }
     public function faqs()
     {
-        $faqs = FAQS::all();
+        $faqs = FAQS::orderBy('position')->get();
         if ($faqs) {
             return response()->json([
                 'status' => 'success',
