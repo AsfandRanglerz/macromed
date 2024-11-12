@@ -87,6 +87,7 @@
                                             <th>Sales Agent Commission</th>
                                             <th>Total Profit</th>
                                             <th>Total Amount</th>
+                                            <th>Discounted Total</th>
                                             <th>Order Date</th>
                                             <th>Status</th>
                                             <th>Details</th>
@@ -179,6 +180,17 @@
                     {
                         "data": "total",
                         "render": (data) => '$' + parseFloat(data).toFixed(2)
+                    },
+                    {
+                        "data": "discounted_total",
+                        "render": function(data, type, row) {
+                            if (data) {
+                                return '$' + data;
+                            } else {
+                                return '<span class="text-danger">No Discount Total Found!</span>'
+                            }
+
+                        }
                     },
                     {
                         "data": "created_at",
