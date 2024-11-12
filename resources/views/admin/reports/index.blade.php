@@ -168,14 +168,9 @@
                         "render": function(data) {
                             var totalProfit = 0;
                             data.order_item.forEach(function(item) {
-                                // Use discounted price if available, otherwise use selling price
-                                var sellingPrice = item.product_variant
-                                    .discounted_price_per_unit > 0 ?
-                                    item.product_variant.discounted_price_per_unit :
-                                    item.product_variant.selling_price_per_unit;
-
-                                var profit = (sellingPrice - item.product_variant
-                                    .price_per_unit) * item.quantity;
+                                var profit = (item.product_variant.selling_price_per_unit -
+                                        item.product_variant.price_per_unit) * item
+                                    .quantity;
                                 totalProfit += profit;
                             });
                             return '$' + totalProfit.toFixed(2);
