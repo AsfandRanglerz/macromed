@@ -29,7 +29,7 @@ class AdminController extends Controller
         } elseif (Auth::guard('admin')->check()) {
             $data = Admin::find(Auth::guard('admin')->id());
         } else {
-            return redirect('/admin')->with(['alert' => 'error', 'error' => 'You Are Unable For Login!']);
+            return redirect('/admin-login')->with(['alert' => 'error', 'error' => 'You Are Unable For Login!']);
         }
         return view('admin.auth.profile', compact('data'));
     }
