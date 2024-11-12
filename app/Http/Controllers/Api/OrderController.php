@@ -419,22 +419,19 @@ class OrderController extends Controller
     public function seenBy($id)
     {
         try {
-            $seenBy = Order::where('user_id', $id)->get();
+            $updatedRows = Order::where('user_id', $id)->update(['seen_by' => '1']);
 
-            if (is_null($seenBy)) {  // Check if the record is null instead of using isEmpty()
+            if ($updatedRows == '0') {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Error in seen notification!',
+                    'message' => 'No Notifcation Found!',
                 ], 404);
-            } else {
-                $seenBy->seen_by = 1;
-                $seenBy->save();
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Notification has been seen!',
-                ], 200);
             }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Notifications have been seen!',
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -442,6 +439,8 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+
 
     public function checkCronJob()
     {
