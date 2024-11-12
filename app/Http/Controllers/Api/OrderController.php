@@ -440,8 +440,6 @@ class OrderController extends Controller
         }
     }
 
-
-
     public function checkCronJob()
     {
         DB::enableQueryLog();
