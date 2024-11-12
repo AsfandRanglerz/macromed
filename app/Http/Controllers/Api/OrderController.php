@@ -419,7 +419,7 @@ class OrderController extends Controller
     public function seenBy($id)
     {
         try {
-            $seenBy = Order::where('id', $id)->first();
+            $seenBy = Order::where('user_id', $id)->get();
 
             if (is_null($seenBy)) {  // Check if the record is null instead of using isEmpty()
                 return response()->json([
