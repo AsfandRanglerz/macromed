@@ -77,7 +77,9 @@ class ReportsController extends Controller
 
         // Fetch results
         $salesData = $query->get();
-        $totalAmount = $salesData->sum('total');
+        $totalAmount = $salesData->sum(function ($order) {
+            return $order->discounted_total ?? $order->total;
+        });
 
         // Return JSON response
         return response()->json([
