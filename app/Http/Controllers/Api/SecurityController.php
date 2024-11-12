@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\FAQS;
 use App\Models\About;
+use App\Models\ContactUs;
+use Illuminate\Http\Request;
 use App\Models\PrivacyPolicy;
 use App\Models\TermCondition;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Mail\adminContactUs;
+use App\Models\admin;
+use Illuminate\Support\Facades\Mail;
 
 class SecurityController extends Controller
 {
@@ -53,6 +59,48 @@ class SecurityController extends Controller
                 'status' => 'error',
                 'message' => 'Not Found!',
             ], 404);
+        }
+    }
+    public function faqs()
+    {
+        $faqs = FAQS::all();
+        if ($faqs) {
+            return response()->json([
+                'status' => 'success',
+                'faqs' => $faqs,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Not Found!',
+            ], 404);
+        }
+    }
+
+    public function sendContactMessage(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $admin = Admin::firstOrFail();  // Retrieve the admin's email
+            $contact = ContactUs::create([
+                'email' => $request->email,
+                'message' => $request->message
+            ]);
+
+            Mail::to($admin->email)->send(new AdminContactUs($contact));
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Your message has been sent successfully!',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to send message. Please try again later.',
+            ], 500);
         }
     }
 }

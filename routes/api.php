@@ -60,7 +60,10 @@ Route::post('/addPermission', [RolesPermissionController::class, 'addPermission'
 Route::post('/updatePermission/{id}', [RolesPermissionController::class, 'updatePermission']);
 Route::post('/addRole', [RolesPermissionController::class, 'addRole']);
 Route::post('/updateRole/{id}', [RolesPermissionController::class, 'updateRole']);
+
 ######### Security Controller ##########
 Route::get('about-us', [SecurityController::class, 'getAboutUs']);
 Route::get('privacy-policy', [SecurityController::class, 'getPrivacyPolicy']);
 Route::get('terms-condations', [SecurityController::class, 'getTermsCondation']);
+Route::get('/faqs', [SecurityController::class, 'faqs']);
+Route::post('/sendContactMessage',[SecurityController::class,'sendContactMessage']);
