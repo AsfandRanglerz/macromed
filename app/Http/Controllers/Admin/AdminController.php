@@ -4,12 +4,14 @@ namespace App\Http\Controllers\admin;
 
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Mail\PasswordResetMail;
 use App\Mail\ResetPasswordMail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\SalesAgent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -19,8 +21,20 @@ class AdminController extends Controller
     //
     public function getdashboard()
     {
+        if (auth()->guard('admin')->check()) {
+            // Fetch counts only if the admin is logged in
+            $customerCount = User::where('user_type', 'customer')->count();
+            $subAdminCount   = User::where('user_type', 'subadmin')->count();
+            $salesAgentCount = SalesAgent::count();
+            $productCount = Product::count();
 
-        return view('admin.index');
+            return view('admin.index', compact('customerCount', 'salesAgentCount', 'subAdminCount', 'productCount'));
+        } elseif (auth()->guard('web')->check()) {
+            return view('admin.index');
+        }
+
+        // If neither admin nor sub-admin is logged in, redirect to login
+        return redirect()->route('login');
     }
     public function getProfile()
     {
