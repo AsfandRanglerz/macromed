@@ -13,19 +13,21 @@
     </div>
     <ul class="navbar-nav navbar-right">
         <li class="dropdown">
+            @php
+                $userImage = null;
+                if (Auth::guard('admin')->check()) {
+                    $userImage = Auth::guard('admin')->user()->image;
+                } elseif (Auth::guard('web')->check()) {
+                    $userImage = Auth::guard('web')->user()->image;
+                }
+                $userImageUrl = $userImage ? asset($userImage) : asset('public/admin/assets/images/admin-image.jpg');
+            @endphp
+
             <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-                <img alt="User Image"
-                    src="{{ Auth::guard('admin')->check()
-                        ? (Auth::guard('admin')->user()->image
-                            ? asset(Auth::guard('admin')->user()->image)
-                            : asset('public/admin/assets/images/admin-image.jpg'))
-                        : (Auth::guard('web')->user()->image
-                            ? asset(Auth::guard('web')->user()->image)
-                            : asset('public/admin/assets/images/admin-image.jpg')) }}"
-                    class="user-img-radious-style mt-2">
-                <span class="d-sm-none d-lg-inline-block">
-                </span>
+                <img alt="User Image" src="{{ $userImageUrl }}" class="user-img-radious-style mt-2">
+                <span class="d-sm-none d-lg-inline-block"></span>
             </a>
+
 
             <div class="dropdown-menu dropdown-menu-right pullDown">
                 <div class="dropdown-title">

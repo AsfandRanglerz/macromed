@@ -81,9 +81,9 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('logout',  'logout');
     });
     // ############## Resouces Controllers ############
-    Route::resource('about', AboutusController::class);
-    Route::resource('policy', PolicyController::class);
-    Route::resource('terms', TermConditionController::class);
+    Route::resource('about', AboutusController::class)->middleware('permission:About Us');
+    Route::resource('policy', PolicyController::class)->middleware('permission:Privacy Policy');
+    Route::resource('terms', TermConditionController::class)->middleware('permission:Terms & Conditions');
     // ############## Silder ############
     Route::controller(SliderController::class)->group(function () {
         Route::get('/silder-image',  'showSilderImage')->name('silder.image')->middleware('permission:Sliders');
@@ -349,23 +349,23 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 
     // ############## Orders ############
     Route::controller(OrderController::class)->group(function () {
-        Route::get('/orderData',  'orderData')->name('order.get')->middleware('permission:Pending Orders');
-        Route::get('/order',  'orderIndex')->name('order.index')->middleware('permission:Pending Orders');
-        Route::get('/orders/{id}/status',  'getStatus')->name('orders.status')->middleware('permission:Pending Orders');
-        Route::post('/orders/{id}/update-status',  'updateStatus')->name('orders.update-status')->middleware('permission:Pending Orders');
-        Route::get('/order/delete/{id}',  'deleteOrder')->name('order.delete')->middleware('permission:Pending Orders');
-        Route::get('/order/counter',  'getOrderCount')->name('orders.count')->middleware('permission:Pending Orders');
-        Route::get('/order/details/{id}',  'getOrderDetails')->name('order.details')->middleware('permission:Pending Orders');
-        Route::post('/order/salesAganet/{id}',  'saveSalesAgent')->name('salesAgent.status')->middleware('permission:Pending Orders');
+        Route::get('/orderData',  'orderData')->name('order.get')->middleware('permission:Orders');
+        Route::get('/order',  'orderIndex')->name('order.index')->middleware('permission:Orders');
+        Route::get('/orders/{id}/status',  'getStatus')->name('orders.status')->middleware('permission:Orders');
+        Route::post('/orders/{id}/update-status',  'updateStatus')->name('orders.update-status')->middleware('permission:Orders');
+        Route::get('/order/delete/{id}',  'deleteOrder')->name('order.delete')->middleware('permission:Orders');
+        Route::get('/order/counter',  'getOrderCount')->name('orders.count')->middleware('permission:Orders');
+        Route::get('/order/details/{id}',  'getOrderDetails')->name('order.details')->middleware('permission:Orders');
+        Route::post('/order/salesAganet/{id}',  'saveSalesAgent')->name('salesAgent.status')->middleware('permission:Orders');
         ### InVoice ####
-        Route::get('/order/invoice/{id}',  'getInVoiceDetails')->name('invoice.index')->middleware('permission:Pending Orders');
+        Route::get('/order/invoice/{id}',  'getInVoiceDetails')->name('invoice.index')->middleware('permission:Orders');
     });
 
     Route::controller(ReportsController::class)->group(function () {
-        Route::get('/reports',  'reportsIndex')->name('reports.index');
-        Route::get('reports/data/', 'getReportsData')->name('admin.reports.data');
+        Route::get('/reports',  'reportsIndex')->name('reports.index')->middleware('permission:Reports');
+        Route::get('reports/data/', 'getReportsData')->name('admin.reports.data')->middleware('permission:Reports');
         ### InVoice ####
-        Route::get('/reports/invoice/{id}',  'getReportInVoiceDetails')->name('reportsinvoice.index')->middleware('permission:Pending Orders');
+        Route::get('/reports/invoice/{id}',  'getReportInVoiceDetails')->name('reportsinvoice.index')->middleware('permission:Reports');
     });
 
     // ############## Wallet WithDraw Limit ############
@@ -380,36 +380,36 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 
     // ############## Wallet WithDraw Limit ############
     Route::controller(WithDrawRequestController::class)->group(function () {
-        Route::post('/paymentRequestData',  'paymentRequestData')->name('paymentRequest.get')->middleware('permission:WithDrawal Request');
-        Route::get('/paymentRequest',  'paymentRequestIndex')->name('paymentRequest.index')->middleware('permission:WithDrawal Request');
-        Route::post('/paymentRequest-create',  'paymentRequestCreate')->name('paymentRequest.create')->middleware('permission:WithDrawal Request');
-        Route::get('/paymentRequest/{id}',  'showPaymentRequest')->name('paymentRequest.show')->middleware('permission:WithDrawal Request');
-        Route::post('/paymentRequestUpdate/{id}',  'updatePaymentRequest')->name('paymentRequest.update')->middleware('permission:WithDrawal Request');
-        Route::get('/paymentRequest/delete/{id}',  'deletePaymentRequest')->name('paymentRequest.delete')->middleware('permission:WithDrawal Request');
-        Route::get('/paymentRequestCounter',  'getPaymentRequestCount')->name('paymentRequest.count')->middleware('permission:WithDrawal Request');
+        Route::post('/paymentRequestData',  'paymentRequestData')->name('paymentRequest.get')->middleware('permission:Withdrawal Requests');
+        Route::get('/paymentRequest',  'paymentRequestIndex')->name('paymentRequest.index')->middleware('permission:Withdrawal Requests');
+        Route::post('/paymentRequest-create',  'paymentRequestCreate')->name('paymentRequest.create')->middleware('permission:Withdrawal Requests');
+        Route::get('/paymentRequest/{id}',  'showPaymentRequest')->name('paymentRequest.show')->middleware('permission:Withdrawal Requests');
+        Route::post('/paymentRequestUpdate/{id}',  'updatePaymentRequest')->name('paymentRequest.update')->middleware('permission:Withdrawal Requests');
+        Route::get('/paymentRequest/delete/{id}',  'deletePaymentRequest')->name('paymentRequest.delete')->middleware('permission:Withdrawal Requests');
+        Route::get('/paymentRequestCounter',  'getPaymentRequestCount')->name('paymentRequest.count')->middleware('permission:Withdrawal Requests');
         // User Account Details
-        Route::get('/paymentRequest/bankInfo/{userId}',  'getAccountDetails')->name('paymentAccount.index')->middleware('permission:WithDrawal Request');
+        Route::get('/paymentRequest/bankInfo/{userId}',  'getAccountDetails')->name('paymentAccount.index')->middleware('permission:Withdrawal Requests');
     });
 
     // ############## Discounts Code  ############
     Route::controller(DiscountCodeController::class)->group(function () {
-        Route::get('/discountsCodeData',  'discountsCodeData')->name('discountsCode.get')->middleware('permission:WithDrawal Request');
-        Route::get('/discountsCode',  'discountsCodeIndex')->name('discountsCode.index')->middleware('permission:WithDrawal Request');
-        Route::post('/discountsCode-create',  'discountsCodeCreate')->name('discountsCode.create')->middleware('permission:WithDrawal Request');
-        Route::get('/discountsCode/{id}',  'showDiscountsCode')->name('discountsCode.show')->middleware('permission:WithDrawal Request');
-        Route::post('/discountsCodeUpdate/{id}',  'updateDiscountsCode')->name('discountsCode.update')->middleware('permission:WithDrawal Request');
-        Route::get('/discountsCode/delete/{id}',  'deleteDiscountsCode')->name('discountsCode.delete')->middleware('permission:WithDrawal Request');
-        Route::post('/update-discountcode-status/{id}',  'updateDiscountCodeStatus')->name('discountsCodedBlock.update')->middleware('permission:Category');
+        Route::get('/discountsCodeData',  'discountsCodeData')->name('discountsCode.get')->middleware('permission:Discount Codes');
+        Route::get('/discountsCode',  'discountsCodeIndex')->name('discountsCode.index')->middleware('permission:Discount Codes');
+        Route::post('/discountsCode-create',  'discountsCodeCreate')->name('discountsCode.create')->middleware('permission:Discount Codes');
+        Route::get('/discountsCode/{id}',  'showDiscountsCode')->name('discountsCode.show')->middleware('permission:Discount Codes');
+        Route::post('/discountsCodeUpdate/{id}',  'updateDiscountsCode')->name('discountsCode.update')->middleware('permission:Discount Codes');
+        Route::get('/discountsCode/delete/{id}',  'deleteDiscountsCode')->name('discountsCode.delete')->middleware('permission:Discount Codes');
+        Route::post('/update-discountcode-status/{id}',  'updateDiscountCodeStatus')->name('discountsCodedBlock.update')->middleware('permission:Discount Codes');
     });
     //  ######################### FAQ #########################
     Route::controller(FaqController::class)->group(function () {
-        Route::get('/faq',  'faqIndex')->name('faq.index');
-        Route::post('/faq-create',  'faqCreate')->name('faq.create');
-        Route::get('/faqData',  'faqData')->name('faq.get');
-        Route::get('/faq/{id}',  'showFaq')->name('faq.show');
-        Route::post('/faqUpdate/{id}',  'updateFaq')->name('faq.update');
-        Route::get('/faq/delete/{id}',  'deleteFaq')->name('faq.delete');
-        Route::post('/faq/reorder',  'faqReorder')->name('faq.updateOrder');
+        Route::get('/faq',  'faqIndex')->name('faq.index')->middleware('permission:FAQ`s');
+        Route::post('/faq-create',  'faqCreate')->name('faq.create')->middleware('permission:FAQ`s');
+        Route::get('/faqData',  'faqData')->name('faq.get')->middleware('permission:FAQ`s');
+        Route::get('/faq/{id}',  'showFaq')->name('faq.show')->middleware('permission:FAQ`s');
+        Route::post('/faqUpdate/{id}',  'updateFaq')->name('faq.update')->middleware('permission:FAQ`s');
+        Route::get('/faq/delete/{id}',  'deleteFaq')->name('faq.delete')->middleware('permission:FAQ`s');
+        Route::post('/faq/reorder',  'faqReorder')->name('faq.updateOrder')->middleware('permission:FAQ`s');
     });
 });
 

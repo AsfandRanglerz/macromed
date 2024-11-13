@@ -302,13 +302,13 @@
                 </li>
             @endif
             {{-- Orders --}}
-            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Orders'))
                 <li class="dropdown {{ request()->is('admin/order*') ? 'active' : '' }}">
-                    <a href="{{ route('order.index') }}" class="nav-link padding" style="padding-left: 37px">
+                    <a href="{{ route('order.index') }}" class="nav-link padding" style="padding-left: 23px">
                         <span><i data-feather="shopping-cart"></i>
                             Orders</span>
                         <div id="orderCounter"
-                            class="badge {{ request()->is('admin/order*') ? 'bg-white text-primary' : 'bg-primary text-white' }} rounded-circle ">
+                            class="badge {{ request()->is('admin/order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
                         </div>
                     </a>
                 </li>
@@ -325,7 +325,7 @@
             @endif
 
             {{-- Discounts Code  --}}
-            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Discount Codes'))
                 <li class="dropdown {{ request()->is('admin/discountsCode*') ? 'active' : '' }}">
                     <a href="{{ route('discountsCode.index') }}" class="nav-link" style="padding-left:23px">
                         <span><i data-feather="percent"></i>Discount Codes</span>
@@ -341,7 +341,7 @@
             @endif
 
             {{-- Reports --}}
-            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Pending Orders'))
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Reports'))
                 <li class="dropdown {{ request()->is('admin/reports*') ? 'active' : '' }}">
                     <a href="{{ route('reports.index') }}" class="nav-link" style="padding-left:23px">
                         <span><i data-feather="file-text"></i>Reports</span>
@@ -356,7 +356,7 @@
                 </li>
             @endif
             {{-- WithDarw Request --}}
-            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Wallet WithDrawal Limit'))
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Withdrawal Requests'))
                 <li class="{{ request()->is('admin/paymentRequest*') ? 'active' : '' }} ">
                     <a href="{{ route('paymentRequest.index') }}"
                         class="nav-link {{ request()->is('admin/paymentRequest*') ? 'text-white' : '' }}"style="padding-left:13px">
@@ -444,27 +444,49 @@
                 </li>
             @endif
             {{-- About Us --}}
-            <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
-                <a href="{{ route('about.index') }}" class="nav-link">
-                    <span><i data-feather="info"></i>About Us</span>
-                </a>
-            </li>
-
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('About Us'))
+                <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
+                    <a href="{{ route('about.index') }}" class="nav-link">
+                        <span><i data-feather="info"></i>About Us</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">
+                    <a href="{{ route('about.index') }}" class="nav-link">
+                        <span><i data-feather="info"></i>About Us</span>
+                    </a>
+                </li>
+            @endif
             {{-- Privacy Policy --}}
-            <li class="dropdown {{ request()->is('admin/policy*') ? 'active' : '' }}">
-                <a href="{{ route('policy.index') }}" class="nav-link">
-                    <span> <i data-feather="shield"></i>Privacy Policy</span>
-                </a>
-            </li>
-
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Privacy Policy'))
+                <li class="dropdown {{ request()->is('admin/policy*') ? 'active' : '' }}">
+                    <a href="{{ route('policy.index') }}" class="nav-link">
+                        <span> <i data-feather="shield"></i>Privacy Policy</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/policy*') ? 'active' : '' }}">
+                    <a href="{{ route('policy.index') }}" class="nav-link">
+                        <span> <i data-feather="shield"></i>Privacy Policy</span>
+                    </a>
+                </li>
+            @endif
             {{-- Terms & Cond --}}
-            <li class="dropdown {{ request()->is('admin/terms*') ? 'active' : '' }}">
-                <a href="{{ route('terms.index') }}" class="nav-link">
-                    <span> <i data-feather="file-text"></i>Terms & Conditions</span>
-                </a>
-            </li>
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Terms & Conditions'))
+                <li class="dropdown {{ request()->is('admin/terms*') ? 'active' : '' }}">
+                    <a href="{{ route('terms.index') }}" class="nav-link">
+                        <span> <i data-feather="file-text"></i>Terms & Conditions</span>
+                    </a>
+                </li>
+            @elseif (auth()->guard('admin')->check())
+                <li class="dropdown {{ request()->is('admin/terms*') ? 'active' : '' }}">
+                    <a href="{{ route('terms.index') }}" class="nav-link">
+                        <span> <i data-feather="file-text"></i>Terms & Conditions</span>
+                    </a>
+                </li>
+            @endif
             {{-- FAQS --}}
-            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Faqs'))
+            @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('FAQ`s'))
                 <li class="{{ request()->is('admin/faq*') ? 'active' : '' }}">
                     <a href="{{ route('faq.index') }}"
                         class="nav-link {{ request()->is('admin/faq*') ? 'text-white' : '' }}">
