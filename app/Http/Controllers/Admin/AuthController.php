@@ -31,9 +31,11 @@ class AuthController extends Controller
                 return redirect('admin/dashboard')->with(['alert' => 'success', 'message' => 'Login Successfully!']);
             } else {
                 Auth::logout();
-                return redirect('/admin')->with(['alert' => 'error', 'error' => 'Only Subadmins with active status can log in.']);
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return redirect('/admin-login')->with(['alert' => 'error', 'error' => 'Only Subadmins with active status can log in.']);
             }
         }
-        return redirect('/admin')->with(['alert' => 'error', 'error' => 'Invalid Email and Password!']);
+        return redirect('/admin-login')->with(['alert' => 'error', 'error' => 'Invalid Email and Password!']);
     }
 }
