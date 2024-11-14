@@ -15,4 +15,9 @@ class admin extends Authenticatable
     {
         return $this->hasMany(AdminNotes::class, 'admin_id');
     }
+
+    public function admin_user()
+    {
+        return $this->morphMany(Category::class, 'admin_user');
+    }
 }

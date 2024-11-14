@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Category;
+use App\Models\Discount;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Traits\ChecksUserTypeTrait;
 use App\Http\Controllers\Controller;
-use App\Models\Discount;
+use App\Http\Requests\CreateCategory;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
+    use ChecksUserTypeTrait;
     public function categoryData()
     {
         $categorys = Category::latest()->get();
@@ -23,30 +26,16 @@ class CategoryController extends Controller
         // $categories = Category::with('discounts')all();
         return view('admin.category.index');
     }
-    public function categoryCreate(Request $request)
+    public function categoryCreate(CreateCategory $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('categories')
-                ],
-                'slug' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('categories')
-                ],
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
+            $user = $this->checkUserType();
+            if ($user) {
+                $category = new Category($request->only(['name', 'slug', 'status']));
+                $category->admin_user()->associate($user);
+                $category->save();
+                return response()->json(['alert' => 'success', 'message' => 'Category Created Successfully!']);
             }
-            $category = new Category($request->only(['name', 'slug', 'status']));
-            $category->save();
-            return response()->json(['alert' => 'success', 'message' => 'Category Created Successfully!']);
         } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating Category!' . $e->getMessage()], 500);
         }
@@ -116,6 +105,4 @@ class CategoryController extends Controller
             return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
         }
     }
-
-
 }
