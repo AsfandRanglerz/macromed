@@ -156,6 +156,22 @@
 
     {{-- Data Table --}}
     <script>
+        // Convert Name into Slug
+        (function($) {
+            "use strict";
+            $(document).ready(function() {
+                $(".name").on("focusout", function(e) {
+                    $(".slug").val(convertToSlug($(this).val()));
+                })
+            });
+        })(jQuery);
+
+        function convertToSlug(Text) {
+            return Text
+                .toLowerCase()
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
+        }
         // ######### Data Table ##############
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
@@ -224,107 +240,25 @@
 
     <script>
         // ##############Create Sub admin################
-        const draftKey = 'categoryDraftData';
-
-        // Utility function to save draft data to localStorage
-        function saveDraftToLocal(formData, categoryId = null) {
-            formData.categoryId = categoryId; // Save categoryId in draft
-            localStorage.setItem(draftKey, JSON.stringify(formData));
-        }
-
-        // Utility function to clear form fields
-        function clearCategoryForm() {
-            $('#createCategoryForm').trigger('reset');
-            $('#createCategoryForm .is-invalid').removeClass('is-invalid');
-            $('#createCategoryForm .invalid-feedback').html('');
-        }
-
-        // Function to load draft data (from localStorage or server)
-        function loadCategoryDraft() {
-            let localDraft = JSON.parse(localStorage.getItem(draftKey));
-
-            if (localDraft) {
-                $('#name').val(localDraft.name || '');
-                $('#slug').val(localDraft.slug || '');
-                $('#status').val(localDraft.status || '1');
-
-                // If there is a categoryId in the draft, use it
-                if (localDraft.categoryId) {
-                    $('#createCategoryForm').data('categoryId', localDraft.categoryId);
-                }
-            } else {
-                // Fetch draft from the server if no local draft is found
-                $.ajax({
-                    url: '{{ route('category.getDraft') }}',
-                    type: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        console.log("data", response);
-                        if (response.data) {
-                            $('#name').val(response.data.name || '');
-                            $('#slug').val(response.data.slug || '');
-                            $('#status').val(response.data.status || '1');
-                            // Save the categoryId
-                            saveDraftToLocal(response.data, response.data.id);
-                        } else {
-                            clearCategoryForm();
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error("Error fetching draft:", xhr);
-                    }
+        $(document).ready(function() {
+            $('#createSubadminForm input, #createSubadminForm select, #createSubadminForm textarea').on(
+                'input change',
+                function() {
+                    $(this).siblings('.invalid-feedback').text('');
+                    $(this).removeClass('is-invalid');
                 });
-            }
-        }
-
-        // Event listener to handle modal show and load category draft
-        $('#createCategoryModal').on('show.bs.modal', function() {
-            loadCategoryDraft();
         });
 
-        // Event listener to save draft both locally and on the server
-        $('#createCategoryForm').on('input', function() {
-            let formData = {
-                name: $('#name').val(),
-                slug: $('#slug').val(),
-                status: $('#status').val()
-            };
-
-            let categoryId = $('#createCategoryForm').data('categoryId');
-            // Save draft to localStorage with categoryId
-            saveDraftToLocal(formData, categoryId);
-
-            // Delay server save to prevent frequent requests (debounced)
-            clearTimeout(window.draftTimer);
-            window.draftTimer = setTimeout(function() {
-                $.ajax({
-                    url: '{{ route('category.saveDraft') }}',
-                    type: 'POST',
-                    data: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        toastr.success('Draft Saved');
-                    },
-                    error: function(xhr) {
-                        console.error("Error saving draft:", xhr);
-                    }
-                });
-            }, 2000); // Save draft every 2 seconds after user stops typing
-        });
-
-        // Function to create or update category and clear drafts after success
         function createCategory() {
-            let formData = new FormData($('#createCategoryForm')[0]);
-            let categoryId = $('#createCategoryForm').data('categoryId'); // Get categoryId from form data
-            let createButton = $('#createCategoryModal').find('.modal-footer').find('button');
+            var formData = new FormData($('#createCategoryForm')[0]);
+            var createButton = $('#createCategoryModal').find('.modal-footer').find('button');
             createButton.prop('disabled', true);
+            var formDataObject = {};
+            formData.forEach(function(value, key) {
+                formDataObject[key] = value;
+            });
             $.ajax({
-                url: categoryId ? `{{ route('category.create', '') }}/${categoryId}` :
-                    '{{ route('category.create') }}',
+                url: '{{ route('category.create') }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -333,20 +267,22 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    toastr.success('Category Created/Updated Successfully!');
-                    localStorage.removeItem(draftKey); // Clear draft data from localStorage
-                    clearCategoryForm(); // Clear form fields
+                    toastr.success('Category Created Successfully!');
                     $('#createCategoryModal').modal('hide');
                     reloadDataTable();
+                    $('#createCategoryModal form')[0].reset();
                 },
                 error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // Validation errors
-                        let errors = xhr.responseJSON.errors;
+                    console.log("data", xhr);
+                    if (xhr.status === 422) { // If validation errors
+                        var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
+                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
+                                value[
+                                    0]);
                         });
                     } else {
-                        console.error("Error:", xhr);
+                        console.log("Error:", xhr);
                     }
                 },
                 complete: function() {
@@ -354,32 +290,19 @@
                 }
             });
         }
-        $(".name").on("focusout", function() {
-            const name = $(this).val();
-            $(".slug").val(convertToSlug(name));
+        $('#createCategoryForm input').keyup(function() {
+            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
         });
-        let debounceTimer;
-        $(".name").on("keyup", function(e) {
-            const name = $(this).val();
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(function() {
-                $(".slug").val(convertToSlug(name));
-            }, 300);
-        })
-
-        function convertToSlug(text) {
-            return text.toLowerCase().replace(/[^\w ]+/g, '').replace(/ +/g, '-');
-        }
-        window.addEventListener('beforeunload', function() {
-            let formData = {
-                name: $('#name').val(),
-                slug: $('#slug').val(),
-                status: $('#status').val()
-            };
-            saveDraftToLocal(formData);
+        $('#createCategoryModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
         });
-
-
+        $('#createCategoryModal').on('show.bs.modal', function() {
+            $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ######Get & Update Category#########
 
         function editCategoryModal(id) {
