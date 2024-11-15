@@ -26,20 +26,59 @@ class CategoryController extends Controller
         // $categories = Category::with('discounts')all();
         return view('admin.category.index');
     }
-    public function categoryCreate(CreateCategory $request)
+    public function getDraft()
+    {
+        $user = $this->checkUserType();
+        $draft = Category::where('admin_user_type', get_class($user))
+            ->where('admin_user_id', $user->id)
+            ->where('is_draft', false)
+            ->first();
+
+        return response()->json(['data' => $draft]);
+    }
+    public function saveDraft(CreateCategory $request)
+    {
+        $user = $this->checkUserType();
+        $draft = Category::firstOrNew(
+            [
+                'admin_user_type' => get_class($user),
+                'admin_user_id' => $user->id,
+                'is_draft' => false
+            ]
+        );
+
+        $draft->fill([
+            'name' => $request->name,
+            'slug' => $request->slug,
+            'status' => $request->status,
+        ]);
+
+        $draft->admin_user()->associate($user);
+        $draft->save();
+
+        return response()->json(['message' => 'Draft saved successfully.']);
+    }
+
+    public function categoryCreate(Request $request, $categoryId = null)
     {
         try {
             $user = $this->checkUserType();
-            if ($user) {
-                $category = new Category($request->only(['name', 'slug', 'status']));
-                $category->admin_user()->associate($user);
-                $category->save();
-                return response()->json(['alert' => 'success', 'message' => 'Category Created Successfully!']);
-            }
+            $category = $categoryId ? Category::findOrFail($categoryId) : new Category();
+            $category->fill([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'status' => $request->status,
+            ]);
+            $category->is_draft =  true;
+            $category->admin_user()->associate($user);
+            $category->save();
+
+            return response()->json(['alert' => 'success', 'message' => 'Category Created/Updated Successfully!']);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating Category!' . $e->getMessage()], 500);
+            return response()->json(['alert' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function showCategory($id)
     {
