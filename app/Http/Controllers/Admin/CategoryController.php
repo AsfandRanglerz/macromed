@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Validator;
 class CategoryController extends Controller
 {
     use ChecksUserTypeTrait;
-    public function categoryData()
+    public function categoryData(Request $request)
     {
-        $categorys = Category::where('is_draft', 1)->latest()->get();
+        $is_draft = $request->query('is_draft', 1);
+        $categorys = Category::where('is_draft', $is_draft)->latest()->get();
         $json_data["data"] = $categorys;
         return json_encode($json_data);
     }

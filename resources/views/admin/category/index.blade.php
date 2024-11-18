@@ -161,6 +161,13 @@
                                     <h4>Category</h4>
                                 </div>
                             </div>
+                            <div class="form-group col-sm-3 mb-2">
+                                <label for="periodSelect">Draft Status</label>
+                                <select id="periodSelect" class="form-control" onchange="loadData()">
+                                    <option value="pending" selected><span class="text-danger">Saved Data</span></option>
+                                    <option value="completed">Draft Data</option>
+                                </select>
+                            </div>
                             <div class="card-body table-responsive">
                                 {{-- <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createCategoryModal">
@@ -216,6 +223,11 @@
                 .replace(/ +/g, '-');
         }
         // ######### Data Table ##############
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('order.get') }}?status=" + status).load();
+        }
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -224,7 +236,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('category.get') }}",
+                    "url": "{{ route('category.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -411,10 +423,9 @@
         function handleBeforeUnload(event) {
             const savedData = localStorage.getItem('categoryDraft');
             if (savedData) {
-                // Show confirmation before leaving the page
                 const message = "You have unsaved changes. Are you sure you want to leave?";
-                event.returnValue = message; // For most browsers
-                return message; // For some older browsers
+                event.returnValue = message;
+                return message;
             }
         }
 
