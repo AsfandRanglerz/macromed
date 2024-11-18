@@ -136,8 +136,8 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Category ############
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/category', 'categoryIndex')->name('category.index')->middleware('permission:Category');
-        Route::post('/category/saveDraft',  'saveDraft')->name('category.saveDraft')->middleware('permission:Category');
-        Route::get('/category/getDraft',  'getDraft')->name('category.getDraft')->middleware('permission:Category');
+        Route::post('/category/autosave', 'autosave')->name('category.autosave');
+        Route::get('/category/draft/{draftId}',  'fetchDraft')->name('category.fetchDraft');
         Route::post('/category-create/{categoryId?}', 'categoryCreate')->name('category.create')->middleware('permission:Category');
         Route::get('/categoryData', 'categoryData')->name('category.get')->middleware('permission:Category');
         Route::get('/category/{id}', 'showCategory')->name('category.show')->middleware('permission:Category');

@@ -2,7 +2,7 @@
 @section('title', 'Category')
 @section('content')
     {{-- Create Category Model  --}}
-    <div class="modal fade" id="createCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    {{-- <div class="modal fade" id="createCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -37,6 +37,43 @@
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-success" onclick="createCategory()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+    <div class="modal fade" id="createCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="createCategoryForm" enctype="multipart/form-data">
+                        <input type="hidden" id="draft_id" name="draft_id">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                oninput="autosaveCategory()">
+                        </div>
+                        <div class="form-group">
+                            <label for="slug">Slug</label>
+                            <input type="text" class="form-control slug" id="slug" name="slug">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Active Status</label>
+                            <select name="status" class="form-control" id="status" onchange="autosaveCategory()">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
                         </div>
                     </form>
                 </div>
@@ -125,10 +162,13 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
-                                <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
+                                {{-- <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createCategoryModal">
                                     Create Category
-                                </a>
+                                </a> --}}
+                                <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
+                                    data-target="#createCategoryModal" onclick="initializeCreateCategoryModal()">Create
+                                    Category</a>
                                 <table class="responsive table table-striped table-bordered" id="example">
                                     <thead>
                                         <tr>
@@ -160,9 +200,12 @@
         (function($) {
             "use strict";
             $(document).ready(function() {
-                $(".name").on("focusout", function(e) {
-                    $(".slug").val(convertToSlug($(this).val()));
-                })
+                $("#name").on("keyup", function() {
+                    const nameValue = $(this).val();
+                    const slugValue = convertToSlug(nameValue);
+                    $("#slug").val(slugValue);
+                    autosaveCategory();
+                });
             });
         })(jQuery);
 
@@ -240,17 +283,90 @@
 
     <script>
         // ##############Create Sub admin################
-        $(document).ready(function() {
-            $('#createSubadminForm input, #createSubadminForm select, #createSubadminForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
+        let autosaveTimer;
+
+        function initializeCreateCategoryModal() {
+            loadFromLocalStorage();
+            const draftId = $('#draft_id').val();
+            const url = `{{ url('admin/category/draft') }}/${draftId}`;
+            // Fetch draft from server if a draft ID exists
+            if (draftId) {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#name').val(response.name);
+                        $('#slug').val(response.slug);
+                        $('#status').val(response.status);
+                    },
+                    error: function(xhr) {
+                        console.error('Error fetching draft:', xhr.responseText);
+                    },
                 });
-        });
+            }
+        }
+        // Save form data to local storage
+        function saveToLocalStorage() {
+            const formData = {
+                name: $('#name').val(),
+                slug: $('#slug').val(),
+                status: $('#status').val(),
+                draft_id: $('#draft_id').val(),
+            };
+            localStorage.setItem('categoryDraft', JSON.stringify(formData));
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('categoryDraft');
+            console.log("data", savedData);
+
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                $('#name').val(data.name || '');
+                $('#slug').val(data.slug || '');
+                $('#status').val(data.status || '0');
+                $('#draft_id').val(data.draft_id || '');
+            }
+        }
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                var formData = new FormData($('#createCategoryForm')[0]);
+                const draftId = $('#draft_id').val();
+
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+
+                saveToLocalStorage(); // Save data to local storage
+
+                $.ajax({
+                    url: '{{ route('category.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        // console.log("data", response);
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id); // Save draft ID
+                        // console.log('Draft saved:', response.message);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000); // 1-second debounce
+        }
 
         function createCategory() {
             var formData = new FormData($('#createCategoryForm')[0]);
+            const draftId = $('#draft_id').val(); // Fetch draft ID
+            console.log('Draft ID:', draftId);
             var createButton = $('#createCategoryModal').find('.modal-footer').find('button');
             createButton.prop('disabled', true);
             var formDataObject = {};
@@ -267,19 +383,19 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    toastr.success('Category Created Successfully!');
+                    toastr.success('Category created successfully!');
                     $('#createCategoryModal').modal('hide');
+                    $('#createCategoryForm')[0].reset();
                     reloadDataTable();
-                    $('#createCategoryModal form')[0].reset();
+                    $('#draft_id').val('');
+                    localStorage.removeItem('categoryDraft');
                 },
                 error: function(xhr, status, error) {
                     console.log("data", xhr);
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
@@ -290,18 +406,22 @@
                 }
             });
         }
-        $('#createCategoryForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
-        $('#createCategoryModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-        $('#createCategoryModal').on('show.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
+        window.addEventListener('beforeunload', saveToLocalStorage);
+
+        function handleBeforeUnload(event) {
+            const savedData = localStorage.getItem('categoryDraft');
+            if (savedData) {
+                // Show confirmation before leaving the page
+                const message = "You have unsaved changes. Are you sure you want to leave?";
+                event.returnValue = message; // For most browsers
+                return message; // For some older browsers
+            }
+        }
+
+        // Listen for window unload or tab close
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('unload', function() {
+            autosaveCategory(); // Save data as draft
         });
         // ######Get & Update Category#########
 

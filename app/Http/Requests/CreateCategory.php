@@ -24,18 +24,20 @@ class CreateCategory extends FormRequest
      */
     public function rules()
     {
+        $categoryId = $this->route('category') ?? $this->input('draft_id');
+
         return [
             'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('categories')
+                Rule::unique('categories')->ignore($categoryId),
             ],
             'slug' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('categories')
+                Rule::unique('categories')->ignore($categoryId),
             ],
         ];
     }

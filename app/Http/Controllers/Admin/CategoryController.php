@@ -16,7 +16,7 @@ class CategoryController extends Controller
     use ChecksUserTypeTrait;
     public function categoryData()
     {
-        $categorys = Category::latest()->get();
+        $categorys = Category::where('is_draft', 1)->latest()->get();
         $json_data["data"] = $categorys;
         return json_encode($json_data);
     }
@@ -26,16 +26,40 @@ class CategoryController extends Controller
         // $categories = Category::with('discounts')all();
         return view('admin.category.index');
     }
+
+    public function autosave(Request $request)
+    {
+        $category = $request->draft_id
+            ? Category::find($request->draft_id)
+            : new Category();
+
+        $category->fill($request->only(['name', 'slug', 'status']));
+        $category->save();
+
+        return response()->json([
+            'message' => 'Draft autosaved successfully',
+            'draft_id' => $category->id,
+        ]);
+    }
+    public function fetchDraft($id)
+    {
+        $category = Category::findOrFail($id);
+
+        if ($category->is_draft == '0') {
+            return response()->json($category);
+        } else {
+            return response()->json(['message' => 'Not a draft'], 400);
+        }
+    }
     public function categoryCreate(CreateCategory $request)
     {
         try {
-            $user = $this->checkUserType();
-            if ($user) {
-                $category = new Category($request->only(['name', 'slug', 'status']));
-                $category->admin_user()->associate($user);
-                $category->save();
-                return response()->json(['alert' => 'success', 'message' => 'Category Created Successfully!']);
-            }
+
+            $category =  Category::find($request->draft_id) ?? new Category();
+            $category->fill($request->only(['name', 'slug', 'status']));
+            $category->is_draft = 1;
+            $category->save();
+            return response()->json(['alert' => 'success', 'message' => 'Category Created Successfully!']);
         } catch (\Exception $e) {
             return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating Category!' . $e->getMessage()], 500);
         }
