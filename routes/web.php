@@ -138,12 +138,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/category', 'categoryIndex')->name('category.index')->middleware('permission:Category');
         Route::post('/category/autosave', 'autosave')->name('category.autosave');
         Route::get('/category/draft/{draftId}',  'fetchDraft')->name('category.fetchDraft');
-        Route::post('/category-create/{categoryId?}', 'categoryCreate')->name('category.create')->middleware('permission:Category');
+        Route::post('/category-create/{categoryId?}', 'createEntity')->name('category.create')->middleware('permission:Category');
         Route::get('/categoryData', 'categoryData')->name('category.get')->middleware('permission:Category');
         Route::get('/category/{id}', 'showCategory')->name('category.show')->middleware('permission:Category');
-        Route::post('/categoryUpdate/{id}', 'updateCategory')->name('category.update')->middleware('permission:Category');
-        Route::get('/category/delete/{id}', 'deleteCategory')->name('category.delete')->middleware('permission:Category');
-        Route::post('/update-category-status/{id}',  'updateCategoryStatus')->name('categoryBlock.update')->middleware('permission:Category');
+        Route::put('/categoryUpdate/{categoryId}', 'updateEntity')->name('category.update')->middleware('permission:Category');
+        Route::get('/category/delete/{id}', 'deleteEntity')->name('category.delete')->middleware('permission:Category');
+        Route::post('/update-category-status/{id}',  'updateStatus')->name('categoryBlock.update')->middleware('permission:Category');
     });
     // ############## Category Discounts ############
     Route::controller(CategoryDiscountController::class)->group(function () {
