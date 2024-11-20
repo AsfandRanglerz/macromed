@@ -15,7 +15,7 @@ class CategoryController extends BaseController
 
     public function categoryData(Request $request)
     {
-        // $is_draft = $request->query('is_draft', 1);
+
         $categories = $this->model::where('is_draft', '1')->latest()->get();
 
         return response()->json(['data' => $categories]);

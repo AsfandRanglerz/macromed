@@ -13,26 +13,21 @@ abstract class BaseController extends Controller
     protected function validateRequest(Request $request)
     {
         if ($this->formRequestClass) {
+
             app($this->formRequestClass);
         }
     }
-
     public function autosave(Request $request)
     {
-        $this->validateRequest($request);
-
-        // Check if we are updating an existing draft or creating a new one
         $entity = $request->draft_id
             ? $this->model::find($request->draft_id)
             : new $this->model();
 
         $entity->fill($request->only($this->keys));
-
-        // If it's an update, we maintain the draft status as 1
         if ($entity->is_draft == 1) {
             $entity->is_draft = 1;
         } else {
-            $entity->is_draft = 0; // For new drafts, mark it as a draft
+            $entity->is_draft = 0;
         }
 
         $entity->save();
@@ -56,23 +51,12 @@ abstract class BaseController extends Controller
     public function createEntity(Request $request)
     {
         $this->validateRequest($request);
-        $entity = $this->model::find($request->draft_id) ?? new $this->model();
+        $entity = $this->model::findOrFail($request->draft_id) ?? new $this->model();
         $entity->fill($request->only($this->keys));
         $entity->is_draft = 1; // Mark as draft if it's being created
         $entity->save();
 
         return response()->json(['alert' => 'success', 'message' => 'Entity Created Successfully!']);
-    }
-
-    public function updateEntity(Request $request, $id)
-    {
-        // $this->validateRequest($request);
-        $entity = $this->model::findOrFail($id);
-        $entity->fill($request->only($this->keys));
-        $entity->is_draft = 1; // Maintain draft status during update
-        $entity->save();
-
-        return response()->json(['alert' => 'success', 'message' => 'Entity Updated Successfully!']);
     }
 
     public function deleteEntity($id)

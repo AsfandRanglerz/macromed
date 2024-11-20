@@ -15,7 +15,7 @@
                 <div class="modal-body">
                     <form id="createCategoryForm" enctype="multipart/form-data">
                         <input type="hidden" id="draft_id" name="draft_id">
-                        <input type="hidden" id="category_id" name="category_id">
+                        {{-- <input type="hidden" id="category_id" name="category_id"> --}}
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" class="form-control" id="name" name="name"
@@ -307,7 +307,6 @@
                         toastr.success(response.message);
                         $('#draft_id').val(response.draft_id);
                         saveToLocalStorage();
-
                     },
                     error: function(xhr) {
                         console.error('Autosave error:', xhr.responseText);
@@ -327,7 +326,6 @@
                     $('#status').val(response.status);
                     $('#createCategoryModal .modal-title').text('Edit Category'); // Change title to Edit
                     $('#createCategoryModal .btn-success').text('Update'); // Change button text to Update
-                    $('#category_id').val(response.id);
                     $('#draft_id').val(response.id);
                     $('#createCategoryModal').modal('show');
                 },
@@ -339,11 +337,8 @@
 
         function saveCategory() {
             var formData = new FormData($('#createCategoryForm')[0]);
-            const categoryId = $('#category_id').val();
-
-            const url = categoryId ? '{{ route('category.update', ':id') }}'.replace(':id', categoryId) :
-                '{{ route('category.create') }}';
-            const method = categoryId ? 'PUT' : 'POST'; // Use PUT for update, POST for create
+            const url = '{{ route('category.create') }}';
+            const method = 'POST';
             $.ajax({
                 url: url,
                 type: method,
