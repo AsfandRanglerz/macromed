@@ -17,9 +17,8 @@ class SubCategoryController extends BaseController
 
     public function subCategoryData()
     {
-        $subCategories = $this->model::where('is_draft', '1')->latest()->get();
-        $json_data["data"] =  $subCategories;
-        return json_encode($json_data);
+        $subCategories = $this->model::with('category')->where('is_draft', '1')->latest()->get();
+        return response()->json(['data' => $subCategories]);
     }
 
     public function subCategoryIndex()

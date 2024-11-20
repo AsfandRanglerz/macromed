@@ -14,12 +14,13 @@
                 </div>
                 <div class="modal-body">
                     <form id="createSubCategoryForm" enctype="multipart/form-data">
+                        <input type="hidden" id="draft_id" name="draft_id">
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="category">Category</label>
                                 <select class="form-control select2" id="category_id" name="category_id" required
                                     onchange="autosaveCategory()" style="width: 100%">
-                                    <option value="">Select Category</option>
+                                    <option value="" disabled selected>Select Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -212,7 +213,7 @@
                     success: function(response) {
                         $('#name').val(response.name);
                         $('#slug').val(response.slug);
-                        $('#category_id').val(response.category_id).trigger('change');
+                        $('#category_id').val(response.category_id);
                         $('#status').val(response.status);
                     },
                     error: function(xhr) {
@@ -319,6 +320,7 @@
                     $('#name').val(response.name);
                     $('#slug').val(response.slug);
                     $('#status').val(response.status);
+                    $('#category_id').val(response.category_id).trigger('change');
                     $('#createSubCategoryModal .modal-title').text('Edit'); // Change title to Edit
                     $('#createSubCategoryModal .btn-success').text('Update'); // Change button text to Update
                     $('#draft_id').val(response.id);
