@@ -17,7 +17,8 @@
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="category">Category</label>
-                                <select class="form-control select2" id="category_id" name="category_id" required style="width: 100%">
+                                <select class="form-control select2" id="category_id" name="category_id" required
+                                    onchange="autosaveCategory()" style="width: 100%">
                                     <option value="">Select Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -25,26 +26,20 @@
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
+
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control name" id="name" name="name" required>
-                                <div class="invalid-feedback"></div>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    oninput="autosaveCategory()">
                             </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="slug">Slug</label>
-                                <input type="text" class="form-control slug" id="slug" name="slug">
-                                <div class="invalid-feedback"></div>
+                                <input type="text" class="form-control" id="slug" name="slug">
                             </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="status">Active Status</label>
-                                <select name="status" class="form-control" id="status">
-                                    <option value="1">Active</option>
+                                <select name="status" class="form-control" id="status" onchange="autosaveCategory()">
+                                    <option value= "1">Active</option>
                                     <option value="0">In Active</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
@@ -53,68 +48,13 @@
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="createSubCategory()">Create</button>
+                    <button type="button" class="btn btn-success" onclick="saveSubCategory()">Create</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Edit Category Modal -->
-    <div class="modal fade" id="editSubCategoryModal" tabindex="-1" role="dialog"
-        aria-labelledby="editSubCategoryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editSubCategoryModalLabel">Edit Sub Category</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editSubCategory" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="category">Category</label>
-                                <select class="form-control category_id select2" name="category_id" required style="width: 100%">
-                                    <option value="">Select Category</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control name" name="name">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="slug">Slug</label>
-                                <input type="text" class="form-control slug" name="slug">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control status">
-                                    <option value="1">Active</option>
-                                    <option value="0">In Active</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="updateSubCategories()">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
+
     <!-- Delete Category Modal -->
     <div class="modal fade" id="deleteSubCategoryModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteSubCategoryModalLabel" aria-hidden="true">
@@ -150,7 +90,7 @@
                             </div>
                             <div class="card-body table-responsive">
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
-                                    data-target="#createSubCategoryModal">
+                                    data-target="#createSubCategoryModal" onclick="initializecreateSubCategoryModal()">
                                     Create Sub Category
                                 </a>
                                 <table class="responsive table table-striped table-bordered" id="example">
@@ -177,25 +117,7 @@
 @endsection
 
 @section('js')
-
     <script>
-        // Convert Name into Slug
-        (function($) {
-            "use strict";
-            $(document).ready(function() {
-                $(".name").on("focusout", function(e) {
-                    $(".slug").val(convertToSlug($(this).val()));
-                })
-            });
-        })(jQuery);
-
-        function convertToSlug(Text) {
-            return Text
-                .toLowerCase()
-                .replace(/[^\w ]+/g, '')
-                .replace(/ +/g, '-');
-        }
-
         // Data Table
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
@@ -254,147 +176,196 @@
                 deleteSubCategoryModal(id);
             });
         });
-
-        // ##############Create Sub admin################
-        $(document).ready(function() {
-            $('#createSubCategoryForm input, #createSubCategoryForm select, #createSubCategoryForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
+    </script>
+    <script>
+        // Convert Name into Slug
+        (function($) {
+            "use strict";
+            $(document).ready(function() {
+                $("#name").on("keyup", function() {
+                    const nameValue = $(this).val();
+                    const slugValue = convertToSlug(nameValue);
+                    $("#slug").val(slugValue);
+                    autosaveCategory();
                 });
-        });
-
-        function createSubCategory() {
-            var formData = new FormData($('#createSubCategoryForm')[0]);
-            var createButton = $('#createSubCategoryModal').find('.modal-footer').find('button');
-            createButton.prop('disabled', true);
-            var formDataObject = {};
-            formData.forEach(function(value, key) {
-                formDataObject[key] = value;
             });
-            $.ajax({
-                url: '{{ route('subCategory.create') }}',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Sub Category Created Successfully!');
-                    $('#createSubCategoryModal').modal('hide');
-                    reloadDataTable();
-                    $('#createSubCategoryModal form')[0].reset();
+        })(jQuery);
 
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                },
-                complete: function() {
-                    createButton.prop('disabled', false);
-                }
-            });
+        function convertToSlug(Text) {
+            return Text
+                .toLowerCase()
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
         }
-        $('#createSubCategoryForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
-        $('#createSubCategoryModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-        $('#createSubCategoryModal').on('show.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-        // ######Get & Update Category#########
+
+        let autosaveTimer;
+
+        function initializecreateSubCategoryModal() {
+            loadFromLocalStorage();
+            const draftId = $('#draft_id').val();
+            const url = `{{ url('admin/subCategory/draft') }}/${draftId}`;
+            // Fetch draft from server if a draft ID exists
+            if (draftId) {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#name').val(response.name);
+                        $('#slug').val(response.slug);
+                        $('#category_id').val(response.category_id).trigger('change');
+                        $('#status').val(response.status);
+                    },
+                    error: function(xhr) {
+                        console.error('Error fetching draft:', xhr.responseText);
+                    },
+                });
+            }
+        }
+        // Save form data to local storage
+        function saveToLocalStorage() {
+            const formData = {
+                name: $('#name').val(),
+                slug: $('#slug').val(),
+                status: $('#status').val(),
+                category_id: $('#category_id').val(),
+                draft_id: $('#draft_id').val(),
+            };
+            localStorage.setItem('categoryDraft', JSON.stringify(formData));
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('categoryDraft');
+            console.log("data", savedData);
+
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                $('#name').val(data.name || '');
+                $('#slug').val(data.slug || '');
+                $('#category_id').val(data.category_id || '');
+                $('#status').val(data.status || '0');
+                $('#draft_id').val(data.draft_id || '');
+            }
+        }
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                var formData = new FormData($('#createSubCategoryForm')[0]);
+                const draftId = $('#draft_id').val();
+
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+
+                saveToLocalStorage(); // Save data to local storage
+
+                $.ajax({
+                    url: '{{ route('subCategory.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        // console.log("data", response);
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id); // Save draft ID
+                        // console.log('Draft saved:', response.message);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000); // 1-second debounce
+        }
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                var formData = new FormData($('#createSubCategoryForm')[0]);
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: '{{ route('subCategory.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id);
+                        saveToLocalStorage();
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 2000); // 1-second debounce
+        }
 
         function editSubCategoryModal(id) {
-            var showSubCategory = '{{ route('subCategory.show', ':id') }}';
+            var showCategory = '{{ route('subCategory.show', ':id') }}';
             $.ajax({
-                url: showSubCategory.replace(':id', id),
+                url: showCategory.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editSubCategory .name').val(response.name);
-                    $('#editSubCategory .category_id').val(response.category_id).trigger('change');
-                    $('#editSubCategory .slug').val(response.slug);
-                    $('#editSubCategory .status').val(response.status);
-                    $('#editSubCategoryModal').modal('show');
-                    $('#editSubCategoryModal').data('id', id);
+                    $('#name').val(response.name);
+                    $('#slug').val(response.slug);
+                    $('#status').val(response.status);
+                    $('#createSubCategoryModal .modal-title').text('Edit'); // Change title to Edit
+                    $('#createSubCategoryModal .btn-success').text('Update'); // Change button text to Update
+                    $('#draft_id').val(response.id);
+                    $('#createSubCategoryModal').modal('show');
                 },
                 error: function(xhr, status, error) {
-                    // Handle error response
-                    console.log(xhr.responseText);
+                    console.error(xhr.responseText);
                 }
             });
         }
-        // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editSubCategory input, #editSubCategory select, #editSubCategory textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
 
-        function updateSubCategories() {
-            var updateSubCategory = '{{ route('subCategory.update', ':id') }}';
-            var id = $('#editSubCategoryModal').data('id');
-            var formData = new FormData($('#editSubCategory')[0]);
+        function saveSubCategory() {
+            var formData = new FormData($('#createSubCategoryForm')[0]);
+            const url = '{{ route('subCategory.create') }}';
+            const method = 'POST';
             $.ajax({
-                url: updateSubCategory.replace(':id', id),
-                type: 'POST',
+                url: url,
+                type: method,
                 data: formData,
                 processData: false,
                 contentType: false,
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
                 success: function(response) {
-                    toastr.success('Sub Category Updated Successfully!');
-                    $('#editSubCategoryModal').modal('hide');
-                    reloadDataTable();
-                    $('#editSubCategoryModal form')[0].reset();
-
+                    toastr.success(response.message);
+                    $('#createSubCategoryModal').modal('hide');
+                    $('#draft_id').val('');
+                    localStorage.removeItem('categoryDraft');
+                    $('#createSubCategoryForm')[0].reset();
+                    reloadDataTable(); // Reload the DataTable to reflect changes
                 },
                 error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // If validation errors
+                    if (xhr.status === 422) { // Validation error
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('.' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
-                        console.log("Error:", xhr);
+                        console.error(xhr.responseText);
                     }
                 }
             });
         }
 
-        $('#editSubCategoryModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
+        window.addEventListener('beforeunload', saveToLocalStorage);
 
-        $('#editSubCategoryModal').on('show.bs.modal', function() {
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
         // ############# Delete Category Data###########
         function deleteSubCategoryModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);
