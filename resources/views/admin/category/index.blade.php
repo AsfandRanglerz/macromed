@@ -15,9 +15,8 @@
                 <div class="modal-body">
                     <form id="createCategoryForm" enctype="multipart/form-data">
                         <input type="hidden" id="draft_id" name="draft_id">
-                        {{-- <input type="hidden" id="category_id" name="category_id"> --}}
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name">Name<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name"
                                 oninput="autosaveCategory()">
                         </div>
