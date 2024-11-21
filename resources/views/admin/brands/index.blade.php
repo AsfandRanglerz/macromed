@@ -163,6 +163,7 @@
                                             <th>Company Country</th>
                                             <th>Image</th>
                                             <th>Discounts</th>
+                                            <th>Visibility Status</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -212,19 +213,28 @@
                         }
                     },
                     {
-                        "data": "name"
+                        "data": "name",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Name Found!';
+                        }
                     },
                     {
-                        "data": "owner"
+                        "data": "owner",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Owner Found!';
+                        }
                     },
                     {
-                        "data": "company"
+                        "data": "company",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Company Found!';
+                        }
                     },
                     {
                         "data": "company_country",
                         "render": function(data) {
                             if (!data || data.trim() === "") {
-                                return "No data found";
+                                return "No Country Found!</span>";
                             }
                             return data.split(',')[1] ||
                                 data;
@@ -250,15 +260,29 @@
                         },
                     },
                     {
+                        "data": "is_draft",
+                        "render": function(data, type, row) {
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
+                        }
+                    },
+                    {
                         "data": null,
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                            return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                                return '<button id="update-status" class="btn ' + buttonClass +
+                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                            } else {
+                                // If it's not published, do not display the button
+                                return '<span class="text-muted">No Active Status</span>';
+                            }
+                        }
                     },
                     {
                         "data": null,
