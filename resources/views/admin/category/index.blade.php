@@ -374,10 +374,6 @@
 
         window.addEventListener('beforeunload', saveToLocalStorage);
 
-        // ###### Get & Update Category #########
-
-
-
 
         // ############# Delete Category Data###########
         function deleteCategoryModal(id) {

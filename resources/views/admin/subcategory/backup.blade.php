@@ -19,7 +19,7 @@
                             <div class="form-group">
                                 <label for="category">Category</label>
                                 <select class="form-control select2" id="category_id" name="category_id" required
-                                    style="width: 100%" onchange="autosaveCategory()">
+                                    style="width: 100%">
                                     <option value="" disabled selected>Select Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -39,8 +39,8 @@
                             <div class="form-group">
                                 <label for="status">Active Status</label>
                                 <select name="status" class="form-control" id="status" onchange="autosaveCategory()">
-                                    <option value="0">In Active</option>
                                     <option value= "1">Active</option>
+                                    <option value="0">In Active</option>
                                 </select>
                             </div>
                         </div>
@@ -179,17 +179,13 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            // Check if is_draft is 1 (published), then show Active/Inactive button
-                            if (row.is_draft == 1) {
-                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                                return '<button id="update-status" class="btn ' + buttonClass +
-                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
-                            } else {
-                                // If it's not published, do not display the button
-                                return '<span class="text-muted">No Active Status</span>';
-                            }
-                        }
+                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                            return '<button id="update-status" class="btn ' + buttonClass +
+                                '" data-userid="' + row
+                                .id + '">' + buttonText + '</button>';
+                        },
+
                     },
                     {
                         "data": null,
@@ -243,34 +239,115 @@
 
         let autosaveTimer;
 
+        // Initialize the modal and load draft if available
+        function initializecreateSubCategoryModal() {
+            loadFromLocalStorage();
+            // localStorage.removeItem('subCategoryDraft');
+            const draftId = $('#draft_id').val();
+            const url = `{{ url('admin/subCategory/draft') }}/${draftId}`;
+
+            // Fetch draft from server if a draft ID exists
+            if (draftId) {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#name').val(response.name);
+                        $('#slug').val(response.slug);
+                        $('#category_id').val(response.category_id);
+                        $('#status').val(response.status);
+                    },
+                    error: function(xhr) {
+                        console.error('Error fetching draft:', xhr.responseText);
+                    },
+                });
+            }
+        }
+
+        // Save form data to local storage if there is data
+        function saveToLocalStorage() {
+            const name = $('#name').val();
+            const slug = $('#slug').val();
+            const status = $('#status').val();
+            const category_id = $('#category_id').val();
+            const draft_id = $('#draft_id').val();
+
+            // Only save if there is data in the form
+            if (name || slug || status || category_id || draft_id) {
+                const formData = {
+                    name: name,
+                    slug: slug,
+                    status: status,
+                    category_id: category_id,
+                    draft_id: draft_id,
+                };
+                localStorage.setItem('subCategoryDraft', JSON.stringify(formData));
+            }
+        }
+
+        // Load saved data from localStorage if available
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('subCategoryDraft');
+            console.log("data", savedData);
+
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                $('#name').val(data.name || '');
+                $('#slug').val(data.slug || '');
+
+                const categoryElement = $('#category_id');
+                categoryElement.val(data.category_id || '').trigger('change');
+
+                $('#status').val(data.status || '0');
+                $('#draft_id').val(data.draft_id || '');
+            }
+        }
+
+        // Autosave the category data
         function autosaveCategory() {
             clearTimeout(autosaveTimer);
             autosaveTimer = setTimeout(() => {
+                // Only save if there's any data to save
                 const formData = new FormData($('#createSubCategoryForm')[0]);
                 const draftId = $('#draft_id').val();
+
                 if (draftId) {
                     formData.append('draft_id', draftId);
                 }
-                $.ajax({
-                    url: '{{ route('subCategory.autosave') }}',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                    },
-                    success: function(response) {
-                        toastr.success(response.message);
-                        $('#draft_id').val(response.draft_id);
-                    },
-                    error: function(xhr) {
-                        console.error('Autosave error:', xhr.responseText);
-                    },
-                });
+
+                if (hasDataToSave()) {
+                    $.ajax({
+                        url: '{{ route('subCategory.autosave') }}',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        },
+                        success: function(response) {
+                            toastr.success(response.message);
+                            saveToLocalStorage();
+                            $('#draft_id').val(response.draft_id);
+                        },
+                        error: function(xhr) {
+                            console.error('Autosave error:', xhr.responseText);
+                        },
+                    });
+                }
             }, 1000); // 1-second debounce
         }
 
+        // Check if there’s data to save
+        function hasDataToSave() {
+            const name = $('#name').val();
+            const slug = $('#slug').val();
+            const status = $('#status').val();
+            const category_id = $('#category_id').val();
+            return name || slug || status || category_id;
+        }
+
+        // Save subcategory on form submission
         function saveSubCategory() {
             var formData = new FormData($('#createSubCategoryForm')[0]);
             const url = '{{ route('subCategory.create') }}';
@@ -305,6 +382,33 @@
                 }
             });
         }
+
+        // Handle changes in tabs or visibility change
+        function handleTabChange() {
+            saveToLocalStorage();
+            autosaveCategory();
+        }
+
+        window.addEventListener('beforeunload', function(event) {
+            if (hasDataToSave()) {
+                event.preventDefault();
+                event.returnValue = '';
+                handleTabChange(); // Call autosave before unload
+            }
+        });
+
+        // Handle visibility change to trigger autosave when the user switches tabs
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                handleTabChange();
+            }
+        });
+
+        window.addEventListener('beforeunload', function(event) {
+            event.preventDefault();
+            event.returnValue = '';
+            handleTabChange();
+        });
 
         function editSubCategoryModal(id) {
             var showCategory = '{{ route('subCategory.show', ':id') }}';

@@ -53,7 +53,8 @@ abstract class BaseController extends Controller
         $this->validateRequest($request);
         $entity = $this->model::findOrFail($request->draft_id) ?? new $this->model();
         $entity->fill($request->only($this->keys));
-        $entity->is_draft = 1; // Mark as draft if it's being created
+        $entity->is_draft = 1;
+        $entity->status = '1';
         $entity->save();
 
         return response()->json(['alert' => 'success', 'message' => 'Entity Created Successfully!']);
