@@ -1,51 +1,7 @@
 @extends('admin.layout.app')
 @section('title', 'Category')
 @section('content')
-    {{-- Create Category Model  --}}
-    {{-- <div class="modal fade" id="createCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Category</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="createCategoryForm" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control name" id="name" name="name" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="slug">Slug</label>
-                                <input type="text" class="form-control slug" id="slug" name="slug">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control" id="status">
-                                    <option value="1">Active</option>
-                                    <option value="0">In Active</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="createCategory()">Create</button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
+
     <div class="modal fade" id="createCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -59,6 +15,7 @@
                 <div class="modal-body">
                     <form id="createCategoryForm" enctype="multipart/form-data">
                         <input type="hidden" id="draft_id" name="draft_id">
+                        {{-- <input type="hidden" id="category_id" name="category_id"> --}}
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" class="form-control" id="name" name="name"
@@ -66,7 +23,7 @@
                         </div>
                         <div class="form-group">
                             <label for="slug">Slug</label>
-                            <input type="text" class="form-control slug" id="slug" name="slug">
+                            <input type="text" class="form-control" id="slug" name="slug">
                         </div>
                         <div class="form-group">
                             <label for="status">Active Status</label>
@@ -78,56 +35,14 @@
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="createCategory()">Create</button>
+                    <button type="button" class="btn btn-success" id="saveCategoryBtn"
+                        onclick="saveCategory()">Save</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Edit Category Modal -->
-    <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editCategory" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control name" name="name" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="slug">Slug</label>
-                                <input type="text" class="form-control slug" name="slug">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control status">
-                                    <option value="1">Active</option>
-                                    <option value="0">In Active</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="updateCategories()">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
+
     <!-- Delete Category Modal -->
     <div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
@@ -163,17 +78,14 @@
                             </div>
 
                             <div class="card-body table-responsive">
-                                {{-- <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
-                                    data-target="#createCategoryModal">
-                                    Create Category
-                                </a> --}}
-                                {{-- <div class="form-group col-sm-3 mb-3 px-0">
+                                <div class="form-group col-sm-3 mb-3 px-0">
                                     <label for="periodSelect">Draft Status</label>
                                     <select id="periodSelect" class="form-control" onchange="loadData()">
-                                        <option value="pending" selected><span class="text-danger">Saved Data</span></option>
-                                        <option value="completed">Draft Data</option>
+                                        <option value="1" selected><span class="text-danger">Saved Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
                                     </select>
-                                </div> --}}
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createCategoryModal" onclick="initializeCreateCategoryModal()">Create
                                     Category</a>
@@ -224,15 +136,15 @@
                 .replace(/ +/g, '-');
         }
         // ######### Data Table ##############
+        function reloadDataTable() {
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.reload();
+        }
+
         function loadData() {
             var status = $('#periodSelect').val(); // Get the selected status
             var dataTable = $('#example').DataTable();
             dataTable.ajax.url("{{ route('category.get') }}?is_draft=" + status).load();
-        }
-
-        function reloadDataTable() {
-            var dataTable = $('#example').DataTable();
-            dataTable.ajax.reload();
         }
         $(document).ready(function() {
             // Initialize DataTable with options
@@ -377,65 +289,34 @@
             }, 1000); // 1-second debounce
         }
 
-        function createCategory() {
-            var formData = new FormData($('#createCategoryForm')[0]);
-            const draftId = $('#draft_id').val(); // Fetch draft ID
-            var createButton = $('#createCategoryModal').find('.modal-footer').find('button');
-            createButton.prop('disabled', true);
-            var formDataObject = {};
-            formData.forEach(function(value, key) {
-                formDataObject[key] = value;
-            });
-            $.ajax({
-                url: '{{ route('category.create') }}',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Category created successfully!');
-                    $('#createCategoryModal').modal('hide');
-                    $('#createCategoryForm')[0].reset();
-                    reloadDataTable();
-                    $('#draft_id').val('');
-                    localStorage.removeItem('categoryDraft');
-                },
-                error: function(xhr, status, error) {
-                    console.log("data", xhr);
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                },
-                complete: function() {
-                    createButton.prop('disabled', false);
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                var formData = new FormData($('#createCategoryForm')[0]);
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
                 }
-            });
+                $.ajax({
+                    url: '{{ route('category.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id);
+                        saveToLocalStorage();
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 2000); // 1-second debounce
         }
-        window.addEventListener('beforeunload', saveToLocalStorage);
-
-        // function handleBeforeUnload(event) {
-        //     const savedData = localStorage.getItem('categoryDraft');
-        //     if (savedData) {
-        //         const message = "You have unsaved changes. Are you sure you want to leave?";
-        //         event.returnValue = message;
-        //         return message;
-        //     }
-        // }
-
-        // // Listen for window unload or tab close
-        // window.addEventListener('beforeunload', handleBeforeUnload);
-        // window.addEventListener('unload', function() {
-        //     autosaveCategory(); // Save data as draft
-        // });
-        // ######Get & Update Category#########
 
         function editCategoryModal(id) {
             var showCategory = '{{ route('category.show', ':id') }}';
@@ -443,73 +324,57 @@
                 url: showCategory.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editCategory .name').val(response.name);
-                    $('#editCategory .slug').val(response.slug);
-                    $('#editCategory .status').val(response.status);
-                    $('#editCategoryModal').modal('show');
-                    $('#editCategoryModal').data('id', id);
+                    $('#name').val(response.name);
+                    $('#slug').val(response.slug);
+                    $('#status').val(response.status);
+                    $('#createCategoryModal .modal-title').text('Edit Category'); // Change title to Edit
+                    $('#createCategoryModal .btn-success').text('Update'); // Change button text to Update
+                    $('#draft_id').val(response.id);
+                    $('#createCategoryModal').modal('show');
                 },
                 error: function(xhr, status, error) {
-                    // Handle error response
-                    console.log(xhr.responseText);
+                    console.error(xhr.responseText);
                 }
             });
         }
-        // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editCategory input, #editCategory select, #editCategory textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
 
-        function updateCategories() {
-            var updateCategory = '{{ route('category.update', ':id') }}';
-            var id = $('#editCategoryModal').data('id');
-            var formData = new FormData($('#editCategory')[0]);
-            // console.log('formData', formData);
+        function saveCategory() {
+            var formData = new FormData($('#createCategoryForm')[0]);
+            const url = '{{ route('category.create') }}';
+            const method = 'POST';
             $.ajax({
-                url: updateCategory.replace(':id', id),
-                type: 'POST',
+                url: url,
+                type: method,
                 data: formData,
                 processData: false,
                 contentType: false,
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
                 success: function(response) {
-                    toastr.success('Category Updated Successfully!');
-                    reloadDataTable();
-                    $('#editCategoryModal').modal('hide');
-                    $('#editCategory form')[0].reset();
-
+                    toastr.success(response.message);
+                    $('#createCategoryModal').modal('hide');
+                    $('#draft_id').val('');
+                    localStorage.removeItem('categoryDraft');
+                    $('#createCategoryForm')[0].reset();
+                    reloadDataTable(); // Reload the DataTable to reflect changes
                 },
                 error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // If validation errors
+                    if (xhr.status === 422) { // Validation error
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('.' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
-                        console.log("Error:", xhr);
+                        console.error(xhr.responseText);
                     }
                 }
             });
         }
-        $('#editCategoryModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
 
-        $('#editCategoryModal').on('show.bs.modal', function() {
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
+        window.addEventListener('beforeunload', saveToLocalStorage);
+
+
         // ############# Delete Category Data###########
         function deleteCategoryModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);
@@ -574,5 +439,4 @@
             });
         });
     </script>
-
 @endsection

@@ -27,7 +27,6 @@ class CategoryController extends BaseController
         }
     }
 
-
     public function categoryIndex()
     {
         return view('admin.category.index');

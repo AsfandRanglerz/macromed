@@ -87,7 +87,7 @@
                                     </select>
                                 </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
-                                    data-target="#createCategoryModal" onclick="initializeCreateCategoryModal()">Create
+                                    data-target="#createCategoryModal">Create
                                     Category</a>
                                 <table class="responsive table table-striped table-bordered" id="example">
                                     <thead>
@@ -211,49 +211,7 @@
         // ##############Create Sub admin################
         let autosaveTimer;
 
-        function initializeCreateCategoryModal() {
-            loadFromLocalStorage();
-            const draftId = $('#draft_id').val();
-            const url = `{{ url('admin/category/draft') }}/${draftId}`;
-            // Fetch draft from server if a draft ID exists
-            if (draftId) {
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function(response) {
-                        $('#name').val(response.name);
-                        $('#slug').val(response.slug);
-                        $('#status').val(response.status);
-                    },
-                    error: function(xhr) {
-                        console.error('Error fetching draft:', xhr.responseText);
-                    },
-                });
-            }
-        }
-        // Save form data to local storage
-        function saveToLocalStorage() {
-            const formData = {
-                name: $('#name').val(),
-                slug: $('#slug').val(),
-                status: $('#status').val(),
-                draft_id: $('#draft_id').val(),
-            };
-            localStorage.setItem('categoryDraft', JSON.stringify(formData));
-        }
 
-        function loadFromLocalStorage() {
-            const savedData = localStorage.getItem('categoryDraft');
-            console.log("data", savedData);
-
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                $('#name').val(data.name || '');
-                $('#slug').val(data.slug || '');
-                $('#status').val(data.status || '0');
-                $('#draft_id').val(data.draft_id || '');
-            }
-        }
 
         function autosaveCategory() {
             clearTimeout(autosaveTimer);
@@ -265,8 +223,6 @@
                     formData.append('draft_id', draftId);
                 }
 
-                saveToLocalStorage(); // Save data to local storage
-
                 $.ajax({
                     url: '{{ route('category.autosave') }}',
                     type: 'POST',
@@ -277,16 +233,15 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     },
                     success: function(response) {
-                        // console.log("data", response);
+
                         toastr.success(response.message);
-                        $('#draft_id').val(response.draft_id); // Save draft ID
-                        // console.log('Draft saved:', response.message);
+                        $('#draft_id').val(response.draft_id);
                     },
                     error: function(xhr) {
                         console.error('Autosave error:', xhr.responseText);
                     },
                 });
-            }, 1000); // 1-second debounce
+            }, 1000);
         }
 
         function autosaveCategory() {
@@ -309,13 +264,12 @@
                     success: function(response) {
                         toastr.success(response.message);
                         $('#draft_id').val(response.draft_id);
-                        saveToLocalStorage();
                     },
                     error: function(xhr) {
                         console.error('Autosave error:', xhr.responseText);
                     },
                 });
-            }, 2000); // 1-second debounce
+            }, 1000); // 1-second debounce
         }
 
         function editCategoryModal(id) {
@@ -328,7 +282,7 @@
                     $('#slug').val(response.slug);
                     $('#status').val(response.status);
                     $('#createCategoryModal .modal-title').text('Edit Category'); // Change title to Edit
-                    $('#createCategoryModal .btn-success').text('Update'); // Change button text to Update
+                    $('#createCategoryModal .btn-success').text('Publish'); // Change button text to Update
                     $('#draft_id').val(response.id);
                     $('#createCategoryModal').modal('show');
                 },
@@ -355,7 +309,6 @@
                     toastr.success(response.message);
                     $('#createCategoryModal').modal('hide');
                     $('#draft_id').val('');
-                    localStorage.removeItem('categoryDraft');
                     $('#createCategoryForm')[0].reset();
                     reloadDataTable(); // Reload the DataTable to reflect changes
                 },
@@ -372,7 +325,7 @@
             });
         }
 
-        window.addEventListener('beforeunload', saveToLocalStorage);
+
 
 
         // ############# Delete Category Data###########
