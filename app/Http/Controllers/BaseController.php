@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\CountryApiRequestTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
 abstract class BaseController extends Controller
 {
+    use CountryApiRequestTrait;
     protected $model;
     protected $keys;
     protected $formRequestClass;
@@ -18,6 +20,7 @@ abstract class BaseController extends Controller
             app($this->formRequestClass);
         }
     }
+
     public function autosave(Request $request)
     {
         $entity = $request->draft_id
@@ -45,16 +48,6 @@ abstract class BaseController extends Controller
             'message' => 'Draft autosaved successfully',
             'draft_id' => $entity->id,
         ]);
-    }
-
-    public function fetchDraft($id)
-    {
-        $entity = $this->model::findOrFail($id);
-        if ($entity->is_draft == '0') {
-            return response()->json($entity);
-        }
-
-        return response()->json(['message' => 'Not a draft'], 400);
     }
 
     public function createEntity(Request $request)
@@ -102,5 +95,34 @@ abstract class BaseController extends Controller
             : 'Entity Deactivated Successfully';
 
         return response()->json(['alert' => 'success', 'message' => $message]);
+    }
+
+    // ############# Fetch States and City code ################
+    public function fetchStates(Request $request)
+    {
+        $countryCode = $request->input('country_code');
+        $url = 'https://api.countrystatecity.in/v1/countries/' . $countryCode . '/states';
+
+        $states = $this->fetchApiData($url);
+
+        if (isset($states['error'])) {
+            return response()->json(['error' => $states['error']], 500);
+        }
+
+        return response()->json($states);
+    }
+    public function fetchCities(Request $request)
+    {
+        $stateCode = $request->input('state_code');
+        $countryCode = $request->input('country_code');
+        $url = 'https://api.countrystatecity.in/v1/countries/' . $countryCode . '/states/' . $stateCode . '/cities';
+
+        $cities = $this->fetchApiData($url);
+
+        if (isset($cities['error'])) {
+            return response()->json(['error' => $cities['error']], 500);
+        }
+
+        return response()->json($cities);
     }
 }

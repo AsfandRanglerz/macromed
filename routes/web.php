@@ -171,7 +171,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/brands-create',  'createEntity')->name('brands.create')->middleware('permission:Brands');
         Route::get('/brandsData',  'brandsData')->name('brands.get')->middleware('permission:Brands');
         Route::get('/brands/{id}',  'showBrands')->name('brands.show')->middleware('permission:Brands');
-        Route::post('/brandsUpdate/{id}',  'updateBrands')->name('brands.update')->middleware('permission:Brands');
         Route::get('/brands/delete/{id}',  'deleteEntity')->name('brands.delete')->middleware('permission:Brands');
         Route::post('/update-brands-status/{id}',  'updateStatus')->name('brandsBlock.update')->middleware('permission:Brands');
     });
@@ -187,15 +186,15 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     });
     // ############## Comapny ############
     Route::controller(CompanyController::class)->group(function () {
-        Route::get('/company',  'companyIndex')->name('company.index')->middleware('permission:Company');
-        Route::post('/company-create',  'companyCreate')->name('company.create')->middleware('permission:Company');
         Route::get('/companyData',  'companyData')->name('company.get')->middleware('permission:Company');
+        Route::get('/company',  'companyIndex')->name('company.index')->middleware('permission:Company');
+        Route::post('/company/autosave', 'autosave')->name('company.autosave');
+        Route::post('/company-create',  'createEntity')->name('company.create')->middleware('permission:Company');
         Route::get('/company/{id}',  'showCompany')->name('company.show')->middleware('permission:Company');
-        Route::post('/companyUpdate/{id}',  'updateCompany')->name('company.update')->middleware('permission:Company');
-        Route::get('/company/delete/{id}',  'deleteCompany')->name('company.delete')->middleware('permission:Company');
-        Route::post('/update-company-status/{id}',  'updateCompanyStatus')->name('companyBlock.update')->middleware('permission:Company');
-        Route::get('/fetchCompany-states', 'fetchCompanyStates')->name('fetchCompanyStates')->middleware('permission:Company');
-        Route::get('/fetchCompany-cities', 'fetchCompanyCities')->name('fetchCompanyCities')->middleware('permission:Company');
+        Route::get('/company/delete/{id}',  'deleteEntity')->name('company.delete')->middleware('permission:Company');
+        Route::post('/update-company-status/{id}',  'updateStatus')->name('companyBlock.update')->middleware('permission:Company');
+        Route::get('/fetchCompany-states', 'fetchStates')->name('fetchCompanyStates')->middleware('permission:Company');
+        Route::get('/fetchCompany-cities', 'fetchCities')->name('fetchCompanyCities')->middleware('permission:Company');
     });
 
     // ############## Model ############
