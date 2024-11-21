@@ -137,11 +137,9 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/category', 'categoryIndex')->name('category.index')->middleware('permission:Category');
         Route::post('/category/autosave', 'autosave')->name('category.autosave');
-        Route::get('/category/draft/{draftId}',  'fetchDraft')->name('category.fetchDraft');
         Route::post('/category-create/{id?}', 'createEntity')->name('category.create')->middleware('permission:Category');
         Route::get('/categoryData', 'categoryData')->name('category.get')->middleware('permission:Category');
         Route::get('/category/{id}', 'showCategory')->name('category.show')->middleware('permission:Category');
-        // Route::put('/categoryUpdate/{id}', 'updateEntity')->name('category.update')->middleware('permission:Category');
         Route::get('/category/delete/{id}', 'deleteEntity')->name('category.delete')->middleware('permission:Category');
         Route::post('/update-category-status/{id}',  'updateStatus')->name('categoryBlock.update')->middleware('permission:Category');
     });
@@ -160,23 +158,22 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::controller(SubCategoryController::class)->group(function () {
         Route::get('/subCategory',  'subCategoryIndex')->name('subCategory.index')->middleware('permission:Sub Category');
         Route::post('/subCategory/autosave', 'autosave')->name('subCategory.autosave');
-        Route::get('/subCategory/draft/{draftId}',  'fetchDraft')->name('subCategory.fetchDraft');
         Route::post('/subCategory-create/{id?}',  'createEntity')->name('subCategory.create')->middleware('permission:Sub Category');
         Route::get('/subCategoryData',  'subCategoryData')->name('subCategory.get')->middleware('permission:Sub Category');
         Route::get('/subCategory/{id}',  'showSubCategory')->name('subCategory.show')->middleware('permission:Sub Category');
-        // Route::post('/subCategoryUpdate/{id}',  'updateSubCategory')->name('subCategory.update')->middleware('permission:Sub Category');
         Route::get('/subCategory/delete/{id}',  'deleteEntity')->name('subCategory.delete')->middleware('permission:Sub Category');
         Route::post('/update-subcategory-status/{id}',  'updateStatus')->name('subcategoryBlock.update')->middleware('permission:Sub Category');
     });
     // ############## Brands ############
     Route::controller(BrandsController::class)->group(function () {
         Route::get('/brands',  'brandsIndex')->name('brands.index')->middleware('permission:Brands');
-        Route::post('/brands-create',  'brandsCreate')->name('brands.create')->middleware('permission:Brands');
+        Route::post('/subCategory/autosave', 'autosave')->name('brands.autosave');
+        Route::post('/brands-create',  'createEntity')->name('brands.create')->middleware('permission:Brands');
         Route::get('/brandsData',  'brandsData')->name('brands.get')->middleware('permission:Brands');
         Route::get('/brands/{id}',  'showBrands')->name('brands.show')->middleware('permission:Brands');
         Route::post('/brandsUpdate/{id}',  'updateBrands')->name('brands.update')->middleware('permission:Brands');
-        Route::get('/brands/delete/{id}',  'deleteBrands')->name('brands.delete')->middleware('permission:Brands');
-        Route::post('/update-brands-status/{id}',  'updateBrandsStatus')->name('brandsBlock.update')->middleware('permission:Brands');
+        Route::get('/brands/delete/{id}',  'deleteEntity')->name('brands.delete')->middleware('permission:Brands');
+        Route::post('/update-brands-status/{id}',  'updateStatus')->name('brandsBlock.update')->middleware('permission:Brands');
     });
     // ############## Brands Discounts ############
     Route::controller(BrandDiscountController::class)->group(function () {

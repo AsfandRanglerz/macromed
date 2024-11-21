@@ -97,7 +97,7 @@
                                     </select>
                                 </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
-                                    data-target="#createSubCategoryModal" onclick="initializecreateSubCategoryModal()">
+                                    data-target="#createSubCategoryModal">
                                     Create Sub Category
                                 </a>
                                 <table class="responsive table table-striped table-bordered" id="example">
@@ -289,7 +289,6 @@
                     toastr.success(response.message);
                     $('#createSubCategoryModal').modal('hide');
                     $('#draft_id').val('');
-                    localStorage.removeItem('subCategoryDraft');
                     $('#createSubCategoryForm')[0].reset();
                     reloadDataTable(); // Reload the DataTable to reflect changes
                 },

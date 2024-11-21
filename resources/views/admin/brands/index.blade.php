@@ -14,18 +14,19 @@
                 </div>
                 <div class="modal-body">
                     <form id="createBrandsForm" enctype="multipart/form-data">
+                        <input type="hidden" id="draft_id" name="draft_id">
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Brand Name</label>
-                                    <input type="text" class="form-control name" id="name" name="name" required>
+                                    <label for="name">Brand Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control name" id="name" name="name" required oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Brand Owner Name</label>
-                                    <input type="text" class="form-control owner" id="owner" name="owner" required>
+                                    <label for="name">Brand Owner Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control owner" id="owner" name="owner" required oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -33,16 +34,16 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Company Name</label>
+                                    <label for="name">Company Name<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control company" id="company" name="company"
-                                        required>
-                                    <div class="invalid-feedback"></div>
+                                        required oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
-                                <label>Company Country</label>
-                                <select name="company_country" class="form-control select2" id="country"
-                                    style="width: 100%">
+                                <label>Company Country<span class="text-danger">*</span></label>
+                                <select name="company_country" class="form-control select2 company_country" id="country"
+                                    style="width: 100%" onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
@@ -57,15 +58,15 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Contact Details</label>
+                                    <label for="name">Contact Details<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control contact_detail" id="contact_detail"
-                                        name="contact_detail" required>
+                                        name="contact_detail" required oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="slug">Slug</label>
+                                    <label for="slug">Slug<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control slug" id="slug" name="slug">
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -74,18 +75,21 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="status">Active Status</label>
+                                    <label for="status">Active Status<span class="text-danger">*</span></label>
                                     <select name="status" class="form-control" id="status">
-                                        <option value="1">Active</option>
                                         <option value="0">In Active</option>
+                                        <option value="1">Active</option>
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="image">Image</label>
-                                    <input type="file" class="form-control" id="image" name="image">
+                                    <label for="image">Image<span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control image" name="image" onchange="autosaveCategory()">
+                                    <label for="imagePreview">Pervious Image:<span class="text-danger">*</span></label>
+                                    <img id="imagePreview" src="" alt="Image Preview"
+                                        style="display: none; max-width: 100px; margin-top: 10px;">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -99,106 +103,7 @@
             </div>
         </div>
     </div>
-    <!-- Edit Brands Modal -->
-    <div class="modal fade editBrandsModal" id="editBrandsModal" tabindex="-1" role="dialog"
-        aria-labelledby="editBrandsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editBrandsModalLabel">Edit Brands</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editBrands" enctype="multipart/form-data">
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Brand Name</label>
-                                    <input type="text" class="form-control name" name="name" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Brand Owner Name</label>
-                                    <input type="text" class="form-control owner" name="owner" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Company Name</label>
-                                    <input type="text" class="form-control company" name="company" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Company Country</label>
-                                <select name="company_country" class="form-control select2 company_country"
-                                    style="width: 100%">
-                                    <option value="" selected disabled>Company Country</option>
-                                    @foreach ($countries as $country)
-                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
-                                            {{ $country->name }}</option>
-                                    @endforeach
-                                    <div class="invalid-feedback"></div>
-                                </select>
-                                @if ($countries == null)
-                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Contact Details</label>
-                                    <input type="text" class="form-control contact_detail" name="contact_detail"
-                                        required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="slug">Slug</label>
-                                    <input type="text" class="form-control slug" name="slug">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="status">Active Status</label>
-                                    <select name="status" class="form-control status">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="image">Image</label>
-                                    <input type="file" class="form-control image" name="image">
-                                    <label for="imagePreview">Pervious Image:</label>
-                                    <img id="imagePreview" src="" alt="Image Preview"
-                                        style="display: none; max-width: 100px; margin-top: 10px;">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="updateCategories()">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- Delete Brands Modal -->
     <div class="modal fade" id="deleteBrandsModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteBrandsModalLabel" aria-hidden="true">
@@ -268,23 +173,18 @@
 
     {{-- Data Table --}}
     <script>
-        // Convert Name into Slug
-        (function($) {
-            "use strict";
-            $(document).ready(function() {
-                $(".name").on("focusout", function(e) {
-                    $(".slug").val(convertToSlug($(this).val()));
-                })
-            });
-        })(jQuery);
-
-        function convertToSlug(Text) {
-            return Text
-                .toLowerCase()
-                .replace(/[^\w ]+/g, '')
-                .replace(/ +/g, '-');
-        }
         // ######### Data Table ##############
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('subCategory.get') }}?is_draft=" + status).load();
+        }
+
+        function reloadDataTable() {
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.reload();
+        }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -374,19 +274,67 @@
                 deleteBrandsModal(id);
             });
         });
-
+    </script>
+    <script>
         // ##############Create Sub admin################
-        $(document).ready(function() {
-            $('#createBrandsForm input, #createBrandsForm select, #createBrandsForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
+        function initializeSelect2(modal) {
+            modal.find('.select2').select2({
+                dropdownParent: modal,
+                width: '100%'
+            });
+        }
+        $('#createBrandsModal').on('shown.bs.modal', function() {
+            initializeSelect2($(this));
         });
+        (function($) {
+            "use strict";
+            $(document).ready(function() {
+                $("#name").on("keyup", function() {
+                    const nameValue = $(this).val();
+                    const slugValue = convertToSlug(nameValue);
+                    $("#slug").val(slugValue);
+                    autosaveCategory();
+                });
+            });
+        })(jQuery);
+
+        function convertToSlug(Text) {
+            return Text
+                .toLowerCase()
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
+        }
+        let autosaveTimer;
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                const formData = new FormData($('#createSubCategoryForm')[0]);
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: '{{ route('brands.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000); // 1-second debounce
+        }
 
         function createBrands() {
-            $('.select2').select2();
             var formData = new FormData($('#createBrandsForm')[0]);
             var createButton = $('#createBrandsModal').find('.modal-footer').find('button');
             createButton.prop('disabled', true);
@@ -406,6 +354,7 @@
                 success: function(response) {
                     toastr.success('Brands Created Successfully!');
                     $('#createBrandsModal').modal('hide');
+                    $('#draft_id').val('');
                     reloadDataTable();
                     $('#createBrandsModal form')[0].reset();
                 },
@@ -414,9 +363,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
@@ -427,19 +374,7 @@
                 }
             });
         }
-        $('#createBrandsForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
-        $('#createBrandsModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-        $('#createBrandsModal').on('show.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
+
         // ######Get & Update Brands#########
 
         function editBrandsModal(id) {
@@ -448,13 +383,13 @@
                 url: showBrands.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editBrands .name').val(response.name);
-                    $('#editBrands .slug').val(response.slug);
-                    $('#editBrands .status').val(response.status);
-                    $('#editBrands .owner').val(response.owner);
-                    $('#editBrands .company').val(response.company);
-                    $('#editBrands .company_country').val(response.company_country).trigger('change');
-                    $('#editBrands .contact_detail').val(response.contact_detail);
+                    $('#createBrandsModal .name').val(response.name);
+                    $('#createBrandsModal .slug').val(response.slug);
+                    $('#createBrandsModal .status').val(response.status);
+                    $('#createBrandsModal .owner').val(response.owner);
+                    $('#createBrandsModal .company').val(response.company);
+                    $('#createBrandsModal .company_country').val(response.company_country).trigger('change');
+                    $('#createBrandsModal .contact_detail').val(response.contact_detail);
                     var imageUrl = response.image;
                     var baseUrl = 'https://macromed.com.pk/admin/';
                     var responseImage = baseUrl + response.image;
@@ -463,8 +398,11 @@
                     } else {
                         $('#imagePreview').hide();
                     }
-                    $('#editBrandsModal').modal('show');
-                    $('#editBrandsModal').data('id', id);
+                    $('#createBrandsModal .modal-title').text('Edit'); // Change title to Edit
+                    $('#createBrandsModal .btn-success').text('Publish'); // Change button text to Update
+                    $('#draft_id').val(response.id);
+                    $('#createBrandsModal').modal('show');
+                    $('#createBrandsModalModal').data('id', id);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -472,61 +410,8 @@
                 }
             });
         }
-        // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editBrands input, #editBrands select, #editBrands textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
 
-        function updateCategories() {
-            var updateBrands = '{{ route('brands.update', ':id') }}';
-            var id = $('#editBrandsModal').data('id');
-            var formData = new FormData($('#editBrands')[0]);
-            // console.log('formData', formData);
-            $.ajax({
-                url: updateBrands.replace(':id', id),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Brands Updated Successfully!');
-                    reloadDataTable();
-                    $('#editBrandsModal').modal('hide');
-                    $('#editBrands form')[0].reset();
 
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('.' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                }
-            });
-        }
-        $('#editBrandsModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-
-        $('#editBrandsModal').on('show.bs.modal', function() {
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
         // ############# Delete Brands Data###########
         function deleteBrandsModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);

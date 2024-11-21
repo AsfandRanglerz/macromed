@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 abstract class BaseController extends Controller
 {
@@ -22,14 +23,22 @@ abstract class BaseController extends Controller
         $entity = $request->draft_id
             ? $this->model::find($request->draft_id)
             : new $this->model();
-
         $entity->fill($request->only($this->keys));
         if ($entity->is_draft == 1) {
             $entity->is_draft = 1;
         } else {
             $entity->is_draft = 0;
         }
-
+        if ($request->hasFile('image')) {
+            $oldImagePath = $entity->image;
+            if ($entity->image &&  File::exists($oldImagePath)) {
+                File::delete($oldImagePath);
+            }
+            $image = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('admin/assets/images/brands'), $filename);
+            $entity->image = 'public/admin/assets/images/brands/' . $filename;
+        }
         $entity->save();
 
         return response()->json([
@@ -55,6 +64,16 @@ abstract class BaseController extends Controller
         $entity->fill($request->only($this->keys));
         $entity->is_draft = 1;
         $entity->status = '1';
+        if ($request->hasFile('image')) {
+            $oldImagePath = $entity->image;
+            if ($entity->image &&  File::exists($oldImagePath)) {
+                File::delete($oldImagePath);
+            }
+            $image = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('admin/assets/images/brands'), $filename);
+            $entity->image = 'public/admin/assets/images/brands/' . $filename;
+        }
         $entity->save();
 
         return response()->json(['alert' => 'success', 'message' => 'Entity Created Successfully!']);
@@ -63,6 +82,10 @@ abstract class BaseController extends Controller
     public function deleteEntity($id)
     {
         $entity = $this->model::findOrFail($id);
+        $imagePath = $entity->image;
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
         $entity->delete();
 
         return response()->json(['alert' => 'success', 'message' => 'Entity Deleted Successfully!']);
