@@ -1,7 +1,6 @@
 @extends('admin.layout.app')
 @section('title', 'Category')
 @section('content')
-
     <div class="modal fade" id="createCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
