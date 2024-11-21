@@ -18,7 +18,7 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Name</label>
+                                    <label for="name">Name<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control name" id="name" name="name" required
                                         oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
@@ -26,7 +26,7 @@
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Website</label>
+                                    <label for="name">Website<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control website" id="website" name="website"
                                         required oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
@@ -35,7 +35,7 @@
                         </div>
                         <div class="row col-md-12 col-lg-12">
                             <div class="form-group col-md-6">
-                                <label>Country</label>
+                                <label>Country<span class="text-danger">*</span></label>
                                 <select name="country" class="form-control select2 country" id="country"
                                     style="width: 100%" onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select Country</option>
@@ -49,7 +49,7 @@
                                 @endif
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="state">State</label>
+                                <label for="state">State<span class="text-danger">*</span></label>
                                 <select class="form-control select2 state" id="state" name="state" style="width: 100%"
                                     required onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select State</option>
@@ -59,7 +59,7 @@
                         </div>
                         <div class="row col-md-12 col-lg-12">
                             <div class="form-group col-md-6">
-                                <label for="city">City</label>
+                                <label for="city">City<span class="text-danger">*</span></label>
                                 <select class="form-control select2 city" id="city" name="city" style="width: 100%"
                                     required onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select City</option>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Contact Details</label>
+                                    <label for="name">Contact Details<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control contact_detail" id="contact_detail"
                                         name="contact_detail" required oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
@@ -78,7 +78,7 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Zip</label>
+                                    <label for="name">Zip<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control zip" id="zip" name="zip" required
                                         oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
@@ -141,7 +141,7 @@
                             </div>
                             <div class="card-body table-responsive">
                                 <div class="form-group col-sm-3 mb-3 px-0">
-                                    <label for="periodSelect">Visibility Status</label>
+                                    <label for="periodSelect">Visibility Status<span class="text-danger">*</span></label>
                                     <select id="periodSelect" class="form-control" onchange="loadData()">
                                         <option value="1" selected><span class="text-danger">Published Data</span>
                                         </option>
