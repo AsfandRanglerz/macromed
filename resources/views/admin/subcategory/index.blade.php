@@ -20,12 +20,10 @@
                                 <label for="category">Category</label>
                                 <select class="form-control select2" id="category_id" name="category_id" required
                                     onchange="autosaveCategory()" style="width: 100%">
-                                    <option value="" disabled selected>Select Category</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
-                                <div class="invalid-feedback"></div>
                             </div>
 
                             <div class="form-group">
@@ -43,7 +41,6 @@
                                     <option value= "1">Active</option>
                                     <option value="0">In Active</option>
                                 </select>
-                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                     </form>
@@ -90,6 +87,14 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
+                                <div class="form-group col-sm-3 mb-3 px-0">
+                                    <label for="periodSelect">Draft Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="1" selected><span class="text-danger">Saved Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
+                                    </select>
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createSubCategoryModal" onclick="initializecreateSubCategoryModal()">
                                     Create Sub Category
@@ -120,6 +125,12 @@
 @section('js')
     <script>
         // Data Table
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('subCategory.get') }}?is_draft=" + status).load();
+        }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -128,11 +139,15 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('subCategory.get') }}",
+                    "url": "{{ route('subCategory.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
-                    }
+                    },
+                    "error": function(xhr, error, code) {
+                        // Handle AJAX errors
+                        console.error("Error fetching data:", xhr.responseJSON?.message || error);
+                    },
                 },
                 "columns": [{
                         "data": null,
@@ -141,10 +156,16 @@
                         }
                     },
                     {
-                        "data": "category.name"
+                        "data": "category.name",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Category Found';
+                        }
                     },
                     {
                         "data": "name",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Name Found';
+                        }
                     },
                     {
                         "data": null,
@@ -179,7 +200,15 @@
         });
     </script>
     <script>
-        // Convert Name into Slug
+        function initializeSelect2(modal) {
+            modal.find('.select2').select2({
+                dropdownParent: modal,
+                width: '100%'
+            });
+        }
+        $('#createSubCategoryModal').on('shown.bs.modal', function() {
+            initializeSelect2($(this));
+        });
         (function($) {
             "use strict";
             $(document).ready(function() {
@@ -231,56 +260,23 @@
                 category_id: $('#category_id').val(),
                 draft_id: $('#draft_id').val(),
             };
-            localStorage.setItem('categoryDraft', JSON.stringify(formData));
+            localStorage.setItem('subCategoryDraft', JSON.stringify(formData));
         }
 
         function loadFromLocalStorage() {
-            const savedData = localStorage.getItem('categoryDraft');
+            const savedData = localStorage.getItem('subCategoryDraft');
             console.log("data", savedData);
 
             if (savedData) {
                 const data = JSON.parse(savedData);
                 $('#name').val(data.name || '');
                 $('#slug').val(data.slug || '');
-                $('#category_id').val(data.category_id || '');
+                $('#category_id').val(data.category_id || '').trigger('change');
                 $('#status').val(data.status || '0');
                 $('#draft_id').val(data.draft_id || '');
             }
         }
 
-        function autosaveCategory() {
-            clearTimeout(autosaveTimer);
-            autosaveTimer = setTimeout(() => {
-                var formData = new FormData($('#createSubCategoryForm')[0]);
-                const draftId = $('#draft_id').val();
-
-                if (draftId) {
-                    formData.append('draft_id', draftId);
-                }
-
-                saveToLocalStorage(); // Save data to local storage
-
-                $.ajax({
-                    url: '{{ route('subCategory.autosave') }}',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                    },
-                    success: function(response) {
-                        // console.log("data", response);
-                        toastr.success(response.message);
-                        $('#draft_id').val(response.draft_id); // Save draft ID
-                        // console.log('Draft saved:', response.message);
-                    },
-                    error: function(xhr) {
-                        console.error('Autosave error:', xhr.responseText);
-                    },
-                });
-            }, 1000); // 1-second debounce
-        }
 
         function autosaveCategory() {
             clearTimeout(autosaveTimer);
@@ -349,7 +345,7 @@
                     toastr.success(response.message);
                     $('#createSubCategoryModal').modal('hide');
                     $('#draft_id').val('');
-                    localStorage.removeItem('categoryDraft');
+                    localStorage.removeItem('subCategoryDraft');
                     $('#createSubCategoryForm')[0].reset();
                     reloadDataTable(); // Reload the DataTable to reflect changes
                 },

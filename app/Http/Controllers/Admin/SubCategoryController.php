@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Models\Category;
 use App\Models\SubCategory;
+use Illuminate\Http\Request;
+use App\Http\Controllers\BaseController;
 use App\Http\Requests\SubCategoryRequest;
 
 
@@ -15,10 +16,18 @@ class SubCategoryController extends BaseController
     protected $formRequestClass = SubCategoryRequest::class;
 
 
-    public function subCategoryData()
+    public function subCategoryData(Request $request)
     {
-        $subCategories = $this->model::with('category')->where('is_draft', '1')->latest()->get();
-        return response()->json(['data' => $subCategories]);
+        try {
+            $is_draft = $request->query('is_draft', '1');
+            $subCategories = $this->model::with('category')->where('is_draft', $is_draft)->latest()->get();
+            return response()->json(['data' => $subCategories]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch category data',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function subCategoryIndex()

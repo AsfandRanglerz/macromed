@@ -15,10 +15,18 @@ class CategoryController extends BaseController
 
     public function categoryData(Request $request)
     {
-
-        $categories = $this->model::where('is_draft', '1')->latest()->get();
-        return response()->json(['data' => $categories]);
+        try {
+            $is_draft = $request->query('is_draft', '1');
+            $categories = $this->model::where('is_draft', $is_draft)->latest()->get();
+            return response()->json(['data' => $categories], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch category data',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     public function categoryIndex()
     {
