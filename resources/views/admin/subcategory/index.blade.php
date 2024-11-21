@@ -17,7 +17,7 @@
                         <input type="hidden" id="draft_id" name="draft_id">
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
-                                <label for="category">Category</label>
+                                <label for="category">Category<span class="text-danger">*</span></label>
                                 <select class="form-control select2" id="category_id" name="category_id" required
                                     style="width: 100%" onchange="autosaveCategory()">
                                     <option value="" disabled selected>Select Category</option>
@@ -28,7 +28,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="name">Name</label>
+                                <label for="name">Name<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name"
                                     oninput="autosaveCategory()">
                             </div>

@@ -28,8 +28,8 @@
                         <div class="form-group">
                             <label for="status">Active Status</label>
                             <select name="status" class="form-control" id="status" onchange="autosaveCategory()">
-                                <option value="1">Active</option>
                                 <option value="0">Inactive</option>
+                                <option value="1">Active</option>
                             </select>
                         </div>
                     </form>
@@ -79,9 +79,9 @@
 
                             <div class="card-body table-responsive">
                                 <div class="form-group col-sm-3 mb-3 px-0">
-                                    <label for="periodSelect">Draft Status</label>
+                                    <label for="periodSelect">Visibility Status</label>
                                     <select id="periodSelect" class="form-control" onchange="loadData()">
-                                        <option value="1" selected><span class="text-danger">Saved Data</span>
+                                        <option value="1" selected><span class="text-danger">Published Data</span>
                                         </option>
                                         <option value="0">Draft Data</option>
                                     </select>
@@ -95,6 +95,7 @@
                                             <th>Sr.</th>
                                             <th>Name</th>
                                             <th>Discounts</th>
+                                            <th>Visibility Status</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -175,15 +176,29 @@
                         },
                     },
                     {
+                        "data": "is_draft",
+                        "render": function(data, type, row) {
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
+                        }
+                    },
+                    {
                         "data": null,
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                            return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                                return '<button id="update-status" class="btn ' + buttonClass +
+                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                            } else {
+                                // If it's not published, do not display the button
+                                return '<span class="text-muted">No Active Status</span>';
+                            }
+                        }
                     },
                     {
                         "data": null,
