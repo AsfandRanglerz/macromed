@@ -167,7 +167,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Brands ############
     Route::controller(BrandsController::class)->group(function () {
         Route::get('/brands',  'brandsIndex')->name('brands.index')->middleware('permission:Brands');
-        Route::post('/subCategory/autosave', 'autosave')->name('brands.autosave');
+        Route::post('/brands/autosave', 'autosave')->name('brands.autosave');
         Route::post('/brands-create',  'createEntity')->name('brands.create')->middleware('permission:Brands');
         Route::get('/brandsData',  'brandsData')->name('brands.get')->middleware('permission:Brands');
         Route::get('/brands/{id}',  'showBrands')->name('brands.show')->middleware('permission:Brands');

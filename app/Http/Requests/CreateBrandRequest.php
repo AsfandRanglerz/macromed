@@ -24,18 +24,19 @@ class CreateBrandRequest extends FormRequest
      */
     public function rules()
     {
+        $brandId = $this->route('category') ?? $this->input('draft_id');
         return [
             'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('brands')
+                Rule::unique('brands')->ignore($brandId)
             ],
             'slug' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('brands')
+                Rule::unique('brands')->ignore($brandId)
             ],
             'image' => 'required|image|mimes:jpeg,jpg,png|max:1048',
             'contact_detail' => 'required|numeric|regex:/^\+[1-9]{1}[0-9]{1,14}$/',

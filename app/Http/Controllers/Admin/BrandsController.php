@@ -2,22 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\BaseController;
 use App\Models\Brands;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateBrandRequest;
 use App\Traits\CountryApiRequestTrait;
 
 
-class BrandsController extends Controller
+class BrandsController extends BaseController
 {
     use CountryApiRequestTrait;
 
     protected $model = Brands::class;
     protected $keys = ['name', 'slug', 'status', 'owner', 'company', 'company_country', 'contact_detail'];
     protected $formRequestClass = CreateBrandRequest::class;
-
-
+    
     public function brandsData(Request $request)
     {
         try {

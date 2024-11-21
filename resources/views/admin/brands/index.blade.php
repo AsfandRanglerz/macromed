@@ -19,14 +19,16 @@
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="name">Brand Name<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control name" id="name" name="name" required oninput="autosaveCategory()">
+                                    <input type="text" class="form-control name" id="name" name="name" required
+                                        oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="name">Brand Owner Name<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control owner" id="owner" name="owner" required oninput="autosaveCategory()">
+                                    <input type="text" class="form-control owner" id="owner" name="owner" required
+                                        oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -86,7 +88,8 @@
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="image">Image<span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control image" name="image" onchange="autosaveCategory()">
+                                    <input type="file" class="form-control image" name="image"
+                                        onchange="autosaveCategory()">
                                     <label for="imagePreview">Pervious Image:<span class="text-danger">*</span></label>
                                     <img id="imagePreview" src="" alt="Image Preview"
                                         style="display: none; max-width: 100px; margin-top: 10px;">
@@ -138,6 +141,14 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
+                                <div class="form-group col-sm-3 mb-3 px-0">
+                                    <label for="periodSelect">Visibility Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="1" selected><span class="text-danger">Published Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
+                                    </select>
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createBrandsModal">
                                     Create Brands
@@ -177,12 +188,7 @@
         function loadData() {
             var status = $('#periodSelect').val(); // Get the selected status
             var dataTable = $('#example').DataTable();
-            dataTable.ajax.url("{{ route('subCategory.get') }}?is_draft=" + status).load();
-        }
-
-        function reloadDataTable() {
-            var dataTable = $('#example').DataTable();
-            dataTable.ajax.reload();
+            dataTable.ajax.url("{{ route('brands.get') }}?is_draft=" + status).load();
         }
 
         function reloadDataTable() {
@@ -309,7 +315,11 @@
         function autosaveCategory() {
             clearTimeout(autosaveTimer);
             autosaveTimer = setTimeout(() => {
-                const formData = new FormData($('#createSubCategoryForm')[0]);
+                const formData = new FormData($('#createBrandsForm')[0]);
+                var formDataObject = {};
+                formData.forEach(function(value, key) {
+                    formDataObject[key] = value;
+                });
                 const draftId = $('#draft_id').val();
                 if (draftId) {
                     formData.append('draft_id', draftId);
