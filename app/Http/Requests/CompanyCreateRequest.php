@@ -24,7 +24,7 @@ class CompanyCreateRequest extends FormRequest
      */
     public function rules()
     {
-        $companyId = $this->route('id');
+        $companyId = $this->route('category') ?? $this->input('draft_id');
         return [
             'name' => [
                 'required',

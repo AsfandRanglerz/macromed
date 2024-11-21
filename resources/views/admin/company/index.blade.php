@@ -14,18 +14,21 @@
                 </div>
                 <div class="modal-body">
                     <form id="createCompanyForm" enctype="multipart/form-data">
+                        <input type="hidden" id="draft_id" name="draft_id">
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input type="text" class="form-control name" id="name" name="name" required
+                                        oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="name">Website</label>
-                                    <input type="text" class="form-control" id="website" name="website" required>
+                                    <input type="text" class="form-control website" id="website" name="website"
+                                        required oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -33,7 +36,8 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="form-group col-md-6">
                                 <label>Country</label>
-                                <select name="country" class="form-control select2" id="country" style="width: 100%">
+                                <select name="country" class="form-control select2 country" id="country"
+                                    style="width: 100%" onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
@@ -46,8 +50,8 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="state">State</label>
-                                <select class="form-control select2" id="state" name="state" style="width: 100%"
-                                    required>
+                                <select class="form-control select2 state" id="state" name="state" style="width: 100%"
+                                    required onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select State</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
@@ -56,8 +60,8 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="form-group col-md-6">
                                 <label for="city">City</label>
-                                <select class="form-control select2" id="city" name="city" style="width: 100%"
-                                    required>
+                                <select class="form-control select2 city" id="city" name="city" style="width: 100%"
+                                    required onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select City</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
@@ -65,8 +69,8 @@
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="name">Contact Details</label>
-                                    <input type="text" class="form-control" id="contact_detail" name="contact_detail"
-                                        required>
+                                    <input type="text" class="form-control contact_detail" id="contact_detail"
+                                        name="contact_detail" required oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -75,16 +79,18 @@
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="name">Zip</label>
-                                    <input type="text" class="form-control" id="zip" name="zip" required>
+                                    <input type="text" class="form-control zip" id="zip" name="zip" required
+                                        oninput="autosaveCategory()">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="status">Active Status</label>
-                                    <select name="status" class="form-control" id="status">
-                                        <option value="1">Active</option>
+                                    <select name="status" class="form-control status" id="status"
+                                        onchange="autosaveCategory()">
                                         <option value="0">In Active</option>
+                                        <option value="1">Active</option>
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -98,101 +104,8 @@
             </div>
         </div>
     </div>
-    <!-- Edit Company Modal -->
-    <div class="modal fade" id="editCompanyModal" tabindex="-1" role="dialog" aria-labelledby="editCompanyModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCompanyModalLabel">Edit Company</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editCompany" enctype="multipart/form-data">
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Name</label>
-                                    <input type="text" class="form-control name" name="name" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Website</label>
-                                    <input type="text" class="form-control website" name="website" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="form-group col-md-6">
-                                <label>Country</label>
-                                <select name="country" class="form-control select2 country" style="width: 100%">
-                                    <option value="" selected disabled>Select Country</option>
-                                    @foreach ($countries as $country)
-                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
-                                            {{ $country->name }}</option>
-                                    @endforeach
-                                </select>
-                                @if ($countries == null)
-                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
-                                @endif
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="state">State</label>
-                                <select class="form-control select2 state" name="state" style="width: 100%" required>
-                                    <option value="" selected disabled>Select State</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="form-group col-md-6">
-                                <label for="city">City</label>
-                                <select class="form-control select2 city" name="city" style="width: 100%" required>
-                                    <option value="" selected disabled>Select City</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Contact Details</label>
-                                    <input type="text" class="form-control contact_detail" name="contact_detail"
-                                        required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Zip</label>
-                                    <input type="text" class="form-control zip" name="zip" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="status">Active Status</label>
-                                    <select name="status" class="form-control status">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="updateCompany()">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
+
     <!-- Delete Company Modal -->
     <div class="modal fade" id="deleteCompanyModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteCompanyModalLabel" aria-hidden="true">
@@ -227,6 +140,14 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
+                                <div class="form-group col-sm-3 mb-3 px-0">
+                                    <label for="periodSelect">Visibility Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="1" selected><span class="text-danger">Published Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
+                                    </select>
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createCompanyModal">
                                     Create Company
@@ -241,6 +162,7 @@
                                             <th>City</th>
                                             <th>Website</th>
                                             <th>ZIP</th>
+                                            <th>Visibility Status</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -263,6 +185,12 @@
     {{-- Data Table --}}
     <script>
         // ######### Data Table ##############
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('company.get') }}?is_draft=" + status).load();
+        }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -271,7 +199,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('company.get') }}",
+                    "url": "{{ route('company.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -323,25 +251,52 @@
                         "data": "zip"
                     },
                     {
-                        "data": null,
+                        "data": "is_draft",
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                            return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
+                        }
                     },
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                                return '<button id="update-status" class="btn ' + buttonClass +
+                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                            } else {
+                                // If it's not published, do not display the button
+                                return '<span class="text-muted">No Active Status</span>';
+                            }
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return `
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown${row.id}" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="actionDropdown${row.id}">
+                    <a class="dropdown-item editSubadminBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <a class="dropdown-item deleteSubadminBtn text-danger" href="#" data-id="${row.id}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </a>
+                </div>
+            </div>
+        `;
                         }
                     }
+
+
                 ]
             });
             $('#example').on('click', '.editSubadminBtn', function() {
@@ -355,14 +310,48 @@
         });
 
         // ##############Create Sub admin################
-        $(document).ready(function() {
-            $('#createCompanyForm input, #createCompanyForm select, #createCompanyForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
+        function initializeSelect2(modal) {
+            modal.find('.select2').select2({
+                dropdownParent: modal,
+                width: '100%'
+            });
+        }
+        $('#createCompanyModal').on('shown.bs.modal', function() {
+            initializeSelect2($(this));
         });
+        let autosaveTimer;
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                const formData = new FormData($('#createCompanyForm')[0]);
+                var formDataObject = {};
+                formData.forEach(function(value, key) {
+                    formDataObject[key] = value;
+                });
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: '{{ route('company.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000); // 1-second debounce
+        }
 
         function createCompany() {
             var formData = new FormData($('#createCompanyForm')[0]);
@@ -392,9 +381,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
@@ -405,19 +392,7 @@
                 }
             });
         }
-        $('#createCompanyForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
-        $('#createCompanyModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-        $('#createCompanyModal').on('show.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
+
 
         // ######Get & Update Company#########
 
@@ -427,17 +402,17 @@
                 url: showCompany.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editCompany .name').val(response.name);
-                    $('#editCompany .contact_detail').val(response.contact_detail);
-                    $('#editCompany .zip').val(response.zip);
-                    $('#editCompany .website').val(response.website);
-                    $('#editCompany .status').val(response.status);
+                    $('#createCompanyForm .name').val(response.name);
+                    $('#createCompanyForm .contact_detail').val(response.contact_detail);
+                    $('#createCompanyForm .zip').val(response.zip);
+                    $('#createCompanyForm .website').val(response.website);
+                    $('#createCompanyForm .status').val(response.status);
                     var nativeCountryValues = $('.country option').map(function() {
                         return $(this).val();
                     }).get();
                     for (let k of nativeCountryValues) {
                         if (k.includes(response.country)) {
-                            $('#editCompany .country').val(k).trigger('change');
+                            $('#createCompanyForm .country').val(k).trigger('change');
                             fetchCompanyStates(k.split(',')[0], response.state.split(',')[0], function(
                                 stateCode) {
                                 if (response.state.split(',')[0]) {
@@ -450,9 +425,11 @@
                         }
                     }
 
-                    $('#editCompany .city').val(response.city);
-                    $('#editCompanyModal').modal('show');
-                    $('#editCompanyModal').data('id', id);
+                    $('#createCompanyForm .city').val(response.city);
+                    $('#createCompanyModal .modal-title').text('Edit'); // Change title to Edit
+                    $('#createCompanyModal .btn-success').text('Publish'); // Change button text to Update
+                    $('#draft_id').val(response.id);
+                    $('#createCompanyModal').modal('show');
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -460,61 +437,6 @@
                 }
             });
         }
-        // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editCompany input, #editCompany select, #editCompany textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
-
-        function updateCompany() {
-            var updateCompany = '{{ route('company.update', ':id') }}';
-            var id = $('#editCompanyModal').data('id');
-            var formData = new FormData($('#editCompany')[0]);
-            // console.log('formData', formData);
-            $.ajax({
-                url: updateCompany.replace(':id', id),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Company Updated Successfully!');
-                    $('#editCompanyModal').modal('hide');
-                    reloadDataTable();
-                    $('#editCompanyModal form')[0].reset();
-
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('.' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                }
-            });
-        }
-        $('#editCompanyModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-
-        $('#editCompanyModal').on('show.bs.modal', function() {
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
         // ############# Delete Company Data###########
         function deleteCompanyModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);

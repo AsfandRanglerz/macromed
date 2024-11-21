@@ -200,7 +200,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('brands.get') }}",
+                    "url": "{{ route('brands.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -287,12 +287,24 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            return `
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown${row.id}" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="actionDropdown${row.id}">
+                    <a class="dropdown-item editSubadminBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <a class="dropdown-item deleteSubadminBtn text-danger" href="#" data-id="${row.id}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </a>
+                </div>
+            </div>
+        `;
                         }
                     }
+
                 ]
             });
             $('#example').on('click', '.editSubadminBtn', function() {
@@ -436,7 +448,7 @@
                     $('#createBrandsModal .btn-success').text('Publish'); // Change button text to Update
                     $('#draft_id').val(response.id);
                     $('#createBrandsModal').modal('show');
-                    $('#createBrandsModalModal').data('id', id);
+
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
