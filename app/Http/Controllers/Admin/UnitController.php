@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\BaseController;
 use App\Models\Unit;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\UnitRequest;
-use Illuminate\Support\Facades\Validator;
 
-class UnitController extends Controller
+
+class UnitController extends BaseController
 {
     protected $model = Unit::class;
     protected $keys = ['name', 'status'];

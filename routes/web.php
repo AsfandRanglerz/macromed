@@ -222,7 +222,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Units ############
     Route::controller(UnitController::class)->group(function () {
         Route::get('/units',  'unitsIndex')->name('units.index')->middleware('permission:Units');
-        Route::post('/certification/autosave', 'autosave')->name('certification.autosave');
+        Route::post('/certification/autosave', 'autosave')->name('units.autosave');
         Route::post('/units-create',  'createEntity')->name('units.create')->middleware('permission:Units');
         Route::get('/unitsData',  'unitsData')->name('units.get')->middleware('permission:Units');
         Route::get('/units/{id}',  'showunits')->name('units.show')->middleware('permission:Units');
@@ -233,12 +233,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Units ############
     Route::controller(SterilizationController::class)->group(function () {
         Route::get('/sterilization',  'sterilizationIndex')->name('sterilization.index')->middleware('permission:Sterilization');
-        Route::post('/sterilization-create',  'sterilizationCreate')->name('sterilization.create')->middleware('permission:Sterilization');
+        Route::post('/sterilization/autosave', 'autosave')->name('sterilization.autosave');
+        Route::post('/sterilization-create',  'createEntity')->name('sterilization.create')->middleware('permission:Sterilization');
         Route::get('/sterilizationData',  'sterilizationData')->name('sterilization.get')->middleware('permission:Sterilization');
         Route::get('/sterilization/{id}',  'showSterilization')->name('sterilization.show')->middleware('permission:Sterilization');
-        Route::post('/sterilizationUpdate/{id}',  'updateSterilization')->name('sterilization.update')->middleware('permission:Sterilization');
-        Route::get('/sterilization/delete/{id}',  'deleteSterilization')->name('sterilization.delete')->middleware('permission:Sterilization');
-        Route::post('/update-sterilization-status/{id}',  'updateSterilizationStatus')->name('sterilizationBlock.update')->middleware('permission:Sterilization');
+        Route::get('/sterilization/delete/{id}',  'deleteEntity')->name('sterilization.delete')->middleware('permission:Sterilization');
+        Route::post('/update-sterilization-status/{id}',  'updateStatus')->name('sterilizationBlock.update')->middleware('permission:Sterilization');
     });
 
     // ############## Number of Use ############
