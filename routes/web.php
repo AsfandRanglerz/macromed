@@ -211,12 +211,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Certifications ############
     Route::controller(CertificationController::class)->group(function () {
         Route::get('/certification',  'certificationIndex')->name('certification.index')->middleware('permission:Certification');
-        Route::post('/certification-create',  'certificationCreate')->name('certification.create')->middleware('permission:Certification');
+        Route::post('/certification/autosave', 'autosave')->name('certification.autosave');
+        Route::post('/certification-create',  'createEntity')->name('certification.create')->middleware('permission:Certification');
         Route::get('/certificationData',  'certificationData')->name('certification.get')->middleware('permission:Certification');
         Route::get('/certification/{id}',  'showCertification')->name('certification.show')->middleware('permission:Certification');
-        Route::post('/certificationUpdate/{id}',  'updateCertification')->name('certification.update')->middleware('permission:Certification');
-        Route::get('/certification/delete/{id}',  'deleteCertification')->name('certification.delete')->middleware('permission:Certification');
-        Route::post('/update-certification-status/{id}',  'updateCertificationStatus')->name('certificationBlock.update')->middleware('permission:Certification');
+        Route::get('/certification/delete/{id}',  'deleteEntity')->name('certification.delete')->middleware('permission:Certification');
+        Route::post('/update-certification-status/{id}',  'updateStatus')->name('certificationBlock.update')->middleware('permission:Certification');
     });
 
     // ############## Units ############

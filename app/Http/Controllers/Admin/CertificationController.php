@@ -6,15 +6,28 @@ use Illuminate\Http\Request;
 use App\Models\Certification;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CertificationRequest;
 use Illuminate\Support\Facades\Validator;
 
 class CertificationController extends Controller
 {
-    public function certificationData()
+    protected $model = Certification::class;
+    protected $keys = ['name', 'status'];
+    protected $formRequestClass = CertificationRequest::class;
+
+
+    public function certificationData(Request $request)
     {
-        $certifications = Certification::latest()->get();
-        $json_data["data"] = $certifications;
-        return json_encode($json_data);
+        try {
+            $is_draft = $request->query('is_draft', '1');
+            $certifications = $this->model::where('is_draft', $is_draft)->latest()->get();
+            return response()->json(['data' => $certifications], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch category data',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function certificationIndex()
@@ -22,84 +35,13 @@ class CertificationController extends Controller
         $certifications = Certification::all();
         return view('admin.certification.index', compact('certifications'));
     }
-    public function certificationCreate(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('certifications')
-                ],
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-            $certification = new Certification($request->only(['name', 'status']));
-            $certification->save();
-            return response()->json(['alert' => 'success', 'message' => 'Certification Created Successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating Certification!' . $e->getMessage()], 500);
-        }
-    }
 
     public function showCertification($id)
     {
-        $certification = Certification::find($id);
+        $certification = $this->model::findOrFail($id);
         if (!$certification) {
             return response()->json(['alert' => 'error', 'message' => 'Certification Not Found'], 500);
         }
         return response()->json($certification);
-    }
-    public function updateCertification(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('certifications')->ignore($id),
-
-            ],
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        try {
-            $certification = Certification::findOrFail($id);
-            $certification->fill($request->only(['name', 'status']));
-            $certification->save();
-            return response()->json(['alert' => 'success', 'message' => 'Certification Updated Successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating Sub Admin' . $e->getMessage()], 500);
-        }
-    }
-
-    public function deleteCertification($id)
-    {
-        $certification = Certification::findOrFail($id);
-        $certification->delete();
-        return response()->json(['alert' => 'success', 'message' => 'Certification Deleted SuccessFully!']);
-    }
-    public function updateCertificationStatus($id)
-    {
-        try {
-            $certification = Certification::findOrFail($id);
-            if ($certification->status == '0') {
-                $certification->status = '1';
-                $message = 'Certification Active Successfully';
-            } else if ($certification->status == '1') {
-                $certification->status = '0';
-                $message = 'Certification In Active Successfully';
-            } else {
-                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
-            }
-            $certification->save();
-            return response()->json(['alert' => 'success', 'message' => $message]);
-        } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
-        }
     }
 }
