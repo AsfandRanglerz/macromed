@@ -222,12 +222,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Units ############
     Route::controller(UnitController::class)->group(function () {
         Route::get('/units',  'unitsIndex')->name('units.index')->middleware('permission:Units');
-        Route::post('/units-create',  'unitsCreate')->name('units.create')->middleware('permission:Units');
+        Route::post('/certification/autosave', 'autosave')->name('certification.autosave');
+        Route::post('/units-create',  'createEntity')->name('units.create')->middleware('permission:Units');
         Route::get('/unitsData',  'unitsData')->name('units.get')->middleware('permission:Units');
         Route::get('/units/{id}',  'showunits')->name('units.show')->middleware('permission:Units');
-        Route::post('/unitsUpdate/{id}',  'updateUnits')->name('units.update')->middleware('permission:Units');
-        Route::get('/units/delete/{id}',  'deleteUnits')->name('units.delete')->middleware('permission:Units');
-        Route::post('/update-units-status/{id}',  'updateUnitsStatus')->name('unitsBlock.update')->middleware('permission:Units');
+        Route::get('/units/delete/{id}',  'deleteEntity')->name('units.delete')->middleware('permission:Units');
+        Route::post('/update-units-status/{id}',  'updateStatus')->name('unitsBlock.update')->middleware('permission:Units');
     });
 
     // ############## Units ############
