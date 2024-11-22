@@ -98,8 +98,8 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Country<span class="text-danger">*</span></label>
-                                <select name="country" class="form-control select2 country" id="country" style="width: 100%"
-                                    onchange="autosaveCategory()">
+                                <select name="country" class="form-control select2 country" id="country"
+                                    style="width: 100%" onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
@@ -114,16 +114,18 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="form-group col-md-6">
                                 <label for="state">State<span class="text-danger">*</span></label>
-                                <select class="form-control select2 state" id="state" name="state" style="width: 100%"
-                                    onchange="autosaveCategory()" required oninput="autosaveCategory()">
+                                <select class="form-control select2 state" id="state" name="state"
+                                    style="width: 100%" onchange="autosaveCategory()" required
+                                    oninput="autosaveCategory()">
                                     <option value="" selected disabled>Select State</option>
                                 </select>
 
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="city">City<span class="text-danger">*</span></label>
-                                <select class="form-control select2 city" id="city" name="city" style="width: 100%"
-                                    onchange="autosaveCategory()" required oninput="autosaveCategory()">
+                                <select class="form-control select2 city" id="city" name="city"
+                                    style="width: 100%" onchange="autosaveCategory()" required
+                                    oninput="autosaveCategory()">
                                     <option value="" selected disabled>Select City</option>
                                 </select>
 
@@ -340,6 +342,7 @@
         $('#createSupplierModal').on('shown.bs.modal', function() {
             initializeSelect2($(this));
         });
+        let autosaveTimer;
 
         function autosaveCategory() {
             clearTimeout(autosaveTimer);
@@ -393,6 +396,7 @@
                 success: function(response) {
                     toastr.success('Supplier Created Successfully!');
                     $('#createSupplierModal').modal('hide');
+                    $('#draft_id').val('');
                     reloadDataTable();
                     $('#createSupplierModal form')[0].reset();
                 },
@@ -400,9 +404,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
@@ -422,34 +424,41 @@
                 url: showSupplier.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#createSupplierForm #name').val(response.name);
-                    $('#createSupplierForm #email').val(response.email);
-                    $('#createSupplierForm #phone_number').val(response.phone_number);
-                    $('#createSupplierForm #poc').val(response.poc);
-                    $('#createSupplierForm #whats_app').val(response.whats_app);
-                    $('#createSupplierForm #address').val(response.address);
-                    $('#createSupplierForm #alternate_phone_number').val(response.alternate_phone_number);
-                    $('#createSupplierForm #alternate_email').val(response.alternate_email);
-                    $('#createSupplierForm #website').val(response.website);
+                    $('#createSupplierForm #name').val(response.name || '');
+                    $('#createSupplierForm #email').val(response.email || '');
+                    $('#createSupplierForm #phone_number').val(response.phone_number || '');
+                    $('#createSupplierForm #poc').val(response.poc || '');
+                    $('#createSupplierForm #whats_app').val(response.whats_app || '');
+                    $('#createSupplierForm #address').val(response.address || '');
+                    $('#createSupplierForm #alternate_phone_number').val(response.alternate_phone_number || '');
+                    $('#createSupplierForm #alternate_email').val(response.alternate_email || '');
+                    $('#createSupplierForm #website').val(response.website || '');
+
+                    // Populate country dropdown
                     var nativeCountryValues = $('.country option').map(function() {
                         return $(this).val();
                     }).get();
+
                     for (let k of nativeCountryValues) {
                         if (k.includes(response.country)) {
                             $('#createSupplierForm .country').val(k).trigger('change');
-                            fetchSupplierStates(k.split(',')[0], response.state.split(',')[0], function(
-                                stateCode) {
-                                if (response.state.split(',')[0]) {
-                                    fetchSupplierCities(response.state.split(',')[0], k.split(',')[0],
-                                        response
-                                        .city);
-                                }
-                            });
+
+                            // Fetch states only if country exists
+                            fetchSupplierStates(k.split(',')[0], response.state ? response.state.split(',')[0] :
+                                null,
+                                function(stateCode) {
+                                    if (response.state && response.state.split(',')[0]) {
+                                        fetchSupplierCities(response.state.split(',')[0], k.split(',')[0],
+                                            response.city || null);
+                                    } else {
+                                        $('.city').val(null).empty().append(
+                                            '<option value="" disabled selected>Select City</option>');
+                                    }
+                                });
                             break;
                         }
                     }
 
-                    $('#createSupplierForm .city').val(response.city);
                     $('#createSupplierModal .modal-title').text('Edit'); // Change title to Edit
                     $('#createSupplierModal .btn-success').text('Publish'); // Change button text to Update
                     $('#draft_id').val(response.id);
@@ -457,11 +466,11 @@
                     $('#createSupplierModal').data('id', id);
                 },
                 error: function(xhr, status, error) {
-                    // Handle error response
                     console.log(xhr.responseText);
                 }
             });
         }
+
 
 
 
@@ -563,8 +572,12 @@
         });
         $('#state').change(function() {
             let stateCode = $(this).val();
-            let arr1 = stateCode.split(',');
             let countryCode = $('#country').val();
+            if (!stateCode || !countryCode) {
+                console.error("State or Country is not selected");
+                return;
+            }
+            let arr1 = stateCode.split(',');
             let arr2 = countryCode.split(',');
             $.ajax({
                 url: '{{ route('fetchSupplierCities') }}',
@@ -615,30 +628,26 @@
                 success: function(data) {
                     var stateSelect = $('.state');
                     stateSelect.empty();
-                    var stateCode = '';
-
-                    // Add default "Select State" option
                     stateSelect.append('<option value="" disabled selected>Select State</option>');
-
                     $('.city').val(null).empty().append(
-                        '<option value="" disabled selected>Select City</option>'); // Reset cities dropdown
+                        '<option value="" disabled selected>Select City</option>');
+
+                    if (data.length === 0) {
+                        callback(null); // No states available
+                        return;
+                    }
 
                     data.forEach(function(stateData) {
-                        var stateName = stateData.name;
-                        var statecode = stateData.iso2;
-                        var optionValue = statecode + ',' + stateName;
-                        var option = $('<option></option>').attr('value', optionValue).text(stateName);
-
-                        if (selectedState && (selectedState === statecode || selectedState ===
-                                optionValue)) {
+                        var optionValue = `${stateData.iso2},${stateData.name}`;
+                        var option = $('<option></option>').attr('value', optionValue).text(stateData
+                            .name);
+                        if (selectedState && selectedState === stateData.iso2) {
                             option.prop('selected', true);
-                            stateCode = statecode;
                         }
-
                         stateSelect.append(option);
                     });
 
-                    callback(stateCode);
+                    callback(selectedState);
                 },
                 error: function(xhr, status, error) {
                     console.error("Error fetching states:", xhr.responseText);
@@ -657,12 +666,14 @@
                 success: function(data) {
                     var citySelect = $('.city');
                     citySelect.empty();
-                    // Add default "Select City" option
                     citySelect.append('<option value="" disabled selected>Select City</option>');
+
+                    if (data.length === 0) return;
+
                     data.forEach(function(cityData) {
-                        var cityName = cityData.name;
-                        var option = $('<option></option>').attr('value', cityName).text(cityName);
-                        if (cityName === selectedCity) {
+                        var option = $('<option></option>').attr('value', cityData.name).text(cityData
+                            .name);
+                        if (selectedCity && cityData.name === selectedCity) {
                             option.prop('selected', true);
                         }
                         citySelect.append(option);
