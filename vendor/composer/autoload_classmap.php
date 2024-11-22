@@ -79,6 +79,7 @@ return array(
     'App\\Http\\Requests\\CreateCustomer' => $baseDir . '/app/Http/Requests/CreateCustomer.php',
     'App\\Http\\Requests\\DiscountCodeCreate' => $baseDir . '/app/Http/Requests/DiscountCodeCreate.php',
     'App\\Http\\Requests\\Document' => $baseDir . '/app/Http/Requests/Document.php',
+    'App\\Http\\Requests\\MainMaterialRequest' => $baseDir . '/app/Http/Requests/MainMaterialRequest.php',
     'App\\Http\\Requests\\NumberOfUseRequest' => $baseDir . '/app/Http/Requests/NumberOfUseRequest.php',
     'App\\Http\\Requests\\OrderRequest' => $baseDir . '/app/Http/Requests/OrderRequest.php',
     'App\\Http\\Requests\\SterilizationsRequest' => $baseDir . '/app/Http/Requests/SterilizationsRequest.php',

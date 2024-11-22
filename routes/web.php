@@ -268,12 +268,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Main Material ############
     Route::controller(MainMaterialController::class)->group(function () {
         Route::get('/mainMaterial',  'mainMaterialIndex')->name('mainMaterial.index')->middleware('permission:Main Material');
-        Route::post('/mainMaterial-create',  'mainMaterialCreate')->name('mainMaterial.create')->middleware('permission:Main Material');
+        Route::post('/mainMaterial/autosave', 'autosave')->name('mainMaterial.autosave');
+        Route::post('/mainMaterial-create',  'createEntity')->name('mainMaterial.create')->middleware('permission:Main Material');
         Route::get('/mainMaterialData',  'mainMaterialData')->name('mainMaterial.get')->middleware('permission:Main Material');
         Route::get('/mainMaterial/{id}',  'showMainMaterial')->name('mainMaterial.show')->middleware('permission:Main Material');
-        Route::post('/mainMaterialUpdate/{id}',  'updateMainMaterial')->name('mainMaterial.update')->middleware('permission:Main Material');
-        Route::get('/mainMaterial/delete/{id}',  'deleteMainMaterial')->name('mainMaterial.delete')->middleware('permission:Main Material');
-        Route::post('/update-mainMaterial-status/{id}',  'updateMainMaterialStatus')->name('mainMaterialBlock.update')->middleware('permission:Main Material');
+        Route::get('/mainMaterial/delete/{id}',  'deleteEntity')->name('mainMaterial.delete')->middleware('permission:Main Material');
+        Route::post('/update-mainMaterial-status/{id}',  'updateStatus')->name('mainMaterialBlock.update')->middleware('permission:Main Material');
     });
 
     // ############## Product ############

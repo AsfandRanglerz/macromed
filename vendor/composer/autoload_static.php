@@ -605,6 +605,7 @@ class ComposerStaticInita31faf40ff9b8773d514dda0170fd133
         'App\\Http\\Requests\\CreateCustomer' => __DIR__ . '/../..' . '/app/Http/Requests/CreateCustomer.php',
         'App\\Http\\Requests\\DiscountCodeCreate' => __DIR__ . '/../..' . '/app/Http/Requests/DiscountCodeCreate.php',
         'App\\Http\\Requests\\Document' => __DIR__ . '/../..' . '/app/Http/Requests/Document.php',
+        'App\\Http\\Requests\\MainMaterialRequest' => __DIR__ . '/../..' . '/app/Http/Requests/MainMaterialRequest.php',
         'App\\Http\\Requests\\NumberOfUseRequest' => __DIR__ . '/../..' . '/app/Http/Requests/NumberOfUseRequest.php',
         'App\\Http\\Requests\\OrderRequest' => __DIR__ . '/../..' . '/app/Http/Requests/OrderRequest.php',
         'App\\Http\\Requests\\SterilizationsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/SterilizationsRequest.php',

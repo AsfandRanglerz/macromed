@@ -2,19 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\BaseController;
 use App\Models\MainMaterial;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\MainMaterialRequest;
 
-class MainMaterialController extends Controller
+
+class MainMaterialController extends BaseController
 {
-    public function mainMaterialData()
+    protected $model = MainMaterial::class;
+    protected $keys = ['name', 'status'];
+    protected $formRequestClass = MainMaterialRequest::class;
+
+    public function mainMaterialData(Request $request)
     {
-        $mainMaterial = MainMaterial::latest()->get();
-        $json_data["data"] = $mainMaterial;
-        return json_encode($json_data);
+        try {
+            $is_draft = $request->query('is_draft', '1');
+            $mainMaterial = $this->model::where('is_draft', $is_draft)->latest()->get();
+            return response()->json(['data' => $mainMaterial], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch category data',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function MainMaterialIndex()
@@ -22,84 +33,14 @@ class MainMaterialController extends Controller
         $mainMaterial = MainMaterial::all();
         return view('admin.mianmaterial.index', compact('mainMaterial'));
     }
-    public function mainMaterialCreate(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'name' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    Rule::unique('main_materials')
-                ],
-            ]);
 
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-            $mainMaterial = new MainMaterial($request->only(['name', 'status']));
-            $mainMaterial->save();
-            return response()->json(['alert' => 'success', 'message' => 'MainMaterial Created Successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating MainMaterial!' . $e->getMessage()], 500);
-        }
-    }
 
     public function showMainMaterial($id)
     {
-        $mainMaterial = MainMaterial::find($id);
+        $mainMaterial =  $this->model::findOrFail($id);
         if (!$mainMaterial) {
             return response()->json(['alert' => 'error', 'message' => 'MainMaterial Not Found'], 500);
         }
         return response()->json($mainMaterial);
-    }
-    public function updateMainMaterial(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('main_materials')->ignore($id),
-
-            ],
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        try {
-            $mainMaterial = MainMaterial::findOrFail($id);
-            $mainMaterial->fill($request->only(['name', 'status']));
-            $mainMaterial->save();
-            return response()->json(['alert' => 'success', 'message' => 'Main Material Updated Successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating Sub Admin' . $e->getMessage()], 500);
-        }
-    }
-
-    public function deleteMainMaterial($id)
-    {
-        $mainMaterial = MainMaterial::findOrFail($id);
-        $mainMaterial->delete();
-        return response()->json(['alert' => 'success', 'message' => 'Main Material Deleted SuccessFully!']);
-    }
-    public function updateMainMaterialStatus($id)
-    {
-        try {
-            $mainMaterial = MainMaterial::findOrFail($id);
-            if ($mainMaterial->status == '0') {
-                $mainMaterial->status = '1';
-                $message = 'Main Material Active Successfully';
-            } else if ($mainMaterial->status == '1') {
-                $mainMaterial->status = '0';
-                $message = 'Main Material In Active Successfully';
-            } else {
-                return response()->json(['alert' => 'info', 'error' => 'User status is already updated or cannot be updated.']);
-            }
-            $mainMaterial->save();
-            return response()->json(['alert' => 'success', 'message' => $message]);
-        } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'error' => 'An error occurred while updating user status.']);
-        }
     }
 }

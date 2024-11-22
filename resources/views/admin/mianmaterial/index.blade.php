@@ -14,10 +14,12 @@
                 </div>
                 <div class="modal-body">
                     <form id="createMainMaterialForm" enctype="multipart/form-data">
+                        <input type="hidden" id="draft_id" name="draft_id">
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="name">Enter Main Material Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <input type="text" class="form-control" id="name" name="name" required
+                                    oninput="autosaveCategory()">
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -25,8 +27,8 @@
                             <div class="form-group">
                                 <label for="status">Active Status</label>
                                 <select name="status" class="form-control" id="status">
-                                    <option value="1">Active</option>
                                     <option value="0">In Active</option>
+                                    <option value="1">Active</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -40,44 +42,7 @@
             </div>
         </div>
     </div>
-    <!-- Edit MainMaterial Modal -->
-    <div class="modal fade" id="editMainMaterialModal" tabindex="-1" role="dialog"
-        aria-labelledby="editMainMaterialModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editMainMaterialModalLabel">Edit MainMaterial</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editMainMaterial" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Enter Main Material Name</label>
-                                <input type="text" class="form-control name" name="name" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control status">
-                                    <option value="1">Active</option>
-                                    <option value="0">In Active</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="updateMainMaterial()">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- Delete MainMaterial Modal -->
     <div class="modal fade" id="deleteMainMaterialModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteMainMaterialModalLabel" aria-hidden="true">
@@ -112,6 +77,14 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
+                                <div class="form-group col-sm-3 mb-3 px-0">
+                                    <label for="periodSelect">Visibility Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="1" selected><span class="text-danger">Published Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
+                                    </select>
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createMainMaterialModal">
                                     Create Main Material
@@ -121,6 +94,7 @@
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
+                                            <th>Visibility Status</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -143,6 +117,12 @@
     {{-- Data Table --}}
     <script>
         // ######### Data Table ##############
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('mainMaterial.get') }}?is_draft=" + status).load();
+        }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -151,7 +131,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('mainMaterial.get') }}",
+                    "url": "{{ route('mainMaterial.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -167,23 +147,48 @@
                         "data": "name"
                     },
                     {
-                        "data": null,
+                        "data": "is_draft",
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                            return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
+                        }
                     },
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                                return '<button id="update-status" class="btn ' + buttonClass +
+                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                            } else {
+                                // If it's not published, do not display the button
+                                return '<span class="text-muted">No Active Status</span>';
+                            }
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return `
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown${row.id}" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="actionDropdown${row.id}">
+                    <a class="dropdown-item editSubadminBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <a class="dropdown-item deleteSubadminBtn text-danger" href="#" data-id="${row.id}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </a>
+                </div>
+            </div>
+        `;
                         }
                     }
                 ]
@@ -199,14 +204,40 @@
         });
 
         // ##############Create Sub admin################
-        $(document).ready(function() {
-            $('#createMainMaterialForm input, #createMainMaterialForm select, #createMainMaterialForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
+        let autosaveTimer;
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                const formData = new FormData($('#createMainMaterialForm')[0]);
+                var formDataObject = {};
+                formData.forEach(function(value, key) {
+                    formDataObject[key] = value;
                 });
-        });
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: '{{ route('mainMaterial.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000); // 1-second debounce
+        }
+
 
         function createMainMaterial() {
             var formData = new FormData($('#createMainMaterialForm')[0]);
@@ -228,6 +259,8 @@
                 success: function(response) {
                     toastr.success('Main Material Created Successfully!');
                     $('#createMainMaterialModal').modal('hide');
+                    $('#draft_id').val('');
+
                     reloadDataTable();
                     $('#createMainMaterialModal form')[0].reset();
                 },
@@ -236,9 +269,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
@@ -249,11 +280,6 @@
                 }
             });
         }
-        $('#createMainMaterialForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
-
-        // ######Get & Update MainMaterial#########
 
         function editMainMaterialModal(id) {
             var showMainMaterial = '{{ route('mainMaterial.show', ':id') }}';
@@ -261,9 +287,12 @@
                 url: showMainMaterial.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editMainMaterial .name').val(response.name);
-                    $('#editMainMaterial .status').val(response.status);
-                    $('#editMainMaterialModal').modal('show');
+                    $('#createMainMaterialForm #name').val(response.name);
+                    $('#createMainMaterialForm #status').val(response.status);
+                    $('#createMainMaterialModal .modal-title').text('Edit');
+                    $('#createMainMaterialModal .btn-success').text('Publish');
+                    $('#createMainMaterialModal').modal('show');
+                    $('#draft_id').val(response.id);
                     $('#editMainMaterialModal').data('id', id);
                 },
                 error: function(xhr, status, error) {
@@ -272,51 +301,7 @@
                 }
             });
         }
-        // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editMainMaterial input, #editMainMaterial select, #editMainMaterial textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
 
-        function updateMainMaterial() {
-            var updateMainMaterial = '{{ route('mainMaterial.update', ':id') }}';
-            var id = $('#editMainMaterialModal').data('id');
-            var formData = new FormData($('#editMainMaterial')[0]);
-            // console.log('formData', formData);
-            $.ajax({
-                url: updateMainMaterial.replace(':id', id),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Main Material Updated Successfully!');
-                    $('#editMainMaterialModal').modal('hide');
-                    reloadDataTable();
-                    $('#editMainMaterialModal form')[0].reset();
-
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('.' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                }
-            });
-        }
         // ############# Delete MainMaterial Data###########
         function deleteMainMaterialModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);

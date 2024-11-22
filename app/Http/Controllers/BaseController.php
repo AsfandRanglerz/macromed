@@ -28,6 +28,7 @@ abstract class BaseController extends Controller
             : new $this->model();
         $entity->fill($request->only($this->keys));
         $entity->is_draft = 0;
+        $entity->status = '0';
         if ($request->hasFile('image')) {
             $oldImagePath = $entity->image;
             if ($entity->image &&  File::exists($oldImagePath)) {
