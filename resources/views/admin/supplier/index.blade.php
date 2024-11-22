@@ -255,7 +255,10 @@
                         }
                     },
                     {
-                        "data": "name"
+                        "data": "name",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Data Found!';
+                        }
                     },
                     {
                         "data": "supplier_id",
@@ -264,16 +267,28 @@
                         }
                     },
                     {
-                        "data": "poc"
+                        "data": "poc",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Data Found!';
+                        }
                     },
                     {
-                        "data": "email"
+                        "data": "email",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Data Found!';
+                        }
                     },
                     {
-                        "data": "phone_number"
+                        "data": "phone_number",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Data Found!';
+                        }
                     },
                     {
-                        "data": "whats_app"
+                        "data": "whats_app",
+                        "render": function(data, type, row) {
+                            return data ? data : 'No Data Found!';
+                        }
                     },
                     {
                         "data": "is_draft",
