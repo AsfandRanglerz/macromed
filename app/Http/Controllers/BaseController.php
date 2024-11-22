@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\CountryApiRequestTrait;
+use App\Models\Supplier;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use App\Traits\CountryApiRequestTrait;
 
 abstract class BaseController extends Controller
 {
@@ -20,7 +22,13 @@ abstract class BaseController extends Controller
             app($this->formRequestClass);
         }
     }
-
+    protected function beforeSave($entity, $request)
+    {
+        // Only generate supplier_id if it's not already set (e.g., during creation)
+        if ($this->model === Supplier::class && !$entity->exists && empty($entity->supplier_id)) {
+            $entity->supplier_id = $this->generateUniqueSupplierId();
+        }
+    }
     public function autosave(Request $request)
     {
         $entity = $request->draft_id
@@ -39,6 +47,7 @@ abstract class BaseController extends Controller
             $image->move(public_path('admin/assets/images/brands'), $filename);
             $entity->image = 'public/admin/assets/images/brands/' . $filename;
         }
+        $this->beforeSave($entity, $request);
         $entity->save();
 
         return response()->json([
@@ -64,6 +73,7 @@ abstract class BaseController extends Controller
             $image->move(public_path('admin/assets/images/brands'), $filename);
             $entity->image = 'public/admin/assets/images/brands/' . $filename;
         }
+        $this->beforeSave($entity, $request);
         $entity->save();
 
         return response()->json(['alert' => 'success', 'message' => 'Entity Created Successfully!']);
@@ -121,5 +131,16 @@ abstract class BaseController extends Controller
         }
 
         return response()->json($cities);
+    }
+
+    // ############### Supplier Id Gnerate code ###################
+
+    private function generateUniqueSupplierId()
+    {
+        do {
+            $supplier_id = Str::random(8); // Generate random string of length 8
+        } while ($this->model::where('supplier_id', $supplier_id)->exists());
+
+        return $supplier_id;
     }
 }

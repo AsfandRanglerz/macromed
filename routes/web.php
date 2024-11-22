@@ -255,14 +255,14 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Suppliers ############
     Route::controller(SupplierController::class)->group(function () {
         Route::get('/supplier',  'supplierIndex')->name('supplier.index')->middleware('permission:Supplier');
-        Route::post('/supplier-create',  'supplierCreate')->name('supplier.create')->middleware('permission:Supplier');
+        Route::post('/supplier/autosave', 'autosave')->name('supplier.autosave');
+        Route::post('/supplier-create',  'createEntity')->name('supplier.create')->middleware('permission:Supplier');
         Route::get('/supplierData',  'supplierData')->name('supplier.get')->middleware('permission:Supplier');
         Route::get('/supplier/{id}',  'showSupplier')->name('supplier.show')->middleware('permission:Supplier');
-        Route::post('/supplierUpdate/{id}',  'updateSupplier')->name('supplier.update')->middleware('permission:Supplier');
-        Route::get('/supplier/delete/{id}',  'deleteSupplier')->name('supplier.delete')->middleware('permission:Supplier');
-        Route::post('/update-supplier-status/{id}',  'updateSupplierStatus')->name('supplierBlock.update')->middleware('permission:Supplier');
-        Route::get('/fetchSupplier-states', 'fetchSupplierStates')->name('fetchSupplierStates')->middleware('permission:Supplier');
-        Route::get('/fetchSupplier-cities', 'fetchSupplierCities')->name('fetchSupplierCities')->middleware('permission:Supplier');
+        Route::get('/supplier/delete/{id}',  'deleteEntity')->name('supplier.delete')->middleware('permission:Supplier');
+        Route::post('/update-supplier-status/{id}',  'updateStatus')->name('supplierBlock.update')->middleware('permission:Supplier');
+        Route::get('/fetchSupplier-states', 'fetchStates')->name('fetchSupplierStates')->middleware('permission:Supplier');
+        Route::get('/fetchSupplier-cities', 'fetchCities')->name('fetchSupplierCities')->middleware('permission:Supplier');
     });
 
     // ############## Main Material ############

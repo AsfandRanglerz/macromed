@@ -24,7 +24,7 @@ class SupplierUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $supplierId = $this->route('id');
+        $supplierId = $this->route('category') ?? $this->input('draft_id');
         return [
             'name' => [
                 'required',

@@ -14,84 +14,92 @@
                 </div>
                 <div class="modal-body">
                     <form id="createSupplierForm" enctype="multipart/form-data">
+                        <input type="hidden" id="draft_id" name="draft_id">
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Supplier Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
-                                    <div class="invalid-feedback"></div>
+                                    <label for="name">Supplier Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" required
+                                        oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Supplier POC</label>
-                                    <input type="text" class="form-control" id="poc" name="poc" required>
-                                    <div class="invalid-feedback"></div>
+                                    <label for="name">Supplier POC<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="poc" name="poc" required
+                                        oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                         </div>
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Supplier Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                    <div class="invalid-feedback"></div>
+                                    <label for="name">Supplier Email<span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" required
+                                        oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Supplier Phone Number</label>
+                                    <label for="name">Supplier Phone Number<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="phone_number" name="phone_number"
-                                        required>
-                                    <div class="invalid-feedback"></div>
+                                        required oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                         </div>
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Physical Addres</label>
-                                    <input type="text" class="form-control" id="address" name="address" required>
-                                    <div class="invalid-feedback"></div>
+                                    <label for="name">Physical Addres<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="address" name="address" required
+                                        oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Whats App</label>
-                                    <input type="text" class="form-control" id="whats_app" name="whats_app" required>
-                                    <div class="invalid-feedback"></div>
+                                    <label for="name">Whats App<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="whats_app" name="whats_app" required
+                                        oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                         </div>
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Website</label>
-                                    <input type="text" class="form-control" id="website" name="website" required>
-                                    <div class="invalid-feedback"></div>
+                                    <label for="name">Website<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="website" name="website" required
+                                        oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Alternate Email</label>
+                                    <label for="name">Alternate Email<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="alternate_email" name="alternate_email"
-                                        required>
-                                    <div class="invalid-feedback"></div>
+                                        required oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                         </div>
                         <div class="row col-md-12 col-lg-12">
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label for="name">Alternate Phone Number</label>
+                                    <label for="name">Alternate Phone Number<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="alternate_phone_number"
-                                        name="alternate_phone_number" required>
-                                    <div class="invalid-feedback"></div>
+                                        name="alternate_phone_number" required oninput="autosaveCategory()">
+
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
-                                <label>Country</label>
-                                <select name="country" class="form-control select2" id="country" style="width: 100%">
+                                <label>Country<span class="text-danger">*</span></label>
+                                <select name="country" class="form-control select2 country" id="country" style="width: 100%"
+                                    onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->iso2 . ',' . $country->name }}">
@@ -105,28 +113,29 @@
                         </div>
                         <div class="row col-md-12 col-lg-12">
                             <div class="form-group col-md-6">
-                                <label for="state">State</label>
-                                <select class="form-control select2" id="state" name="state" style="width: 100%"
-                                    required>
+                                <label for="state">State<span class="text-danger">*</span></label>
+                                <select class="form-control select2 state" id="state" name="state" style="width: 100%"
+                                    onchange="autosaveCategory()" required oninput="autosaveCategory()">
                                     <option value="" selected disabled>Select State</option>
                                 </select>
-                                <div class="invalid-feedback"></div>
+
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="city">City</label>
-                                <select class="form-control select2 " id="city" name="city" style="width: 100%"
-                                    required>
+                                <label for="city">City<span class="text-danger">*</span></label>
+                                <select class="form-control select2 city" id="city" name="city" style="width: 100%"
+                                    onchange="autosaveCategory()" required oninput="autosaveCategory()">
                                     <option value="" selected disabled>Select City</option>
                                 </select>
-                                <div class="invalid-feedback"></div>
+
                             </div>
                             <div class="form-group col-md-12 col-lg-12">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control" id="status">
-                                    <option value="1">Active</option>
+                                <label for="status">Active Status<span class="text-danger">*</span></label>
+                                <select name="status" class="form-control" id="status"
+                                    onchange="autosaveCategory()">
                                     <option value="0">In Active</option>
+                                    <option value="1">Active</option>
                                 </select>
-                                <div class="invalid-feedback"></div>
+
                             </div>
                         </div>
                     </form>
@@ -137,140 +146,7 @@
             </div>
         </div>
     </div>
-    <!-- Edit Supplier Modal -->
-    <div class="modal fade" id="editSupplierModal" tabindex="-1" role="dialog"
-        aria-labelledby="editSupplierModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editSupplierModalLabel">Edit Supplier</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editSupplier" enctype="multipart/form-data">
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Supplier Name</label>
-                                    <input type="text" class="form-control name" name="name" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Supplier POC</label>
-                                    <input type="text" class="form-control poc" name="poc" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Supplier Email</label>
-                                    <input type="email" class="form-control email" name="email" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Supplier Phone Number</label>
-                                    <input type="text" class="form-control phone_number" name="phone_number" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Physical Addres</label>
-                                    <input type="text" class="form-control address" name="address" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Whats App</label>
-                                    <input type="text" class="form-control whats_app" name="whats_app" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Website</label>
-                                    <input type="text" class="form-control website" name="website" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Alternate Email</label>
-                                    <input type="text" class="form-control alternate_email" name="alternate_email"
-                                        required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="col-md-6 col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <label for="name">Alternate Phone Number</label>
-                                    <input type="text" class="form-control alternate_phone_number"
-                                        name="alternate_phone_number" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Country</label>
-                                <select name="country" class="form-control select2 country" style="width: 100%">
-                                    <option value="" selected disabled>Select Country</option>
-                                    @foreach ($countries as $country)
-                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
-                                            {{ $country->name }}</option>
-                                    @endforeach
-                                </select>
-                                @if ($countries == null)
-                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="row col-md-12 col-lg-12">
-                            <div class="form-group col-md-6">
-                                <label for="state">State</label>
-                                <select class="form-control select2 state" name="state" style="width: 100%" required>
-                                    <option value="" selected disabled>Select State</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="city">City</label>
-                                <select class="form-control select2 city" name="city" style="width: 100%" required>
-                                    <option value="" selected disabled>Select City</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
 
-                            <div class="form-group col-md-12 col-lg-12">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control status">
-                                    <option value="1">Active</option>
-                                    <option value="0">In Active</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="updateSupplier()">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Delete Supplier Modal -->
     <div class="modal fade" id="deleteSupplierModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteSupplierModalLabel" aria-hidden="true">
@@ -305,6 +181,14 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
+                                <div class="form-group col-sm-3 mb-3 px-0">
+                                    <label for="periodSelect">Visibility Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="1" selected><span class="text-danger">Published Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
+                                    </select>
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createSupplierModal">
                                     Create Supplier
@@ -319,6 +203,7 @@
                                             <th>Email</th>
                                             <th>Phone Number</th>
                                             <th>Whats App</th>
+                                            <th>Visibility Status</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -341,6 +226,12 @@
     {{-- Data Table --}}
     <script>
         // ######### Data Table ##############
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('supplier.get') }}?is_draft=" + status).load();
+        }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -349,7 +240,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('supplier.get') }}",
+                    "url": "{{ route('supplier.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -383,23 +274,48 @@
                         "data": "whats_app"
                     },
                     {
-                        "data": null,
+                        "data": "is_draft",
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                            return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
+                        }
                     },
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                                return '<button id="update-status" class="btn ' + buttonClass +
+                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                            } else {
+                                // If it's not published, do not display the button
+                                return '<span class="text-muted">No Active Status</span>';
+                            }
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return `
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown${row.id}" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="actionDropdown${row.id}">
+                    <a class="dropdown-item editSubadminBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <a class="dropdown-item deleteSubadminBtn text-danger" href="#" data-id="${row.id}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </a>
+                </div>
+            </div>
+        `;
                         }
                     }
                 ]
@@ -415,15 +331,47 @@
         });
 
         // ##############Create Sub admin################
-        $(document).ready(function() {
-            $('#createSupplierForm input, #createSupplierForm select, #createSupplierForm textarea')
-                .on(
-                    'input change',
-                    function() {
-                        $(this).siblings('.invalid-feedback').text('');
-                        $(this).removeClass('is-invalid');
-                    });
+        function initializeSelect2(modal) {
+            modal.find('.select2').select2({
+                dropdownParent: modal,
+                width: '100%'
+            });
+        }
+        $('#createSupplierModal').on('shown.bs.modal', function() {
+            initializeSelect2($(this));
         });
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                const formData = new FormData($('#createSupplierForm')[0]);
+                var formDataObject = {};
+                formData.forEach(function(value, key) {
+                    formDataObject[key] = value;
+                });
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: '{{ route('supplier.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000); // 1-second debounce
+        }
 
         function createSupplier() {
             var formData = new FormData($('#createSupplierForm')[0]);
@@ -465,20 +413,7 @@
                 }
             });
         }
-        $('#createSupplierForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
 
-        $('#createSupplierModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-        $('#createSupplierModal').on('show.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
         // ######Get & Update Supplier#########
 
         function editSupplierModal(id) {
@@ -487,21 +422,21 @@
                 url: showSupplier.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editSupplier .name').val(response.name);
-                    $('#editSupplier .email').val(response.email);
-                    $('#editSupplier .phone_number').val(response.phone_number);
-                    $('#editSupplier .poc').val(response.poc);
-                    $('#editSupplier .whats_app').val(response.whats_app);
-                    $('#editSupplier .address').val(response.address);
-                    $('#editSupplier .alternate_phone_number').val(response.alternate_phone_number);
-                    $('#editSupplier .alternate_email').val(response.alternate_email);
-                    $('#editSupplier .website').val(response.website);
+                    $('#createSupplierForm #name').val(response.name);
+                    $('#createSupplierForm #email').val(response.email);
+                    $('#createSupplierForm #phone_number').val(response.phone_number);
+                    $('#createSupplierForm #poc').val(response.poc);
+                    $('#createSupplierForm #whats_app').val(response.whats_app);
+                    $('#createSupplierForm #address').val(response.address);
+                    $('#createSupplierForm #alternate_phone_number').val(response.alternate_phone_number);
+                    $('#createSupplierForm #alternate_email').val(response.alternate_email);
+                    $('#createSupplierForm #website').val(response.website);
                     var nativeCountryValues = $('.country option').map(function() {
                         return $(this).val();
                     }).get();
                     for (let k of nativeCountryValues) {
                         if (k.includes(response.country)) {
-                            $('#editSupplier .country').val(k).trigger('change');
+                            $('#createSupplierForm .country').val(k).trigger('change');
                             fetchSupplierStates(k.split(',')[0], response.state.split(',')[0], function(
                                 stateCode) {
                                 if (response.state.split(',')[0]) {
@@ -514,9 +449,12 @@
                         }
                     }
 
-                    $('#editSupplier .city').val(response.city);
-                    $('#editSupplierModal').modal('show');
-                    $('#editSupplierModal').data('id', id);
+                    $('#createSupplierForm .city').val(response.city);
+                    $('#createSupplierModal .modal-title').text('Edit'); // Change title to Edit
+                    $('#createSupplierModal .btn-success').text('Publish'); // Change button text to Update
+                    $('#draft_id').val(response.id);
+                    $('#createSupplierModal').modal('show');
+                    $('#createSupplierModal').data('id', id);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -524,61 +462,9 @@
                 }
             });
         }
-        // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editSupplier input, #editSupplier select, #editSupplier textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
 
-        function updateSupplier() {
-            var updateSupplier = '{{ route('supplier.update', ':id') }}';
-            var id = $('#editSupplierModal').data('id');
-            var formData = new FormData($('#editSupplier')[0]);
-            // console.log('formData', formData);
-            $.ajax({
-                url: updateSupplier.replace(':id', id),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Supplier Updated Successfully!');
-                    $('#editSupplierModal').modal('hide');
-                    reloadDataTable();
-                    $('#editSupplierModal form')[0].reset();
 
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('.' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                }
-            });
-        }
-        $('#editSupplierModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
 
-        $('#editSupplierModal').on('show.bs.modal', function() {
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
         // ############# Delete Supplier Data###########
         function deleteSupplierModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);
