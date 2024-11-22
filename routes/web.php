@@ -244,12 +244,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Number of Use ############
     Route::controller(NumberOfUseController::class)->group(function () {
         Route::get('/number-of-use',  'numberOfUseIndex')->name('numberOfUse.index')->middleware('permission:Number Of Use');
-        Route::post('/numberOfUse-create',  'numberOfUseCreate')->name('numberOfUse.create')->middleware('permission:Number Of Use');
+        Route::post('/numberOfUse/autosave', 'autosave')->name('numberOfUse.autosave');
+        Route::post('/numberOfUse-create',  'createEntity')->name('numberOfUse.create')->middleware('permission:Number Of Use');
         Route::get('/numberOfUseData',  'numberOfUseData')->name('numberOfUse.get')->middleware('permission:Number Of Use');
         Route::get('/numberOfUse/{id}',  'showNumberOfUse')->name('numberOfUse.show')->middleware('permission:Number Of Use');
-        Route::post('/numberOfUseUpdate/{id}',  'updateNumberOfUse')->name('numberOfUse.update')->middleware('permission:Number Of Use');
-        Route::get('/numberOfUse/delete/{id}',  'deleteNumberOfUse')->name('numberOfUse.delete')->middleware('permission:Number Of Use');
-        Route::post('/update-numberOfUse-status/{id}',  'updateNumberOfUseStatus')->name('numberOfUseBlock.update')->middleware('permission:Number Of Use');
+        Route::get('/numberOfUse/delete/{id}',  'deleteEntity')->name('numberOfUse.delete')->middleware('permission:Number Of Use');
+        Route::post('/update-numberOfUse-status/{id}',  'updateStatus')->name('numberOfUseBlock.update')->middleware('permission:Number Of Use');
     });
 
     // ############## Suppliers ############
