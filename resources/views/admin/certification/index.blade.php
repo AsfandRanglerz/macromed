@@ -14,10 +14,13 @@
                 </div>
                 <div class="modal-body">
                     <form id="createCertificationForm" enctype="multipart/form-data">
+                        <input type="hidden" id="draft_id" name="draft_id">
+
                         <div class="col-md-12 col-sm-12 col-lg-12">
                             <div class="form-group">
                                 <label for="name">Certified By</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <input type="text" class="form-control" id="name" name="name" required
+                                    oninput="autosaveCategory()">
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -25,8 +28,8 @@
                             <div class="form-group">
                                 <label for="status">Active Status</label>
                                 <select name="status" class="form-control" id="status">
-                                    <option value="1">Active</option>
                                     <option value="0">In Active</option>
+                                    <option value="1">Active</option>
                                 </select>
                                 <div class="invalid-feedback"></div>
                             </div>
@@ -40,44 +43,7 @@
             </div>
         </div>
     </div>
-    <!-- Edit Certification Modal -->
-    <div class="modal fade" id="editCertificationModal" tabindex="-1" role="dialog"
-        aria-labelledby="editCertificationModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCertificationModalLabel">Edit Certification</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editCertification" enctype="multipart/form-data">
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Certified By</label>
-                                <input type="text" class="form-control name" name="name" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                <label for="status">Active Status</label>
-                                <select name="status" class="form-control status">
-                                    <option value="1">Active</option>
-                                    <option value="0">In Active</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="updateCertification()">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- Delete Certification Modal -->
     <div class="modal fade" id="deleteCertificationModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteCertificationModalLabel" aria-hidden="true">
@@ -112,6 +78,14 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
+                                <div class="form-group col-sm-3 mb-3 px-0">
+                                    <label for="periodSelect">Visibility Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="1" selected><span class="text-danger">Published Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
+                                    </select>
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createCertificationModal">
                                     Create Certification
@@ -121,6 +95,7 @@
                                         <tr>
                                             <th>Sr.</th>
                                             <th>Name</th>
+                                            <th>Visibility Status</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -143,6 +118,12 @@
     {{-- Data Table --}}
     <script>
         // ######### Data Table ##############
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('certification.get') }}?is_draft=" + status).load();
+        }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
@@ -151,7 +132,7 @@
             // Initialize DataTable with options
             var dataTable = $('#example').DataTable({
                 "ajax": {
-                    "url": "{{ route('certification.get') }}",
+                    "url": "{{ route('certification.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -167,23 +148,48 @@
                         "data": "name"
                     },
                     {
-                        "data": null,
+                        "data": "is_draft",
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                            return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
+                        }
                     },
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success  mr-2 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                                return '<button id="update-status" class="btn ' + buttonClass +
+                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                            } else {
+                                // If it's not published, do not display the button
+                                return '<span class="text-muted">No Active Status</span>';
+                            }
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return `
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown${row.id}" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="actionDropdown${row.id}">
+                    <a class="dropdown-item editSubadminBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <a class="dropdown-item deleteSubadminBtn text-danger" href="#" data-id="${row.id}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </a>
+                </div>
+            </div>
+        `;
                         }
                     }
                 ]
@@ -199,15 +205,39 @@
         });
 
         // ##############Create Sub admin################
-        $(document).ready(function() {
-            $('#createCertificationForm input, #createCertificationForm select, #createCertificationForm textarea')
-                .on(
-                    'input change',
-                    function() {
-                        $(this).siblings('.invalid-feedback').text('');
-                        $(this).removeClass('is-invalid');
-                    });
-        });
+        let autosaveTimer;
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                const formData = new FormData($('#createCertificationForm')[0]);
+                var formDataObject = {};
+                formData.forEach(function(value, key) {
+                    formDataObject[key] = value;
+                });
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: '{{ route('certification.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000); // 1-second debounce
+        }
 
         function createCertification() {
             var formData = new FormData($('#createCertificationForm')[0]);
@@ -229,6 +259,7 @@
                 success: function(response) {
                     toastr.success('Certification Created Successfully!');
                     $('#createCertificationModal').modal('hide');
+                    $('#draft_id').val('');
                     reloadDataTable();
                     $('#createCertificationModal form')[0].reset();
                 },
@@ -237,9 +268,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
+                            toastr.error(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
@@ -250,19 +279,7 @@
                 }
             });
         }
-        $('#createCertificationForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
-        $('#createCertificationModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-        $('#createCertificationModal').on('show.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
+
         // ######Get & Update Certification#########
 
         function editCertificationModal(id) {
@@ -271,10 +288,13 @@
                 url: showCertification.replace(':id', id),
                 type: 'GET',
                 success: function(response) {
-                    $('#editCertification .name').val(response.name);
-                    $('#editCertification .status').val(response.status);
-                    $('#editCertificationModal').modal('show');
-                    $('#editCertificationModal').data('id', id);
+                    $('#createCertificationForm #name').val(response.name);
+                    $('#createCertificationForm #status').val(response.status);
+                    $('#createCertificationModal').modal('show');
+                    $('#createCertificationModal .modal-title').text('Edit');
+                    $('#createCertificationModal .btn-success').text('Publish');
+                    $('#draft_id').val(response.id);
+                    $('#createCertificationModal').data('id', id);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -282,61 +302,6 @@
                 }
             });
         }
-        // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editCertification input, #editCertification select, #editCertification textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
-
-        function updateCertification() {
-            var updateCertification = '{{ route('certification.update', ':id') }}';
-            var id = $('#editCertificationModal').data('id');
-            var formData = new FormData($('#editCertification')[0]);
-            // console.log('formData', formData);
-            $.ajax({
-                url: updateCertification.replace(':id', id),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Certification Updated Successfully!');
-                    $('#editCertificationModal').modal('hide');
-                    reloadDataTable();
-                    $('#editCertificationModal form')[0].reset();
-
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('.' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
-                                value[
-                                    0]);
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                }
-            });
-        }
-        $('#editCertificationModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
-
-        $('#editCertificationModal').on('show.bs.modal', function() {
-            $(this).find('.is-invalid').removeClass('is-invalid');
-            $(this).find('.invalid-feedback').html('');
-        });
         // ############# Delete Certification Data###########
         function deleteCertificationModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);

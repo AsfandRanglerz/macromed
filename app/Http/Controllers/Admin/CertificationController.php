@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use App\Models\Certification;
-use Illuminate\Validation\Rule;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CertificationRequest;
-use Illuminate\Support\Facades\Validator;
 
-class CertificationController extends Controller
+
+class CertificationController extends BaseController
 {
     protected $model = Certification::class;
     protected $keys = ['name', 'status'];
