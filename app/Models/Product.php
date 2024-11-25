@@ -54,5 +54,8 @@ class Product extends Model
     {
         return $this->morphMany(Discount::class, 'discountable');
     }
-
+    public function admin_user()
+    {
+        return $this->morphTo();
+    }
 }

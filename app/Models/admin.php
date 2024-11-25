@@ -18,6 +18,6 @@ class admin extends Authenticatable
 
     public function admin_user()
     {
-        return $this->morphMany(Category::class, 'admin_user');
+        return $this->morphMany(Product::class, 'admin_user');
     }
 }
