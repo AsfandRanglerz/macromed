@@ -220,7 +220,7 @@
                     formData.append('draft_id', draftId);
                 }
                 $.ajax({
-                    url: '{{ route('certification.autosave') }}',
+                    url: '{{ route('certifications.autosave') }}',
                     type: 'POST',
                     data: formData,
                     processData: false,
