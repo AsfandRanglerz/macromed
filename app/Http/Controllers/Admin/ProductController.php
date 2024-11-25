@@ -480,4 +480,117 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Failed to delete image.');
         }
     }
+
+
+
+    public function productAutosave(Request $request)
+    {
+        try {
+            $product = $request->draft_id
+                ? Product::find($request->draft_id)
+                : new Product();
+            $product->fill($request->only([
+                'product_hts',
+                'product_name',
+                'short_name',
+                'slug',
+                'company',
+                'country',
+                'models',
+                'product_commission',
+                'video_link',
+                'short_description',
+                'long_description',
+                'status',
+                'sterilizations',
+                'product_use_status',
+                'buyer_type',
+                'product_class',
+                'supplier_id',
+                'supplier_delivery_time',
+                'supplier_name',
+                'delivery_period',
+                'self_life',
+                'federal_tax',
+                'provincial_tax',
+                'tab_1_heading',
+                'tab_1_text',
+                'tab_2_heading',
+                'tab_2_text',
+                'tab_3_heading',
+                'tab_3_text',
+                'tab_4_heading',
+                'tab_4_text',
+                'product_condition'
+            ]));
+            if ($request->hasFile('thumbnail_image')) {
+                // Delete old image if exists
+                $oldImagePath =  $product->thumbnail_image;
+                // Delete old image if it exists
+                if ($product->thumbnail_image &&  File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
+                $thumbnail_image = $request->file('thumbnail_image');
+                $thumbnail_name = time() . '.' . $thumbnail_image->getClientOriginalExtension();
+                $thumbnail_path = 'public/admin/assets/images/products/' . $thumbnail_name;
+                $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
+                $product->thumbnail_image = $thumbnail_path;
+            }
+            $product->save();
+
+            // Update product variants
+            $category_ids = json_decode($request->input('category_id'), true);
+            $sub_category_ids = json_decode($request->input('sub_category_id'), true) ?? [];
+            $brand_ids = json_decode($request->input('brand_id'), true);
+            $certification_ids = json_decode($request->input('certification_id'), true);
+            $material_ids = json_decode($request->input('material_id'), true);
+            $taxes = $request->input('taxes');
+
+            // Delete old variants
+            ProductCatgeory::where('product_id', $product->id)->delete();
+            ProductSubCatgeory::where('product_id', $product->id)->delete();
+            ProductBrands::where('product_id', $product->id)->delete();
+            ProductCertifcation::where('product_id', $product->id)->delete();
+            ProductMaterial::where('product_id', $product->id)->delete();
+            ProductTax::where('product_id', $product->id)->delete();
+            // Insert new variants
+            foreach ($category_ids as $categoryId) {
+                ProductCatgeory::create(['product_id' => $product->id, 'category_id' => $categoryId]);
+            }
+
+            foreach ($sub_category_ids as $subCategoryId) {
+                ProductSubCatgeory::create(['product_id' => $product->id, 'sub_category_id' => $subCategoryId]);
+            }
+
+            foreach ($brand_ids as $brandId) {
+                ProductBrands::create(['product_id' => $product->id, 'brand_id' => $brandId]);
+            }
+
+            foreach ($certification_ids as $certificationId) {
+                ProductCertifcation::create(['product_id' => $product->id, 'certification_id' => $certificationId]);
+            }
+
+            foreach ($material_ids as $materialId) {
+                ProductMaterial::create(['product_id' => $product->id, 'material_id' => $materialId]);
+            }
+            // Handle taxes
+            if (!empty($taxes)) {
+                foreach ($taxes as $tax) {
+                    ProductTax::updateOrCreate(
+                        [
+                            'product_id' => $product->id,
+                            'tax_per_city' => $tax['tax_per_city']
+                        ],
+                        [
+                            'local_tax' => $tax['local_tax']
+                        ]
+                    );
+                }
+            }
+            return response()->json(['message' => 'Product Updated Successfully!']);
+        } catch (\Exception $e) {
+            // Log::error($e->getMessage());
+            return response()->json(['error' => 'Failed to update Product. Please try again later.' . $e->getMessage()]);
+        }
+    }
 }

@@ -15,8 +15,9 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
+                                <form method="POST" enctype="multipart/form-data">
                                     @csrf
+                                    <input type="hidden" id="draft_id" name="draft_id">
                                     <div class="form-group col-md-12">
                                         <label>Thumbnail Image Preview</label>
                                         <div>
@@ -569,6 +570,51 @@
 @endsection
 
 @section('js')
+    <script>
+        $(document).ready(function() {
+            let autosaveTimer;
+            // Function to save data in localStorage and send it to the backend
+            function saveFormData() {
+                let formData = {};
+                $('form input, form select, form textarea').each(function() {
+                    formData[$(this).attr('name')] = $(this).val();
+                });
+                localStorage.setItem("formData", JSON.stringify(formData));
+                clearTimeout(autosaveTimer);
+                autosaveTimer = setTimeout(() => {
+                    $.ajax({
+                        url: "{{ url('product/autosave') }}",
+                        type: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            formData: formData
+                        },
+                        success: function(response) {
+                            $('#draft_id').val(response.draft_id);
+                            console.log("Form data saved to database successfully.");
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr);
+
+                            console.error("Error saving form data to database.");
+                        }
+                    });
+                }, 1000);
+            }
+
+            // Listen for changes on form fields
+            $('form input, form select, form textarea').on('change', function() {
+                saveFormData();
+            });
+
+            // Optionally, save data on form submission
+            $('form').on('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+                saveFormData();
+            });
+        });
+    </script>
+
     <script>
         // Slug code
         (function($) {

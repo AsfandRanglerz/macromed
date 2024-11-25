@@ -281,6 +281,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/productData',  'productData')->name('product.get')->middleware('permission:Products');
         Route::get('/product',  'productIndex')->name('product.index')->middleware('permission:Products');
         Route::get('/product-create',  'productCreateIndex')->name('product.create')->middleware('permission:Products');
+        Route::post('/product/autosave',  'productAutosave')->name('product.autosave')->middleware('permission:Products');
         Route::post('/product-store', 'productStore')->name('product.store')->middleware('permission:Products');
         Route::get('/product-edit/{id}', 'productEdit')->name('product.show')->middleware('permission:Products');
         Route::post('/product-update/{id}', 'productUpdate')->name('product.update')->middleware('permission:Products');
