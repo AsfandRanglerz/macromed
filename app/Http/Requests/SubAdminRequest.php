@@ -26,8 +26,10 @@ class SubAdminRequest extends FormRequest
         $id = $this->route('category') ?? $this->input('draft_id');
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'user_email' => 'required|email|max:255|unique:users,user_email,' . $id,
             'phone' => 'required|numeric|min:11,' . $id,
+            'user_password' => 'required|string|min:8|max:255',
+            'confirmpassword' => 'required|same:user_password',
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
         ];
     }
