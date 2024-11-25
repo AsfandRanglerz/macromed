@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ProductCertifcation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
+use App\Traits\CountryApiRequestTrait;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -36,6 +37,7 @@ use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
+    use CountryApiRequestTrait;
     // ########## Generate Product Code #############
     private function generateUniqueProductId()
     {
@@ -66,20 +68,8 @@ class ProductController extends Controller
 
     public function productIndex()
     {
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => array(
-                'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $countries = json_decode($response);
-
-        // Decode the JSON response
-        if ($countries == NULL) {
+        $countries = $this->fetchApiData('https://api.countrystatecity.in/v1/countries');
+        if (isset($countries['error'])) {
             $countries = [];
         }
         // return $countries;
@@ -106,20 +96,8 @@ class ProductController extends Controller
 
     public function productCreateIndex()
     {
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => array(
-                'X-CSCAPI-KEY: TExJVmdYa1pFcWFsRWViS0c3dDRRdTdFV3hnWXJveFhQaHoyWVo3Mw=='
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $countries = json_decode($response);
-
-        // Decode the JSON response
-        if ($countries == NULL) {
+        $countries = $this->fetchApiData('https://api.countrystatecity.in/v1/countries');
+        if (isset($countries['error'])) {
             $countries = [];
         }
         // return $countries;

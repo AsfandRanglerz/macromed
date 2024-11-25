@@ -117,8 +117,19 @@
                                             </select>
                                         </div>
 
-
-
+                                        <!-- Models Field -->
+                                        {{-- <div class="form-group col-md-4">
+                                            <label>Models <span class="text-danger">*</span></label>
+                                            <select name="models" class="form-control select2" id="models">
+                                                <option value="" disabled selected>Select Models</option>
+                                                @foreach ($models as $model)
+                                                    <option value="{{ $model->name }}"
+                                                        {{ old('models') == $model->name ? 'selected' : '' }}>
+                                                        {{ $model->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div> --}}
                                         <div class="form-group col-md-4">
                                             <label>Product HTS Code<span class="text-danger">*</span></label>
                                             <input type="text" id="product_hts" class="form-control product_hts"
@@ -429,7 +440,94 @@
                                                     <option value="" disabled
                                                         {{ old('taxes.0.tax_per_city') == null ? 'selected' : '' }}>Select
                                                         City</option>
-                                                    @foreach ([] as $city)
+                                                    @foreach ([
+            'Karachi',
+            'Lahore',
+            'Faisalabad',
+            'Rawalpindi',
+            'Multan',
+            'Hyderabad',
+            'Gujranwala',
+            'Peshawar',
+            'Quetta',
+            'Islamabad',
+            'Sargodha',
+            'Sialkot',
+            'Bahawalpur',
+            'Sukkur',
+            'Larkana',
+            'Sheikhupura',
+            'Mardan',
+            'Gujrat',
+            'Rahim Yar Khan',
+            'Kasur',
+            'Okara',
+            'Sahiwal',
+            'Wah Cantonment',
+            'Dera Ghazi Khan',
+            'Mingora',
+            'Mirpur Khas',
+            'Chiniot',
+            'Nawabshah',
+            'Kamoke',
+            'Burewala',
+            'Jhelum',
+            'Sadiqabad',
+            'Khanewal',
+            'Hafizabad',
+            'Kohat',
+            'Jacobabad',
+            'Shikarpur',
+            'Muzaffargarh',
+            'Abottabad',
+            'Muridke',
+            'Jhang',
+            'Daska',
+            'Mandi Bahauddin',
+            'Khuzdar',
+            'Pakpattan',
+            'Tando Allahyar',
+            'Vehari',
+            'Gojra',
+            'Mandi Bahauddin',
+            'Turbat',
+            'Dadu',
+            'Bahawalnagar',
+            'Khairpur',
+            'Chishtian',
+            'Charsadda',
+            'Kandhkot',
+            'Mianwali',
+            'Tando Adam',
+            'Dera Ismail Khan',
+            'Kot Addu',
+            'Nowshera',
+            'Swabi',
+            'Chakwal',
+            'Tando Muhammad Khan',
+            'Jaranwala',
+            'Kandhkot',
+            'Hasilpur',
+            'Gojra',
+            'Samundri',
+            'Haveli Lakha',
+            'Layyah',
+            'Tank',
+            'Chaman',
+            'Bannu',
+            'Haripur',
+            'Attock',
+            'Mansehra',
+            'Lodhran',
+            'Chakwal',
+            'Chitral',
+            'Kharan',
+            'Kohlu',
+            'Zhob',
+            'Hub',
+            'Gwadar',
+            'Sibi',
+        ] as $city)
                                                         <option value="{{ $city }}"
                                                             {{ old('taxes.0.tax_per_city') == $city ? 'selected' : '' }}>
                                                             {{ $city }}

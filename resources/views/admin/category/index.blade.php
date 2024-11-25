@@ -235,8 +235,6 @@
         // ##############Create Sub admin################
         let autosaveTimer;
 
-
-
         function autosaveCategory() {
             clearTimeout(autosaveTimer);
             autosaveTimer = setTimeout(() => {
