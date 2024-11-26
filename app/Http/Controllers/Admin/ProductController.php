@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Log;
 use App\Models\Unit;
 use App\Models\Brands;
 use App\Models\Models;
@@ -27,6 +26,7 @@ use Illuminate\Validation\Rule;
 use App\Models\ProductSubCatgeory;
 use Illuminate\Support\Facades\DB;
 use App\Models\ProductCertifcation;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use App\Traits\CountryApiRequestTrait;
@@ -481,14 +481,14 @@ class ProductController extends Controller
         }
     }
 
-
-
     public function productAutosave(Request $request)
     {
         try {
             $product = $request->draft_id
                 ? Product::find($request->draft_id)
                 : new Product();
+
+            // Assign product-specific fields
             $product->fill($request->only([
                 'product_hts',
                 'product_name',
@@ -521,61 +521,56 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
-                'product_condition'
+                'product_condition',
             ]));
+
+            // Handle thumbnail image upload
             if ($request->hasFile('thumbnail_image')) {
-                // Delete old image if exists
-                $oldImagePath =  $product->thumbnail_image;
-                // Delete old image if it exists
-                if ($product->thumbnail_image &&  File::exists($oldImagePath)) {
+                $oldImagePath = $product->thumbnail_image;
+                if ($oldImagePath && File::exists($oldImagePath)) {
                     File::delete($oldImagePath);
                 }
+
                 $thumbnail_image = $request->file('thumbnail_image');
                 $thumbnail_name = time() . '.' . $thumbnail_image->getClientOriginalExtension();
                 $thumbnail_path = 'public/admin/assets/images/products/' . $thumbnail_name;
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
+
             $product->save();
 
-            // Update product variants
-            $category_ids = json_decode($request->input('category_id'), true);
-            $sub_category_ids = json_decode($request->input('sub_category_id'), true) ?? [];
-            $brand_ids = json_decode($request->input('brand_id'), true);
-            $certification_ids = json_decode($request->input('certification_id'), true);
-            $material_ids = json_decode($request->input('material_id'), true);
-            $taxes = $request->input('taxes');
+            $this->updateProductRelationships($product, $request);
 
-            // Delete old variants
-            ProductCatgeory::where('product_id', $product->id)->delete();
-            ProductSubCatgeory::where('product_id', $product->id)->delete();
-            ProductBrands::where('product_id', $product->id)->delete();
-            ProductCertifcation::where('product_id', $product->id)->delete();
-            ProductMaterial::where('product_id', $product->id)->delete();
-            ProductTax::where('product_id', $product->id)->delete();
-            // Insert new variants
-            foreach ($category_ids as $categoryId) {
-                ProductCatgeory::create(['product_id' => $product->id, 'category_id' => $categoryId]);
-            }
+            return response()->json(['draft_id' => $product->id, 'message' => 'Product Updated Successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update Product. Please try again later.' . $e->getMessage()]);
+        }
+    }
 
-            foreach ($sub_category_ids as $subCategoryId) {
-                ProductSubCatgeory::create(['product_id' => $product->id, 'sub_category_id' => $subCategoryId]);
-            }
+    private function updateProductRelationships($product, $request)
+    {
+        $relations = [
+            'category_id' => ProductCatgeory::class,
+            'sub_category_id' => ProductSubCatgeory::class,
+            'brand_id' => ProductBrands::class,
+            'certification_id' => ProductCertifcation::class,
+            'material_id' => ProductMaterial::class,
+        ];
 
-            foreach ($brand_ids as $brandId) {
-                ProductBrands::create(['product_id' => $product->id, 'brand_id' => $brandId]);
+        foreach ($relations as $key => $model) {
+            if ($request->filled($key)) {
+                foreach ($request->input($key) as $relationId) {
+                    $model::updateOrCreate(
+                        ['product_id' => $product->id, "{$key}" => $relationId]
+                    );
+                }
             }
-
-            foreach ($certification_ids as $certificationId) {
-                ProductCertifcation::create(['product_id' => $product->id, 'certification_id' => $certificationId]);
-            }
-
-            foreach ($material_ids as $materialId) {
-                ProductMaterial::create(['product_id' => $product->id, 'material_id' => $materialId]);
-            }
-            // Handle taxes
-            if (!empty($taxes)) {
-                foreach ($taxes as $tax) {
+        }
+        if ($request->filled('taxes')) {
+            foreach ($request->input('taxes') as $tax) {
+                // Check if 'tax_per_city' and 'local_tax' are set before accessing them
+                if (isset($tax['tax_per_city']) && isset($tax['local_tax'])) {
                     ProductTax::updateOrCreate(
                         [
                             'product_id' => $product->id,
@@ -585,12 +580,11 @@ class ProductController extends Controller
                             'local_tax' => $tax['local_tax']
                         ]
                     );
+                } else {
+                    // Handle missing tax values gracefully
+                    Log::warning('Missing tax_per_city or local_tax for product: ' . $product->id);
                 }
             }
-            return response()->json(['message' => 'Product Updated Successfully!']);
-        } catch (\Exception $e) {
-            // Log::error($e->getMessage());
-            return response()->json(['error' => 'Failed to update Product. Please try again later.' . $e->getMessage()]);
         }
     }
 }

@@ -15,7 +15,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form method="POST" enctype="multipart/form-data">
+                                <form id="productForm" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" id="draft_id" name="draft_id">
                                     <div class="form-group col-md-12">
@@ -558,7 +558,6 @@
                                         </div>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                     </div>
@@ -572,48 +571,115 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            let autosaveTimer;
-            // Function to save data in localStorage and send it to the backend
-            function saveFormData() {
-                let formData = {};
-                $('form input, form select, form textarea').each(function() {
-                    formData[$(this).attr('name')] = $(this).val();
-                });
-                localStorage.setItem("formData", JSON.stringify(formData));
-                clearTimeout(autosaveTimer);
-                autosaveTimer = setTimeout(() => {
-                    $.ajax({
-                        url: "{{ url('product/autosave') }}",
-                        type: 'POST',
-                        data: {
-                            _token: $('meta[name="csrf-token"]').attr('content'),
-                            formData: formData
-                        },
-                        success: function(response) {
-                            $('#draft_id').val(response.draft_id);
-                            console.log("Form data saved to database successfully.");
-                        },
-                        error: function(xhr, status, error) {
-                            console.log(xhr);
-
-                            console.error("Error saving form data to database.");
+            function restoreFormData(savedData) {
+                for (let key in savedData) {
+                    let field = $('[name="' + key + '"]');
+                    if (field.length) {
+                        if (field.is('input[type="text"]') || field.is('textarea') || field.is(
+                                'input[type="hidden"]')) {
+                            field.val(savedData[key]);
+                        } else if (field.is('select')) {
+                            field.val(savedData[key]).change(); // Trigger change event for select
+                        } else if (field.is('input[type="radio"], input[type="checkbox"]')) {
+                            field.each(function() {
+                                if ($(this).val() === savedData[key]) {
+                                    $(this).prop('checked', true); // Check radio button or checkbox
+                                }
+                            });
                         }
-                    });
-                }, 1000);
+                    }
+                }
             }
 
-            // Listen for changes on form fields
-            $('form input, form select, form textarea').on('change', function() {
+            // Check if there is saved data in localStorage
+            if (localStorage.getItem("formData")) {
+                let savedData = JSON.parse(localStorage.getItem("formData"));
+                restoreFormData(savedData);
+            }
+            let formData = {};
+
+            // Monitor the form fields for changes and save data to formData object
+            $('form input, form select, form textarea').each(function() {
+                var fieldName = $(this).attr('name');
+                var fieldValue = $(this).val();
+                if (fieldName && fieldValue !== '') {
+                    formData[fieldName] = fieldValue;
+                }
+            });
+
+
+            var taxes = [];
+            $('form .taxes').each(function() {
+                var taxData = {};
+                var taxPerCity = $(this).find('.tax_per_city').val();
+                var localTax = $(this).find('.local_tax').val();
+
+                if (taxPerCity && localTax) {
+                    taxData.tax_per_city = taxPerCity;
+                    taxData.local_tax = localTax;
+                    taxes.push(taxData);
+                }
+            });
+
+            if (taxes.length > 0) {
+                formData.taxes = taxes;
+            }
+
+            let autosaveTimer;
+
+            function saveFormData() {
+                clearTimeout(autosaveTimer);
+                if (Object.keys(formData).length > 0) {
+                    autosaveTimer = setTimeout(function() {
+                        var formDataObj = new FormData($('#productForm')[0]);
+                        const draftId = $('#draft_id').val();
+                        if (draftId) {
+                            formDataObj.append('draft_id', draftId);
+                        }
+                        localStorage.setItem("formData", JSON.stringify(formData));
+                        console.log("Data saved to localStorage:", formData);
+                        $.ajax({
+                            url: "{{ url('admin/product/autosave') }}",
+                            type: 'POST',
+                            data: formDataObj,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                if (response.draft_id) {
+                                    $('#draft_id').val(response.draft_id);
+                                }
+                                toastr.success('Data Saved SuccessFully');
+                                console.log("Form data saved to database successfully.",
+                                    response);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error saving form data to database.");
+                            }
+                        });
+                    }, 1000); 
+                }
+            }
+
+            // Trigger the save on input change
+            $('form input, form select, form textarea').on('change input', function() {
                 saveFormData();
             });
 
-            // Optionally, save data on form submission
-            $('form').on('submit', function(event) {
-                event.preventDefault(); // Prevent default form submission
+            // Also save before the window unloads
+            window.addEventListener('beforeunload', function(event) {
                 saveFormData();
             });
+
+            function clearLocalStorage() {
+                localStorage.removeItem("formData");
+                console.log("LocalStorage cleared after saving form data.");
+            }
         });
     </script>
+
+
+
+
 
     <script>
         // Slug code
