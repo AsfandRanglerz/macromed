@@ -131,7 +131,10 @@ class ProductController extends Controller
     {
         try {
             DB::beginTransaction();
-            $product = new Product($request->only([
+            $product = $request->draft_id
+                ? Product::findOrFail($request->draft_id)
+                : new Product();
+            $product->fill($request->only([
                 'product_hts',
                 'product_name',
                 'short_name',
@@ -163,72 +166,24 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
-                'product_condition'
+                'product_condition',
             ]));
-            $product->product_code = $this->generateUniqueProductId();
+
+            // Handle thumbnail image upload
             if ($request->hasFile('thumbnail_image')) {
+                $oldImagePath = $product->thumbnail_image;
+                if ($oldImagePath && File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
                 $thumbnail_image = $request->file('thumbnail_image');
                 $thumbnail_name = time() . '.' . $thumbnail_image->getClientOriginalExtension();
                 $thumbnail_path = 'public/admin/assets/images/products/' . $thumbnail_name;
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
+            $product->is_darft = 1;
             $product->save();
-            // Save product variants
-            $category_ids = $request->input('category_id');
-            $sub_category_ids = $request->input('sub_category_id');
-            $brand_ids = $request->input('brand_id');
-            $certification_ids = $request->input('certification_id');
-            $material_ids = $request->input('material_id');
-
-            foreach ($category_ids as $categoryId) {
-                ProductCatgeory::create([
-                    'product_id' => $product->id,
-                    'category_id' => $categoryId
-                ]);
-            }
-            if ($sub_category_ids) {
-                foreach ($sub_category_ids as $subCategoryId) {
-                    ProductSubCatgeory::create([
-                        'product_id' => $product->id,
-                        'sub_category_id' => $subCategoryId
-                    ]);
-                }
-            }
-            foreach ($brand_ids as $brandId) {
-                ProductBrands::create([
-                    'product_id' => $product->id,
-                    'brand_id' => $brandId
-                ]);
-            }
-
-            foreach ($certification_ids as $certificationId) {
-                ProductCertifcation::create([
-                    'product_id' => $product->id,
-                    'certification_id' => $certificationId
-                ]);
-            }
-
-            foreach ($material_ids as $materialId) {
-                ProductMaterial::create([
-                    'product_id' => $product->id,
-                    'material_id' => $materialId
-                ]);
-            }
-
-            if ($request->has('taxes')) {
-                foreach ($request->taxes as $tax) {
-                    ProductTax::updateOrCreate(
-                        [
-                            'product_id' => $product->id,
-                            'tax_per_city' => $tax['tax_per_city'],
-                        ],
-                        [
-                            'local_tax' => $tax['local_tax'],
-                        ]
-                    );
-                }
-            }
+            $this->updateProductRelationships($product, $request);
             DB::commit();
             return redirect()->route('product.index')->with('message', 'Product Created Successfully!');
         } catch (\Exception $e) {
@@ -487,8 +442,6 @@ class ProductController extends Controller
             $product = $request->draft_id
                 ? Product::find($request->draft_id)
                 : new Product();
-
-            // Assign product-specific fields
             $product->fill($request->only([
                 'product_hts',
                 'product_name',
@@ -530,7 +483,6 @@ class ProductController extends Controller
                 if ($oldImagePath && File::exists($oldImagePath)) {
                     File::delete($oldImagePath);
                 }
-
                 $thumbnail_image = $request->file('thumbnail_image');
                 $thumbnail_name = time() . '.' . $thumbnail_image->getClientOriginalExtension();
                 $thumbnail_path = 'public/admin/assets/images/products/' . $thumbnail_name;

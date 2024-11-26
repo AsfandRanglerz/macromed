@@ -554,7 +554,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 text-center">
-                                            <button class="btn btn-success">Save</button>
+                                            <button class="btn btn-success" onclick="saveProduct()">Save</button>
                                         </div>
                                     </div>
                                 </form>
@@ -571,19 +571,19 @@
 @section('js')
     <script>
         $(document).ready(function() {
+            // Restore form data from localStorage
             function restoreFormData(savedData) {
                 for (let key in savedData) {
                     let field = $('[name="' + key + '"]');
                     if (field.length) {
-                        if (field.is('input[type="text"]') || field.is('textarea') || field.is(
-                                'input[type="hidden"]')) {
+                        if (field.is('input[type="text"], textarea, input[type="hidden"]')) {
                             field.val(savedData[key]);
                         } else if (field.is('select')) {
-                            field.val(savedData[key]).change(); // Trigger change event for select
+                            field.val(savedData[key]).change();
                         } else if (field.is('input[type="radio"], input[type="checkbox"]')) {
                             field.each(function() {
                                 if ($(this).val() === savedData[key]) {
-                                    $(this).prop('checked', true); // Check radio button or checkbox
+                                    $(this).prop('checked', true);
                                 }
                             });
                         }
@@ -591,64 +591,85 @@
                 }
             }
 
-            // Check if there is saved data in localStorage
+            // Check if saved data exists and restore
             if (localStorage.getItem("formData")) {
                 let savedData = JSON.parse(localStorage.getItem("formData"));
                 restoreFormData(savedData);
             }
+
             let formData = {};
 
-            // Monitor the form fields for changes and save data to formData object
-            $('form input, form select, form textarea').each(function() {
-                var fieldName = $(this).attr('name');
-                var fieldValue = $(this).val();
-                if (fieldName && fieldValue !== '') {
-                    formData[fieldName] = fieldValue;
+            // Update formData object with current form values
+            function updateFormData() {
+                $('form input, form select, form textarea').each(function() {
+                    var fieldName = $(this).attr('name');
+                    var fieldValue = $(this).val();
+                    if (fieldName) {
+                        if ($(this).is(':radio, :checkbox')) {
+                            if ($(this).is(':checked')) {
+                                formData[fieldName] = fieldValue;
+                            }
+                        } else {
+                            formData[fieldName] = fieldValue;
+                        }
+                    }
+                });
+
+                // Handle dynamic tax fields
+                var taxes = [];
+                $('form .taxes').each(function() {
+                    var taxData = {};
+                    var taxPerCity = $(this).find('.tax_per_city').val();
+                    var localTax = $(this).find('.local_tax').val();
+
+                    if (taxPerCity && localTax) {
+                        taxData.tax_per_city = taxPerCity;
+                        taxData.local_tax = localTax;
+                        taxes.push(taxData);
+                    }
+                });
+
+                if (taxes.length > 0) {
+                    formData.taxes = taxes;
                 }
-            });
-
-
-            var taxes = [];
-            $('form .taxes').each(function() {
-                var taxData = {};
-                var taxPerCity = $(this).find('.tax_per_city').val();
-                var localTax = $(this).find('.local_tax').val();
-
-                if (taxPerCity && localTax) {
-                    taxData.tax_per_city = taxPerCity;
-                    taxData.local_tax = localTax;
-                    taxes.push(taxData);
-                }
-            });
-
-            if (taxes.length > 0) {
-                formData.taxes = taxes;
             }
 
-            let autosaveTimer;
+            // Debounce function to optimize autosave
+            let saveTimeout;
 
             function saveFormData() {
-                clearTimeout(autosaveTimer);
-                if (Object.keys(formData).length > 0) {
-                    autosaveTimer = setTimeout(function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(function() {
+                    updateFormData(); // Update form data
+                    if (Object.keys(formData).length > 0) {
+
+                        localStorage.setItem("formData", JSON.stringify(formData));
+                        console.log("Data saved to localStorage:", formData);
+
+                        editors.forEach((editor, index) => {
+                            let textarea = document.querySelectorAll('.long_description')[index];
+                            textarea.value = editor.getData();
+                        });
+
                         var formDataObj = new FormData($('#productForm')[0]);
                         const draftId = $('#draft_id').val();
                         if (draftId) {
                             formDataObj.append('draft_id', draftId);
                         }
-                        localStorage.setItem("formData", JSON.stringify(formData));
-                        console.log("Data saved to localStorage:", formData);
                         $.ajax({
                             url: "{{ url('admin/product/autosave') }}",
                             type: 'POST',
                             data: formDataObj,
                             processData: false,
                             contentType: false,
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
                             success: function(response) {
                                 if (response.draft_id) {
                                     $('#draft_id').val(response.draft_id);
                                 }
-                                toastr.success('Data Saved SuccessFully');
+                                toastr.success('Data saved successfully');
                                 console.log("Form data saved to database successfully.",
                                     response);
                             },
@@ -656,26 +677,61 @@
                                 console.error("Error saving form data to database.");
                             }
                         });
-                    }, 1000); 
-                }
+                    }
+                }, 1000);
             }
 
-            // Trigger the save on input change
+            // Save data on input change
             $('form input, form select, form textarea').on('change input', function() {
                 saveFormData();
             });
 
-            // Also save before the window unloads
-            window.addEventListener('beforeunload', function(event) {
-                saveFormData();
+            // Save data before the window unloads
+            window.addEventListener('beforeunload', function() {
+                localStorage.setItem("formData", JSON.stringify(formData));
             });
 
-            function clearLocalStorage() {
+            // Clear localStorage and form data
+            $('#clearStorage').on('click', function() {
                 localStorage.removeItem("formData");
-                console.log("LocalStorage cleared after saving form data.");
-            }
+                $('form')[0].reset(); // Reset the form
+                formData = {}; // Clear the formData object
+                console.log("LocalStorage cleared and form reset.");
+            });
         });
+
+        function saveProduct() {
+            var formData = new FormData($('#productForm')[0]);
+            const url = '{{ route('category.create') }}';
+            const method = 'POST';
+            $.ajax({
+                url: url,
+                type: method,
+                data: formDataObj,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: function(response) {
+                    $('#draft_id').val('');
+                    localStorage.removeItem("formData");
+                    $('#createCategoryForm')[0].reset();
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 422) { // Validation error
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            toastr.error(value[0]);
+                        });
+                    } else {
+                        console.error(xhr.responseText);
+                    }
+                }
+            });
+        }
     </script>
+
 
 
 
@@ -718,11 +774,26 @@
                 .create(textarea)
                 .then(editor => {
                     editors[index] = editor;
+
+                    // Check if there's saved content in localStorage for this editor
+                    let savedData = JSON.parse(localStorage.getItem(textarea.name));
+                    if (savedData) {
+                        // Restore CKEditor content from localStorage
+                        editor.setData(savedData);
+                    }
+
+                    // Sync the CKEditor data to localStorage when content changes
+                    editor.model.document.on('change:data', () => {
+                        let content = editor.getData();
+                        localStorage.setItem(textarea.name, JSON.stringify(content));
+                    });
                 })
                 .catch(error => {
                     console.error(error);
                 });
         });
+
+
 
         // Show sub Categories against Category
         $(document).ready(function() {
