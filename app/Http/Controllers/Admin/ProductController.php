@@ -61,7 +61,7 @@ class ProductController extends Controller
     }
     public function productData()
     {
-        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->latest()->get();
+        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('is_draft', 1)->latest()->get();
         $json_data["data"] = $products;
         return json_encode($json_data);
     }
@@ -127,7 +127,7 @@ class ProductController extends Controller
         return response()->json($subCategories);
     }
 
-    public function productStore(StoreProductRequest $request)
+    public function productStore(UpdateProductRequest $request)
     {
         try {
             DB::beginTransaction();
@@ -182,13 +182,14 @@ class ProductController extends Controller
                 $product->thumbnail_image = $thumbnail_path;
             }
             $product->is_darft = 1;
+            $product->product_code = $this->generateUniqueProductId();
             $product->save();
             $this->updateProductRelationships($product, $request);
             DB::commit();
-            return redirect()->route('product.index')->with('message', 'Product Created Successfully!');
+            return response()->json(['status' => 'success', 'message' => 'Product Created Successfully!'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to save Product. Please try again later.' . $e->getMessage());
+            return response()->json(['error', 'Failed to save Product. Please try again later.' . $e->getMessage()], 500);
         }
     }
 

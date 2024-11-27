@@ -691,22 +691,18 @@
                 localStorage.setItem("formData", JSON.stringify(formData));
             });
 
-            // Clear localStorage and form data
-            $('#clearStorage').on('click', function() {
-                localStorage.removeItem("formData");
-                $('form')[0].reset(); // Reset the form
-                formData = {}; // Clear the formData object
-                console.log("LocalStorage cleared and form reset.");
-            });
         });
 
         function saveProduct() {
-            var formData = new FormData($('#productForm')[0]);
-            const url = '{{ route('category.create') }}';
-            const method = 'POST';
+            console.log("data");
+            var formDataObj = new FormData($('#productForm')[0]);
+            const draftId = $('#draft_id').val();
+            if (draftId) {
+                formDataObj.append('draft_id', draftId);
+            }
             $.ajax({
-                url: url,
-                type: method,
+                url: "{{ url('admin/product-store') }}",
+                type:'POST',
                 data: formDataObj,
                 processData: false,
                 contentType: false,
@@ -716,10 +712,16 @@
                 success: function(response) {
                     $('#draft_id').val('');
                     localStorage.removeItem("formData");
-                    $('#createCategoryForm')[0].reset();
+                    $('#productForm')[0].reset();
+                    toastr.success("Product saved successfully!");
+                    setTimeout(function() {
+                        window.location.href = "{{ route('product.index') }}";
+                    }, 2000);
                 },
                 error: function(xhr, status, error) {
-                    if (xhr.status === 422) { // Validation error
+                    console.log(xhr);
+
+                    if (xhr.status === 422) {
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
                             toastr.error(value[0]);
@@ -731,12 +733,6 @@
             });
         }
     </script>
-
-
-
-
-
-
     <script>
         // Slug code
         (function($) {
@@ -792,9 +788,6 @@
                     console.error(error);
                 });
         });
-
-
-
         // Show sub Categories against Category
         $(document).ready(function() {
             // Trigger change if any category is already selected
@@ -857,15 +850,6 @@
             }
         });
 
-
-
-
-        //#### Torster Message##########
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                toastr.error('{{ $error }}');
-            @endforeach
-        @endif
         //################ Get Supplier Name ############
         // Fetch and populate supplier names
         let oldSupplierName = '{{ old('supplier_name_display') }}';
