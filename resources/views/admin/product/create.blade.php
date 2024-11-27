@@ -607,7 +607,6 @@
                 let savedData = JSON.parse(localStorage.getItem("formData"));
                 restoreFormData(savedData);
             }
-
             function updateFormData() {
                 formData = {}; // Reset formData
                 $('form input, form select, form textarea').each(function() {
