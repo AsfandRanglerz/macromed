@@ -440,31 +440,8 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
-                                @php
-                                    $auth = auth('web')->check()
-                                        ? auth('web')->user()
-                                        : (auth('admin')->check()
-                                            ? auth('admin')->user()
-                                            : null);
-                                    $createProductRoute = route('product.create');
-                                    $draftProduct = \App\Models\Product::where('is_draft', 1)
-                                        ->whereHasMorph(
-                                            'admin_user',
-                                            [\App\Models\Admin::class, \App\Models\User::class],
-                                            function ($query) use ($auth) {
-                                                $query->where('id', $auth->id);
-                                            },
-                                        )
-                                        ->first();
-
-                                    // If a draft exists, change the URL to the draft edit route
-                                    if ($draftProduct) {
-                                        $createProductRoute = route('product.edit', $draftProduct->id);
-                                    }
-                                @endphp
-
-                                <a class="btn btn-primary mb-3 text-white" href="{{ $createProductRoute }}">
-                                    {{ $draftProduct ? 'Edit Draft Product' : 'Create Product' }}
+                                <a class="btn btn-primary mb-3 text-white" href="{{ route('product.create') }}">
+                                    Create Product
                                 </a>
 
                                 <table class="responsive table table-striped table-bordered" id="example">

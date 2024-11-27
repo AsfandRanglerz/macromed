@@ -572,9 +572,14 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            // localStorage.removeItem("formData");
-            // clearEditors(editors)
-            // Restore form data from localStorage
+            function ckEditor() {
+                editors.forEach((editor, index) => {
+                    let textarea = document.querySelectorAll('.long_description')[index];
+                    textarea.value = editor.getData();
+                });
+            }
+            let formData = {};
+            // clearLocalStorage();
             function restoreFormData(savedData) {
                 for (let key in savedData) {
                     let field = $('[name="' + key + '"]');
@@ -591,39 +596,40 @@
                             });
                         }
                     }
+
+                    // Restore the image preview
+                    if (key === 'thumbnailPreview' && savedData[key]) {
+                        $('#preview-img').attr('src', savedData[key]);
+                    }
                 }
             }
-
-            // Check if saved data exists and restore
             if (localStorage.getItem("formData")) {
                 let savedData = JSON.parse(localStorage.getItem("formData"));
                 restoreFormData(savedData);
             }
 
-            let formData = {};
-
-            // Update formData object with current form values
             function updateFormData() {
+                formData = {}; // Reset formData
                 $('form input, form select, form textarea').each(function() {
-                    var fieldName = $(this).attr('name');
-                    var fieldValue = $(this).val();
+                    let fieldName = $(this).attr('name');
+                    let fieldValue = $(this).val();
+
                     if (fieldName) {
                         if ($(this).is(':radio, :checkbox')) {
                             if ($(this).is(':checked')) {
-                                formData[fieldName] = fieldValue;
+                                formData[fieldName] = fieldValue || '';
                             }
-                        } else {
+                        } else if (fieldValue !== '') {
                             formData[fieldName] = fieldValue;
                         }
                     }
                 });
 
-                // Handle dynamic tax fields
-                var taxes = [];
+                let taxes = [];
                 $('form .taxes').each(function() {
-                    var taxData = {};
-                    var taxPerCity = $(this).find('.tax_per_city').val();
-                    var localTax = $(this).find('.local_tax').val();
+                    let taxData = {};
+                    let taxPerCity = $(this).find('.tax_per_city').val();
+                    let localTax = $(this).find('.local_tax').val();
 
                     if (taxPerCity && localTax) {
                         taxData.tax_per_city = taxPerCity;
@@ -635,30 +641,28 @@
                 if (taxes.length > 0) {
                     formData.taxes = taxes;
                 }
+                const thumbnailSrc = $('#preview-img').attr('src');
+                if (thumbnailSrc) {
+                    formData.thumbnailPreview = thumbnailSrc;
+                }
             }
 
-            // Debounce function to optimize autosave
+            // Debounced form data save
             let saveTimeout;
-
             function saveFormData() {
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(function() {
                     updateFormData();
                     if (Object.keys(formData).length > 0) {
-
                         localStorage.setItem("formData", JSON.stringify(formData));
-                        console.log("Data saved to localStorage:", formData);
-
-                        editors.forEach((editor, index) => {
-                            let textarea = document.querySelectorAll('.long_description')[index];
-                            textarea.value = editor.getData();
-                        });
-
-                        var formDataObj = new FormData($('#productForm')[0]);
+                        ckEditor();
+                        // Make AJAX request to save data in the database
+                        let formDataObj = new FormData($('#productForm')[0]);
                         const draftId = $('#draft_id').val();
                         if (draftId) {
                             formDataObj.append('draft_id', draftId);
                         }
+
                         $.ajax({
                             url: "{{ url('admin/product/autosave') }}",
                             type: 'POST',
@@ -673,90 +677,90 @@
                                     $('#draft_id').val(response.draft_id);
                                 }
                                 toastr.success('Data saved successfully');
-                                console.log("Form data saved to database successfully.",
-                                    response);
                             },
-                            error: function(xhr, status, error) {
+                            error: function(xhr) {
                                 if (xhr.status === 422) {
-                                    var errors = xhr.responseJSON.errors;
+                                    let errors = xhr.responseJSON.errors;
                                     $.each(errors, function(key, value) {
                                         toastr.error(value[0]);
                                     });
                                 } else {
-                                    console.error("Error saving form data to database.");
+                                    toastr.error("Error saving form data to the database.");
                                 }
                             }
                         });
                     }
                 }, 1000);
             }
+            $('form input, form select, form textarea').on('change input', saveFormData);
 
-            // Save data on input change
-            $('form input, form select, form textarea').on('change input', function() {
-                saveFormData();
-            });
+            let isSaving = false; // Flag to track if form is being saved
 
-            // Save data before the window unloads
-            window.addEventListener('beforeunload', function() {
-                localStorage.setItem("formData", JSON.stringify(formData));
-            });
-
-        });
-
-
-
-        function saveProduct() {
-            var formDataObj = new FormData($('#productForm')[0]);
-            const draftId = $('#draft_id').val();
-            if (draftId) {
-                formDataObj.append('draft_id', draftId);
-            }
-            $.ajax({
-                url: "{{ route('product.store') }}",
-                type: 'POST',
-                data: formDataObj,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                },
-                success: function(response) {
-                    $('#draft_id').val('');
-                    localStorage.removeItem("formData");
-                    // Reset the form
-                    $('#productForm')[0].reset();
-                    $('#productForm input, #productForm textarea, #productForm select').each(function() {
-                        if ($(this).is('input[type="text"], textarea, input[type="hidden"]')) {
-                            $(this).val('');
-                        } else if ($(this).is('select')) {
-                            $(this).val('').change();
-                        } else if ($(this).is('input[type="radio"], input[type="checkbox"]')) {
-                            $(this).prop('checked', false);
-                        }
-                    });
-                    editors.forEach(editor => {
-                        editor.setData('');
-                    });
-                    toastr.success("Product saved successfully!");
-                    setTimeout(function() {
-                        window.location.href = "{{ route('product.index') }}";
-                    }, 2000);
-                },
-                error: function(xhr, status, error) {
-                    console.log(xhr);
-
-                    if (xhr.status === 422) {
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
-                        });
-                    } else {
-                        toastr.error('Failed to Create Product. Please try again later');
-                    }
+            window.addEventListener('beforeunload', function(event) {
+                if (!isSaving) {
+                    localStorage.setItem("formData", JSON.stringify(formData));
                 }
             });
-        }
+
+
+
+            function clearLocalStorage() {
+                localStorage.removeItem("formData");
+            }
+            window.saveProduct = function saveProduct() {
+                isSaving = true;
+                $('form input, form select, form textarea').off('change input'); // Stop autosave events
+                ckEditor();
+                let formDataObj = new FormData($('#productForm')[0]);
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formDataObj.append('draft_id', draftId);
+                }
+
+                $('form input, form select, form textarea').each(function() {
+                    if ($(this).val() === '' || $(this).val() === null) {
+                        $(this).prop('disabled', true);
+                    }
+                });
+
+                $.ajax({
+                    url: "{{ route('product.store') }}",
+                    type: 'POST',
+                    data: formDataObj,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function() {
+                        toastr.success("Product saved successfully!");
+                        setTimeout(function() {
+                            $('#draft_id').val('');
+                            clearLocalStorage();
+                            window.location.href = "{{ route('product.index') }}";
+                        }, 2000);
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            $('form input, form select, form textarea').prop('disabled', false);
+                            let errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                toastr.error(value[0]);
+                            });
+                        } else {
+                            toastr.error("Failed to save product. Try again later.");
+                        }
+                    },
+                    complete: function() {
+                        $('form input, form select, form textarea').prop('disabled', false);
+                    }
+                });
+            };
+
+        });
     </script>
+
+
     <script>
         // Slug code
         (function($) {
@@ -779,12 +783,19 @@
             var reader = new FileReader();
             reader.onload = function() {
                 var output = document.getElementById('preview-img');
-                output.src = reader.result; // Update preview with the new image
+                const imageData = reader.result;
+                output.src = imageData;
+
+                // Update the thumbnail preview in formData
+                let savedData = JSON.parse(localStorage.getItem('formData')) || {};
+                savedData.thumbnailPreview = imageData; // Store under a specific key
+                localStorage.setItem('formData', JSON.stringify(savedData));
             }
             if (event.target.files[0]) { // Check if a file was selected
                 reader.readAsDataURL(event.target.files[0]);
             }
         }
+
 
         // Classic Editor Code
         let editors = [];
