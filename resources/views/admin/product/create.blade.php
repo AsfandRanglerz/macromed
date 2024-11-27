@@ -649,6 +649,7 @@
 
             // Debounced form data save
             let saveTimeout;
+
             function saveFormData() {
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(function() {
@@ -702,8 +703,6 @@
                 }
             });
 
-
-
             function clearLocalStorage() {
                 localStorage.removeItem("formData");
             }
@@ -716,13 +715,6 @@
                 if (draftId) {
                     formDataObj.append('draft_id', draftId);
                 }
-
-                $('form input, form select, form textarea').each(function() {
-                    if ($(this).val() === '' || $(this).val() === null) {
-                        $(this).prop('disabled', true);
-                    }
-                });
-
                 $.ajax({
                     url: "{{ route('product.store') }}",
                     type: 'POST',
