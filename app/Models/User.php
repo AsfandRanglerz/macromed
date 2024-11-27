@@ -79,8 +79,5 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(WhishList::class, 'user_id');
     }
 
-    public function admin_user()
-    {
-        return $this->morphMany(Product::class, 'admin_user');
-    }
+
 }

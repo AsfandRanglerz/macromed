@@ -181,7 +181,7 @@ class ProductController extends Controller
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
-            $product->is_darft = 1;
+            $product->is_draft = 1;
             $product->product_code = $this->generateUniqueProductId();
             $product->save();
             $this->updateProductRelationships($product, $request);

@@ -554,7 +554,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 text-center">
-                                            <button class="btn btn-success" onclick="saveProduct()">Save</button>
+                                            <button type="button" class="btn btn-success"
+                                                onclick="saveProduct()">Save</button>
                                         </div>
                                     </div>
                                 </form>
@@ -571,6 +572,8 @@
 @section('js')
     <script>
         $(document).ready(function() {
+            // localStorage.removeItem("formData");
+            // clearEditors(editors)
             // Restore form data from localStorage
             function restoreFormData(savedData) {
                 for (let key in savedData) {
@@ -640,7 +643,7 @@
             function saveFormData() {
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(function() {
-                    updateFormData(); // Update form data
+                    updateFormData();
                     if (Object.keys(formData).length > 0) {
 
                         localStorage.setItem("formData", JSON.stringify(formData));
@@ -674,7 +677,14 @@
                                     response);
                             },
                             error: function(xhr, status, error) {
-                                console.error("Error saving form data to database.");
+                                if (xhr.status === 422) {
+                                    var errors = xhr.responseJSON.errors;
+                                    $.each(errors, function(key, value) {
+                                        toastr.error(value[0]);
+                                    });
+                                } else {
+                                    console.error("Error saving form data to database.");
+                                }
                             }
                         });
                     }
@@ -693,16 +703,17 @@
 
         });
 
+
+
         function saveProduct() {
-            console.log("data");
             var formDataObj = new FormData($('#productForm')[0]);
             const draftId = $('#draft_id').val();
             if (draftId) {
                 formDataObj.append('draft_id', draftId);
             }
             $.ajax({
-                url: "{{ url('admin/product-store') }}",
-                type:'POST',
+                url: "{{ route('product.store') }}",
+                type: 'POST',
                 data: formDataObj,
                 processData: false,
                 contentType: false,
@@ -712,7 +723,20 @@
                 success: function(response) {
                     $('#draft_id').val('');
                     localStorage.removeItem("formData");
+                    // Reset the form
                     $('#productForm')[0].reset();
+                    $('#productForm input, #productForm textarea, #productForm select').each(function() {
+                        if ($(this).is('input[type="text"], textarea, input[type="hidden"]')) {
+                            $(this).val('');
+                        } else if ($(this).is('select')) {
+                            $(this).val('').change();
+                        } else if ($(this).is('input[type="radio"], input[type="checkbox"]')) {
+                            $(this).prop('checked', false);
+                        }
+                    });
+                    editors.forEach(editor => {
+                        editor.setData('');
+                    });
                     toastr.success("Product saved successfully!");
                     setTimeout(function() {
                         window.location.href = "{{ route('product.index') }}";
@@ -727,7 +751,7 @@
                             toastr.error(value[0]);
                         });
                     } else {
-                        console.error(xhr.responseText);
+                        toastr.error('Failed to Create Product. Please try again later');
                     }
                 }
             });
@@ -777,8 +801,6 @@
                         // Restore CKEditor content from localStorage
                         editor.setData(savedData);
                     }
-
-                    // Sync the CKEditor data to localStorage when content changes
                     editor.model.document.on('change:data', () => {
                         let content = editor.getData();
                         localStorage.setItem(textarea.name, JSON.stringify(content));
