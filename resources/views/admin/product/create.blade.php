@@ -538,7 +538,7 @@
                                     <!-- Append Button & Fields -->
                                     <div class="row col-md-12 mt-0 mb-2">
                                         <div class="col-md-12">
-                                            <button type="button" class="btn btn-success" id="addTaxBtn">
+                                            <button type="button" class="btn btn-primary" id="addTaxBtn">
                                                 Add Tax/City
                                             </button>
                                         </div>
