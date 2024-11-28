@@ -64,18 +64,9 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Sub Category</label>
-                                            <select name="sub_category_id[]" class="form-control select2" id="sub_category"
-                                                multiple>
+                                            <select name="sub_category_id[]" class="form-control select2 sub_category"
+                                                id="sub_category" multiple style="width: 100%">
                                                 <option value="">Select Sub Category</option>
-                                                @if (old('sub_category_id'))
-                                                    @foreach ($subCategories as $subCategory)
-                                                        <!-- Assuming $subCategories is passed -->
-                                                        <option value="{{ $subCategory->id }}"
-                                                            {{ in_array($subCategory->id, old('sub_category_id', [])) ? 'selected' : '' }}>
-                                                            {{ $subCategory->name }}
-                                                        </option>
-                                                    @endforeach
-                                                @endif
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
@@ -607,6 +598,7 @@
                 let savedData = JSON.parse(localStorage.getItem("formData"));
                 restoreFormData(savedData);
             }
+
             function updateFormData() {
                 formData = {}; // Reset formData
                 $('form input, form select, form textarea').each(function() {
@@ -662,7 +654,7 @@
                         if (draftId) {
                             formDataObj.append('draft_id', draftId);
                         }
-
+                        formDataObj.append('_token', "{{ csrf_token() }}");
                         $.ajax({
                             url: "{{ url('admin/product/autosave') }}",
                             type: 'POST',
@@ -685,7 +677,7 @@
                                         toastr.error(value[0]);
                                     });
                                 } else {
-                                    toastr.error("Error saving form data to the database.");
+                                    toastr.error("Failed to save product. Try again later.");
                                 }
                             }
                         });
@@ -694,19 +686,13 @@
             }
             $('form input, form select, form textarea').on('change input', saveFormData);
 
-            let isSaving = false; // Flag to track if form is being saved
 
-            window.addEventListener('beforeunload', function(event) {
-                if (!isSaving) {
-                    localStorage.setItem("formData", JSON.stringify(formData));
-                }
-            });
 
             function clearLocalStorage() {
                 localStorage.removeItem("formData");
             }
             window.saveProduct = function saveProduct() {
-                isSaving = true;
+
                 $('form input, form select, form textarea').off('change input'); // Stop autosave events
                 ckEditor();
                 let formDataObj = new FormData($('#productForm')[0]);
@@ -725,6 +711,9 @@
                     },
                     success: function() {
                         toastr.success("Product saved successfully!");
+                        editors.forEach(editor => {
+                            editor.setData('');
+                        });
                         setTimeout(function() {
                             $('#draft_id').val('');
                             clearLocalStorage();
@@ -814,46 +803,47 @@
         });
         // Show sub Categories against Category
         $(document).ready(function() {
-            // Trigger change if any category is already selected
+            // Check if categories are already selected on page load
             if ($('#category').val().length > 0) {
-                $('#category').trigger('change');
+                var selectedCategories = $('#category').val();
+                fetchSubCategories(selectedCategories, true);
             }
 
             $('#category').change(function() {
                 var selectedCategories = $(this).val();
 
                 if (selectedCategories.length > 0) {
-                    $.ajax({
-                        url: '{{ route('category.subCategories') }}',
-                        type: 'GET',
-                        data: {
-                            category_ids: selectedCategories
-                        },
-                        success: function(response) {
-                            populateSubCategoryDropdown(response);
-                        },
-                        error: function(xhr) {
-                            console.error('Error fetching subcategories:', xhr);
-                        }
-                    });
+                    fetchSubCategories(selectedCategories, false);
                 } else {
                     resetSubCategoryDropdown();
                 }
             });
 
-            // Callback function to populate subcategory dropdown
-            function populateSubCategoryDropdown(response) {
+            function fetchSubCategories(categoryIds, isInitialLoad) {
+                $.ajax({
+                    url: '{{ route('category.subCategories') }}',
+                    type: 'GET',
+                    data: {
+                        category_ids: categoryIds
+                    },
+                    success: function(response) {
+                        populateSubCategoryDropdown(response, isInitialLoad);
+                    },
+                    error: function(xhr) {
+                        console.error('Error fetching subcategories:', xhr);
+                    }
+                });
+            }
+
+            function populateSubCategoryDropdown(response, isInitialLoad) {
                 $('#sub_category').empty();
-
-                // Store the old subcategory IDs for later use
                 var oldSubCategories = @json(old('sub_category_id', []));
-
-                // Create a set from the old subcategories for easier look-up
                 var oldSubCategorySet = new Set(oldSubCategories);
 
                 if (response.length > 0) {
                     response.forEach(function(subCategory) {
-                        var isSelected = oldSubCategorySet.has(subCategory.id) ? 'selected' : '';
+                        var isSelected = isInitialLoad && oldSubCategorySet.has(subCategory.id) ?
+                            'selected' : '';
                         $('#sub_category').append('<option value="' +
                             subCategory.id + '" ' + isSelected + '>' +
                             subCategory.name + '</option>');
@@ -866,13 +856,13 @@
                 }
             }
 
-            // Function to reset the subcategory dropdown
             function resetSubCategoryDropdown() {
                 $('#sub_category').empty();
                 $('#sub_category').append('<option value="">Select Sub Category</option>');
                 $('#sub_category').prop('disabled', true);
             }
         });
+
 
         //################ Get Supplier Name ############
         // Fetch and populate supplier names
