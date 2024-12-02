@@ -10,7 +10,12 @@ class Product extends Model
 {
     use HasFactory;
     protected $guarded = [];
-
+    // Scope code
+    public function scopeActiveAndNonDraft($query)
+    {
+        return $query->where('status', '1')->where('is_draft', 1);
+    }
+    // model code
     public function productVaraint()
     {
         return $this->hasMany(ProductVaraint::class, 'product_id');
@@ -54,5 +59,4 @@ class Product extends Model
     {
         return $this->morphMany(Discount::class, 'discountable');
     }
- 
 }

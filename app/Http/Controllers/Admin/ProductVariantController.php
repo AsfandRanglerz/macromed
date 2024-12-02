@@ -30,7 +30,7 @@ class ProductVariantController extends Controller
     public function productVariantIndex($id)
     {
         $units = Unit::activeAndNonDraft()->get();
-        $data = Product::where('status', '1')->with('productVaraint')->find($id);
+        $data = Product::activeAndNonDraft()->with('productVaraint')->find($id);
         return view('admin.product.product_variant_create', compact('data', 'units'));
     }
 
