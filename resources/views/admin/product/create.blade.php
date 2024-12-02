@@ -700,6 +700,7 @@
                 if (draftId) {
                     formDataObj.append('draft_id', draftId);
                 }
+                formDataObj.append('_token', "{{ csrf_token() }}");
                 $.ajax({
                     url: "{{ route('product.store') }}",
                     type: 'POST',
