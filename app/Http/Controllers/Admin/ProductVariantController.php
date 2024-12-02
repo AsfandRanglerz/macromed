@@ -33,6 +33,7 @@ class ProductVariantController extends Controller
         $data = Product::where('status', '1')->with('productVaraint')->find($id);
         return view('admin.product.product_variant_create', compact('data', 'units'));
     }
+
     public function productVariantStore(ProductVariantStore $request, $productId)
     {
         try {
@@ -55,18 +56,29 @@ class ProductVariantController extends Controller
                         'status' => $variant['status'],
                         'description' => $variant['description'],
                         'tooltip_information' => $variant['tooltip_information'],
+                        'is_draft' => 1,
                     ]
                 );
             }
-            return redirect()->route('product_variant_index.index', ['id' => $productId])
-                ->with('message', 'Product variants saved successfully!');
+            return response()->json([
+                'success' => true,
+                'message' => 'Product variants saved successfully!',
+                'redirectUrl' => route('product_variant_index.index', ['id' => $productId]),
+            ]);
         } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->errors())->withInput();
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
-            // Log the error or handle it as needed
-            return redirect()->back()->with('error', 'Failed to save product variants. Please try again later.');
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save product variants. Please try again later.',
+            ], 500);
         }
     }
+
     public function showVariants($id)
     {
         $productVariant  = ProductVaraint::find($id);

@@ -161,7 +161,6 @@
 
 @section('js')
     <script>
-        // Initialize Classic Editor for all long description fields
         let geteditor;
         ClassicEditor
             .create(document.querySelector('#description'))
@@ -174,7 +173,84 @@
     </script>
 
     <script>
+        $('form').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('form')[0].reset();
+                        localStorage.removeItem('productVariants');
+                        setTimeout(function() {
+                            window.location.href = response.redirectUrl;
+                        }, 2000);
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            toastr.error(value[0]);
+                        });
+                    } else {
+                        toastr.error("Failed to save product. Try again later.");
+                    }
+                }
+            });
+        });
+
         let editors = [];
+
+        // Function to save the form data to localStorage
+        function saveFormDataToLocalStorage() {
+            let formData = {};
+            $('.variant-field').each(function(index) {
+                let variant = {};
+                $(this)
+                    .find(':input[name]')
+                    .each(function() {
+                        let name = $(this).attr('name');
+                        let value = $(this).val();
+                        if (name) {
+                            variant[name] = value;
+                        }
+                    });
+                formData[`variant_${index}`] = variant;
+            });
+            localStorage.setItem('productVariants', JSON.stringify(formData));
+        }
+
+        // Function to load form data from localStorage
+        function loadFormDataFromLocalStorage() {
+            let formData = JSON.parse(localStorage.getItem('productVariants'));
+            if (formData) {
+                Object.keys(formData).forEach((key, index) => {
+                    if (index === 0) {
+                        // Populate the initial field
+                        populateVariantFields($('.variant-field:first'), formData[key]);
+                    } else {
+                        // Add and populate additional fields
+                        addVariantFields();
+                        populateVariantFields($('.variant-field').last(), formData[key]);
+                    }
+                });
+            }
+        }
+
+        // Populate fields with data
+        function populateVariantFields(container, data) {
+            Object.keys(data).forEach(name => {
+                container.find(`[name="${name}"]`).val(data[name]);
+            });
+        }
 
         function addVariantFields() {
             let variantCount = $('.variant-field').length;
@@ -269,47 +345,52 @@
         </div>
         `;
             $('#variantFields').append(variantFieldHTML);
-            ClassicEditor
-                .create(document.querySelector(`textarea[name="variants[${variantCount}][description]"]`))
+            if (!$(`textarea[name="variants[${variantCount}][description]"]`).data('editor')) {
+                ClassicEditor
+                    .create(document.querySelector(`textarea[name="variants[${variantCount}][description]"]`))
+                    .then(editor => {
+                        $(`textarea[name="variants[${variantCount}][description]"]`).data('editor', editor);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        }
+        $('#addVariantBtn').click(function() {
+            addVariantFields();
+        });
+        $(document).on('click', '.removeVariantBtn', function() {
+            let variantField = $(this).closest('.variant-field');
+            let editor = variantField.find('textarea').data('editor');
+            if (editor) {
+                editor.destroy().then(() => {
+                    // Remove editor reference from the data attribute
+                    variantField.find('textarea').removeData('editor');
+                });
+            }
+            variantField.remove();
+        });
+
+
+        // Save on input change
+        $(document).on('change', ':input', function() {
+            saveFormDataToLocalStorage();
+        });
+
+        // Load saved data on page load
+        $(document).ready(function() {
+            loadFormDataFromLocalStorage();
+            ClassicEditor.create(document.querySelector('.description'))
                 .then(editor => {
                     editors.push(editor);
                 })
                 .catch(error => {
                     console.error(error);
                 });
-        }
 
-        // Remove variant field
-        $(document).on('click', '.removeVariantBtn', function() {
-            let index = $('.removeVariantBtn').index(this);
-            editors[index].destroy().then(() => {
-                editors.splice(index, 1);
-                $(this).closest('.variant-field').remove();
-            });
         });
-
-        // Event listener for Add Variant button
-        $('#addVariantBtn').click(function() {
-            addVariantFields();
-        });
-
-        // Initialize the first Classic Editor
-        ClassicEditor
-            .create(document.querySelector('.description'))
-            .then(editor => {
-                editors.push(editor);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
-        //#### Toaster Message ##########
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                toastr.error('{{ $error }}');
-            @endforeach
-        @endif
     </script>
+
 
 
 

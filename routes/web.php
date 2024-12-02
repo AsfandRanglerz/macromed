@@ -302,6 +302,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/product-variants-index/{id}', 'productVariantViewIndex')->name('product_variant_index.index')->middleware('permission:Products');
         Route::get('/product-variant/{id}', 'getProductVariants')->name('product.variants')->middleware('permission:Products');
         Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index')->middleware('permission:Products');
+        Route::post('products/autosave-variants', 'variantAutoStore')->name('product-variant.autostore')->middleware('permission:Products');
         Route::post('/products/{product}/variants', 'productVariantStore')->name('product-variant.store')->middleware('permission:Products');
         Route::post('/variantUpdate/{id}',  'updateVariant')->name('variants.update')->middleware('permission:Products');
         Route::get('/variants/{id}',  'showVariants')->name('variants.show')->middleware('permission:Products');
