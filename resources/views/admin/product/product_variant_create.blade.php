@@ -173,43 +173,10 @@
     </script>
 
     <script>
-        $('form').on('submit', function(e) {
-            e.preventDefault();
-            let formData = new FormData(this);
-            $.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
+        let editors = {}; // Store editor instances by element ID
+        let saveTimeout;
 
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message);
-                        $('form')[0].reset();
-                        localStorage.removeItem('productVariants');
-                        setTimeout(function() {
-                            window.location.href = response.redirectUrl;
-                        }, 2000);
-
-                    }
-                },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 422) {
-                        let errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
-                        });
-                    } else {
-                        toastr.error("Failed to save product. Try again later.");
-                    }
-                }
-            });
-        });
-
-        let editors = [];
-
-        // Function to save the form data to localStorage
+        // Save form data to localStorage
         function saveFormDataToLocalStorage() {
             let formData = {};
             $('.variant-field').each(function(index) {
@@ -228,16 +195,14 @@
             localStorage.setItem('productVariants', JSON.stringify(formData));
         }
 
-        // Function to load form data from localStorage
+        // Load form data from localStorage
         function loadFormDataFromLocalStorage() {
             let formData = JSON.parse(localStorage.getItem('productVariants'));
             if (formData) {
                 Object.keys(formData).forEach((key, index) => {
                     if (index === 0) {
-                        // Populate the initial field
                         populateVariantFields($('.variant-field:first'), formData[key]);
                     } else {
-                        // Add and populate additional fields
                         addVariantFields();
                         populateVariantFields($('.variant-field').last(), formData[key]);
                     }
@@ -247,7 +212,7 @@
 
         // Populate fields with data
         function populateVariantFields(container, data) {
-            Object.keys(data).forEach(name => {
+            Object.keys(data).forEach((name) => {
                 container.find(`[name="${name}"]`).val(data[name]);
             });
         }
@@ -345,49 +310,98 @@
         </div>
         `;
             $('#variantFields').append(variantFieldHTML);
-            if (!$(`textarea[name="variants[${variantCount}][description]"]`).data('editor')) {
-                ClassicEditor
-                    .create(document.querySelector(`textarea[name="variants[${variantCount}][description]"]`))
-                    .then(editor => {
-                        $(`textarea[name="variants[${variantCount}][description]"]`).data('editor', editor);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            }
+            initializeEditor(`textarea[name="variants[${variantCount}][description]"]`);
         }
         $('#addVariantBtn').click(function() {
             addVariantFields();
         });
-        $(document).on('click', '.removeVariantBtn', function() {
-            let variantField = $(this).closest('.variant-field');
-            let editor = variantField.find('textarea').data('editor');
-            if (editor) {
-                editor.destroy().then(() => {
-                    // Remove editor reference from the data attribute
-                    variantField.find('textarea').removeData('editor');
+        // Initialize ClassicEditor for a textarea
+        function initializeEditor(selector) {
+            const element = $(selector)[0];
+            if (!element || editors[element.name]) return; // Prevent duplicate editors
+            ClassicEditor.create(element)
+                .then((editor) => {
+                    editors[element.name] = editor;
+                })
+                .catch((error) => console.error(error));
+        }
+
+        // Save editor content back to the textarea
+        function saveEditorData() {
+            Object.keys(editors).forEach((name) => {
+                if (editors[name]) {
+                    const data = editors[name].getData();
+                    $(`[name="${name}"]`).val(data);
+                }
+            });
+        }
+
+        // Remove editor instance
+        function removeEditor(name) {
+            if (editors[name]) {
+                editors[name].destroy().then(() => {
+                    delete editors[name];
                 });
             }
+        }
+
+        // Remove variant fields
+        $(document).on('click', '.removeVariantBtn', function() {
+            let variantField = $(this).closest('.variant-field');
+            let textarea = variantField.find('textarea');
+            removeEditor(textarea.attr('name'));
             variantField.remove();
         });
 
-
-        // Save on input change
+        // Save form data on input change
         $(document).on('change', ':input', function() {
-            saveFormDataToLocalStorage();
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                saveFormDataToLocalStorage();
+                toastr.success('Data saved successfully');
+            }, 1000);
         });
 
-        // Load saved data on page load
+        // Form submission
+        $('form').on('submit', function(e) {
+            e.preventDefault();
+            saveEditorData(); // Save editor content before submitting
+            let formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('form')[0].reset();
+                        localStorage.removeItem('productVariants');
+                        setTimeout(() => {
+                            window.location.href = response.redirectUrl;
+                        }, 1000);
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        $.each(errors, (key, value) => {
+                            toastr.error(value[0]);
+                        });
+                    } else {
+                        toastr.error('Failed to save product. Try again later.');
+                    }
+                },
+            });
+        });
+
+        // Load saved data and initialize editors on page load
         $(document).ready(function() {
             loadFormDataFromLocalStorage();
-            ClassicEditor.create(document.querySelector('.description'))
-                .then(editor => {
-                    editors.push(editor);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-
+            // Cleanup editors on page unload
+          
         });
     </script>
 
