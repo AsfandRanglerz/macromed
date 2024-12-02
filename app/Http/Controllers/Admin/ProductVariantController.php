@@ -22,14 +22,14 @@ class ProductVariantController extends Controller
     }
     public function productVariantViewIndex($id)
     {
-        $units = Unit::all();
+        $units = Unit::activeAndNonDraft()->get();
         $productVariant = ProductVaraint::where('product_id', $id)->get();
         $product = Product::findOrFail($id);
         return view('admin.product.product_variants_index', compact('productVariant', 'id', 'units', 'product'));
     }
     public function productVariantIndex($id)
     {
-        $units = Unit::all();
+        $units = Unit::activeAndNonDraft()->get();
         $data = Product::where('status', '1')->with('productVaraint')->find($id);
         return view('admin.product.product_variant_create', compact('data', 'units'));
     }

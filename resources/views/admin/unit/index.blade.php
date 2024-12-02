@@ -209,7 +209,7 @@
         function autosaveCategory() {
             clearTimeout(autosaveTimer);
             autosaveTimer = setTimeout(() => {
-                const formData = new FormData($('#createCertificationForm')[0]);
+                const formData = new FormData($('#createUnitsForm')[0]);
                 var formDataObject = {};
                 formData.forEach(function(value, key) {
                     formDataObject[key] = value;

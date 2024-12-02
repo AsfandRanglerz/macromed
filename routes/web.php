@@ -222,7 +222,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Units ############
     Route::controller(UnitController::class)->group(function () {
         Route::get('/units',  'unitsIndex')->name('units.index')->middleware('permission:Units');
-        Route::post('/certification/autosave', 'autosave')->name('units.autosave');
+        Route::post('/units/autosave', 'autosave')->name('units.autosave');
         Route::post('/units-create',  'createEntity')->name('units.create')->middleware('permission:Units');
         Route::get('/unitsData',  'unitsData')->name('units.get')->middleware('permission:Units');
         Route::get('/units/{id}',  'showunits')->name('units.show')->middleware('permission:Units');

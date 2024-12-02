@@ -8,6 +8,7 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
+                        <a class="btn btn-primary mb-3" href="{{ route('product.index') }}">Back</a>
                         @if ($data)
                             <div class="card">
                                 <div class="card-header">
@@ -378,6 +379,11 @@
                     if (response.success) {
                         toastr.success(response.message);
                         $('form')[0].reset();
+
+                        Object.keys(editors).forEach((name) => {
+                            removeEditor(name);
+                        });
+
                         localStorage.removeItem('productVariants');
                         setTimeout(() => {
                             window.location.href = response.redirectUrl;
@@ -400,7 +406,6 @@
 
         $(document).ready(function() {
             loadFormDataFromLocalStorage();
-
         });
     </script>
 
