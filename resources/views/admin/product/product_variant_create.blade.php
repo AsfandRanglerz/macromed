@@ -397,11 +397,10 @@
             });
         });
 
-        // Load saved data and initialize editors on page load
+
         $(document).ready(function() {
             loadFormDataFromLocalStorage();
-            // Cleanup editors on page unload
-          
+
         });
     </script>
 
