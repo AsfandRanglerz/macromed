@@ -143,7 +143,7 @@
                                         {{-- Save Button --}}
                                         <div class="row">
                                             <div class="col-12 text-center">
-                                                <button class="btn btn-success">Save</button>
+                                                <button class="btn btn-primary">Save</button>
                                             </div>
                                         </div>
                                     </form>
