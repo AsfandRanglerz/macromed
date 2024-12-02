@@ -211,7 +211,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Certifications ############
     Route::controller(CertificationController::class)->group(function () {
         Route::get('/certification',  'certificationIndex')->name('certification.index')->middleware('permission:Certification');
-        Route::post('/certification/autosave', 'autosave')->name('certifications.autosave');
+        Route::post('/certification/auto-save', 'autosave')->name('certifications.autosave');
         Route::post('/certification-create',  'createEntity')->name('certification.create')->middleware('permission:Certification');
         Route::get('/certificationData',  'certificationData')->name('certification.get')->middleware('permission:Certification');
         Route::get('/certification/{id}',  'showCertification')->name('certification.show')->middleware('permission:Certification');

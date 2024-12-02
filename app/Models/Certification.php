@@ -8,10 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Certification extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'name',
-        'status'
-    ];
+    protected $guarded =[];
 
     public function products()
     {
