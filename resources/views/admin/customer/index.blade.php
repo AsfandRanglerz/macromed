@@ -88,7 +88,7 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label>Country</label>
+                                <label for="country">Country</label>
                                 <select name="country" class="form-control select2 country" id="country"
                                     style="width: 100%">
                                     <option value="" selected disabled>Select Country</option>
