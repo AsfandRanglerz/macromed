@@ -148,7 +148,6 @@ class SalesAgentController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $salesManager = $request->draft_id
                 ? SalesAgent::find($request->draft_id)
                 : new SalesAgent();
@@ -156,8 +155,6 @@ class SalesAgentController extends Controller
             $salesManager->user_type = 'salesmanager';
             $salesManager->is_draft = 1;
             $salesManager->status = '1';
-            $generatedPassword = Str::random(8);
-            $salesManager->password = bcrypt($generatedPassword);
             if ($request->hasFile('image')) {
                 $oldImagePath = $salesManager->image;
                 if ($salesManager->image && File::exists($oldImagePath)) {
@@ -170,8 +167,6 @@ class SalesAgentController extends Controller
             }
 
             $salesManager->save();
-
-            // Update or Create Agent Account
             $accountData = $request->only(['account_number', 'account_name', 'account_holder_name']);
             AgentAccount::updateOrCreate(
                 ['agent_id' => $salesManager->id],
@@ -185,7 +180,10 @@ class SalesAgentController extends Controller
                     'total_commission' => 0,
                 ]
             );
-            if ($salesManager) {
+            if ($salesManager->password == null) {
+                $generatedPassword = Str::random(8);
+                $salesManager->password = bcrypt($generatedPassword);
+                $salesManager->save();
                 $data = [
                     'subadminname' => $salesManager->name,
                     'subadminemail' => $salesManager->email,
@@ -196,11 +194,10 @@ class SalesAgentController extends Controller
                 ];
                 Mail::to($salesManager->email)->send(new SalesAgentRegistration($data));
                 DB::commit();
-
                 return response()->json(['alert' => 'success', 'message' => 'Sales Manager Created Successfully!']);
             } else {
-                DB::rollBack();
-                return response()->json(['alert' => 'error', 'message' => 'Sales Manager Not Created!']);
+                DB::commit();
+                return response()->json(['alert' => 'success', 'message' => 'Sales Manager Updated Successfully!']);
             }
         } catch (\Exception $e) {
             DB::rollBack();

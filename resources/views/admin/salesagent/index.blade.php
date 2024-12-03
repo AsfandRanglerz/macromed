@@ -401,7 +401,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    toastr.success('Sales Manager Created Successfully!');
+                    toastr.success(response.message);
                     $('#createSalesAgentModal').modal('hide');
                     $('#draft_id').val('');
                     reloadDataTable();

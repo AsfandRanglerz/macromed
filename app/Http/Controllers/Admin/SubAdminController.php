@@ -86,8 +86,7 @@ class SubAdminController extends Controller
             $subAdmin->user_type = 'subadmin';
             $subAdmin->is_draft = 1;
             $subAdmin->status = '1';
-            $generatedPassword = Str::random(8);
-            $subAdmin->password = bcrypt($generatedPassword);
+
             if ($request->hasFile('image')) {
                 $oldImagePath =   $subAdmin->image;
                 if ($subAdmin->image &&  File::exists($oldImagePath)) {
@@ -99,15 +98,19 @@ class SubAdminController extends Controller
                 $subAdmin->image = 'public/admin/assets/images/users/' . $filename;
             }
             $subAdmin->save();
-            if ($subAdmin->is_draft == 1 && $subAdmin->status == '1') {
+            if ($subAdmin->password == null) {
+                $generatedPassword = Str::random(8);
+                $subAdmin->password = bcrypt($generatedPassword);
+                $subAdmin->save();
                 $emailData = [
                     'subadminname' => $subAdmin->name,
                     'subadminemail' => $subAdmin->email,
                     'password' =>  $generatedPassword,
                 ];
-
                 Mail::to($subAdmin->email)->send(new subAdminRegistration($emailData));
                 return response()->json(['alert' => 'success', 'message' => 'SubAdmin Created Successfully!']);
+            } else {
+                return response()->json(['alert' => 'success', 'message' => 'SubAdmin Updated Successfully!']);
             }
             return response()->json(['alert' => 'error', 'message' => 'SubAdmin Not Created!']);
         } catch (\Exception $e) {
