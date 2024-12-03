@@ -112,7 +112,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/salesagent-create',  'salesagentCreate')->name('salesagent.create')->middleware('permission:Sales Agent');
         Route::get('/salesagentData',  'salesagentData')->name('salesagent.get')->middleware('permission:Sales Agent');
         Route::get('/salesagent/{id}',  'showSalesAgent')->name('salesagent.show')->middleware('permission:Sales Agent');
-        Route::post('/salesagentUpdate/{id}',  'updateSalesAgent')->name('salesagent.update')->middleware('permission:Sales Agent');
         Route::get('/salesagent/delete/{id}',  'deletesalesagent')->name('salesagent.delete')->middleware('permission:Sales Agent');
         Route::post('/update-salesagent-status/{id}',  'updateAgentBlockStatus')->name('agentBlock.update')->middleware('permission:Sales Agent');
         Route::get('/salesagent-profile/{id}',  'salesagentProfile')->name('salesagent.profile')->middleware('permission:Sales Agent');
@@ -125,10 +124,10 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Customer ############
     Route::controller(CustomerController::class)->group(function () {
         Route::get('/customer',  'customerIndex')->name('customer.index')->middleware('permission:Customer');
+        Route::post('/customer-autosave',  'customerAutoSave')->name('customer.autosave')->middleware('permission:Customer');
         Route::post('/customer-create',  'customerCreate')->name('customer.create')->middleware('permission:Customer');
         Route::get('/customerData',  'customerData')->name('customer.get')->middleware('permission:Customer');
         Route::get('/customer/{id}',  'showCustomer')->name('customer.show')->middleware('permission:Customer');
-        Route::post('/customerUpdate/{id}',  'updateCustomer')->name('customer.update')->middleware('permission:Customer');
         Route::get('/customer/delete/{id}',  'deleteCustomer')->name('customer.delete')->middleware('permission:Customer');
         Route::post('/update-customer-status/{id}',  'updateCustomerBlockStatus')->name('customerBlock.update')->middleware('permission:Customer');
         Route::get('/customer-profile/{id}',  'customerProfile')->name('customer.profile')->middleware('permission:Customer');
