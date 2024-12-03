@@ -94,6 +94,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## SubAdmin ############
     Route::controller(SubAdminController::class)->group(function () {
         Route::get('/subadmin',  'subadminIndex')->name('subadmin.index')->middleware('permission:Sales Agent');
+        Route::post('/subadmin-autosave',  'subadminAutoSave')->name('subadmin.autosave')->middleware('permission:Sales Agent');
         Route::post('/subadmin-create',  'subadminCreate')->name('subadmin.create')->middleware('permission:Sales Agent');
         Route::get('/subadminData',  'subadminData')->name('subadmin.get')->middleware('permission:Sales Agent');
         Route::get('/subadmin/{id}',  'showSubAdmin')->name('subadmin.show')->middleware('permission:Sales Agent');

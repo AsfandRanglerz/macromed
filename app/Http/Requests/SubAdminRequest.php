@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SubAdminRequest extends FormRequest
@@ -13,7 +14,7 @@ class SubAdminRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,10 +27,20 @@ class SubAdminRequest extends FormRequest
         $id = $this->route('category') ?? $this->input('draft_id');
         return [
             'name' => 'required|string|max:255',
-            'user_email' => 'required|email|max:255|unique:users,user_email,' . $id,
-            'phone' => 'required|numeric|min:11,' . $id,
-            'user_password' => 'required|string|min:8|max:255',
-            'confirmpassword' => 'required|same:user_password',
+            'email' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users')->ignore($id),
+            ],
+            'phone' => [
+                'required',
+                'numeric',
+                'min:11',
+                Rule::unique('users')->ignore($id),
+            ],
+            'password' => 'required|string|min:8|max:255',
+            'confirmpassword' => 'required|same:password',
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
         ];
     }

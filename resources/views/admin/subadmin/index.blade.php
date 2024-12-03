@@ -15,6 +15,7 @@
                 <div class="modal-body">
                     <form id="createSubadminForm" enctype="multipart/form-data">
                         <div class="row">
+                            <input type="hidden" id="draft_id" name="draft_id">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="name">Name</label>
@@ -239,6 +240,14 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
+                                <div class="form-group col-sm-3 mb-3 px-0">
+                                    <label for="periodSelect">Visibility Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="1" selected><span class="text-danger">Published Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
+                                    </select>
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createSubadminModal">
                                     Create Sub Admins
@@ -249,8 +258,9 @@
                                             <th>Sr.</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Active & Deactivate Status</th>
                                             <th>Permissions</th>
+                                            <th>Visibility Status</th>
+                                            <th>Active & Deactivate Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -268,6 +278,12 @@
 {{-- ############ Data Table ############## --}}
 @section('js')
     <script>
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('.table').DataTable();
+            dataTable.ajax.url("{{ route('subadmin.get') }}?is_draft=" + status).load();
+        }
+
         function reloadDataTable() {
             var dataTable = $('.table').DataTable();
             dataTable.ajax.reload();
@@ -276,7 +292,7 @@
             // Initialize DataTable with options
             var dataTable = $('.table').DataTable({
                 "ajax": {
-                    "url": "{{ route('subadmin.get') }}",
+                    "url": "{{ route('subadmin.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -294,36 +310,61 @@
                     {
                         "data": "email"
                     },
+
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                            return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                            if (row.is_draft == 1) {
+                                return '<button class="btn btn-primary mb-0 text-white updatePermissionBtn btn-sm" data-id="' +
+                                    row.id + '"><i class="fas fa-user"></i></button>';
+                            } else {
+                                return '<span class="text-muted">No Permission Avaiable</span>';
+                            }
+                        }
                     },
                     {
-                        "data": null,
+                        "data": "is_draft",
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-primary mb-0 text-white updatePermissionBtn btn-sm" data-id="' +
-                                row.id + '"><i class="fas fa-user"></i></button>';
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
                         }
                     },
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success mb-0 mr-2 text-white editSubadminBtn btn-sm" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger mb-0 mr-2 text-white deleteSubadminBtn btn-sm" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
-
-                            // '<a href="' +
-                            // "{{ route('subadmin.profile', ['id' => ':id']) }}"
-                            // .replace(':id', row.id) +
-                            // '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                                return '<button id="update-status" class="btn ' + buttonClass +
+                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                            } else {
+                                // If it's not published, do not display the button
+                                return '<span class="text-muted">No Active Status</span>';
+                            }
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return `
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown${row.id}" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="actionDropdown${row.id}">
+                    <a class="dropdown-item editSubadminBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <a class="dropdown-item deleteSubadminBtn text-danger" href="#" data-id="${row.id}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </a>
+                </div>
+            </div>
+        `;
                         }
                     }
                 ]
@@ -345,14 +386,41 @@
         });
 
         // ##############Create Sub admin################
-        $(document).ready(function() {
-            $('#createSubadminForm input, #createSubadminForm select, #createSubadminForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
+
+        let autosaveTimer;
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                const formData = new FormData($('#createSubadminForm')[0]);
+                var formDataObject = {};
+                formData.forEach(function(value, key) {
+                    formDataObject[key] = value;
                 });
-        });
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: '{{ route('subadmin.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success(response.message);
+                        $('#draft_id').val(response.draft_id);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000);
+        }
+        $('form input, form select, form textarea').on('change input', autosaveCategory);
 
         function submitSubadminForm() {
             var formData = new FormData($('#createSubadminForm')[0]);
@@ -378,8 +446,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            $('[name="' + key + '"]').addClass('is-invalid').siblings(
-                                '.invalid-feedback').text(value);
+                           toastr.error(value[0]);
 
                         });
                     } else {
@@ -391,10 +458,7 @@
                 }
             });
         }
-        // Remove validation messages when user starts typing
-        $('#createSubadminForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
+
         // ######Get & Update Sub Admin#########
         var subadminShowRoute = '{{ route('subadmin.show', ':id') }}';
         var subadminUpdateRoute = '{{ route('subadmin.update', ':id') }}';
@@ -404,11 +468,12 @@
                 url: subadminShowRoute.replace(':id', subadminId),
                 type: 'GET',
                 success: function(response) {
-                    $('#editSubadminForm .name').val(response.name);
-                    $('#editSubadminForm .email').val(response.email);
-                    $('#editSubadminForm .phone').val(response.phone);
-                    $('#editSubadminForm .status').val(response.status);
-                    $('#editSubadminForm .user_type').val(response.user_type);
+                    console.log("data",response);
+
+                    $('#createSubadminForm #name').val(response.name);
+                    $('#createSubadminForm #email').val(response.email);
+                    $('#createSubadminForm #phone').val(response.phone);
+                    $('#createSubadminForm #status').val(response.status);
                     // Assuming response.image contains the URL of the existing image
                     var imageUrl = response.image;
                     var baseUrl = 'https://ranglerzwp.xyz/macromed/';
@@ -418,8 +483,10 @@
                     } else {
                         $('#imagePreview').hide();
                     }
-
-                    $('#editSubadminModal').modal('show');
+                    $('#createSubadminModal .modal-title').text('Edit'); // Change title to Edit
+                    $('#createSubadminModal .btn-success').text('Publish'); // Change button text to Update
+                    $('#draft_id').val(response.id);
+                    $('#createSubadminModal').modal('show');
                     $('#editSubadminModal').data('subadminId', subadminId);
                 },
                 error: function(xhr, status, error) {
@@ -428,49 +495,8 @@
                 }
             });
         }
-        // #############Update subAdmin#############
-        $(document).ready(function() {
-            $('#editSubadminForm input, #editSubadminForm select, #editSubadminForm textarea').on(
-                'input change',
-                function() {
-                    $(this).siblings('.invalid-feedback').text('');
-                    $(this).removeClass('is-invalid');
-                });
-        });
 
-        function submitEditSubadminForm() {
-            var subadminId = $('#editSubadminModal').data('subadminId');
-            var formData = new FormData($('#editSubadminForm')[0]);
-            $.ajax({
-                url: subadminUpdateRoute.replace(':id', subadminId),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Sub Admin Updated Successfully!');
-                    $('#editSubadminModal').modal('hide');
-                    reloadDataTable();
-                    $('#editSubadminForm').reset();
-                },
-                error: function(xhr, status, error) {
-                    console.log("data", xhr);
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('[name="' + key + '"]').addClass('is-invalid').siblings(
-                                '.invalid-feedback').text(value);
 
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                }
-            });
-        }
         // ############# Delete Subadmin Data###########
         function deleteSubadminModal(subadminId) {
             $('#confirmDeleteSubadmin').data('subadmin-id', subadminId);

@@ -10,6 +10,7 @@ use ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SubAdminRequest;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Permission;
@@ -17,11 +18,18 @@ use Illuminate\Support\Facades\Validator;
 
 class SubAdminController extends Controller
 {
-    public function subadminData()
+    public function subadminData(Request $request)
     {
-        $subAdmins = User::where('user_type', 'subadmin')->latest()->get();
-        $json_data["data"] = $subAdmins;
-        return json_encode($json_data);
+        try {
+            $is_draft = $request->query('is_draft', '1');
+            $subAdmins = User::where('user_type', 'subadmin')->where('is_draft', $is_draft)->latest()->get();
+            return response()->json(['data' => $subAdmins], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch category data',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
     public function subadminIndex()
     {
@@ -34,43 +42,81 @@ class SubAdminController extends Controller
         $subAdmin = User::findOrFail($id);
         return view('admin.subadmin.subadminprofile', compact('subAdmin'));
     }
-    public function subadminCreate(Request $request)
+    public function subadminAutoSave(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users|max:255',
-                'password' => 'required|string|min:8|max:255',
-                'phone' => 'required|unique:users|min:11',
-                'confirmpassword' => 'required|same:password',
-                'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-            $data = $request->only(['name', 'email', 'phone', 'status']);
-            $data['user_type'] = 'subadmin';
-            $data['password'] = bcrypt($request->input('password'));
+            $subAdmin = $request->draft_id
+                ? User::find($request->draft_id)
+                : new User();
+            $subAdmin->fill($request->only(['name', 'email', 'phone']));
+            $subAdmin->user_type = 'subadmin';
+            $subAdmin->is_draft = 0;
+            $subAdmin->status = '0';
+            $subAdmin->password = bcrypt($request->input('password'));
             if ($request->hasFile('image')) {
+                $oldImagePath =   $subAdmin->image;
+                if ($subAdmin->image &&  File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
                 $image = $request->file('image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('admin/assets/images/users'), $filename);
-                $data['image'] = 'public/admin/assets/images/users/' . $filename;
+                $subAdmin->image = 'public/admin/assets/images/users/' . $filename;
             }
-            $subadmin = User::create($data);
-            if ($subadmin) {
-                $data['subadminname'] = $subadmin->name;
-                $data['subadminemail'] = $subadmin->email;
-                $data['password'] = $request->password;
-                Mail::to($subadmin->email)->send(new subAdminRegistration($data));
+            $subAdmin->save();
+            return response()->json([
+                'alert' => 'success',
+                'message' => 'SubAdmin Created Successfully!',
+                'draft_id' => $subAdmin->id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'alert' => 'error',
+                'message' => 'An error occurred while creating SubAdmin: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function subadminCreate(SubAdminRequest $request)
+    {
+        try {
+            $subAdmin = $request->draft_id
+                ? User::findOrFail($request->draft_id)
+                : new User();
+            $subAdmin->fill($request->only(['name', 'email', 'phone']));
+            $subAdmin->user_type = 'subadmin';
+            $subAdmin->is_draft = 1;
+            $subAdmin->status = '1';
+            $subAdmin->password = bcrypt($request->input('password'));
+            if ($request->hasFile('image')) {
+                $oldImagePath =   $subAdmin->image;
+                if ($subAdmin->image &&  File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
+                $image = $request->file('image');
+                $filename = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('admin/assets/images/users'), $filename);
+                $subAdmin->image = 'public/admin/assets/images/users/' . $filename;
+            }
+            $subAdmin->save();
+            if ($subAdmin->is_draft == 1 && $subAdmin->status == '1') {
+                $emailData = [
+                    'subadminname' => $subAdmin->name,
+                    'subadminemail' => $subAdmin->email,
+                    'password' => $request->password,
+                ];
+
+                // Mail::to($subAdmin->email)->send(new subAdminRegistration($emailData));
                 return response()->json(['alert' => 'success', 'message' => 'SubAdmin Created Successfully!']);
             }
             return response()->json(['alert' => 'error', 'message' => 'SubAdmin Not Created!']);
         } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while Creating SubAdmin: ' . $e->getMessage()], 500);
+            return response()->json([
+                'alert' => 'error',
+                'message' => 'An error occurred while creating SubAdmin: ' . $e->getMessage()
+            ], 500);
         }
     }
+
     public function showSubAdmin($id)
     {
         $subadmin = User::find($id);
@@ -79,41 +125,6 @@ class SubAdminController extends Controller
         }
         return response()->json($subadmin);
     }
-    public function updateAdmin(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'phone' => 'required|numeric|min:11,' . $id,
-            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        try {
-            $subadmin = User::findOrFail($id);
-            $subadmin->fill($request->only(['name', 'email', 'phone', 'status']));
-
-            if ($request->hasFile('image')) {
-                // Delete old image if exists
-                $oldImagePath =  $subadmin->image;
-                // Delete old image if it exists
-                if ($subadmin->image &&  File::exists($oldImagePath)) {
-                    File::delete($oldImagePath);
-                }
-                $image = $request->file('image');
-                $filename = time() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('admin/assets/images/users'), $filename);
-                $subadmin->image = 'public/admin/assets/images/users/' . $filename;
-            }
-            $subadmin->save();
-            return response()->json(['alert' => 'success', 'message' => 'SubAdmin Updated Successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['alert' => 'error', 'message' => 'An error occurred while updating Sub Admin: ' . $e->getMessage()], 500);
-        }
-    }
-
 
     public function deleteSubadmin($id)
     {
