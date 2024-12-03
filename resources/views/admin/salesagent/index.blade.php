@@ -14,6 +14,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="createSalesAgentForm" enctype="multipart/form-data">
+                        <input type="hidden" id="draft_id" name="draft_id">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -34,24 +35,49 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input type="text" class="form-control" id="email" name="email" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
+                            <div class="form-group col-md-6">
+                                <label>Country</label>
+                                <select name="country" class="form-control select2 country" id="country"
+                                    style="width: 100%">
+                                    <option value="" selected disabled>Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
+                                            {{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($countries == null)
+                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="state">State</label>
+                                <select class="form-control select2 state" id="state" name="state" style="width: 100%"
+                                    required>
+                                    <option value="" selected disabled>Select State</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="city">City</label>
+                                <select class="form-control select2 city" id="city" name="city" style="width: 100%"
+                                    required>
+                                    <option value="" selected disabled>Select City</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="confirmpassword">Confirm Password</label>
-                                    <input type="password" class="form-control" id="confirmpassword" name="confirmpassword"
-                                        required>
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control" id="location" name="location">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -67,46 +93,6 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label>Country</label>
-                                <select name="country" class="form-control select2" id="country" style="width: 100%">
-                                    <option value="" selected disabled>Select Country</option>
-                                    @foreach ($countries as $country)
-                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
-                                            {{ $country->name }}</option>
-                                    @endforeach
-                                </select>
-                                @if ($countries == null)
-                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
-                                @endif
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="state">State</label>
-                                <select class="form-control select2" id="state" name="state" style="width: 100%"
-                                    required>
-                                    <option value="" selected disabled>Select State</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="city">City</label>
-                                <select class="form-control select2 " id="city" name="city" style="width: 100%"
-                                    required>
-                                    <option value="" selected disabled>Select City</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="address">Address</label>
-                                    <input type="text" class="form-control" id="location" name="location">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
@@ -117,134 +103,6 @@
                         </div>
 
                         <h4>Add Accounts Information:</h4>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_name">Bank Name</label>
-                                    <input type="text" class="form-control" name="account_name">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_holder_name">Account Holder Name</label>
-                                    <input type="text" class="form-control" name="account_holder_name">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="account_number">Account Number</label>
-                                    <input type="text" class="form-control" name="account_number">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="submitSalesAgentForm()">Create</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Edit SalesAgent Modal -->
-    <div class="modal fade" id="editSalesAgentModal" tabindex="-1" role="dialog"
-        aria-labelledby="editSalesAgentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editSalesAgentModalLabel">Edit Sales Manager</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editSalesAgentForm" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Name</label>
-                                    <input type="text" class="form-control name" name="name" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="text" class="form-control phone" name="phone">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control email" name="email" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="address">Address</label>
-                                    <input type="text" class="form-control location" id="location" name="location">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            {{-- <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirmpassword">Active Status</label>
-                                    <select name="status" class="form-control status">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div> --}}
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label>Country</label>
-                                <select name="country" class="form-control select2 country" style="width: 100%">
-                                    <option value="" selected disabled>Select Country</option>
-                                    @foreach ($countries as $country)
-                                        <option value="{{ $country->iso2 . ',' . $country->name }}">
-                                            {{ $country->name }}</option>
-                                    @endforeach
-                                </select>
-                                @if ($countries == null)
-                                    <div class="internet-error text-danger">No Internet Connection Found!</div>
-                                @endif
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="state">State</label>
-                                <select class="form-control select2 state" name="state" style="width: 100%" required>
-                                    <option value="" selected disabled>Select State</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="city">City</label>
-                                <select class="form-control select2 city" name="city" style="width: 100%" required>
-                                    <option value="" selected disabled>Select City</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="image">Image</label>
-                                    <input type="file" class="form-control image" name="image">
-                                    <img id="imagePreview" src="" alt="Image Preview"
-                                        style="display: none; max-width: 100px; margin-top: 10px;">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h4>Update Accounts Information:</h4>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -272,11 +130,12 @@
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="submitEditSalesAgentForm()">Update</button>
+                    <button type="button" class="btn btn-success" onclick="submitSalesAgentForm()">Create</button>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Delete SalesAgent Modal -->
     <div class="modal fade" id="deleteSalesAgentModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteSalesAgentModalLabel" aria-hidden="true">
@@ -336,6 +195,14 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive">
+                                <div class="form-group col-sm-3 mb-3 px-0">
+                                    <label for="periodSelect">Visibility Status</label>
+                                    <select id="periodSelect" class="form-control" onchange="loadData()">
+                                        <option value="1" selected><span class="text-danger">Published Data</span>
+                                        </option>
+                                        <option value="0">Draft Data</option>
+                                    </select>
+                                </div>
                                 <a class="btn btn-primary mb-3 text-white" data-toggle="modal"
                                     data-target="#createSalesAgentModal">
                                     Create Sales Managers
@@ -346,6 +213,7 @@
                                             <th>Sr.</th>
                                             <th>Name</th>
                                             <th>Email</th>
+                                            <th>Visibility Status</th>
                                             <th>Active & Deactivate Status</th>
                                             <th>Withdrawal History</th>
                                             <th>Action</th>
@@ -365,6 +233,12 @@
 {{-- ############ Data Table ############## --}}
 @section('js')
     <script>
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('.table').DataTable();
+            dataTable.ajax.url("{{ route('salesagent.get') }}?is_draft=" + status).load();
+        }
+
         function reloadDataTable() {
             var dataTable = $('.table').DataTable();
             dataTable.ajax.reload();
@@ -373,7 +247,7 @@
             // Initialize DataTable with options
             var dataTable = $('.table').DataTable({
                 "ajax": {
-                    "url": "{{ route('salesagent.get') }}",
+                    "url": "{{ route('salesagent.get') }}?is_draft=1",
                     "type": "GET",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -391,37 +265,63 @@
                     {
                         "data": "email"
                     },
+
+                    {
+                        "data": "is_draft",
+                        "render": function(data, type, row) {
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
+                        }
+                    },
+
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
-                            var buttonText = row.status == '1' ? 'Active' : 'In Active';
-                            return '<button id="update-status" class="btn ' + buttonClass +
-                                '" data-userid="' + row
-                                .id + '">' + buttonText + '</button>';
-                        },
-
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonText = row.status == '1' ? 'Active' : 'In Active';
+                                return '<button id="update-status" class="btn ' + buttonClass +
+                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                            } else {
+                                // If it's not published, do not display the button
+                                return '<span class="text-muted">No Active Status</span>';
+                            }
+                        }
                     },
                     {
                         "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('userPaymentHistory.index', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-file-invoice-dollar"></i></a>';
+                            if (row.is_draft == 1) {
+                                return '<a href="' +
+                                    "{{ route('userPaymentHistory.index', ['id' => ':id']) }}"
+                                    .replace(':id', row.id) +
+                                    '" class="btn btn-primary mb-0 text-white"><i class="fas fa-file-invoice-dollar"></i></a>';
+                            } else {
+                                return '<span class="text-muted">No Withdrawal Avaiable</span>';
+                            }
                         },
                     },
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            return '<button class="btn btn-success mb-0 mr-2 text-white editSalesAgentBtn btn-sm" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger mb-0 mr-2 text-white deleteSalesAgentBtn btn-sm" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
-
-                            // '<a href="' +
-                            // "{{ route('salesagent.profile', ['id' => ':id']) }}"
-                            // .replace(':id', row.id) +
-                            // '" class="btn btn-primary mb-0 mr-2 text-white"><i class="fas fa-eye"></i></a>' +
+                            return `
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown${row.id}" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="actionDropdown${row.id}">
+                    <a class="dropdown-item editSalesAgentBtn" href="#" data-id="${row.id}">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <a class="dropdown-item deleteSalesAgentBtn text-danger" href="#" data-id="${row.id}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </a>
+                </div>
+            </div>
+        `;
                         }
                     }
                 ]
@@ -445,14 +345,52 @@
                 width: '100%'
             });
         }
-        $('#createSalesAgentModal, #editSalesAgentModal').on('shown.bs.modal', function() {
+        $('#createSalesAgentModal').on('shown.bs.modal', function() {
             initializeSelect2($(this));
         });
+        let autosaveTimer;
+
+        function autosaveCategory() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                const formData = new FormData($('#createSalesAgentForm')[0]);
+                var formDataObject = {};
+                formData.forEach(function(value, key) {
+                    formDataObject[key] = value;
+                });
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formData.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: '{{ route('salesagent.autosave') }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(response) {
+                        toastr.success('Data Saved Successfully!');
+                        $('#draft_id').val(response.draft_id);
+                    },
+                    error: function(xhr) {
+                        console.error('Autosave error:', xhr.responseText);
+                    },
+                });
+            }, 1000);
+        }
+        $('form input, form select, form textarea').on('change input', autosaveCategory);
 
         function submitSalesAgentForm() {
             var formData = new FormData($('#createSalesAgentForm')[0]);
             var createButton = $('#createSalesAgentModal').find('.modal-footer').find('button');
             createButton.prop('disabled', true);
+            var formDataObject = {};
+            formData.forEach(function(value, key) {
+                formDataObject[key] = value;
+            });
             $.ajax({
                 url: '{{ route('salesagent.create') }}',
                 type: 'POST',
@@ -484,44 +422,8 @@
                 }
             });
         }
-        // Remove validation messages when user starts typing
-        $('#createSalesAgentForm input').keyup(function() {
-            $(this).removeClass('is-invalid').siblings('.invalid-feedback').html('');
-        });
-        // ######Get & Update Sales Manager#########
-        function submitEditSalesAgentForm() {
-            var salesAgentUpdateRoute = '{{ route('salesagent.update', ':id') }}';
-            var salesAgentId = $('#editSalesAgentModal').data('salesAgentId');
-            var formData = new FormData($('#editSalesAgentForm')[0]);
-            $.ajax({
-                url: salesAgentUpdateRoute.replace(':id', salesAgentId),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    toastr.success('Sales Manager Updated Successfully!');
-                    $('#editSalesAgentModal').modal('hide');
-                    reloadDataTable();
-                    $('#editSalesAgentForm')[0].reset();
-                },
-                error: function(xhr, status, error) {
-                    console.log("data", xhr);
-                    if (xhr.status === 422) { // If validation errors
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
 
-                        });
-                    } else {
-                        console.log("Error:", xhr);
-                    }
-                }
-            });
-        }
+
         // ############# Delete SalesAgent Data###########
         function deleteSalesAgentModal(salesAgentId) {
             $('#confirmDeleteSalesAgent').data('SalesAgent-id', salesAgentId);
@@ -644,8 +546,12 @@
         });
         $('#state').change(function() {
             let stateCode = $(this).val();
-            let arr1 = stateCode.split(',');
             let countryCode = $('#country').val();
+            if (!stateCode || !countryCode) {
+                console.error("State or Country is not selected");
+                return;
+            }
+            let arr1 = stateCode.split(',');
             let arr2 = countryCode.split(',');
             $.ajax({
                 url: '{{ route('fetchCities') }}',
@@ -676,12 +582,14 @@
                 type: 'GET',
                 success: function(response) {
                     console.log("data", response);
-                    $('#editSalesAgentForm .name').val(response.name);
-                    $('#editSalesAgentForm .email').val(response.email);
-                    $('#editSalesAgentForm .phone').val(response.phone);
-                    $('#editSalesAgentForm .status').val(response.status);
-                    $('#editSalesAgentForm .location').val(response.location);
-
+                    $('#createSalesAgentForm #name').val(response.name);
+                    $('#createSalesAgentForm #email').val(response.email);
+                    $('#createSalesAgentForm #phone').val(response.phone);
+                    $('#createSalesAgentForm #status').val(response.status);
+                    $('#createSalesAgentForm #location').val(response.location);
+                    $('#createSalesAgentModal .modal-title').text('Edit'); // Change title to Edit
+                    $('#createSalesAgentModal .btn-success').text('Publish'); // Change button text to Update
+                    $('#draft_id').val(response.id);
                     var imageUrl = response.image;
                     var baseUrl = 'https://ranglerzwp.xyz/macromed/';
                     var responseImage = baseUrl + imageUrl;
@@ -690,9 +598,9 @@
                     } else {
                         $('#imagePreview').hide();
                     }
-                    $('#editSalesAgentForm .account_number').val(response.agent_accounts.account_number);
-                    $('#editSalesAgentForm .account_name').val(response.agent_accounts.account_name);
-                    $('#editSalesAgentForm .account_holder_name').val(response.agent_accounts
+                    $('#createSalesAgentForm .account_number').val(response.agent_accounts.account_number);
+                    $('#createSalesAgentForm .account_name').val(response.agent_accounts.account_name);
+                    $('#createSalesAgentForm .account_holder_name').val(response.agent_accounts
                         .account_holder_name);
 
                     var nativeCountryValues = $('.country option').map(function() {
@@ -700,21 +608,28 @@
                     }).get();
                     for (let k of nativeCountryValues) {
                         if (k.includes(response.country)) {
-                            $('#editSalesAgentForm .country').val(k).trigger('change');
-                            fetchStates(k.split(',')[0], response.state.split(',')[0], function(stateCode) {
-                                if (response.state.split(',')[0]) {
-                                    fetchCities(response.state.split(',')[0], k.split(',')[0], response
-                                        .city);
-                                }
-                            });
+                            $('#createSalesAgentForm .country').val(k).trigger('change');
+
+                            // Fetch states only if country exists
+                            fetchStates(k.split(',')[0], response.state ? response.state.split(',')[0] :
+                                null,
+                                function(stateCode) {
+                                    if (response.state && response.state.split(',')[0]) {
+                                        fetchCities(response.state.split(',')[0], k.split(',')[0],
+                                            response.city || null);
+                                    } else {
+                                        $('.city').val(null).empty().append(
+                                            '<option value="" disabled selected>Select City</option>');
+                                    }
+                                });
                             break;
                         }
                     }
 
-                    $('#editSalesAgentForm [name="city"]').val(response.city);
+                    $('#createSalesAgentForm .city').val(response.city);
 
-                    $('#editSalesAgentModal').modal('show');
-                    $('#editSalesAgentModal').data('salesAgentId', salesAgentId);
+                    $('#createSalesAgentModal').modal('show');
+                    $('#createSalesAgentModal').data('salesAgentId', salesAgentId);
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);
@@ -750,30 +665,26 @@
                 success: function(data) {
                     var stateSelect = $('.state');
                     stateSelect.empty();
-                    var stateCode = '';
-
-                    // Add default "Select State" option
                     stateSelect.append('<option value="" disabled selected>Select State</option>');
-
                     $('.city').val(null).empty().append(
-                        '<option value="" disabled selected>Select City</option>'); // Reset cities dropdown
+                        '<option value="" disabled selected>Select City</option>');
+
+                    if (data.length === 0) {
+                        callback(null); // No states available
+                        return;
+                    }
 
                     data.forEach(function(stateData) {
-                        var stateName = stateData.name;
-                        var statecode = stateData.iso2;
-                        var optionValue = statecode + ',' + stateName;
-                        var option = $('<option></option>').attr('value', optionValue).text(stateName);
-
-                        if (selectedState && (selectedState === statecode || selectedState ===
-                                optionValue)) {
+                        var optionValue = `${stateData.iso2},${stateData.name}`;
+                        var option = $('<option></option>').attr('value', optionValue).text(stateData
+                            .name);
+                        if (selectedState && selectedState === stateData.iso2) {
                             option.prop('selected', true);
-                            stateCode = statecode;
                         }
-
                         stateSelect.append(option);
                     });
 
-                    callback(stateCode);
+                    callback(selectedState);
                 },
                 error: function(xhr, status, error) {
                     console.error("Error fetching states:", xhr.responseText);
@@ -792,12 +703,14 @@
                 success: function(data) {
                     var citySelect = $('.city');
                     citySelect.empty();
-                    // Add default "Select City" option
                     citySelect.append('<option value="" disabled selected>Select City</option>');
+
+                    if (data.length === 0) return;
+
                     data.forEach(function(cityData) {
-                        var cityName = cityData.name;
-                        var option = $('<option></option>').attr('value', cityName).text(cityName);
-                        if (cityName === selectedCity) {
+                        var option = $('<option></option>').attr('value', cityData.name).text(cityData
+                            .name);
+                        if (selectedCity && cityData.name === selectedCity) {
                             option.prop('selected', true);
                         }
                         citySelect.append(option);

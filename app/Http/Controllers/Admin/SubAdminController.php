@@ -106,7 +106,7 @@ class SubAdminController extends Controller
                     'password' =>  $generatedPassword,
                 ];
 
-                // Mail::to($subAdmin->email)->send(new subAdminRegistration($emailData));
+                Mail::to($subAdmin->email)->send(new subAdminRegistration($emailData));
                 return response()->json(['alert' => 'success', 'message' => 'SubAdmin Created Successfully!']);
             }
             return response()->json(['alert' => 'error', 'message' => 'SubAdmin Not Created!']);

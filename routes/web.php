@@ -108,6 +108,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     // ############## Sales Agent ############
     Route::controller(SalesAgentController::class)->group(function () {
         Route::get('/salesagent',  'salesagentIndex')->name('salesagent.index')->middleware('permission:Sales Agent');
+        Route::post('/salesagent-autosave',  'salesagentAutoSave')->name('salesagent.autosave')->middleware('permission:Sales Agent');
         Route::post('/salesagent-create',  'salesagentCreate')->name('salesagent.create')->middleware('permission:Sales Agent');
         Route::get('/salesagentData',  'salesagentData')->name('salesagent.get')->middleware('permission:Sales Agent');
         Route::get('/salesagent/{id}',  'showSalesAgent')->name('salesagent.show')->middleware('permission:Sales Agent');
