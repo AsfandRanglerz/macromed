@@ -403,6 +403,7 @@
                 success: function(response) {
                     toastr.success('Sales Manager Created Successfully!');
                     $('#createSalesAgentModal').modal('hide');
+                    $('#draft_id').val('');
                     reloadDataTable();
                     $('#createSalesAgentForm')[0].reset();
                 },
