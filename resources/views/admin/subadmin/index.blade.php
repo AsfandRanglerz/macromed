@@ -35,24 +35,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirmpassword">Confirm Password</label>
-                                    <input type="password" class="form-control" id="confirmpassword" name="confirmpassword"
-                                        required>
+                                    <input type="text" class="form-control" id="email" name="email" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -85,71 +68,7 @@
         </div>
     </div>
     <!-- Edit Subadmin Modal -->
-    <div class="modal fade" id="editSubadminModal" tabindex="-1" role="dialog" aria-labelledby="editSubadminModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editSubadminModalLabel">Edit Sub Admin</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editSubadminForm" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Name</label>
-                                    <input type="text" class="form-control name" name="name" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="text" class="form-control phone" name="phone">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control email" name="email" required>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="image">Image</label>
-                                    <input type="file" class="form-control image" name="image">
-                                    <img id="imagePreview" src="" alt="Image Preview"
-                                        style="display: none; max-width: 100px; margin-top: 10px;">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            {{-- <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirmpassword">Active Status</label>
-                                    <select name="status" class="form-control status">
-                                        <option value="1">Active</option>
-                                        <option value="0">In Active</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div> --}}
-                        </div>
 
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success" onclick="submitEditSubadminForm()">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Delete Subadmin Modal -->
     <div class="modal fade" id="deleteSubadminModal" tabindex="-1" role="dialog"
         aria-labelledby="deleteSubadminModalLabel" aria-hidden="true">
@@ -411,7 +330,7 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     },
                     success: function(response) {
-                        toastr.success(response.message);
+                        toastr.success('Data Saved Successfully!');
                         $('#draft_id').val(response.draft_id);
                     },
                     error: function(xhr) {
@@ -426,6 +345,10 @@
             var formData = new FormData($('#createSubadminForm')[0]);
             var createButton = $('#createSubadminModal').find('.modal-footer').find('button');
             createButton.prop('disabled', true);
+            var formDataObject = {};
+            formData.forEach(function(value, key) {
+                formDataObject[key] = value;
+            });
             $.ajax({
                 url: '{{ route('subadmin.create') }}',
                 type: 'POST',
@@ -438,6 +361,7 @@
                 success: function(response) {
                     toastr.success('Sub Admin Created Successfully!');
                     $('#createSubadminModal').modal('hide');
+                    $('#draft_id').val('');
                     reloadDataTable();
                     $('#createSubadminForm')[0].reset();
                 },
@@ -446,7 +370,7 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                           toastr.error(value[0]);
+                            toastr.error(value[0]);
 
                         });
                     } else {
@@ -468,7 +392,7 @@
                 url: subadminShowRoute.replace(':id', subadminId),
                 type: 'GET',
                 success: function(response) {
-                    console.log("data",response);
+                    console.log("data", response);
 
                     $('#createSubadminForm #name').val(response.name);
                     $('#createSubadminForm #email').val(response.email);

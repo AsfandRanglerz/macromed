@@ -6,13 +6,14 @@ use App\Models\Role;
 use App\Models\User;
 use App\Mail\userBlocked;
 use App\Mail\userUnBlocked;
+use Illuminate\Support\Str;
 use ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Mail\subAdminRegistration;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SubAdminRequest;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\SubAdminRequest;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,7 +53,6 @@ class SubAdminController extends Controller
             $subAdmin->user_type = 'subadmin';
             $subAdmin->is_draft = 0;
             $subAdmin->status = '0';
-            $subAdmin->password = bcrypt($request->input('password'));
             if ($request->hasFile('image')) {
                 $oldImagePath =   $subAdmin->image;
                 if ($subAdmin->image &&  File::exists($oldImagePath)) {
@@ -86,7 +86,8 @@ class SubAdminController extends Controller
             $subAdmin->user_type = 'subadmin';
             $subAdmin->is_draft = 1;
             $subAdmin->status = '1';
-            $subAdmin->password = bcrypt($request->input('password'));
+            $generatedPassword = Str::random(8);
+            $subAdmin->password = bcrypt($generatedPassword);
             if ($request->hasFile('image')) {
                 $oldImagePath =   $subAdmin->image;
                 if ($subAdmin->image &&  File::exists($oldImagePath)) {
@@ -102,7 +103,7 @@ class SubAdminController extends Controller
                 $emailData = [
                     'subadminname' => $subAdmin->name,
                     'subadminemail' => $subAdmin->email,
-                    'password' => $request->password,
+                    'password' =>  $generatedPassword,
                 ];
 
                 // Mail::to($subAdmin->email)->send(new subAdminRegistration($emailData));

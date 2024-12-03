@@ -30,17 +30,17 @@ class SubAdminRequest extends FormRequest
             'email' => [
                 'required',
                 'string',
+                'email', // Ensures the email format is valid
                 'max:255',
                 Rule::unique('users')->ignore($id),
             ],
+
             'phone' => [
                 'required',
                 'numeric',
                 'min:11',
                 Rule::unique('users')->ignore($id),
             ],
-            'password' => 'required|string|min:8|max:255',
-            'confirmpassword' => 'required|same:password',
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:1048'
         ];
     }
