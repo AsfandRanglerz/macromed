@@ -167,10 +167,16 @@
 
                     {
                         "render": function(data, type, row) {
+                               // Check if is_draft is 1 (published), then show Active/Inactive button
+                               if (row.is_draft == 1) {
                             return '<a href="' +
                                 "{{ route('discounts.index', ['id' => ':id']) }}"
                                 .replace(':id', row.id) +
                                 '" class="btn btn-primary mb-0 text-white"><i class="fas fa-tag"></i></a>';
+                               }else{
+                                return '<span class="text-muted">No Discount Avaiable!</span>';
+
+                               }
                         },
                     },
                     {

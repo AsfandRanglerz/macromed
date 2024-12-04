@@ -253,10 +253,15 @@
                     },
                     {
                         "render": function(data, type, row) {
-                            return '<a href="' +
-                                "{{ route('brandDiscounts.index', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-tag"></i></a>';
+                            if (row.is_draft == 1) {
+                                return '<a href="' +
+                                    "{{ route('brandDiscounts.index', ['id' => ':id']) }}"
+                                    .replace(':id', row.id) +
+                                    '" class="btn btn-primary mb-0 text-white"><i class="fas fa-tag"></i></a>';
+                            } else {
+                                return '<span class="text-muted">No Discount Avaiable!</span>';
+
+                            }
                         },
                     },
                     {
@@ -274,10 +279,12 @@
                         "render": function(data, type, row) {
                             // Check if is_draft is 1 (published), then show Active/Inactive button
                             if (row.is_draft == 1) {
-                                var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
+                                var buttonClass = row.status == '1' ? 'btn-success' :
+                                    'btn-danger';
                                 var buttonText = row.status == '1' ? 'Active' : 'In Active';
                                 return '<button id="update-status" class="btn ' + buttonClass +
-                                    '" data-userid="' + row.id + '">' + buttonText + '</button>';
+                                    '" data-userid="' + row.id + '">' + buttonText +
+                                    '</button>';
                             } else {
                                 // If it's not published, do not display the button
                                 return '<span class="text-muted">No Active Status</span>';
