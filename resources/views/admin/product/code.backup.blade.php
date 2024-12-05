@@ -15,8 +15,9 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
+                                <form id="productForm" method="POST" enctype="multipart/form-data">
                                     @csrf
+                                    <input type="hidden" id="draft_id" name="draft_id">
                                     <div class="form-group col-md-12">
                                         <label>Thumbnail Image Preview</label>
                                         <div>
@@ -63,18 +64,9 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Sub Category</label>
-                                            <select name="sub_category_id[]" class="form-control select2" id="sub_category"
-                                                multiple>
+                                            <select name="sub_category_id[]" class="form-control select2 sub_category"
+                                                id="sub_category" multiple style="width: 100%">
                                                 <option value="">Select Sub Category</option>
-                                                @if (old('sub_category_id'))
-                                                    @foreach ($subCategories as $subCategory)
-                                                        <!-- Assuming $subCategories is passed -->
-                                                        <option value="{{ $subCategory->id }}"
-                                                            {{ in_array($subCategory->id, old('sub_category_id', [])) ? 'selected' : '' }}>
-                                                            {{ $subCategory->name }}
-                                                        </option>
-                                                    @endforeach
-                                                @endif
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
@@ -546,18 +538,18 @@
                                     <!-- Append Button & Fields -->
                                     <div class="row col-md-12 mt-0 mb-2">
                                         <div class="col-md-12">
-                                            <button type="button" class="btn btn-success" id="addTaxBtn">
+                                            <button type="button" class="btn btn-primary" id="addTaxBtn">
                                                 Add Tax/City
                                             </button>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 text-center">
-                                            <button class="btn btn-success">Save</button>
+                                            <button type="button" class="btn btn-success"
+                                                onclick="saveProduct()">Save</button>
                                         </div>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                     </div>
@@ -569,6 +561,190 @@
 @endsection
 
 @section('js')
+    <script>
+        $(document).ready(function() {
+            function ckEditor() {
+                editors.forEach((editor, index) => {
+                    let textarea = document.querySelectorAll('.long_description')[index];
+                    textarea.value = editor.getData();
+                });
+            }
+            let formData = {};
+            // clearLocalStorage();
+            function restoreFormData(savedData) {
+                for (let key in savedData) {
+                    let field = $('[name="' + key + '"]');
+                    if (field.length) {
+                        if (field.is('input[type="text"], textarea, input[type="hidden"]')) {
+                            field.val(savedData[key]);
+                        } else if (field.is('select')) {
+                            field.val(savedData[key]).change();
+                        } else if (field.is('input[type="radio"], input[type="checkbox"]')) {
+                            field.each(function() {
+                                if ($(this).val() === savedData[key]) {
+                                    $(this).prop('checked', true);
+                                }
+                            });
+                        }
+                    }
+
+                    // Restore the image preview
+                    if (key === 'thumbnailPreview' && savedData[key]) {
+                        $('#preview-img').attr('src', savedData[key]);
+                    }
+                }
+            }
+            if (localStorage.getItem("formData")) {
+                let savedData = JSON.parse(localStorage.getItem("formData"));
+                console.log("savedData", savedData);
+
+                restoreFormData(savedData);
+            }
+
+            function updateFormData() {
+                formData = {}; // Reset formData
+                $('form input, form select, form textarea').each(function() {
+                    let fieldName = $(this).attr('name');
+                    let fieldValue = $(this).val();
+
+                    if (fieldName) {
+                        if ($(this).is(':radio, :checkbox')) {
+                            if ($(this).is(':checked')) {
+                                formData[fieldName] = fieldValue || '';
+                            }
+                        } else if (fieldValue !== '') {
+                            formData[fieldName] = fieldValue;
+                        }
+                    }
+                });
+
+                let taxes = [];
+                $('form .taxes').each(function() {
+                    let taxData = {};
+                    let taxPerCity = $(this).find('.tax_per_city').val();
+                    let localTax = $(this).find('.local_tax').val();
+
+                    if (taxPerCity && localTax) {
+                        taxData.tax_per_city = taxPerCity;
+                        taxData.local_tax = localTax;
+                        taxes.push(taxData);
+                    }
+                });
+
+                if (taxes.length > 0) {
+                    formData.taxes = taxes;
+                }
+                const thumbnailSrc = $('#preview-img').attr('src');
+                if (thumbnailSrc) {
+                    formData.thumbnailPreview = thumbnailSrc;
+                }
+            }
+
+            // Debounced form data save
+            let saveTimeout;
+
+            function saveFormData() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(function() {
+                    updateFormData();
+                    if (Object.keys(formData).length > 0) {
+                        localStorage.setItem("formData", JSON.stringify(formData));
+                        console.log("localStorage", localStorage.getItem("formData"));
+
+                        ckEditor();
+                        // Make AJAX request to save data in the database
+                        let formDataObj = new FormData($('#productForm')[0]);
+                        const draftId = $('#draft_id').val();
+                        if (draftId) {
+                            formDataObj.append('draft_id', draftId);
+                        }
+                        formDataObj.append('_token', "{{ csrf_token() }}");
+                        $.ajax({
+                            url: "{{ url('admin/product/autosave') }}",
+                            type: 'POST',
+                            data: formDataObj,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            success: function(response) {
+                                if (response.draft_id) {
+                                    $('#draft_id').val(response.draft_id);
+                                }
+                                toastr.success('Data saved successfully');
+                            },
+                            error: function(xhr) {
+                                if (xhr.status === 422) {
+                                    let errors = xhr.responseJSON.errors;
+                                    $.each(errors, function(key, value) {
+                                        toastr.error(value[0]);
+                                    });
+                                } else {
+                                    toastr.error("Failed to save product. Try again later.");
+                                }
+                            }
+                        });
+                    }
+                }, 1000);
+            }
+            $('form input, form select, form textarea').on('change input', saveFormData);
+
+
+
+            function clearLocalStorage() {
+                localStorage.removeItem("formData");
+            }
+            window.saveProduct = function saveProduct() {
+
+                $('form input, form select, form textarea').off('change input'); // Stop autosave events
+                ckEditor();
+                let formDataObj = new FormData($('#productForm')[0]);
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formDataObj.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: "{{ route('product.store') }}",
+                    type: 'POST',
+                    data: formDataObj,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function() {
+                        toastr.success("Product saved successfully!");
+                        editors.forEach(editor => {
+                            editor.setData('');
+                        });
+                        setTimeout(function() {
+                            $('#draft_id').val('');
+                            clearLocalStorage();
+                            window.location.href = "{{ route('product.index') }}";
+                        }, 2000);
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            $('form input, form select, form textarea').prop('disabled', false);
+                            let errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                toastr.error(value[0]);
+                            });
+                        } else {
+                            toastr.error("Failed to save product. Try again later.");
+                        }
+                    },
+                    complete: function() {
+                        $('form input, form select, form textarea').prop('disabled', false);
+                    }
+                });
+            };
+
+        });
+    </script>
+
+
     <script>
         // Slug code
         (function($) {
@@ -591,12 +767,19 @@
             var reader = new FileReader();
             reader.onload = function() {
                 var output = document.getElementById('preview-img');
-                output.src = reader.result; // Update preview with the new image
+                const imageData = reader.result;
+                output.src = imageData;
+
+                // Update the thumbnail preview in formData
+                let savedData = JSON.parse(localStorage.getItem('formData')) || {};
+                savedData.thumbnailPreview = imageData; // Store under a specific key
+                localStorage.setItem('formData', JSON.stringify(savedData));
             }
             if (event.target.files[0]) { // Check if a file was selected
                 reader.readAsDataURL(event.target.files[0]);
             }
         }
+
 
         // Classic Editor Code
         let editors = [];
@@ -606,57 +789,76 @@
                 .create(textarea)
                 .then(editor => {
                     editors[index] = editor;
+
+                    // Check if there's saved content in localStorage for this editor
+                    let savedData = JSON.parse(localStorage.getItem(textarea.name));
+                    if (savedData) {
+                        // Restore CKEditor content from localStorage
+                        editor.setData(savedData);
+                    }
+                    editor.model.document.on('change:data', () => {
+                        let content = editor.getData();
+                        localStorage.setItem(textarea.name, JSON.stringify(content));
+                    });
                 })
                 .catch(error => {
                     console.error(error);
                 });
         });
-
         // Show sub Categories against Category
         $(document).ready(function() {
-            // Trigger change if any category is already selected
+            // Check if categories are already selected on page load
             if ($('#category').val().length > 0) {
-                $('#category').trigger('change');
+                var selectedCategories = $('#category').val();
+                fetchSubCategories(selectedCategories, true);
             }
 
             $('#category').change(function() {
                 var selectedCategories = $(this).val();
 
                 if (selectedCategories.length > 0) {
-                    $.ajax({
-                        url: '{{ route('category.subCategories') }}',
-                        type: 'GET',
-                        data: {
-                            category_ids: selectedCategories
-                        },
-                        success: function(response) {
-                            populateSubCategoryDropdown(response);
-                        },
-                        error: function(xhr) {
-                            console.error('Error fetching subcategories:', xhr);
-                        }
-                    });
+                    fetchSubCategories(selectedCategories, false);
                 } else {
                     resetSubCategoryDropdown();
                 }
             });
 
-            // Callback function to populate subcategory dropdown
-            function populateSubCategoryDropdown(response) {
+            function fetchSubCategories(categoryIds, isInitialLoad) {
+                $.ajax({
+                    url: '{{ route('category.subCategories') }}',
+                    type: 'GET',
+                    data: {
+                        category_ids: categoryIds
+                    },
+                    success: function(response) {
+                        populateSubCategoryDropdown(response, isInitialLoad);
+                    },
+                    error: function(xhr) {
+                        console.error('Error fetching subcategories:', xhr);
+                    }
+                });
+            }
+
+            function populateSubCategoryDropdown(response, isInitialLoad) {
                 $('#sub_category').empty();
-
-                // Store the old subcategory IDs for later use
                 var oldSubCategories = @json(old('sub_category_id', []));
-
-                // Create a set from the old subcategories for easier look-up
                 var oldSubCategorySet = new Set(oldSubCategories);
 
                 if (response.length > 0) {
                     response.forEach(function(subCategory) {
-                        var isSelected = oldSubCategorySet.has(subCategory.id) ? 'selected' : '';
-                        $('#sub_category').append('<option value="' +
-                            subCategory.id + '" ' + isSelected + '>' +
-                            subCategory.name + '</option>');
+                        setTimeout(() => {
+                            var isSelected = isInitialLoad && oldSubCategorySet.has(subCategory
+                                    .id) ?
+                                'selected' : '';
+                            $('#sub_category').append('<option value="' +
+                                subCategory.id + '" ' + isSelected + '>' +
+                                subCategory.name + '</option>');
+
+                            // Trigger Select2 to update after appending
+                            var option = new Option(subCategory.name, subCategory.id, true, true);
+                            $('#sub_category').append(option).trigger('change.select2');
+                            // $('#sub_category').trigger('change.select2');
+                        }, 200);
                     });
 
                     $('#sub_category').prop('disabled', false);
@@ -666,7 +868,6 @@
                 }
             }
 
-            // Function to reset the subcategory dropdown
             function resetSubCategoryDropdown() {
                 $('#sub_category').empty();
                 $('#sub_category').append('<option value="">Select Sub Category</option>');
@@ -675,14 +876,6 @@
         });
 
 
-
-
-        //#### Torster Message##########
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                toastr.error('{{ $error }}');
-            @endforeach
-        @endif
         //################ Get Supplier Name ############
         // Fetch and populate supplier names
         let oldSupplierName = '{{ old('supplier_name_display') }}';

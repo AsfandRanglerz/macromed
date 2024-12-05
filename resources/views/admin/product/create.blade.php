@@ -561,7 +561,7 @@
 @endsection
 
 @section('js')
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             function ckEditor() {
                 editors.forEach((editor, index) => {
@@ -596,6 +596,8 @@
             }
             if (localStorage.getItem("formData")) {
                 let savedData = JSON.parse(localStorage.getItem("formData"));
+                console.log("daata", savedData);
+
                 restoreFormData(savedData);
             }
 
@@ -738,8 +740,209 @@
             };
 
         });
-    </script>
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            function ckEditor() {
+                // Collect CKEditor content and set it to respective textareas
+                editors.forEach((editor, index) => {
+                    let textarea = document.querySelectorAll('.long_description')[index];
+                    textarea.value = editor.getData();
+                });
+            }
 
+            let formData = {};
+
+            // Restore form data from local storage
+            function restoreFormData(savedData) {
+                for (let key in savedData) {
+                    let field = $('[name="' + key + '"]');
+                    if (field.length) {
+                        if (field.is('input[type="text"], textarea, input[type="hidden"]')) {
+                            field.val(savedData[key]);
+                        } else if (field.is('select')) {
+                            field.val(savedData[key]).change();
+                        } else if (field.is('input[type="radio"], input[type="checkbox"]')) {
+                            field.each(function() {
+                                if ($(this).val() === savedData[key]) {
+                                    $(this).prop('checked', true);
+                                }
+                            });
+                        }
+                    }
+
+                    // Restore image preview
+                    if (key === 'thumbnailPreview' && savedData[key]) {
+                        $('#preview-img').attr('src', savedData[key]);
+                    }
+                }
+            }
+
+            // Load form data from localStorage if available
+            if (localStorage.getItem("formData")) {
+                let savedData = JSON.parse(localStorage.getItem("formData"));
+                console.log("Data restored:", savedData);
+                restoreFormData(savedData);
+            }
+
+            // Update form data
+            function updateFormData() {
+                formData = {}; // Reset formData
+
+                // Loop through each form field and collect values
+                $('form input, form select, form textarea').each(function() {
+                    let fieldName = $(this).attr('name');
+                    let fieldValue = $(this).val();
+
+                    if (fieldName) {
+                        if ($(this).is(':radio, :checkbox')) {
+                            if ($(this).is(':checked')) {
+                                formData[fieldName] = fieldValue || '';
+                            }
+                        } else if (fieldValue !== '') {
+                            formData[fieldName] = fieldValue;
+                        }
+                    }
+                });
+
+                // Collect taxes
+                let taxes = [];
+                $('form .taxes').each(function() {
+                    let taxData = {};
+                    let taxPerCity = $(this).find('.tax_per_city').val();
+                    let localTax = $(this).find('.local_tax').val();
+
+                    if (taxPerCity && localTax) {
+                        taxData.tax_per_city = taxPerCity;
+                        taxData.local_tax = localTax;
+                        taxes.push(taxData);
+                    }
+                });
+
+                if (taxes.length > 0) {
+                    formData.taxes = taxes;
+                }
+
+                // Collect image preview
+                const thumbnailSrc = $('#preview-img').attr('src');
+                if (thumbnailSrc) {
+                    formData.thumbnailPreview = thumbnailSrc;
+                }
+
+                // Include CKEditor content
+                ckEditor();
+            }
+
+            // Debounced form data save function
+            let saveTimeout;
+
+            function saveFormData() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(function() {
+                    updateFormData();
+                    if (Object.keys(formData).length > 0) {
+                        localStorage.setItem("formData", JSON.stringify(formData));
+
+                        // Make AJAX request to autosave data
+                        let formDataObj = new FormData($('#productForm')[0]);
+                        const draftId = $('#draft_id').val();
+                        if (draftId) {
+                            formDataObj.append('draft_id', draftId);
+                        }
+                        formDataObj.append('_token', "{{ csrf_token() }}");
+
+                        $.ajax({
+                            url: "{{ url('admin/product/autosave') }}",
+                            type: 'POST',
+                            data: formDataObj,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            success: function(response) {
+                                if (response.draft_id) {
+                                    $('#draft_id').val(response.draft_id);
+                                }
+                                toastr.success('Data saved successfully');
+                            },
+                            error: function(xhr) {
+                                if (xhr.status === 422) {
+                                    let errors = xhr.responseJSON.errors;
+                                    $.each(errors, function(key, value) {
+                                        toastr.error(value[0]);
+                                    });
+                                } else {
+                                    toastr.error("Failed to save product. Try again later.");
+                                }
+                            }
+                        });
+                    }
+                }, 1000);
+            }
+
+            // Bind saveFormData to form fields' change/input events
+            $('form input, form select, form textarea').on('change input', saveFormData);
+
+            // Clear local storage if needed
+            function clearLocalStorage() {
+                localStorage.removeItem("formData");
+                localStorage.removeItem("supplier_name_display", selectedSupplier.id);
+                localStorage.removeItem("supplier_id_display", selectedSupplier.supplier_id);
+            }
+
+            // Final product save (no autosave)
+            window.saveProduct = function saveProduct() {
+                $('form input, form select, form textarea').off('change input'); // Stop autosave events
+                ckEditor(); // Ensure CKEditor content is collected
+
+                // Create FormData and send the final save request
+                let formDataObj = new FormData($('#productForm')[0]);
+                const draftId = $('#draft_id').val();
+                if (draftId) {
+                    formDataObj.append('draft_id', draftId);
+                }
+                $.ajax({
+                    url: "{{ route('product.store') }}",
+                    type: 'POST',
+                    data: formDataObj,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function() {
+                        toastr.success("Product saved successfully!");
+
+                        // Clear editor data
+                        editors.forEach(editor => {
+                            editor.setData('');
+                        });
+
+                        setTimeout(function() {
+                            $('#draft_id').val('');
+                            clearLocalStorage();
+                            window.location.href = "{{ route('product.index') }}";
+                        }, 2000);
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            $('form input, form select, form textarea').prop('disabled', false);
+                            let errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                toastr.error(value[0]);
+                            });
+                        } else {
+                            toastr.error("Failed to save product. Try again later.");
+                        }
+                    },
+                    complete: function() {
+                        $('form input, form select, form textarea').prop('disabled', false);
+                    }
+                });
+            };
+        });
+    </script>
 
     <script>
         // Slug code
@@ -842,18 +1045,11 @@
 
                 if (response.length > 0) {
                     response.forEach(function(subCategory) {
-                        setTimeout(() => {
                         var isSelected = isInitialLoad && oldSubCategorySet.has(subCategory.id) ?
                             'selected' : '';
                         $('#sub_category').append('<option value="' +
                             subCategory.id + '" ' + isSelected + '>' +
                             subCategory.name + '</option>');
-
-                            // Trigger Select2 to update after appending
-                            var option = new Option(subCategory.name, subCategory.id, true, true);
-                            $('#sub_category').append(option).trigger('change.select2');
-                            // $('#sub_category').trigger('change.select2');
-                        }, 200);
                     });
 
                     $('#sub_category').prop('disabled', false);
@@ -872,27 +1068,30 @@
 
 
         //################ Get Supplier Name ############
-        // Fetch and populate supplier names
-        let oldSupplierName = '{{ old('supplier_name_display') }}';
-        let oldSupplierId = '{{ old('supplier_id_display') }}';
+        let oldSupplierName = "{{ old('supplier_name_display') }}";
+        let oldSupplierId = "{{ old('supplier_id_display') }}";
 
+        // Fetch suppliers via AJAX and populate the dropdown
         $.ajax({
-            url: '{{ route('getSuppliers') }}',
+            url: "{{ route('getSuppliers') }}",
             type: 'GET',
             success: function(data) {
                 let supplierNameDropdown = $('#supplier_name');
                 supplierNameDropdown.empty().append(
-                    '<option value="" disabled selected>Select Supplier Name</option>');
+                    '<option value="" disabled selected>Select Supplier Name</option>'
+                );
 
+                // Populate the supplier_name dropdown with options
                 data.forEach(function(supplier) {
                     supplierNameDropdown.append(
-                        `<option value="${supplier.id}" ${oldSupplierName == supplier.id ? 'selected' : ''}>${supplier.name}</option>`
+                        `<option value="${supplier.id}" ${oldSupplierName == supplier.id || localStorage.getItem("supplier_name_display") == supplier.id ? 'selected' : ''}>${supplier.name}</option>`
                     );
                 });
 
-                // If old value for supplier_name exists, manually trigger the change event to load supplier_id
-                if (oldSupplierName) {
-                    supplierNameDropdown.trigger('change');
+                // Check if there's an old value or stored value in localStorage for supplier_name
+                let savedSupplierName = localStorage.getItem("supplier_name_display") || oldSupplierName;
+                if (savedSupplierName) {
+                    supplierNameDropdown.val(savedSupplierName).trigger('change');
                 }
             },
             error: function(error) {
@@ -906,20 +1105,25 @@
             let supplierIdDropdown = $('#supplier_id');
 
             if (selectedSupplierId) {
-                // Find the selected supplier
+                // Find the selected supplier from the fetched data
                 $.ajax({
-                    url: '{{ route('getSuppliers') }}',
+                    url: "{{ route('getSuppliers') }}",
                     type: 'GET',
                     success: function(data) {
                         let selectedSupplier = data.find(supplier => supplier.id == selectedSupplierId);
                         if (selectedSupplier) {
                             supplierIdDropdown.empty().append(
-                                `<option value="${selectedSupplier.supplier_id}" ${oldSupplierId == selectedSupplier.supplier_id ? 'selected' : ''}>${selectedSupplier.supplier_id}</option>`
+                                `<option value="${selectedSupplier.supplier_id}" ${oldSupplierId == selectedSupplier.supplier_id || localStorage.getItem("supplier_id_display") == selectedSupplier.supplier_id ? 'selected' : ''}>${selectedSupplier.supplier_id}</option>`
                             );
                             supplierIdDropdown.prop('disabled', true);
+
                             // Store supplier name and ID in hidden fields
                             $('#supplier_name_hidden').val(selectedSupplier.name);
                             $('#supplier_id_hidden').val(selectedSupplier.supplier_id);
+
+                            // Save selected supplier details to localStorage
+                            localStorage.setItem("supplier_name_display", selectedSupplier.id);
+                            localStorage.setItem("supplier_id_display", selectedSupplier.supplier_id);
                         }
                     },
                     error: function(error) {
