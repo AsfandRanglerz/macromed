@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
 class TaraxShippingService
@@ -17,20 +19,30 @@ class TaraxShippingService
 
     public function addPickupAddress(array $addressData)
     {
-        $endpoint = "{$this->baseUrl}/pickup_address/add";
+        $endpoint = "{$this->baseUrl}/api/pickup_address/add";
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
-        ])->post($endpoint, $addressData);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+            ])->post($endpoint, $addressData);
 
-        if ($response->successful()) {
-            return $response->json();
+            if ($response->successful()) {
+                return $response->json();
+            }
+            return [
+                'error' => true,
+                'message' => $response->json('message') ?? 'Failed to add pickup address.',
+            ];
+
+        } catch (Exception $e) {
+            Log::error('Error in addPickupAddress: ' . $e->getMessage());
+            return [
+                'error' => true,
+                'message' => 'An error occurred while adding the pickup address.',
+            ];
         }
-        return [
-            'error' => true,
-            'message' => $response->json('message') ?? 'Failed to add pickup address.',
-        ];
     }
+
     /**
      * Get List of Cities
      */
@@ -38,17 +50,26 @@ class TaraxShippingService
     {
         $endpoint = "{$this->baseUrl}/api/cities";
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
-        ])->get($endpoint);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+            ])->get($endpoint);
 
-        if ($response->successful()) {
-            return $response->json();
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            return [
+                'error' => true,
+                'message' => $response->json('message') ?? 'Failed to fetch cities.',
+            ];
+
+        } catch (Exception $e) {
+            Log::error('Error in getCities: ' . $e->getMessage());
+            return [
+                'error' => true,
+                'message' => 'An error occurred while fetching the cities.',
+            ];
         }
-
-        return [
-            'error' => true,
-            'message' => $response->json('message') ?? 'Failed to fetch cities.',
-        ];
     }
 }
