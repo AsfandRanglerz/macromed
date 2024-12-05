@@ -14,7 +14,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="createCustomerForm" enctype="multipart/form-data">
-                        <input type="text" id="draft_id" name="draft_id">
+                        <input type="hidden" id="draft_id" name="draft_id">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">

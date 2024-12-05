@@ -887,8 +887,8 @@
             // Clear local storage if needed
             function clearLocalStorage() {
                 localStorage.removeItem("formData");
-                localStorage.removeItem("supplier_name_display", selectedSupplier.id);
-                localStorage.removeItem("supplier_id_display", selectedSupplier.supplier_id);
+                localStorage.removeItem("supplier_name_display");
+                localStorage.removeItem("supplier_id_display");
             }
 
             // Final product save (no autosave)
