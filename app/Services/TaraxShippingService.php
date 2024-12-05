@@ -24,6 +24,7 @@ class TaraxShippingService
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type' => 'application/json',
             ])->post($endpoint, $addressData);
 
             if ($response->successful()) {
@@ -53,6 +54,7 @@ class TaraxShippingService
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type' => 'application/json',
             ])->get($endpoint);
 
             if ($response->successful()) {
