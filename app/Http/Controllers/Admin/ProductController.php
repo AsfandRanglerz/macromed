@@ -48,9 +48,9 @@ class ProductController extends Controller
         return $productCode;
     }
 
-    private function generateRandomProductId($length = 10)
+    private function generateRandomProductId($length = 3)  // Default length is set to 3
     {
-        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // Only uppercase letters
         $productCode = '';
 
         for ($i = 0; $i < $length; $i++) {
@@ -59,6 +59,7 @@ class ProductController extends Controller
 
         return $productCode;
     }
+
     public function productData()
     {
         $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('is_draft', 1)->latest()->get();
