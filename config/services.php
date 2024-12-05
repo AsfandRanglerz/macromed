@@ -29,5 +29,8 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
+    'tarax' => [
+        'base_url' => env('TARAX_BASE_URL', 'https://api.taraxsonic.com/v1'),
+        'api_key'  => env('TARAX_API_KEY'),
+    ],
 ];
