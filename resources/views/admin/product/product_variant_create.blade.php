@@ -200,6 +200,8 @@
             localStorage.setItem('productVariants', JSON.stringify(formData));
         }
 
+        // console.log("data",localStorage);
+
         // Load form data from localStorage
         function loadFormDataFromLocalStorage() {
             let formData = JSON.parse(localStorage.getItem('productVariants'));

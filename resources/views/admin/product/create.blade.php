@@ -842,11 +842,18 @@
 
                 if (response.length > 0) {
                     response.forEach(function(subCategory) {
+                        setTimeout(() => {
                         var isSelected = isInitialLoad && oldSubCategorySet.has(subCategory.id) ?
                             'selected' : '';
                         $('#sub_category').append('<option value="' +
                             subCategory.id + '" ' + isSelected + '>' +
                             subCategory.name + '</option>');
+
+                            // Trigger Select2 to update after appending
+                            var option = new Option(subCategory.name, subCategory.id, true, true);
+                            $('#sub_category').append(option).trigger('change.select2');
+                            // $('#sub_category').trigger('change.select2');
+                        }, 200);
                     });
 
                     $('#sub_category').prop('disabled', false);
