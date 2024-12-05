@@ -30,7 +30,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
     'tarax' => [
-        'base_url' => env('TARAX_BASE_URL', 'https://api.taraxsonic.com/v1'),
+        'base_url' => env('TARAX_BASE_URL'),
         'api_key'  => env('TARAX_API_KEY'),
     ],
 ];

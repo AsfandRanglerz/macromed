@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RolesPermissionController;
 use App\Http\Controllers\Api\SecurityController;
+use App\Http\Controllers\Api\TaraxShippingServiceController;
 use App\Http\Controllers\Api\WhishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -66,4 +67,7 @@ Route::get('about-us', [SecurityController::class, 'getAboutUs']);
 Route::get('privacy-policy', [SecurityController::class, 'getPrivacyPolicy']);
 Route::get('terms-condations', [SecurityController::class, 'getTermsCondation']);
 Route::get('/faqs', [SecurityController::class, 'faqs']);
-Route::post('/sendContactMessage',[SecurityController::class,'sendContactMessage']);
+Route::post('/sendContactMessage', [SecurityController::class, 'sendContactMessage']);
+// ############### TaraxShipping #########
+Route::post('/tarax/pickup-address', [TaraxShippingServiceController::class, 'addPickupAddress']);
+Route::get('/tarax/cities', [TaraxShippingServiceController::class, 'getCities']);

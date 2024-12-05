@@ -26,18 +26,21 @@ class TaraxShippingService
         if ($response->successful()) {
             return $response->json();
         }
-
         return [
             'error' => true,
             'message' => $response->json('message') ?? 'Failed to add pickup address.',
         ];
     }
-
-    public function getShippingRates(array $params)
+    /**
+     * Get List of Cities
+     */
+    public function getCities()
     {
+        $endpoint = "{$this->baseUrl}/api/cities";
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
-        ])->get("{$this->baseUrl}/shipping-rates", $params);
+        ])->get($endpoint);
 
         if ($response->successful()) {
             return $response->json();
@@ -45,23 +48,7 @@ class TaraxShippingService
 
         return [
             'error' => true,
-            'message' => $response->json('message') ?? 'Unable to fetch shipping rates.',
-        ];
-    }
-
-    public function createShipment(array $data)
-    {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
-        ])->post("{$this->baseUrl}/shipments", $data);
-
-        if ($response->successful()) {
-            return $response->json();
-        }
-
-        return [
-            'error' => true,
-            'message' => $response->json('message') ?? 'Failed to create shipment.',
+            'message' => $response->json('message') ?? 'Failed to fetch cities.',
         ];
     }
 }
