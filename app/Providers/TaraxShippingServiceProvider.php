@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\TaraxShippingService;
 use Illuminate\Support\ServiceProvider;
 
 class TaraxShippingServiceProvider extends ServiceProvider
@@ -13,7 +14,9 @@ class TaraxShippingServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(TaraxShippingService::class, function () {
+            return new TaraxShippingService();
+        });
     }
 
     /**

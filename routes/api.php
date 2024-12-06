@@ -1,14 +1,15 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\RolesPermissionController;
 use App\Http\Controllers\Api\SecurityController;
-use App\Http\Controllers\Api\TaraxShippingServiceController;
 use App\Http\Controllers\Api\WhishlistController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\RolesPermissionController;
+use App\Http\Controllers\Api\TaraxShippingServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,14 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
  */
-
+Route::get('/cache_clear', function () {
+    Artisan::call('config:cache');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('optimize:clear');
+    Artisan::call('route:clear');
+    return 'Application cache cleared!';
+});
 
 ######### Auth  ##########
 Route::post('/register', [AuthController::class, 'register']);

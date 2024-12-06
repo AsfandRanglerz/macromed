@@ -19,15 +19,13 @@ class TaraxShippingServiceController extends Controller
     {
         $request->validate([
             'person_of_contact' => 'required|string',
-            'phone_number'    => 'required|string',
+            'phone_number'    => 'required|integer',
             'Email_address'     => 'required|string',
             'address' => 'required|string',
-            'city_id' => 'required'
+            'city_id' => 'required|integer'
         ]);
-
-        $data = $request->only(['person_of_contact', 'phone_number', 'Email_address','address','city_id']);
+        $data = $request->only(['person_of_contact', 'phone_number', 'Email_address', 'address', 'city_id']);
         $response = $this->taraxApi->addPickupAddress($data);
-
         if (isset($response['error']) && $response['error']) {
             return response()->json($response, 400);
         }
@@ -44,6 +42,6 @@ class TaraxShippingServiceController extends Controller
         if (isset($response['error']) && $response['error']) {
             return response()->json($response, 400);
         }
-        return response()->json($response, 200);
+        return response()->json($response);
     }
 }

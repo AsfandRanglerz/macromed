@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TaraxShippingService
 {
@@ -17,61 +17,50 @@ class TaraxShippingService
         $this->apiKey = config('services.tarax.api_key');
     }
 
-    public function addPickupAddress(array $addressData)
+    /**
+     * Generic method to handle API requests.
+     */
+    private function makeRequest($method, $endpoint, $data = [])
     {
-        $endpoint = "{$this->baseUrl}/api/pickup_address/add";
-
         try {
+            $url = "{$this->baseUrl}/{$endpoint}";
+
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json',
-            ])->post($endpoint, $addressData);
-
+                'Accept' => 'application/json',
+            ])->$method($url, $data);
+            // return $response;
             if ($response->successful()) {
                 return $response->json();
             }
-            return [
-                'error' => true,
-                'message' => $response->json('message') ?? 'Failed to add pickup address.',
-            ];
 
-        } catch (Exception $e) {
-            Log::error('Error in addPickupAddress: ' . $e->getMessage());
+            Log::error("API Error: {$response->body()}");
             return [
                 'error' => true,
-                'message' => 'An error occurred while adding the pickup address.',
+                'message' => $response->json('message') ?? 'API request failed.',
+            ];
+        } catch (Exception $e) {
+            Log::error("Exception in API request: {$e->getMessage()}");
+            return [
+                'error' => true,
+                'message' => 'An error occurred while communicating with the API.',
             ];
         }
     }
 
     /**
-     * Get List of Cities
+     * Add a pickup address.
+     */
+    public function addPickupAddress(array $addressData)
+    {
+        return $this->makeRequest('post', 'api/pickup_address/add', $addressData);
+    }
+
+    /**
+     * Fetch cities.
      */
     public function getCities()
     {
-        $endpoint = "{$this->baseUrl}/api/cities";
-
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json',
-            ])->get($endpoint);
-
-            if ($response->successful()) {
-                return $response->json();
-            }
-
-            return [
-                'error' => true,
-                'message' => $response->json('message') ?? 'Failed to fetch cities.',
-            ];
-
-        } catch (Exception $e) {
-            Log::error('Error in getCities: ' . $e->getMessage());
-            return [
-                'error' => true,
-                'message' => 'An error occurred while fetching the cities.',
-            ];
-        }
+        return $this->makeRequest('get', 'api/cities');
     }
 }
