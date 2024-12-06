@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use Exception;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class TaraxShippingService
 {
@@ -18,9 +18,9 @@ class TaraxShippingService
     }
 
     /**
-     * Generic method to handle API requests.
+     * Generic method to handle API requests using cURL.
      */
-    private function makeRequest($method, $endpoint, $data = [])
+    public function makeRequest($method, $endpoint, $data = [])
     {
         try {
             $url = "{$this->baseUrl}/{$endpoint}";
@@ -29,24 +29,30 @@ class TaraxShippingService
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Accept' => 'application/json',
             ])->$method($url, $data);
-            // return $response;
+
             if ($response->successful()) {
                 return $response->json();
             }
 
-            Log::error("API Error: {$response->body()}");
+            Log::error("API Error: HTTP Code {$response->status()}, Endpoint: {$endpoint}, Data: " . json_encode($data) . ", Response: {$response->body()}");
+
             return [
                 'error' => true,
-                'message' => $response->json('message') ?? 'API request failed.',
+                'message' => 'API request failed.',
+                'details' => $response->json(), // Additional response info
             ];
         } catch (Exception $e) {
             Log::error("Exception in API request: {$e->getMessage()}");
             return [
                 'error' => true,
                 'message' => 'An error occurred while communicating with the API.',
+                'exception' => $e->getMessage(),
             ];
         }
     }
+
+
+
 
     /**
      * Add a pickup address.
