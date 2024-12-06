@@ -39,7 +39,7 @@ class TaraxShippingService
             return [
                 'error' => true,
                 'message' => 'API request failed.',
-                'details' => $response->json(), // Additional response info
+                'details' => $response->status(), // Additional response info
             ];
         } catch (Exception $e) {
             Log::error("Exception in API request: {$e->getMessage()}");
