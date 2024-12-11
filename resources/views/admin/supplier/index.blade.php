@@ -21,7 +21,7 @@
                                     <label for="name">Supplier Name<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name" required
                                         oninput="autosaveCategory()">
-
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
@@ -29,7 +29,7 @@
                                     <label for="name">Supplier POC<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="poc" name="poc" required
                                         oninput="autosaveCategory()">
-
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -39,7 +39,7 @@
                                     <label for="name">Supplier Email<span class="text-danger">*</span></label>
                                     <input type="email" class="form-control" id="email" name="email" required
                                         oninput="autosaveCategory()">
-
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
@@ -47,7 +47,7 @@
                                     <label for="name">Supplier Phone Number<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="phone_number" name="phone_number"
                                         required oninput="autosaveCategory()">
-
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                                     <label for="name">Physical Addres<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="address" name="address" required
                                         oninput="autosaveCategory()">
-
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
@@ -65,7 +65,7 @@
                                     <label for="name">Whats App<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="whats_app" name="whats_app" required
                                         oninput="autosaveCategory()">
-
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -75,15 +75,15 @@
                                     <label for="name">Website<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="website" name="website" required
                                         oninput="autosaveCategory()">
-
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="name">Alternate Email<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="alternate_email" name="alternate_email"
-                                        required oninput="autosaveCategory()">
-
+                                    <input type="text" class="form-control" id="alternate_email"
+                                        name="alternate_email" required oninput="autosaveCategory()">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                                     <label for="name">Alternate Phone Number<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="alternate_phone_number"
                                         name="alternate_phone_number" required oninput="autosaveCategory()">
-
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
@@ -109,6 +109,7 @@
                                 @if ($countries == null)
                                     <div class="internet-error text-danger">No Internet Connection Found!</div>
                                 @endif
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="row col-md-12 col-lg-12">
@@ -119,7 +120,7 @@
                                     oninput="autosaveCategory()">
                                     <option value="" selected disabled>Select State</option>
                                 </select>
-
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="city">City<span class="text-danger">*</span></label>
@@ -128,7 +129,7 @@
                                     oninput="autosaveCategory()">
                                     <option value="" selected disabled>Select City</option>
                                 </select>
-
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="form-group col-md-12 col-lg-12">
                                 <label for="status">Active Status<span class="text-danger">*</span></label>
@@ -137,7 +138,7 @@
                                     <option value="0">In Active</option>
                                     <option value="1">Active</option>
                                 </select>
-
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                     </form>
@@ -354,8 +355,15 @@
                 width: '100%'
             });
         }
+
         $('#createSupplierModal').on('shown.bs.modal', function() {
             initializeSelect2($(this));
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createSupplierModal').on('hidden.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
         });
         let autosaveTimer;
 
@@ -367,6 +375,8 @@
                 formData.forEach(function(value, key) {
                     formDataObject[key] = value;
                 });
+                $('#createSupplierForm').find('.is-invalid').removeClass('is-invalid');
+                $('#createSupplierForm').find('.invalid-feedback').removeClass('.invalid-feedback');
                 const draftId = $('#draft_id').val();
                 if (draftId) {
                     formData.append('draft_id', draftId);
@@ -419,7 +429,8 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
+                            $('#' + key).addClass('is-invalid').siblings(
+                                '.invalid-feedback').html(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
@@ -445,7 +456,8 @@
                     $('#createSupplierForm #poc').val(response.poc || '');
                     $('#createSupplierForm #whats_app').val(response.whats_app || '');
                     $('#createSupplierForm #address').val(response.address || '');
-                    $('#createSupplierForm #alternate_phone_number').val(response.alternate_phone_number || '');
+                    $('#createSupplierForm #alternate_phone_number').val(response.alternate_phone_number ||
+                        '');
                     $('#createSupplierForm #alternate_email').val(response.alternate_email || '');
                     $('#createSupplierForm #website').val(response.website || '');
 
@@ -459,15 +471,18 @@
                             $('#createSupplierForm .country').val(k).trigger('change');
 
                             // Fetch states only if country exists
-                            fetchSupplierStates(k.split(',')[0], response.state ? response.state.split(',')[0] :
+                            fetchSupplierStates(k.split(',')[0], response.state ? response.state.split(',')[
+                                    0] :
                                 null,
                                 function(stateCode) {
                                     if (response.state && response.state.split(',')[0]) {
-                                        fetchSupplierCities(response.state.split(',')[0], k.split(',')[0],
+                                        fetchSupplierCities(response.state.split(',')[0], k.split(',')[
+                                                0],
                                             response.city || null);
                                     } else {
                                         $('.city').val(null).empty().append(
-                                            '<option value="" disabled selected>Select City</option>');
+                                            '<option value="" disabled selected>Select City</option>'
+                                        );
                                     }
                                 });
                             break;
@@ -537,7 +552,8 @@
                     // Update button text and class
                     var buttonText = newStatus === '1' ? 'Active' : 'In Active';
                     var buttonClass = newStatus === '1' ? 'btn-success' : 'btn-danger';
-                    button.text(buttonText).removeClass('btn-success btn-danger').addClass(buttonClass);
+                    button.text(buttonText).removeClass('btn-success btn-danger').addClass(
+                        buttonClass);
                     // Update status cell content
                     var statusCell = button.closest('tr').find('td:eq(6)');
                     var statusText, statusClass;
@@ -574,7 +590,8 @@
                     stateSelect.empty();
                     stateSelect.append('<option value="">Select State</option>');
                     data.forEach(function(state) {
-                        stateSelect.append('<option value="' + state.iso2 + "," + state.name +
+                        stateSelect.append('<option value="' + state.iso2 + "," + state
+                            .name +
                             '">' +
                             state.name + '</option>');
                     });
@@ -654,7 +671,8 @@
 
                     data.forEach(function(stateData) {
                         var optionValue = `${stateData.iso2},${stateData.name}`;
-                        var option = $('<option></option>').attr('value', optionValue).text(stateData
+                        var option = $('<option></option>').attr('value', optionValue).text(
+                            stateData
                             .name);
                         if (selectedState && selectedState === stateData.iso2) {
                             option.prop('selected', true);
@@ -686,7 +704,8 @@
                     if (data.length === 0) return;
 
                     data.forEach(function(cityData) {
-                        var option = $('<option></option>').attr('value', cityData.name).text(cityData
+                        var option = $('<option></option>').attr('value', cityData.name).text(
+                            cityData
                             .name);
                         if (selectedCity && cityData.name === selectedCity) {
                             option.prop('selected', true);

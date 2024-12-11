@@ -204,6 +204,14 @@
         });
 
         // ##############Create Sub admin################
+        $('#createSterilizationModal').on('shown.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createSterilizationModal').on('hidden.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         let autosaveTimer;
 
         function autosaveCategory() {
@@ -214,6 +222,8 @@
                 formData.forEach(function(value, key) {
                     formDataObject[key] = value;
                 });
+                $('#createSterilizationForm').find('.is-invalid').removeClass('is-invalid');
+                $('#createSterilizationForm').find('.invalid-feedback').removeClass('.invalid-feedback');
                 const draftId = $('#draft_id').val();
                 if (draftId) {
                     formData.append('draft_id', draftId);
@@ -267,7 +277,8 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
+                            $('#' + key).addClass('is-invalid').siblings(
+                                '.invalid-feedback').html(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
