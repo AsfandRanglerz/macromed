@@ -18,10 +18,12 @@
                             <label for="name">Name<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name"
                                 oninput="autosaveCategory()">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group">
                             <label for="slug">Slug</label>
                             <input type="text" class="form-control" id="slug" name="slug">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="form-group">
                             <label for="status">Active Status</label>
@@ -167,16 +169,16 @@
 
                     {
                         "render": function(data, type, row) {
-                               // Check if is_draft is 1 (published), then show Active/Inactive button
-                               if (row.is_draft == 1) {
-                            return '<a href="' +
-                                "{{ route('discounts.index', ['id' => ':id']) }}"
-                                .replace(':id', row.id) +
-                                '" class="btn btn-primary mb-0 text-white"><i class="fas fa-tag"></i></a>';
-                               }else{
+                            // Check if is_draft is 1 (published), then show Active/Inactive button
+                            if (row.is_draft == 1) {
+                                return '<a href="' +
+                                    "{{ route('discounts.index', ['id' => ':id']) }}"
+                                    .replace(':id', row.id) +
+                                    '" class="btn btn-primary mb-0 text-white"><i class="fas fa-tag"></i></a>';
+                            } else {
                                 return '<span class="text-muted">No Discount Avaiable!</span>';
 
-                               }
+                            }
                         },
                     },
                     {
@@ -238,6 +240,15 @@
     </script>
 
     <script>
+        $('#createCategoryModal').on('show.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createCategoryModal').on('hidden.bs.modal', function() {
+            // $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
         // ##############Create Sub admin################
         let autosaveTimer;
 
@@ -246,6 +257,8 @@
             autosaveTimer = setTimeout(() => {
                 var formData = new FormData($('#createCategoryForm')[0]);
                 const draftId = $('#draft_id').val();
+                $('#createCategoryForm').find('.is-invalid').removeClass('is-invalid');
+                $('#createCategoryForm').find('.invalid-feedback').removeClass('.invalid-feedback');
 
                 if (draftId) {
                     formData.append('draft_id', draftId);
@@ -261,44 +274,26 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     },
                     success: function(response) {
-
                         toastr.success(response.message);
                         $('#draft_id').val(response.draft_id);
                     },
                     error: function(xhr) {
-                        console.error('Autosave error:', xhr.responseText);
+                        // console.error('Autosave error:', xhr.responseText);
+                        if (xhr.status === 422) { // Validation error
+                            var errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                $('#' + key).addClass('is-invalid').siblings(
+                                    '.invalid-feedback').html(value[0]);
+                            });
+                        } else {
+                            // console.error(xhr.responseText);
+                        }
                     },
                 });
             }, 1000);
         }
 
-        function autosaveCategory() {
-            clearTimeout(autosaveTimer);
-            autosaveTimer = setTimeout(() => {
-                var formData = new FormData($('#createCategoryForm')[0]);
-                const draftId = $('#draft_id').val();
-                if (draftId) {
-                    formData.append('draft_id', draftId);
-                }
-                $.ajax({
-                    url: '{{ route('category.autosave') }}',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                    },
-                    success: function(response) {
-                        toastr.success(response.message);
-                        $('#draft_id').val(response.draft_id);
-                    },
-                    error: function(xhr) {
-                        console.error('Autosave error:', xhr.responseText);
-                    },
-                });
-            }, 1000); // 1-second debounce
-        }
+
 
         function editCategoryModal(id) {
             var showCategory = '{{ route('category.show', ':id') }}';
@@ -344,7 +339,9 @@
                     if (xhr.status === 422) { // Validation error
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
+                            $('#' + key).addClass('is-invalid').siblings('.invalid-feedback').html(
+                                value[
+                                    0]);
                         });
                     } else {
                         console.error(xhr.responseText);
@@ -352,10 +349,6 @@
                 }
             });
         }
-
-
-
-
         // ############# Delete Category Data###########
         function deleteCategoryModal(id) {
             $('#confirmDeleteSubadmin').data('subadmin-id', id);

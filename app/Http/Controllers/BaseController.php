@@ -31,6 +31,7 @@ abstract class BaseController extends Controller
     }
     public function autosave(Request $request)
     {
+        $this->validateRequest($request);
         $entity = $request->draft_id
             ? $this->model::find($request->draft_id)
             : new $this->model();

@@ -25,16 +25,19 @@
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
+                                <div class="invalid-feedback"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="name">Name<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name"
                                     oninput="autosaveCategory()">
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="form-group">
                                 <label for="slug">Slug</label>
                                 <input type="text" class="form-control" id="slug" name="slug">
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="form-group">
                                 <label for="status">Active Status</label>
@@ -232,6 +235,13 @@
         }
         $('#createSubCategoryModal').on('shown.bs.modal', function() {
             initializeSelect2($(this));
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createSubCategoryModal').on('hidden.bs.modal', function() {
+            // $(this).find('form')[0].reset();
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
         });
         (function($) {
             "use strict";
@@ -259,6 +269,8 @@
             autosaveTimer = setTimeout(() => {
                 const formData = new FormData($('#createSubCategoryForm')[0]);
                 const draftId = $('#draft_id').val();
+                $('#createSubCategoryForm').find('.is-invalid').removeClass('is-invalid');
+                $('#createSubCategoryForm').find('.invalid-feedback').removeClass('.invalid-feedback');
                 if (draftId) {
                     formData.append('draft_id', draftId);
                 }
@@ -276,7 +288,16 @@
                         $('#draft_id').val(response.draft_id);
                     },
                     error: function(xhr) {
-                        console.error('Autosave error:', xhr.responseText);
+                        // console.error('Autosave error:', xhr.responseText);
+                        if (xhr.status === 422) { // Validation error
+                            var errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                $('#' + key).addClass('is-invalid').siblings(
+                                    '.invalid-feedback').html(value[0]);
+                            });
+                        } else {
+                            // console.error(xhr.responseText);
+                        }
                     },
                 });
             }, 1000); // 1-second debounce
@@ -304,13 +325,15 @@
                     reloadDataTable(); // Reload the DataTable to reflect changes
                 },
                 error: function(xhr, status, error) {
+                    // console.error('Autosave error:', xhr.responseText);
                     if (xhr.status === 422) { // Validation error
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
+                            $('#' + key).addClass('is-invalid').siblings(
+                                '.invalid-feedback').html(value[0]);
                         });
                     } else {
-                        console.error(xhr.responseText);
+                        // console.error(xhr.responseText);
                     }
                 }
             });
