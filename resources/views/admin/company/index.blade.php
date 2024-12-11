@@ -47,6 +47,7 @@
                                 @if ($countries == null)
                                     <div class="internet-error text-danger">No Internet Connection Found!</div>
                                 @endif
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="state">State<span class="text-danger">*</span></label>
@@ -318,6 +319,12 @@
         }
         $('#createCompanyModal').on('shown.bs.modal', function() {
             initializeSelect2($(this));
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createCompanyModal').on('hidden.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
         });
         let autosaveTimer;
 
@@ -329,6 +336,8 @@
                 formData.forEach(function(value, key) {
                     formDataObject[key] = value;
                 });
+                $('#createCompanyForm').find('.is-invalid').removeClass('is-invalid');
+                $('#createCompanyForm').find('.invalid-feedback').removeClass('.invalid-feedback');
                 const draftId = $('#draft_id').val();
                 if (draftId) {
                     formData.append('draft_id', draftId);
@@ -381,7 +390,8 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
+                            $('#' + key).addClass('is-invalid').siblings(
+                                '.invalid-feedback').html(value[0]);
                         });
                     } else {
                         console.log("Error:", xhr);
