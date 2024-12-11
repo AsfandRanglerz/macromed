@@ -482,6 +482,22 @@
 
 @section('js')
     <script>
+        (function($) {
+            "use strict";
+            $(document).ready(function() {
+                $(".product_name").on("focusout", function(e) {
+                    $(".slug").val(convertToSlug($(this).val()));
+                })
+            });
+        })(jQuery);
+
+        function convertToSlug(Text) {
+            return Text
+                .toLowerCase()
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
+        }
+
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();

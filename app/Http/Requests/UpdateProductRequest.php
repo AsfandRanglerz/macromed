@@ -24,7 +24,7 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules()
     {
-        $productId = $this->route('category') ?? $this->input('draft_id');
+        $productId = $this->route('id') ?? $this->input('draft_id');
         return [
             'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_name' => [
