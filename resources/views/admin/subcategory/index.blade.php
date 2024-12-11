@@ -289,7 +289,8 @@
                     },
                     error: function(xhr) {
                         // console.error('Autosave error:', xhr.responseText);
-                   
+                 
+                    },
                 });
             }, 1000); // 1-second debounce
         }
