@@ -39,12 +39,13 @@
                                     <label for="name">Company Name<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control company" id="company" name="company"
                                         required oninput="autosaveCategory()">
+                                    <div class="invalid-feedback"></div>
 
                                 </div>
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Company Country<span class="text-danger">*</span></label>
-                                <select name="company_country" class="form-control select2 company_country" id="country"
+                                <select name="company_country" class="form-control select2 company_country" id="company_country"
                                     style="width: 100%" onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
@@ -55,6 +56,7 @@
                                 @if ($countries == null)
                                     <div class="internet-error text-danger">No Internet Connection Found!</div>
                                 @endif
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="row col-md-12 col-lg-12">
@@ -334,6 +336,12 @@
         }
         $('#createBrandsModal').on('shown.bs.modal', function() {
             initializeSelect2($(this));
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
+        });
+        $('#createBrandsModal').on('hidden.bs.modal', function() {
+            $(this).find('.is-invalid').removeClass('is-invalid');
+            $(this).find('.invalid-feedback').html('');
         });
         (function($) {
             "use strict";
@@ -363,6 +371,8 @@
                 formData.forEach(function(value, key) {
                     formDataObject[key] = value;
                 });
+                $('#createBrandsForm').find('.is-invalid').removeClass('is-invalid');
+                $('#createBrandsForm').find('.invalid-feedback').removeClass('.invalid-feedback');
                 const draftId = $('#draft_id').val();
                 if (draftId) {
                     formData.append('draft_id', draftId);
@@ -382,6 +392,7 @@
                     },
                     error: function(xhr) {
                         console.error('Autosave error:', xhr.responseText);
+
                     },
                 });
             }, 1000); // 1-second debounce
@@ -416,7 +427,10 @@
                     if (xhr.status === 422) { // If validation errors
                         var errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(value[0]);
+                            $.each(errors, function(key, value) {
+                                $('#' + key).addClass('is-invalid').siblings(
+                                    '.invalid-feedback').html(value[0]);
+                            });
                         });
                     } else {
                         console.log("Error:", xhr);

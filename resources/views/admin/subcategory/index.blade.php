@@ -289,16 +289,7 @@
                     },
                     error: function(xhr) {
                         // console.error('Autosave error:', xhr.responseText);
-                        if (xhr.status === 422) { // Validation error
-                            var errors = xhr.responseJSON.errors;
-                            $.each(errors, function(key, value) {
-                                $('#' + key).addClass('is-invalid').siblings(
-                                    '.invalid-feedback').html(value[0]);
-                            });
-                        } else {
-                            // console.error(xhr.responseText);
-                        }
-                    },
+                   
                 });
             }, 1000); // 1-second debounce
         }
