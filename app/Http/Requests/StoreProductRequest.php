@@ -24,6 +24,7 @@ class StoreProductRequest extends FormRequest
      */
     public function rules()
     {
+        $productId = $this->route('id') ?? $this->input('draft_id');
         return [
             'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'short_name' => [
@@ -31,26 +32,26 @@ class StoreProductRequest extends FormRequest
                 'string',
                 'max:255',
                 'regex:/^[a-zA-Z0-9\s]+$/', // Alphabet and numbers only
-                Rule::unique('products')
+                Rule::unique('products')->ignore($productId)
             ],
             'product_name' => [
                 'required',
                 'string',
                 'max:255',
                 'regex:/^[a-zA-Z0-9\s]+$/', // Alphabet and numbers only
-                Rule::unique('products')
+                Rule::unique('products')->ignore($productId)
             ],
             'slug' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('products')
+                Rule::unique('products')->ignore($productId)
             ],
             'product_hts' => [
                 'required',
                 'string',
                 'regex:/^\d{4}(\.\d{2})?(\.\d{2})?$/',
-                'unique:products,product_hts'
+                Rule::unique('products')->ignore($productId)
             ],
             'category_id' => 'required|array',
             'category_id.*' => 'exists:categories,id',
@@ -87,7 +88,7 @@ class StoreProductRequest extends FormRequest
                 'required',
                 'regex:/^(\d{1,3}(\.\d+)?%|\d{1,6})$/'
             ],
-            'product_condition'=>'required',
+            'product_condition' => 'required',
         ];
     }
 
