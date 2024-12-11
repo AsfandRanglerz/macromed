@@ -77,5 +77,5 @@ Route::get('terms-condations', [SecurityController::class, 'getTermsCondation'])
 Route::get('/faqs', [SecurityController::class, 'faqs']);
 Route::post('/sendContactMessage', [SecurityController::class, 'sendContactMessage']);
 // ############### TaraxShipping #########
-Route::post('/tarax/pickup-address', [TaraxShippingServiceController::class, 'addPickupAddress']);
+Route::post('/tarax/pickup-address', [TaraxShippingServiceController::class, 'addAddress']);
 Route::get('/tarax/cities', [TaraxShippingServiceController::class, 'getCities']);

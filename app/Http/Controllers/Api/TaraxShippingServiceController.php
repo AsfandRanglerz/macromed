@@ -11,30 +11,95 @@ use GuzzleHttp\Exception\RequestException;
 
 class TaraxShippingServiceController extends Controller
 {
-    protected $taraxApi;
+    // protected $taraxApi;
 
-    public function __construct(TaraxShippingService $taraxApi)
+    // public function __construct(TaraxShippingService $taraxApi)
+    // {
+    //     $this->taraxApi = $taraxApi;
+    // }
+    public function addAddress(Request $request)
     {
-        $this->taraxApi = $taraxApi;
-    }
-
-    public function addPickupAddress(Request $request)
-    {
+        // Validate the incoming request
         $request->validate([
             'person_of_contact' => 'required|string',
-            'phone_number'    => 'required|integer',
-            'Email_address'     => 'required|string',
-            'address' => 'required|string',
-            'city_id' => 'required|integer'
+            'phone_number'      => 'required|integer',
+            'email_address'     => 'required|email', // Adjusted to validate email format
+            'address'           => 'required|string',
+            'city_id'           => 'required|integer',
         ]);
-        $data = $request->only(['person_of_contact', 'phone_number', 'Email_address', 'address', 'city_id']);
-        $response = $this->taraxApi->addPickupAddress($data);
-        if (isset($response['error']) && $response['error']) {
-            return response()->json($response, 400);
-        }
 
-        return response()->json($response, 200);
+        // Prepare the data for the API request
+        $data = $request->only(['person_of_contact', 'phone_number', 'email_address', 'address', 'city_id']);
+
+        $apiUrl = 'https://sonic.pk/api/pickup_address/add'; // API endpoint for adding pickup address
+        $timeout = 30; 
+
+        try {
+            $client = new Client(['timeout' => $timeout]);
+
+            // Retrieve API Token
+            $apiToken = 'djNWMjlpbkx2Yk1rT2R1WXN2YkJ5bWN5ZVpqbllxODhOQ0hEVlNzNVUwVVFpVmpNUzNZeHgyaUtjeDND67247f99afac4';
+
+            // Make the POST request with the Authorization header and data
+            $response = $client->post($apiUrl, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $apiToken,
+                    'Content-Type'  => 'application/json',
+                ],
+                'json' => $data, // Send data as JSON
+            ]);
+
+            // Check if the response is successful
+            if ($response->getStatusCode() === 200) {
+                $responseData = json_decode($response->getBody(), true);
+                return response()->json([
+                    'error'   => false,
+                    'message' => 'Pickup address added successfully.',
+                    'data'    => $responseData,
+                ]);
+            }
+
+            // Handle unexpected response status
+            return response()->json([
+                'error'   => true,
+                'message' => 'Unexpected response from the API.',
+            ], $response->getStatusCode());
+        } catch (RequestException $e) {
+            // Handle specific HTTP errors
+            $statusCode = $e->getResponse() ? $e->getResponse()->getStatusCode() : null;
+
+            if ($statusCode === 500) {
+                return response()->json([
+                    'error'   => true,
+                    'message' => 'The API server encountered an error. Please try again later.',
+                ], 500);
+            }
+
+            // Default error handling if request fails
+            return response()->json([
+                'error'     => true,
+                'message'   => 'An error occurred while communicating with the API.',
+                'exception' => $e->getMessage(),
+            ], 500);
+        }
     }
+    // public function addPickupAddress(Request $request)
+    // {
+    //     $request->validate([
+    //         'person_of_contact' => 'required|string',
+    //         'phone_number'    => 'required|integer',
+    //         'Email_address'     => 'required|string',
+    //         'address' => 'required|string',
+    //         'city_id' => 'required|integer'
+    //     ]);
+    //     $data = $request->only(['person_of_contact', 'phone_number', 'Email_address', 'address', 'city_id']);
+    //     $response = $this->taraxApi->addPickupAddress($data);
+    //     if (isset($response['error']) && $response['error']) {
+    //         return response()->json($response, 400);
+    //     }
+
+    //     return response()->json($response, 200);
+    // }
 
     /**
      * Get List of Cities
