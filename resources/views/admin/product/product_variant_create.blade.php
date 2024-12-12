@@ -366,6 +366,8 @@
             saveTimeout = setTimeout(() => {
                 saveFormDataToLocalStorage();
                 toastr.success('Data saved successfully');
+                // Clear previous error messages
+                $('.error-message').remove();
             }, 1000);
         });
 
@@ -374,7 +376,6 @@
             e.preventDefault();
             saveEditorData(); // Save editor content before submitting
             let formData = new FormData(this);
-
             $.ajax({
                 url: $(this).attr('action'),
                 method: 'POST',
@@ -399,8 +400,27 @@
                 error: function(xhr) {
                     if (xhr.status === 422) {
                         let errors = xhr.responseJSON.errors;
-                        $.each(errors, (key, value) => {
-                            toastr.error(value[0]);
+                        console.log("error", errors);
+
+                        $.each(errors, function(key, value) {
+
+                            let matches = key.match(/variants\.(\d+)\.(\w+)/);
+                            console.log("Regex Matches:", matches);
+                            if (matches) {
+                                let variantIndex = matches[1]; // Get the variant index
+                                let fieldName = matches[2]; // Get the field name, e.g. s_k_u
+
+                                // Find the input field for this variant index and field name
+                                let inputField = $(
+                                    `[name="variants[${variantIndex}][${fieldName}]"]`);
+
+                                if (inputField.length > 0) {
+
+                                    let errorMessage =
+                                        `<div class="error-message text-danger">${value[0]}</div>`;
+                                    inputField.closest('.form-group').append(errorMessage);
+                                }
+                            }
                         });
                     } else {
                         toastr.error('Failed to save product. Try again later.');
@@ -408,6 +428,7 @@
                 },
             });
         });
+
 
 
         $(document).ready(function() {
