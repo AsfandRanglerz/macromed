@@ -30,22 +30,26 @@
                                         <label>Thumbnail Image</label>
                                         <input type="file" class="form-control-file" name="thumbnail_image"
                                             value="{{ old('thumbnail_image') }}" onchange="previewThumbnailImage(event)">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
                                             <label>Product Short Name<span class="text-danger">*</span></label>
                                             <input type="text" id="short_name" class="form-control" name="short_name"
                                                 value="{{ old('short_name') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Product Name<span class="text-danger">*</span></label>
                                             <input type="text" id="product_name" class="form-control name"
                                                 name="product_name" value="{{ old('product_name') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Slug<span class="text-danger">*</span></label>
                                             <input type="text" id="slug" class="form-control slug" name="slug"
                                                 value="{{ old('slug') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
 
@@ -61,6 +65,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Sub Category</label>
@@ -79,6 +84,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
@@ -94,6 +100,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <!-- Company Field -->
                                         <div class="form-group col-md-4">
@@ -107,6 +114,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
 
                                         <!-- Models Field -->
@@ -126,7 +134,9 @@
                                             <label>Product HTS Code<span class="text-danger">*</span></label>
                                             <input type="text" id="product_hts" class="form-control product_hts"
                                                 name="product_hts" value="{{ old('product_hts') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
+
                                     </div>
 
                                     <div class="row col-md-12">
@@ -144,6 +154,7 @@
                                             @if ($countries == null)
                                                 <div class="internet-error text-danger">No Internet Connection Found!</div>
                                             @endif
+                                            <div class="invalid-feedback"></div>
                                         </div>
 
                                         <div class="form-group col-md-4">
@@ -151,6 +162,7 @@
                                             <div class="input-group">
                                                 <input type="text" class="form-control" name="product_commission"
                                                     value="{{ old('product_commission') }}">
+
                                                 <span class="input-group-addon"
                                                     style="
                                                 border: 2px solid #ced4da;
@@ -161,6 +173,7 @@
                                                 width: 3rem;
                                                 font-weight: bold;
                                             ">%</span>
+                                                <div class="invalid-feedback"></div>
                                             </div>
 
                                         </div>
@@ -168,6 +181,7 @@
                                             <label>Video Link</label>
                                             <input type="text" class="form-control" name="video_link"
                                                 value="{{ old('video_link') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                     <div class="row col-12">
@@ -182,6 +196,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Sterilizations <span class="text-danger">*</span></label>
@@ -195,6 +210,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
 
                                         <div class="form-group col-md-4">
@@ -225,6 +241,7 @@
                                                     {{ old('buyer_type') == 'Distributor' ? 'selected' : '' }}>Distributor
                                                 </option>
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
@@ -251,6 +268,7 @@
                                                     {{ old('product_class') == 'Class E-5' ? 'selected' : '' }}>Class E-5
                                                 </option>
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
 
                                         <!-- Main Material Field -->
@@ -264,6 +282,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
 
                                         <!-- Supplier Name Field -->
@@ -278,6 +297,7 @@
                                                         {{ old('supplier_name') }}</option>
                                                 @endif
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
 
@@ -307,6 +327,7 @@
                                             <label>Supplier Delivery Period <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="supplier_delivery_time"
                                                 value="{{ old('supplier_delivery_time') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
 
                                         <!-- Delivery Period Field -->
@@ -314,6 +335,7 @@
                                             <label>Delivery Period <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="delivery_period"
                                                 value="{{ old('delivery_period') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
 
@@ -321,12 +343,14 @@
                                         <div class="form-group col-md-12">
                                             <label>Short Description <span class="text-danger">*</span></label>
                                             <textarea name="short_description" cols="30" rows="10" class="form-control text-area-5">{{ old('short_description') }}</textarea>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-12">
                                             <label>Long Description <span class="text-danger">*</span></label>
                                             <textarea name="long_description" cols="20" rows="50" class="long_description">{{ old('long_description') }}</textarea>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
                                     <div class="row col-md-12">
@@ -334,6 +358,7 @@
                                             <label>Shelf Life / Expiry Period<span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="self_life"
                                                 value="{{ old('self_life') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Condition <span class="text-danger">*</span></label>
@@ -346,6 +371,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Status <span class="text-danger">*</span></label>
@@ -415,11 +441,13 @@
                                             <label>Federal Tax<span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="federal_tax"
                                                 value="{{ old('federal_tax') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Provincial Tax <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="provincial_tax"
                                                 value="{{ old('provincial_tax') }}">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
 
@@ -661,6 +689,8 @@
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(function() {
                     updateFormData();
+                    $('#productForm').find('.is-invalid').removeClass('is-invalid');
+                    $('#productForm').find('.invalid-feedback').removeClass('.invalid-feedback');
                     if (Object.keys(formData).length > 0) {
                         localStorage.setItem("formData", JSON.stringify(formData));
 
@@ -688,14 +718,8 @@
                                 toastr.success('Data saved successfully');
                             },
                             error: function(xhr) {
-                                if (xhr.status === 422) {
-                                    let errors = xhr.responseJSON.errors;
-                                    $.each(errors, function(key, value) {
-                                        toastr.error(value[0]);
-                                    });
-                                } else {
-                                    toastr.error("Failed to save product. Try again later.");
-                                }
+                                console.log("error", xhr);
+
                             }
                         });
                     }
@@ -714,7 +738,6 @@
 
             // Final product save (no autosave)
             window.saveProduct = function saveProduct() {
-                $('form input, form select, form textarea').off('change input'); // Stop autosave events
                 ckEditor(); // Ensure CKEditor content is collected
 
                 // Create FormData and send the final save request
@@ -748,10 +771,15 @@
                     },
                     error: function(xhr) {
                         if (xhr.status === 422) {
-                            $('form input, form select, form textarea').prop('disabled', false);
                             let errors = xhr.responseJSON.errors;
+                            // console.log("error", errors);
                             $.each(errors, function(key, value) {
-                                toastr.error(value[0]);
+                                if (key.includes('taxes')) {
+                                    toastr.error(value[0], 'Tax Error');
+                                } else {
+                                    $('form [name*="' + key + '"]').addClass('is-invalid')
+                                        .siblings('.invalid-feedback').html(value[0]);
+                                }
                             });
                         } else {
                             toastr.error("Failed to save product. Try again later.");

@@ -448,6 +448,7 @@
                                     <thead>
                                         <tr>
                                             <th>Sr.</th>
+                                            <th>Visibility Status</th>
                                             <th>Product Code</th>
                                             <th>Product Name</th>
                                             <th>Brands</th>
@@ -516,6 +517,16 @@
                         "data": null,
                         "render": function(data, type, row, meta) {
                             return meta.row + 1;
+                        }
+                    },
+                    {
+                        "data": "is_draft",
+                        "render": function(data, type, row) {
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
                         }
                     },
                     {
