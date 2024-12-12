@@ -43,26 +43,21 @@ class OrderController extends Controller
             ], 500);
         }
     }
-    private function generateRandomString($length = 6)
+    private function generateRandomString($length = 5)
     {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $maxAttempts = 5; // Maximum number of attempts to generate a unique string
-        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
-            $randomString = '';
-            for ($i = 0; $i < $length; $i++) {
-                $randomString .= $characters[rand(0, $charactersLength - 1)];
-            }
-            if (!$this->isStringExists($randomString)) {
-                return $randomString;
-            }
+        $latestOrder = Order::latest('order_id')->first();
+        if (!$latestOrder) {
+            return str_pad(1, $length, '0', STR_PAD_LEFT);
         }
-        return false;
+        $newOrderNumber = (int)$latestOrder->order_id + 1;
+        return str_pad($newOrderNumber, $length, '0', STR_PAD_LEFT);
     }
+
     private function isStringExists($string)
     {
         return Order::where('order_id', $string)->exists();
     }
+
     // ############## couponCode #################
     public function couponCode(Request $request)
     {
@@ -120,20 +115,10 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            // Step 1: Retrieve currency
-            $currency = $this->getCurrency();
-            if (!$currency) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No Currency found.',
-                ], 400);
-            }
 
-            $pkrAmount = $currency->pkr_amount;
             $userId = $request->input('user_id');
             $discountCode = $request->input('discount_code');
 
-            // Step 2: Validate Discount Code
             $discount = null;
             if ($discountCode) {
                 $discount = DiscountCode::where('discount_code', $discountCode)->first();
@@ -171,9 +156,9 @@ class OrderController extends Controller
             $cart->card_date = $request->input('card_date');
             $cart->cvc = $request->input('cvc');
             $cart->order_id = $this->generateRandomString(6);
-            $cart->total = $request->input('total') / $pkrAmount;
+            $cart->total = $request->input('total');
             $cart->discount_code = $discountCode;
-            $cart->discounted_total = $request->input('discounted_total') / $pkrAmount;
+            $cart->discounted_total = $request->input('discounted_total');
             $cart->dicount_code_percentage = $discount ? $discount->discount_percentage : null;
             $cart->status = 'pending';
             $cart->product_commission = 0;
@@ -226,9 +211,9 @@ class OrderController extends Controller
                 $orderItem->variant_number = $product['variant_number'];
                 $orderItem->image = $product['image'];
                 $orderItem->quantity = $product['quantity'];
-                $orderItem->price = $product['price'] / $pkrAmount;
-                $orderItem->discounted_price = ($product['discounted_price'] ?? $product['price']) / $pkrAmount;
-                $orderItem->subtotal = $product['quantity'] * $price / $pkrAmount;
+                $orderItem->price = $product['price'];
+                $orderItem->discounted_price = ($product['discounted_price'] ?? $product['price']);
+                $orderItem->subtotal = $product['quantity'] * $price;
                 $orderItem->product_discount = $product['product_discount'] ?? null;
                 $orderItem->brand_discount = $product['brand_discount'] ?? null;
                 $orderItem->category_discount = $product['category_discount'] ?? null;
@@ -246,7 +231,7 @@ class OrderController extends Controller
                 $discount->remaining_usage_limit -= 1;
                 $discount->save();
             }
-            $cart->product_commission = $totalCommission / $pkrAmount;
+            $cart->product_commission = $totalCommission;
             $cart->order_confirmation_message = 'Your order #' . $cart->order_id . ' is pending. The admin will review it shortly. Please check back later for updates.';
             $cart->save();
             if ($cart->status === 'pending') {
@@ -261,7 +246,7 @@ class OrderController extends Controller
                 'useremail' => $cart->users->email,
                 'username' => $cart->users->name,
                 'ordercode' => $cart->order_id,
-                'total' => $cart->total * $pkrAmount,
+                'total' => $cart->total,
             ];
             Mail::to($data['useremail'])->send(new OrderConfirmation($data));
             $cart->load('orderItem');

@@ -41,12 +41,22 @@ class SalesAgentController extends Controller
     public function salesagentIndex()
     {
         $countries = $this->fetchApiData('https://api.countrystatecity.in/v1/countries');
+
         if (isset($countries['error'])) {
             $countries = [];
+        } else {
+            $countries = collect($countries)->filter(function ($country) {
+                return $country->name === 'Pakistan';
+            })->values();
+            if ($countries->isEmpty()) {
+                $countries = [];
+            }
         }
+
         $salesManagers = SalesAgent::where('user_type', 'salesmanager')->with('agentAccounts')->latest()->get();
         return view('admin.salesagent.index', compact('salesManagers', 'countries'));
     }
+
     public function fetchStates(Request $request)
     {
 

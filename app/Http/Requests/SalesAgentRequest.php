@@ -45,7 +45,17 @@ class SalesAgentRequest extends FormRequest
                 'min:11',
                 Rule::unique('sales_agents')->ignore($id)
             ],
-            'account_number' => 'required|numeric|unique:user_accounts|min:16,' . $id,
+            'account_number' => [
+                'required',
+                'unique:user_accounts',
+                'min:16',
+                'regex:/^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/',
+                function ($attribute, $value, $fail) {
+                    if (!$this->isValidIban($value)) {
+                        $fail('The account number is not a valid IBAN.');
+                    }
+                }
+            ],
             'country' => 'required',
             'state' => 'required',
             'city' => 'required',
@@ -54,5 +64,21 @@ class SalesAgentRequest extends FormRequest
             'account_name' => 'required|string|max:255',
             'account_holder_name' => 'required|string|max:255'
         ];
+    }
+    private function isValidIban($iban)
+    {
+        // Example: Basic IBAN format validation
+        $iban = strtoupper($iban); // Convert to uppercase
+
+        // Ensure the IBAN matches the expected format (country code + check digits + BBAN)
+        if (!preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/', $iban)) {
+            return false;
+        }
+
+        // You can implement a more complex checksum validation here
+        // For a complete validation, you may need to perform a specific algorithm for IBAN checksum.
+        // Here, we're just doing a simple format check.
+
+        return true;
     }
 }
