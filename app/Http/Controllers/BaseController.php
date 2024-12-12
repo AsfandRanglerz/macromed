@@ -138,7 +138,7 @@ abstract class BaseController extends Controller
     private function generateUniqueSupplierId()
     {
         do {
-            $supplier_id = Str::random(8); // Generate random string of length 8
+            $supplier_id = random_int(1000, 9999); // Generate random 4-digit number
         } while ($this->model::where('supplier_id', $supplier_id)->exists());
 
         return $supplier_id;

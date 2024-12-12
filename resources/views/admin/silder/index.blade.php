@@ -119,6 +119,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
+                    console.log(response);
+
                     // Reset all buttons to default (success)
                     toastr.success(response.message);
                     $('.btn').removeClass('btn-danger').addClass('btn-success');
@@ -131,7 +133,7 @@
                         button.removeClass('btn-danger').addClass('btn-success');
                         svgIcon.removeClass('feather-toggle-right').addClass('feather-toggle-left');
                     }
-                    window.location.reload();
+                    // window.location.reload();
                 },
                 error: function(xhr, status, error) {
                     toastr.error(error);

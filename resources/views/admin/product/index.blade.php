@@ -524,18 +524,22 @@
                             return '#' + data;
                         }
                     },
+
                     {
                         "data": "product_name",
                         "render": function(data, type, row) {
                             function truncateText(text, wordLimit) {
+                                if (typeof text !== 'string') {
+                                    return ''; // Return an empty string if data is not a string
+                                }
                                 var words = text.split(' ');
                                 if (words.length > wordLimit) {
                                     return words.slice(0, wordLimit).join(' ') + '...';
                                 }
                                 return text;
                             }
-                            return truncateText(data, 4);
-                        }
+                            return truncateText(data, 4); // Set word limit as needed
+                        },
                     },
                     {
                         "data": "product_brands",

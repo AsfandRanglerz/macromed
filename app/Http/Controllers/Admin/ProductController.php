@@ -128,7 +128,7 @@ class ProductController extends Controller
         return response()->json($subCategories);
     }
 
-    public function productStore(UpdateProductRequest $request)
+    public function productStore(StoreProductRequest $request)
     {
         try {
             DB::beginTransaction();
