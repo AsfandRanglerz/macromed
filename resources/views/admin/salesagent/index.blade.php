@@ -107,7 +107,39 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="account_name">Bank Name</label>
-                                    <input type="text" class="form-control account_name" name="account_name">
+                                    {{-- <input type="text" class="form-control account_name" name="account_name"> --}}
+                                    <select class="form-control account_name select2" name="account_name">
+                                        <option value="" disabled selected>Select Bank</option>
+                                        <option value="HBL">Habib Bank Limited (HBL)</option>
+                                        <option value="UBL">United Bank Limited (UBL)</option>
+                                        <option value="MCB">Muslim Commercial Bank (MCB)</option>
+                                        <option value="NBP">National Bank of Pakistan (NBP)</option>
+                                        <option value="BankAlHabib">Bank Al Habib</option>
+                                        <option value="FaysalBank">Faysal Bank</option>
+                                        <option value="BankOfPunjab">Bank of Punjab (BOP)</option>
+                                        <option value="StandardChartered">Standard Chartered Bank</option>
+                                        <option value="AlliedBank">Allied Bank Limited (ABL)</option>
+                                        <option value="BankIslami">Bank Islami Pakistan Limited</option>
+                                        <option value="BankOfKhyber">The Bank of Khyber (BOK)</option>
+                                        <option value="BankAlFalah">Bank Alfalah</option>
+                                        <option value="FirstWomenBank">First Women Bank</option>
+                                        <option value="AskariBank">Askari Bank</option>
+                                        <option value="Citibank">Citibank</option>
+                                        <option value="DubaiIslamicBank">Dubai Islamic Bank</option>
+                                        <option value="BankOfAzadKashmir">Bank of Azad Jammu & Kashmir</option>
+                                        <option value="PakBruneiInvestment">Pak Brunei Investment Company Limited</option>
+                                        <option value="HabibMetropolitanBank">Habib Metropolitan Bank</option>
+                                        <option value="SoneriBank">Soneri Bank</option>
+                                        <option value="SindhBank">Sindh Bank</option>
+                                        <option value="UMicroFinanceBank">U Microfinance Bank</option>
+                                        <option value="MeezanBank">Meezan Bank</option>
+                                        <option value="BankAlHabib">Bank Al Habib</option>
+                                        <option value="TheBankOfPunjab">The Bank of Punjab (BOP)</option>
+                                        <option value="BankOfPunjab">Bank of Punjab</option>
+                                        <option value="BankIslamicPakistan">Bank Islami Pakistan Limited</option>
+                                        <option value="BankOfKhyber">The Bank of Khyber (BOK)</option>
+                                    </select>
+
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
