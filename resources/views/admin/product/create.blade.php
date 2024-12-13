@@ -855,17 +855,18 @@
         });
         // Show sub Categories against Category
         $(document).ready(function() {
-            // Check if categories are already selected on page load
+
             if ($('#category').val().length > 0) {
                 var selectedCategories = $('#category').val();
-                fetchSubCategories(selectedCategories, true);
+                fetchSubCategories(selectedCategories, true); // true for initial load
             }
 
+            // Handle category change event
             $('#category').change(function() {
                 var selectedCategories = $(this).val();
 
                 if (selectedCategories.length > 0) {
-                    fetchSubCategories(selectedCategories, false);
+                    fetchSubCategories(selectedCategories, true); 
                 } else {
                     resetSubCategoryDropdown();
                 }
@@ -879,6 +880,8 @@
                         category_ids: categoryIds
                     },
                     success: function(response) {
+                        console.log("populate", response);
+
                         populateSubCategoryDropdown(response, isInitialLoad);
                     },
                     error: function(xhr) {
@@ -890,15 +893,17 @@
             function populateSubCategoryDropdown(response, isInitialLoad) {
                 $('#sub_category').empty();
                 var oldSubCategories = @json(old('sub_category_id', []));
-                var oldSubCategorySet = new Set(oldSubCategories);
-
+                var savedSubCategories = JSON.parse(localStorage.getItem('selectedSubCategories')) || [];
+                var selectedSubCategories = isInitialLoad ? new Set([...oldSubCategories, ...savedSubCategories]) :
+                    new Set();
                 if (response.length > 0) {
                     response.forEach(function(subCategory) {
-                        var isSelected = isInitialLoad && oldSubCategorySet.has(subCategory.id) ?
-                            'selected' : '';
-                        $('#sub_category').append('<option value="' +
-                            subCategory.id + '" ' + isSelected + '>' +
-                            subCategory.name + '</option>');
+                        var isSelected = selectedSubCategories.has(String(subCategory.id)) ? 'selected' :
+                            '';
+                        $('#sub_category').append(
+                            '<option value="' + subCategory.id + '" ' + isSelected + '>' +
+                            subCategory.name + '</option>'
+                        );
                     });
 
                     $('#sub_category').prop('disabled', false);
@@ -906,6 +911,14 @@
                     $('#sub_category').append('<option value="">No Sub Category Available</option>');
                     $('#sub_category').prop('disabled', true);
                 }
+
+                // Save selected subcategories on initial load
+                if (isInitialLoad) {
+                    $('#sub_category').val([...selectedSubCategories]);
+                }
+
+                // Trigger change for Select2 or other plugins
+                $('#sub_category').trigger('change');
             }
 
             function resetSubCategoryDropdown() {
@@ -913,7 +926,14 @@
                 $('#sub_category').append('<option value="">Select Sub Category</option>');
                 $('#sub_category').prop('disabled', true);
             }
+
+            // Save selected subcategories to local storage on change
+            $('#sub_category').change(function() {
+                var selectedValues = $(this).val();
+                localStorage.setItem('selectedSubCategories', JSON.stringify(selectedValues || []));
+            });
         });
+
 
 
         //################ Get Supplier Name ############
