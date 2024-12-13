@@ -80,7 +80,12 @@ class UpdateProductRequest extends FormRequest
                 'required',
                 'regex:/^(\d{1,3}(\.\d+)?%|\d{1,6})$/'
             ],
-            'product_condition' => 'required'
+            'product_condition' => 'required',
+            'video_link' => [
+                'nullable',
+                'string',
+                'url'
+            ],
         ];
     }
     public function messages()
