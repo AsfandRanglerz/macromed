@@ -146,6 +146,7 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
+                                                <th>Visibility Status</th>
                                                 <th>MPN</th>
                                                 <th>SKU</th>
                                                 <th>Packing</th>
@@ -203,6 +204,16 @@
                         "data": null,
                         "render": function(data, type, row, meta) {
                             return meta.row + 1; // Display row index
+                        }
+                    },
+                    {
+                        "data": "is_draft",
+                        "render": function(data, type, row) {
+                            if (data == 0) {
+                                return '<span class ="text-danger">In-Darft</span>'
+                            } else {
+                                return '<span class ="text-success">Published</span>'
+                            }
                         }
                     },
                     {
