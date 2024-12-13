@@ -13,7 +13,7 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="card-content">
                                             <h5 class="font-15">Received Commission</h5>
-                                            <h2 class="mb-3 font-18">${{ $data['salesAgent']->recevied_commission }}</h2>
+                                            <h2 class="mb-3 font-18">{{ $data['salesAgent']->recevied_commission }}</h2>
                                         </div>
                                     </div>
 
@@ -30,7 +30,7 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="card-content">
                                             <h5 class="font-15">Pending Commission</h5>
-                                            <h2 class="mb-3 font-18">${{ $data['salesAgent']->pending_commission }}</h2>
+                                            <h2 class="mb-3 font-18">{{ $data['salesAgent']->pending_commission }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -46,7 +46,7 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="card-content">
                                             <h5 class="font-15">Total Commission</h5>
-                                            <h2 class="mb-3 font-18">${{ $data['salesAgent']->total_commission }}</h2>
+                                            <h2 class="mb-3 font-18">{{ $data['salesAgent']->total_commission }}</h2>
                                         </div>
                                     </div>
                                 </div>
