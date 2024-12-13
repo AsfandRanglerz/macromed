@@ -199,14 +199,21 @@
                     {
                         "data": "total",
                         "render": function(data, type, row) {
-                            return 'PKR '  + data;
+                            return 'PKR ' + parseFloat(data).toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
                         }
                     },
+
                     {
                         "data": "discounted_total",
                         "render": function(data, type, row) {
                             if (data) {
-                                return 'PKR '  + data;
+                                return 'PKR ' + parseFloat(data).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                });
                             } else {
                                 return '<span class="text-danger">No Discount Total Found!</span>'
                             }
