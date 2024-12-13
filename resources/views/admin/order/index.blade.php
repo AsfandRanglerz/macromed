@@ -193,20 +193,20 @@
                     {
                         "data": "product_commission",
                         "render": function(data, type, row) {
-                            return '$' + data;
+                            return 'PKR ' + data;
                         }
                     },
                     {
                         "data": "total",
                         "render": function(data, type, row) {
-                            return '$' + data;
+                            return 'PKR '  + data;
                         }
                     },
                     {
                         "data": "discounted_total",
                         "render": function(data, type, row) {
                             if (data) {
-                                return '$' + data;
+                                return 'PKR '  + data;
                             } else {
                                 return '<span class="text-danger">No Discount Total Found!</span>'
                             }

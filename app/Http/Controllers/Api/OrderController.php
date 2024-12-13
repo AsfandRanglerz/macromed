@@ -270,15 +270,6 @@ class OrderController extends Controller
     public function getOrderDetail($userId)
     {
         try {
-            $currency = $this->getCurrency();
-            if (!$currency) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No Currency found.',
-                ]);
-            }
-
-            $pkrAmount = $currency->pkr_amount;
             $getUserOrders = Order::where('user_id', $userId)
                 ->select('id', 'user_id', 'order_id', 'billing_address', 'total', 'discounted_total', 'address', 'payment_type', 'card_number', 'dicount_code_percentage', 'discount_code', 'created_at', 'status')
                 ->with([
@@ -287,15 +278,6 @@ class OrderController extends Controller
                 ])
                 ->latest()
                 ->get();
-            $getUserOrders->each(function ($order) use ($pkrAmount) {
-                $order->total_in_pkr = $order->total * $pkrAmount;
-                $order->discounted_total = $order->discounted_total * $pkrAmount;
-                $order->orderItem->each(function ($item) use ($pkrAmount) {
-                    $item->price_in_pkr = $item->price * $pkrAmount;
-                    $item->subtotal_in_pkr = $item->subtotal * $pkrAmount;
-                    $item->discounted_price_in_pkr = $item->discounted_price * $pkrAmount;
-                });
-            });
             $totalOrders = $getUserOrders->count();
             $pendingOrders = $getUserOrders->where('status', 'pending')->count();
             $deliveredOrders = $getUserOrders->where('status', 'completed')->count();
