@@ -21,7 +21,14 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="password" class="control-label">Password</label>
-                                    <input id="password" type="password" class="form-control" name="password" tabindex="2" required name="password">
+                                    <div class="position-relative">
+                                        <input id="password" type="password" class="form-control" name="password" tabindex="2" required>
+                                        <span class="position-absolute eye-icon-set" style="cursor: pointer;">
+                                            <i id="eye" class="eye-height" data-feather="eye-off"></i>
+                                        </span>
+                                    </div>
+
+
                                     @error('password')
                                     <span class="text-danger">{{$errors->first('password')}}</span>
                                     @enderror
@@ -54,4 +61,26 @@
     </section>
 @endsection
 @section('script')
+
+<script>
+    $(document).ready(function () {
+        feather.replace();
+
+        $('.eye-icon-set').on('click', function () {
+            const passwordField = $('#password');
+            const icon = $('#eye');
+
+            if (passwordField.attr('type') === 'password') {
+                passwordField.attr('type', 'text');
+                icon.attr('data-feather', 'eye');
+            } else {
+                passwordField.attr('type', 'password');
+                icon.attr('data-feather', 'eye-off');
+            }
+
+            feather.replace();
+        });
+    });
+</script>
+
 @endsection

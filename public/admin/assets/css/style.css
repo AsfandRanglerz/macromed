@@ -7302,6 +7302,14 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
     visibility: visible !important
 }
 
+.eye-icon-set {
+    top: 0.6rem;
+    right: 1rem;
+}
+.eye-icon-set .eye-height {
+    height: 1.3rem;
+}
+
 @keyframes slideDown {
     0% {
         transform: translateY(-100%)
