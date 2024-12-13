@@ -167,15 +167,31 @@
 @section('js')
     <script>
         let geteditor;
+
+        // Initialize ClassicEditor for elements with the 'description' class
         ClassicEditor
             .create(document.querySelector('#description'))
             .then(newGetEditor => {
                 geteditor = newGetEditor;
+
+                // Check if there's saved content in localStorage for this editor
+                let savedContent = localStorage.getItem('editorContent');
+                if (savedContent) {
+                    // Restore saved content in the editor
+                    geteditor.setData(savedContent);
+                }
+
+                // Listen for changes and save the content to localStorage
+                geteditor.model.document.on('change:data', () => {
+                    let content = geteditor.getData();
+                    localStorage.setItem('editorContent', content); // Save content to localStorage
+                });
             })
             .catch(error => {
                 console.error(error);
             });
     </script>
+
 
     <script>
         let editors = {}; // Store editor instances by element ID
@@ -199,8 +215,6 @@
             });
             localStorage.setItem('productVariants', JSON.stringify(formData));
         }
-
-        // console.log("data",localStorage);
 
         // Load form data from localStorage
         function loadFormDataFromLocalStorage() {
@@ -227,10 +241,10 @@
         function addVariantFields() {
             let variantCount = $('.variant-field').length;
             let unitsOptions = `
-            <option value="" disabled selected>Select Units</option>
-            @foreach ($units as $unit)
-                <option value="{{ $unit->name }}">{{ ucfirst($unit->name) }}</option>
-            @endforeach
+        <option value="" disabled selected>Select Units</option>
+        @foreach ($units as $unit)
+            <option value="{{ $unit->name }}">{{ ucfirst($unit->name) }}</option>
+        @endforeach
         `;
             let variantFieldHTML = `
         <div class="variant-field border border-1 mt-2">
@@ -319,9 +333,7 @@
             $('#variantFields').append(variantFieldHTML);
             initializeEditor(`textarea[name="variants[${variantCount}][description]"]`);
         }
-        $('#addVariantBtn').click(function() {
-            addVariantFields();
-        });
+
         // Initialize ClassicEditor for a textarea
         function initializeEditor(selector) {
             const element = $(selector)[0];
@@ -329,6 +341,15 @@
             ClassicEditor.create(element)
                 .then((editor) => {
                     editors[element.name] = editor;
+                    let savedData = JSON.parse(localStorage.getItem(element.name)); // Use element.name
+                    if (savedData) {
+                        // Restore CKEditor content from localStorage
+                        editor.setData(savedData);
+                    }
+                    editor.model.document.on('change:data', () => {
+                        let content = editor.getData();
+                        localStorage.setItem(element.name, JSON.stringify(content)); // Save content
+                    });
                 })
                 .catch((error) => console.error(error));
         }
@@ -390,7 +411,7 @@
                         Object.keys(editors).forEach((name) => {
                             removeEditor(name);
                         });
-
+                        $('#variantFields').remove(variantFieldHTML);
                         localStorage.removeItem('productVariants');
                         setTimeout(() => {
                             window.location.href = response.redirectUrl;
@@ -400,22 +421,14 @@
                 error: function(xhr) {
                     if (xhr.status === 422) {
                         let errors = xhr.responseJSON.errors;
-                        console.log("error", errors);
-
                         $.each(errors, function(key, value) {
-
                             let matches = key.match(/variants\.(\d+)\.(\w+)/);
-                            console.log("Regex Matches:", matches);
                             if (matches) {
-                                let variantIndex = matches[1]; // Get the variant index
-                                let fieldName = matches[2]; // Get the field name, e.g. s_k_u
-
-                                // Find the input field for this variant index and field name
+                                let variantIndex = matches[1];
+                                let fieldName = matches[2];
                                 let inputField = $(
                                     `[name="variants[${variantIndex}][${fieldName}]"]`);
-
                                 if (inputField.length > 0) {
-
                                     let errorMessage =
                                         `<div class="error-message text-danger">${value[0]}</div>`;
                                     inputField.closest('.form-group').append(errorMessage);
@@ -428,8 +441,6 @@
                 },
             });
         });
-
-
 
         $(document).ready(function() {
             loadFormDataFromLocalStorage();
