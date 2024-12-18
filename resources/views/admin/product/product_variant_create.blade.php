@@ -411,7 +411,7 @@
                         Object.keys(editors).forEach((name) => {
                             removeEditor(name);
                         });
-                        $('#variantFields').remove(variantFieldHTML);
+                        $('#variantFields').remove();
                         localStorage.removeItem('productVariants');
                         setTimeout(() => {
                             window.location.href = response.redirectUrl;
