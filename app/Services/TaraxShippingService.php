@@ -2,86 +2,66 @@
 
 namespace App\Services;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use Exception;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class TaraxShippingService
 {
-    protected $client;
+    protected $baseUrl;
+    protected $apiKey;
 
     public function __construct()
     {
-        $this->client = new Client([
-            'base_uri' => config('services.tarax.base_url'),
-            'headers' => [
-                'Authorization' => config('services.tarax.api_key'), // Fixed API key access
-                'Content-Type' => 'application/json',
-            ],
-
-            'timeout' => 10.0, // Timeout in seconds
-        ]);
+        $this->baseUrl = config('services.tarax.base_url');
+        $this->apiKey = config('services.tarax.api_key');
     }
 
     /**
-     * Generic method to handle API requests using Guzzle.
-     *
-     * @param string $method
-     * @param string $endpoint
-     * @param array $options
-     * @return array
+     * Generic method to handle API requests using cURL.
      */
-    public function makeRequest(string $method, string $endpoint, array $options = []): array
+    public function makeRequest($method, $endpoint, $data = [])
     {
         try {
-            $response = $this->client->request(strtoupper($method), $endpoint, $options);
-return  $response;
-            return [
-                'error' => false,
-                'data' => json_decode($response->getBody(), true),
-            ];
-        } catch (RequestException $e) {
-            Log::error("Guzzle Request Exception: {$e->getMessage()}");
+            $url = "{$this->baseUrl}/{$endpoint}";
+            // return $url;
+            $response = Http::withHeaders([
+                'Authorization' => $this->apiKey,
+                'Accept' => 'application/json',
+            ])->$method($url, $data);
 
-            $responseBody = $e->hasResponse()
-                ? json_decode($e->getResponse()->getBody(), true)
-                : ['message' => 'Unable to process the request'];
+            if ($response->successful()) {
+                return $response->json();
+            }
 
-            return [
-                'error' => true,
-                'message' => $responseBody['message'] ?? 'An error occurred',
-                'details' => $e->getCode(),
-            ];
-        } catch (\Exception $e) {
-            Log::error("Exception: {$e->getMessage()}");
+            Log::error("API Error: HTTP Code {$response->status()}, Endpoint: {$endpoint}, Data: " . json_encode($data) . ", Response: {$response->body()}");
 
             return [
                 'error' => true,
-                'message' => 'An unexpected error occurred',
-                'details' => $e->getCode(),
+                'message' => 'API request failed.',
+                'details' => $response->status(), // Additional response info
+            ];
+        } catch (Exception $e) {
+            Log::error("Exception in API request: {$e->getMessage()}");
+            return [
+                'error' => true,
+                'message' => 'An error occurred while communicating with the API.',
+                'exception' => $e->getMessage(),
             ];
         }
     }
-
     /**
      * Add a pickup address.
-     *
-     * @param array $addressData
-     * @return array
      */
-    public function addPickupAddress(array $addressData): array
+    public function addPickupAddress(array $addressData)
     {
-        return $this->makeRequest('POST', 'api/pickup_address/add', [
-            'json' => $addressData, // Automatically converts to JSON
-        ]);
+        return $this->makeRequest('POST', 'api/pickup_address/add', $addressData);
     }
 
     /**
      * Fetch cities.
-     *
-     * @return array
      */
-    public function getCities(): array
+    public function getCities()
     {
         return $this->makeRequest('GET', 'api/cities');
     }
