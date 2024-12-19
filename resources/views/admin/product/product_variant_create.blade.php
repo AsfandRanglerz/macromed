@@ -445,6 +445,11 @@
         $(document).ready(function() {
             loadFormDataFromLocalStorage();
         });
+
+        $('#addVariantBtn').click(function() {
+            addVariantFields();
+
+        });
     </script>
 
 
