@@ -39,9 +39,10 @@ class TaraxShippingService
             return [
                 'error' => true,
                 'message' => 'API request failed.',
-                'details' => $response->status(), // Additional response info
+                'details' => $response->status(),
             ];
         } catch (Exception $e) {
+            // Log any exceptions
             Log::error("Exception in API request: {$e->getMessage()}");
             return [
                 'error' => true,
@@ -50,6 +51,7 @@ class TaraxShippingService
             ];
         }
     }
+
     /**
      * Add a pickup address.
      */
