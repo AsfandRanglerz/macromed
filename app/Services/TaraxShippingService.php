@@ -33,17 +33,12 @@ class TaraxShippingService
             if ($response->successful()) {
                 return $response->json();
             }
-
-            Log::error("API Error: HTTP Code {$response->status()}, Endpoint: {$endpoint}, Data: " . json_encode($data) . ", Response: {$response->body()}");
-
             return [
                 'error' => true,
                 'message' => 'API request failed.',
                 'details' => $response->status(),
             ];
         } catch (Exception $e) {
-            // Log any exceptions
-            Log::error("Exception in API request: {$e->getMessage()}");
             return [
                 'error' => true,
                 'message' => 'An error occurred while communicating with the API.',
