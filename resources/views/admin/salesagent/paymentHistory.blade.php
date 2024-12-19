@@ -21,22 +21,22 @@
                                     <div class="col-md-3">
                                         <h5 class="text-muted">Total Amount</h5>
                                         <p class="font-weight-bold">
-                                            ${{ number_format($walletHistory->total_commission, 2) }}</p>
+                                            PKR {{ number_format($walletHistory->total_commission, 2) }}</p>
                                     </div>
                                     <div class="col-md-3">
                                         <h5 class="text-muted">Pending Amount</h5>
                                         <p class="font-weight-bold">
-                                            ${{ number_format($walletHistory->pending_commission, 2) }}</p>
+                                            PKR {{ number_format($walletHistory->pending_commission, 2) }}</p>
                                     </div>
                                     <div class="col-md-3">
                                         <h5 class="text-muted">Received Amount</h5>
                                         <p class="font-weight-bold">
-                                            ${{ number_format($walletHistory->recevied_commission, 2) }}</p>
+                                            PKR {{ number_format($walletHistory->recevied_commission, 2) }}</p>
                                     </div>
                                     <div class="col-md-3">
                                         <h5 class="text-muted">Withdraw Amount</h5>
                                         <p class="font-weight-bold">
-                                            ${{ number_format($walletHistory->with_drawal_amount, 2) }}</p>
+                                            PKR {{ number_format($walletHistory->with_drawal_amount, 2) }}</p>
                                     </div>
                                 </div>
 
