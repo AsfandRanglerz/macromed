@@ -2,168 +2,65 @@
 
 namespace App\Http\Controllers\Api;
 
-use Log;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\TaraxShippingService;
-use GuzzleHttp\Exception\RequestException;
 
 class TaraxShippingServiceController extends Controller
 {
-    // protected $taraxApi;
+    protected $taraxApi;
 
-    // public function __construct(TaraxShippingService $taraxApi)
-    // {
-    //     $this->taraxApi = $taraxApi;
-    // }
-    public function addAddress(Request $request)
+    public function __construct(TaraxShippingService $taraxApi)
     {
-        // Validate the incoming request
-        $request->validate([
-            'person_of_contact' => 'required|string',
-            'phone_number'      => 'required|integer',
-            'email_address'     => 'required|email', // Adjusted to validate email format
-            'address'           => 'required|string',
-            'city_id'           => 'required|integer',
-        ]);
-
-        // Prepare the data for the API request
-        $data = $request->only(['person_of_contact', 'phone_number', 'email_address', 'address', 'city_id']);
-
-        $apiUrl = 'https://sonic.pk/api/pickup_address/add'; // API endpoint for adding pickup address
-        $timeout = 30; 
-
-        try {
-            $client = new Client(['timeout' => $timeout]);
-
-            // Retrieve API Token
-            $apiToken = 'djNWMjlpbkx2Yk1rT2R1WXN2YkJ5bWN5ZVpqbllxODhOQ0hEVlNzNVUwVVFpVmpNUzNZeHgyaUtjeDND67247f99afac4';
-
-            // Make the POST request with the Authorization header and data
-            $response = $client->post($apiUrl, [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $apiToken,
-                    'Content-Type'  => 'application/json',
-                ],
-                'json' => $data, // Send data as JSON
-            ]);
-
-            // Check if the response is successful
-            if ($response->getStatusCode() === 200) {
-                $responseData = json_decode($response->getBody(), true);
-                return response()->json([
-                    'error'   => false,
-                    'message' => 'Pickup address added successfully.',
-                    'data'    => $responseData,
-                ]);
-            }
-
-            // Handle unexpected response status
-            return response()->json([
-                'error'   => true,
-                'message' => 'Unexpected response from the API.',
-            ], $response->getStatusCode());
-        } catch (RequestException $e) {
-            // Handle specific HTTP errors
-            $statusCode = $e->getResponse() ? $e->getResponse()->getStatusCode() : null;
-
-            if ($statusCode === 500) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => 'The API server encountered an error. Please try again later.',
-                ], 500);
-            }
-
-            // Default error handling if request fails
-            return response()->json([
-                'error'     => true,
-                'message'   => 'An error occurred while communicating with the API.',
-                'exception' => $e->getMessage(),
-            ], 500);
-        }
+        $this->taraxApi = $taraxApi;
     }
-    // public function addPickupAddress(Request $request)
-    // {
-    //     $request->validate([
-    //         'person_of_contact' => 'required|string',
-    //         'phone_number'    => 'required|integer',
-    //         'Email_address'     => 'required|string',
-    //         'address' => 'required|string',
-    //         'city_id' => 'required|integer'
-    //     ]);
-    //     $data = $request->only(['person_of_contact', 'phone_number', 'Email_address', 'address', 'city_id']);
-    //     $response = $this->taraxApi->addPickupAddress($data);
-    //     if (isset($response['error']) && $response['error']) {
-    //         return response()->json($response, 400);
-    //     }
-
-    //     return response()->json($response, 200);
-    // }
 
     /**
-     * Get List of Cities
+     * Add a pickup address.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    // public function getCities()
-    // {
-    //     $response = $this->taraxApi->getCities();
-    //     if (isset($response['error']) && $response['error']) {
-    //         return response()->json($response, 400);
-    //     }
-    //     return response()->json($response);
-    // }
+    public function addPickupAddress(Request $request)
+    {
+        $request->validate([
+            'person_of_contact' => 'required|string',
+            'phone_number' => 'required|integer',
+            'email_address' => 'required|email',
+            'address' => 'required|string',
+            'city_id' => 'required|integer',
+        ]);
 
+        $data = $request->only([
+            'person_of_contact',
+            'phone_number',
+            'email_address',
+            'address',
+            'city_id',
+        ]);
 
+        $response = $this->taraxApi->addPickupAddress($data);
+
+        if (isset($response['error']) && $response['error']) {
+            return response()->json($response, 400);
+        }
+
+        return response()->json($response, 200);
+    }
+
+    /**
+     * Get the list of cities.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getCities()
     {
-        $apiUrl =  'http://app.sonic.pk/api/cities'; // API URL
-        $timeout = 30; // Timeout in seconds
+        $response = $this->taraxApi->getCities();
 
-        try {
-            $client = new Client(['timeout' => $timeout]);
-
-            // Retrieve API Token from environment variables
-            $apiToken = 'djNWMjlpbkx2Yk1rT2R1WXN2YkJ5bWN5ZVpqbllxODhOQ0hEVlNzNVUwVVFpVmpNUzNZeHgyaUtjeDND67247f99afac4'; // Assuming the token is stored in your .env file
-
-            // Make the GET request with the Authorization header
-            $response = $client->get($apiUrl, [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $apiToken,  // Add the API Token to the header
-                ]
-            ]);
-
-            // Check if the response is successful
-            if ($response->getStatusCode() === 200) {
-                $data = json_decode($response->getBody(), true);  // Decode the JSON response
-                return response()->json([
-                    'error' => false,
-                    'message' => 'Cities fetched successfully.',
-                    'data' => $data,
-                ]);
-            }
-
-            // If status code is not 200, return the appropriate message
-            return response()->json([
-                'error' => true,
-                'message' => 'Unexpected response from the API.',
-            ], $response->getStatusCode());
-        } catch (RequestException $e) {
-            // Handle specific HTTP errors
-            $statusCode = $e->getResponse() ? $e->getResponse()->getStatusCode() : null;
-
-            if ($statusCode === 500) {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'The API server encountered an error. Please try again later.',
-                ]);
-            }
-
-            // Default error handling if request fails
-            return response()->json([
-                'error' => true,
-                'message' => 'An error occurred while communicating with the API.',
-                'exception' => $e->getMessage(),
-            ], 500);
+        if (isset($response['error']) && $response['error']) {
+            return response()->json($response, 400);
         }
+
+        return response()->json($response, 200);
     }
 }
