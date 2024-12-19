@@ -20,13 +20,6 @@ class TaraxShippingServiceController extends Controller
 
     public function addAddress(Request $request)
     {
-        $request->validate([
-            'person_of_contact' => 'required|string',
-            'phone_number'    => 'required|integer',
-            'Email_address'     => 'required|string',
-            'address' => 'required|string',
-            'city_id' => 'required|integer'
-        ]);
         $data = $request->only(['person_of_contact', 'phone_number', 'Email_address', 'address', 'city_id']);
         $response = $this->taraxApi->addPickupAddress($data);
         if (isset($response['error']) && $response['error']) {
