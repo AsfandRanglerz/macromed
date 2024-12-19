@@ -74,16 +74,16 @@ class ProductController extends Controller
             $countries = [];
         }
         // return $countries;
-        $categories = Category::where('status', '1')->get();
-        $numberOfUses = NumberOfUse::where('status', '1')->get();
-        $subCategories = SubCategory::where('status', '1')->get();
-        $brands = Brands::where('status', '1')->get();
-        $models = Models::where('status', '1')->get();
-        $certifications = Certification::where('status', '1')->get();
-        $companies = Company::where('status', '1')->get();
-        $sterilizations = Sterilization::where('status', '1')->get();
-        $suppliers = Supplier::where('status', '1')->get();
-        $mianMaterials = MainMaterial::where('status', '1')->get();
+        $categories = Category::where('status', '1')->where('is_draft', 1)->get();
+        $numberOfUses = NumberOfUse::where('status', '1')->where('is_draft', 1)->get();
+        $subCategories = SubCategory::where('status', '1')->where('is_draft', 1)->get();
+        $brands = Brands::where('status', '1')->where('is_draft', 1)->get();
+        $models = Models::where('status', '1')->where('is_draft', 1)->get();
+        $certifications = Certification::where('status', '1')->where('is_draft', 1)->get();
+        $companies = Company::where('status', '1')->where('is_draft', 1)->get();
+        $sterilizations = Sterilization::where('status', '1')->where('is_draft', 1)->get();
+        $suppliers = Supplier::where('status', '1')->where('is_draft', 1)->get();
+        $mianMaterials = MainMaterial::where('status', '1')->where('is_draft', 1)->get();
         $conditions = Condation::all();
         $products = Product::with(
             'productBrands.brands',
@@ -91,7 +91,7 @@ class ProductController extends Controller
             'productCategory.categories',
             'productSubCategory.subCategories',
             'productTax'
-        )->where('status', '1')->latest()->get();
+        )->where('status', '1')->where('is_draft', 1)->latest()->get();
         return view('admin.product.index', compact('conditions', 'mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
@@ -102,29 +102,29 @@ class ProductController extends Controller
             $countries = [];
         }
         // return $countries;
-        $categories = Category::where('status', '1')->get();
-        $subCategories = SubCategory::where('status', '1')->get();
-        $brands = Brands::where('status', '1')->get();
-        $models = Models::where('status', '1')->get();
-        $certifications = Certification::where('status', '1')->get();
-        $companies = Company::where('status', '1')->get();
-        $sterilizations = Sterilization::where('status', '1')->get();
-        $numberOfUses = NumberOfUse::where('status', '1')->get();
-        $suppliers = Supplier::where('status', '1')->get();
-        $mianMaterials = MainMaterial::where('status', '1')->get();
+        $categories = Category::where('status', '1')->where('is_draft', 1)->get();
+        $subCategories = SubCategory::where('status', '1')->where('is_draft', 1)->get();
+        $brands = Brands::where('status', '1')->where('is_draft', 1)->get();
+        $models = Models::where('status', '1')->where('is_draft', 1)->get();
+        $certifications = Certification::where('status', '1')->where('is_draft', 1)->get();
+        $companies = Company::where('status', '1')->where('is_draft', 1)->get();
+        $sterilizations = Sterilization::where('status', '1')->where('is_draft', 1)->get();
+        $numberOfUses = NumberOfUse::where('status', '1')->where('is_draft', 1)->get();
+        $suppliers = Supplier::where('status', '1')->where('is_draft', 1)->get();
+        $mianMaterials = MainMaterial::where('status', '1')->where('is_draft', 1)->get();
         $conditions = Condation::all();
         return view('admin.product.create', compact('conditions', 'subCategories', 'mianMaterials', 'suppliers', 'numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
     }
 
     public function getSuppliers()
     {
-        $suppliers = Supplier::where('status', '1')->get(['id', 'name', 'supplier_id']);
+        $suppliers = Supplier::where('status', '1')->where('is_draft', 1)->get(['id', 'name', 'supplier_id']);
         return response()->json($suppliers);
     }
     public function getSubCategories(Request $request)
     {
         $categoryIds = $request->category_ids;
-        $subCategories = SubCategory::whereIn('category_id', $categoryIds)->get();
+        $subCategories = SubCategory::whereIn('category_id', $categoryIds)->where('is_draft', 1)->get();
         return response()->json($subCategories);
     }
 

@@ -36,17 +36,17 @@ class HomeController extends Controller
     {
         try {
             // Get the distinct dropdown data
-            $countryOfManufacture = Product::where('status', '1')->select('country')->distinct()->get();
-            $categories = Category::with('discounts')->where('status', '1')->select('id', 'name')->get();
-            $brands = Brands::with('discounts')->where('status', '1')->select('id', 'name')->get();
-            $certifications = Certification::where('status', '1')->select('id', 'name')->get();
-            $company = Company::where('status', '1')->select('id', 'name')->get();
+            $countryOfManufacture = Product::where('status', '1')->where('is_draft', 1)->select('country')->distinct()->get();
+            $categories = Category::with('discounts')->where('status', '1')->where('is_draft', 1)->select('id', 'name')->get();
+            $brands = Brands::with('discounts')->where('status', '1')->where('is_draft', 1)->select('id', 'name')->get();
+            $certifications = Certification::where('status', '1')->where('is_draft', 1)->select('id', 'name')->get();
+            $company = Company::where('status', '1')->where('is_draft', 1)->select('id', 'name')->get();
             $featureProducts = Product::with([
                 'productBrands.brands:id,name',
                 'productCategory.categories:id,name',
             ])->select('id', 'thumbnail_image', 'short_name', 'short_description')
                 ->where('product_status', 'Featured Product')
-                ->where('status', '1')
+                ->where('status', '1')->where('is_draft', 1)
                 ->latest()
                 ->get();
             $featureProducts =  $featureProducts->map(function ($featureProduct) {
@@ -132,6 +132,7 @@ class HomeController extends Controller
     {
         return [
             'countries' => Product::where('status', '1')
+                ->where('is_draft', 1)
                 ->selectRaw('country, COUNT(*) as count')
                 ->groupBy('country')
                 ->pluck('count', 'country')
@@ -141,6 +142,7 @@ class HomeController extends Controller
                 ->selectRaw('product_brands.brand_id, COUNT(*) as count')
                 ->join('product_brands', 'products.id', '=', 'product_brands.product_id')
                 ->where('products.status', '1')
+                ->where('products.is_draft', 1)
                 ->groupBy('product_brands.brand_id')
                 ->pluck('count', 'product_brands.brand_id')
                 ->toArray(),
@@ -149,6 +151,7 @@ class HomeController extends Controller
                 ->selectRaw('product_catgeories.category_id, COUNT(*) as count')
                 ->join('product_catgeories', 'products.id', '=', 'product_catgeories.product_id')
                 ->where('products.status', '1')
+                ->where('products.is_draft', 1)
                 ->groupBy('product_catgeories.category_id')
                 ->pluck('count', 'product_catgeories.category_id')
                 ->toArray(),
@@ -157,12 +160,14 @@ class HomeController extends Controller
                 ->selectRaw('product_certifcations.certification_id, COUNT(*) as count')
                 ->join('product_certifcations', 'products.id', '=', 'product_certifcations.product_id')
                 ->where('products.status', '1')
+                ->where('products.is_draft', 1)
                 ->groupBy('product_certifcations.certification_id')
                 ->pluck('count', 'product_certifcations.certification_id')
                 ->toArray(),
 
 
             'companies' => Product::where('status', '1')
+                ->where('is_draft', 1)
                 ->selectRaw('company, COUNT(*) as count')
                 ->groupBy('company')
                 ->pluck('count', 'company')
@@ -233,7 +238,7 @@ class HomeController extends Controller
                 'products.short_description',
                 'products.sterilizations'
             )
-                ->where('products.status', '1');
+                ->where('products.status', '1')->where('is_draft', 1);
 
             // Apply filters
             if ($minPrice && $maxPrice) {
@@ -361,5 +366,4 @@ class HomeController extends Controller
             ], 500);
         }
     }
-    
 }
