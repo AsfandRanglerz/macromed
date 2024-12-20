@@ -20,30 +20,12 @@ class SliderController extends Controller
         try {
             $request->validate([
                 'image.*' => [
-                    'image',
-                    'mimes:jpeg,png,jpg,gif',
-                    'max:1024', // Maximum file size in kilobytes
-                    function ($attribute, $value, $fail) {
-                        $image = $value;
-                        $imageSize = getimagesize($image);
-                        if ($imageSize) {
-                            $width = $imageSize[0];
-                            $height = $imageSize[1];
-
-                            // Check dimensions
-                            if ($width > 88 || $height > 88) {
-                                $fail("The uploaded image dimensions are ${width}x${height} pixels. Dimensions must be 88x88 pixels or smaller.");
-                            }
-                        } else {
-                            $fail('The uploaded file is not a valid image.');
-                        }
-                    },
+                    'image',             // Validate that it's an image
+                    'mimes:jpeg,png,jpg,gif',  // Validate the allowed file types (JPEG, PNG, JPG, GIF)
+                    'max:1024',           // Maximum file size in kilobytes (1MB = 1024KB)
                 ],
-            ], [
-                'image.*.image' => 'The file must be an image.',
-                'image.*.mimes' => 'Only JPEG, PNG, JPG, and GIF formats are allowed.',
-                'image.*.max' => 'Maximum file size allowed is 1MB.',
             ]);
+
 
             if ($request->hasFile('image')) {
                 foreach ($request->file('image') as $image) {
