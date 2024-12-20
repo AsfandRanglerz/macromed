@@ -153,7 +153,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="account_number">Account Number</label>
+                                    <label for="account_number">IBAN Number</label>
                                     <input type="text" class="form-control account_number" name="account_number">
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -631,10 +631,17 @@
                     } else {
                         $('#imagePreview').hide();
                     }
-                    $('#createSalesAgentForm .account_number').val(response.agent_accounts.account_number);
-                    $('#createSalesAgentForm .account_name').val(response.agent_accounts.account_name);
-                    $('#createSalesAgentForm .account_holder_name').val(response.agent_accounts
-                        .account_holder_name);
+                    if (response.agent_accounts) {
+                        $('#createSalesAgentForm .account_number').val(response.agent_accounts.account_number);
+                        $('#createSalesAgentForm .account_name').val(response.agent_accounts.account_name);
+                        $('#createSalesAgentForm .account_holder_name').val(response.agent_accounts
+                            .account_holder_name);
+                    } else {
+                        // Handle the case where agent_accounts is null or undefined
+                        $('#createSalesAgentForm .account_number').val('');
+                        $('#createSalesAgentForm .account_name').val('');
+                        $('#createSalesAgentForm .account_holder_name').val('');
+                    }
 
                     var nativeCountryValues = $('.country option').map(function() {
                         return $(this).val();
