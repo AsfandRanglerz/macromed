@@ -129,7 +129,7 @@
                         d.product = $('#productSelect').val();
                     },
                     "dataSrc": function(json) {
-                        $('#totalAmount').text('Total Amount: $ ' + (json.totalAmount || 0).toFixed(
+                        $('#totalAmount').text('Total Amount: Rs ' + (json.totalAmount || 0).toFixed(
                             2));
                         return json.salesData;
                     }
@@ -162,7 +162,7 @@
                     },
                     {
                         "data": "product_commission",
-                        "render": (data) => '$' + data
+                        "render": (data) => 'Rs ' + data
                     },
                     {
                         "data": null,
@@ -174,18 +174,18 @@
                                     .quantity;
                                 totalProfit += profit;
                             });
-                            return '$' + totalProfit.toFixed(2);
+                            return 'Rs ' + totalProfit.toFixed(2);
                         }
                     },
                     {
                         "data": "total",
-                        "render": (data) => '$' + parseFloat(data).toFixed(2)
+                        "render": (data) => 'Rs ' + parseFloat(data).toFixed(2)
                     },
                     {
                         "data": "discounted_total",
                         "render": function(data, type, row) {
                             if (data) {
-                                return '$' + data;
+                                return 'Rs ' + data;
                             } else {
                                 return '<span class="text-danger">No Discount Total Found!</span>'
                             }
