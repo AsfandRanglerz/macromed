@@ -193,13 +193,13 @@
                     {
                         "data": "product_commission",
                         "render": function(data, type, row) {
-                            return 'PKR ' + data;
+                            return 'RS ' + data;
                         }
                     },
                     {
                         "data": "total",
                         "render": function(data, type, row) {
-                            return 'PKR ' + parseFloat(data).toLocaleString(undefined, {
+                            return 'RS ' + parseFloat(data).toLocaleString(undefined, {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
                             });
@@ -210,7 +210,7 @@
                         "data": "discounted_total",
                         "render": function(data, type, row) {
                             if (data) {
-                                return 'PKR ' + parseFloat(data).toLocaleString(undefined, {
+                                return 'RS ' + parseFloat(data).toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2
                                 });
