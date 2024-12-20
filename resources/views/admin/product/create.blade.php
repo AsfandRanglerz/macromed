@@ -26,12 +26,29 @@
                                                 style="width: 15%" alt="Thumbnail Preview">
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label>Thumbnail Image</label>
                                         <input type="file" class="form-control-file" name="thumbnail_image"
                                             value="{{ old('thumbnail_image') }}" onchange="previewThumbnailImage(event)">
                                         <div class="invalid-feedback"></div>
                                     </div>
+                                    <div class="form-group col-md-12">
+                                        <label>PDF Preview</label>
+                                        <div>
+                                            <div id="pdf-preview"
+                                                style="display: none; padding: 10px; border: 1px solid #ccc; width: 50%; background-color: #f9f9f9;">
+                                                <i class="fas fa-file-pdf" style="font-size: 48px; color: red;"></i>
+                                                <span id="pdf-name" style="margin-left: 10px; font-weight: bold;"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Upload PDF</label>
+                                        <input type="file" class="form-control-file" name="pdf"
+                                            accept="application/pdf" onchange="previewPDF(event)">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+
                                     <div class="row col-md-12">
                                         <div class="form-group col-md-4">
                                             <label>Product Short Name<span class="text-danger">*</span></label>
@@ -624,6 +641,14 @@
                     if (key === 'thumbnailPreview' && savedData[key]) {
                         $('#preview-img').attr('src', savedData[key]);
                     }
+                    // Pdf
+                    if (key === 'pdfPreview' && savedData[key]) {
+                        const pdfNameElement = $('#pdf-name');
+                        const pdfPreviewContainer = $('#pdf-preview');
+
+                        pdfNameElement.text(savedData[key]); // Set the file name
+                        pdfPreviewContainer.show(); // Display the PDF preview container
+                    }
                 }
             }
 
@@ -677,7 +702,11 @@
                 if (thumbnailSrc) {
                     formData.thumbnailPreview = thumbnailSrc;
                 }
-
+                // Upload pdf
+                const pdfName = $('#pdf-name').text();
+                if (pdfName && pdfName !== "No file selected") {
+                    formData.pdfPreview = pdfName;
+                }
                 // Include CKEditor content
                 ckEditor();
             }
@@ -746,6 +775,7 @@
                 if (draftId) {
                     formDataObj.append('draft_id', draftId);
                 }
+                formDataObj.append('_token', "{{ csrf_token() }}");
                 $.ajax({
                     url: "{{ route('product.store') }}",
                     type: 'POST',
@@ -828,6 +858,59 @@
             }
         }
 
+        function previewPDF(event) {
+            const fileInput = event.target;
+            const file = fileInput.files[0];
+
+            if (file && file.type === "application/pdf") {
+                const pdfPreview = document.getElementById('pdf-preview');
+                const pdfName = document.getElementById('pdf-name');
+
+                pdfName.textContent = file.name; // Show the file name
+                pdfPreview.style.display = "block"; // Display the preview container
+            } else {
+                alert("Please upload a valid PDF file.");
+                fileInput.value = ""; // Clear the input if the file is not a PDF
+                document.getElementById('pdf-preview').style.display = "none";
+            }
+        }
+
+
+        //   Upload pdf
+        function previewPDF(event) {
+            const fileInput = event.target;
+            const file = fileInput.files[0];
+
+            if (file && file.type === "application/pdf") {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const pdfPreview = document.getElementById('pdf-preview');
+                    const pdfName = document.getElementById('pdf-name');
+                    const pdfData = reader.result;
+
+                    pdfName.textContent = file.name; // Display file name
+                    pdfPreview.style.display = "block"; // Show the preview container
+
+                    // Save PDF data to localStorage
+                    let savedData = JSON.parse(localStorage.getItem('formData')) || {};
+                    savedData.pdfPreview = {
+                        name: file.name,
+                        data: pdfData
+                    }; // Save name and base64 data
+                    localStorage.setItem('formData', JSON.stringify(savedData));
+                };
+                reader.readAsDataURL(file); // Read file as Base64 data
+            } else {
+                alert("Please upload a valid PDF file.");
+                fileInput.value = ""; // Clear the input if the file is not a PDF
+                document.getElementById('pdf-preview').style.display = "none";
+
+                // Remove any stored PDF data from localStorage
+                let savedData = JSON.parse(localStorage.getItem('formData')) || {};
+                delete savedData.pdfPreview;
+                localStorage.setItem('formData', JSON.stringify(savedData));
+            }
+        }
 
         // Classic Editor Code
         let editors = [];
@@ -866,7 +949,7 @@
                 var selectedCategories = $(this).val();
 
                 if (selectedCategories.length > 0) {
-                    fetchSubCategories(selectedCategories, true); 
+                    fetchSubCategories(selectedCategories, true);
                 } else {
                     resetSubCategoryDropdown();
                 }

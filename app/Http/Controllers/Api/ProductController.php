@@ -68,7 +68,8 @@ class ProductController extends Controller
                     'tab_1_text',
                     'tab_2_text',
                     'tab_3_text',
-                    'tab_4_text'
+                    'tab_4_text',
+                    'pdf'
                 )
                 ->first();
 

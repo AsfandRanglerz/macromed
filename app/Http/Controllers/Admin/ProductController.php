@@ -14,6 +14,7 @@ use App\Models\Condation;
 use App\Models\ProductTax;
 use App\Models\NumberOfUse;
 use App\Models\SubCategory;
+use Illuminate\Support\Str;
 use App\Models\MainMaterial;
 use Illuminate\Http\Request;
 use App\Models\Certification;
@@ -78,7 +79,7 @@ class ProductController extends Controller
         $numberOfUses = NumberOfUse::where('status', '1')->where('is_draft', 1)->get();
         $subCategories = SubCategory::where('status', '1')->where('is_draft', 1)->get();
         $brands = Brands::where('status', '1')->where('is_draft', 1)->get();
-        $models = Models::where('status', '1')->where('is_draft', 1)->get();
+        // $models = Models::where('status', '1')->where('is_draft', 1)->get();
         $certifications = Certification::where('status', '1')->where('is_draft', 1)->get();
         $companies = Company::where('status', '1')->where('is_draft', 1)->get();
         $sterilizations = Sterilization::where('status', '1')->where('is_draft', 1)->get();
@@ -92,7 +93,7 @@ class ProductController extends Controller
             'productSubCategory.subCategories',
             'productTax'
         )->where('status', '1')->where('is_draft', 1)->latest()->get();
-        return view('admin.product.index', compact('conditions', 'mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations', 'products'));
+        return view('admin.product.index', compact('conditions', 'mianMaterials', 'suppliers', 'numberOfUses', 'subCategories', 'countries', 'categories', 'brands', 'certifications', 'companies', 'sterilizations', 'products'));
     }
 
     public function productCreateIndex()
@@ -105,7 +106,7 @@ class ProductController extends Controller
         $categories = Category::where('status', '1')->where('is_draft', 1)->get();
         $subCategories = SubCategory::where('status', '1')->where('is_draft', 1)->get();
         $brands = Brands::where('status', '1')->where('is_draft', 1)->get();
-        $models = Models::where('status', '1')->where('is_draft', 1)->get();
+        // $models = Models::where('status', '1')->where('is_draft', 1)->get();
         $certifications = Certification::where('status', '1')->where('is_draft', 1)->get();
         $companies = Company::where('status', '1')->where('is_draft', 1)->get();
         $sterilizations = Sterilization::where('status', '1')->where('is_draft', 1)->get();
@@ -113,7 +114,7 @@ class ProductController extends Controller
         $suppliers = Supplier::where('status', '1')->where('is_draft', 1)->get();
         $mianMaterials = MainMaterial::where('status', '1')->where('is_draft', 1)->get();
         $conditions = Condation::all();
-        return view('admin.product.create', compact('conditions', 'subCategories', 'mianMaterials', 'suppliers', 'numberOfUses', 'countries', 'categories', 'brands', 'models', 'certifications', 'companies', 'sterilizations'));
+        return view('admin.product.create', compact('conditions', 'subCategories', 'mianMaterials', 'suppliers', 'numberOfUses', 'countries', 'categories', 'brands',  'certifications', 'companies', 'sterilizations'));
     }
 
     public function getSuppliers()
@@ -181,6 +182,18 @@ class ProductController extends Controller
                 $thumbnail_path = 'public/admin/assets/images/products/' . $thumbnail_name;
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
+            }
+            // Handle PDF upload
+            if ($request->hasFile('pdf')) {
+                $oldPdfPath = $product->product_pdf;
+                if ($oldPdfPath && File::exists($oldPdfPath)) {
+                    File::delete($oldPdfPath);
+                }
+                $pdf_file = $request->file('pdf');
+                $originalName = $pdf_file->getClientOriginalName();
+                $pdf_path = 'public/admin/assets/pdfs/products/' . $originalName;
+                $pdf_file->move(public_path('admin/assets/pdfs/products'), $originalName);
+                $product->pdf = $pdf_path;
             }
             $product->is_draft = 1;
             $product->product_code = $this->generateUniqueProductId();
@@ -262,6 +275,24 @@ class ProductController extends Controller
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
+            if ($request->hasFile('pdf')) {
+                $oldPdfPath = $product->product_pdf;
+                if ($oldPdfPath && File::exists($oldPdfPath)) {
+                    File::delete($oldPdfPath);
+                }
+
+                $pdf_file = $request->file('pdf');
+                $originalName = $pdf_file->getClientOriginalName(); // Get the original file name with extension
+                $pdf_path = 'public/admin/assets/pdfs/products/' . $originalName;
+
+                // Move the uploaded file to the destination path
+                $pdf_file->move(public_path('admin/assets/pdfs/products'), $originalName);
+
+                // Save the path in the database
+                $product->pdf = $pdf_path;
+            }
+
+
             $product->save();
 
             // Update product variants
@@ -491,7 +522,23 @@ class ProductController extends Controller
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
+            // Handle PDF upload
+            if ($request->hasFile('pdf')) {
+                $oldPdfPath = $product->product_pdf;
+                if ($oldPdfPath && File::exists($oldPdfPath)) {
+                    File::delete($oldPdfPath);
+                }
 
+                $pdf_file = $request->file('pdf');
+                $originalName = $pdf_file->getClientOriginalName(); // Get the original file name with extension
+                $pdf_path = 'public/admin/assets/pdfs/products/' . $originalName;
+
+                // Move the uploaded file to the destination path
+                $pdf_file->move(public_path('admin/assets/pdfs/products'), $originalName);
+
+                // Save the path in the database
+                $product->pdf = $pdf_path;
+            }
             $product->save();
 
             $this->updateProductRelationships($product, $request);

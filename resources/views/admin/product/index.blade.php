@@ -77,6 +77,22 @@
                             <input type="file" class="form-control-file thumbnail_image" name="thumbnail_image"
                                 onchange="previewThumnailImage(event)">
                         </div>
+                        <div class="form-group col-md-12">
+                            <label>PDF Preview</label>
+                            <div>
+                                <div id="pdf-preview"
+                                    style="display: none; padding: 10px; border: 1px solid #ccc; width: 50%; background-color: #f9f9f9;">
+                                    <i class="fas fa-file-pdf" style="font-size: 48px; color: red;"></i>
+                                    <span id="pdf-name" style="margin-left: 10px; font-weight: bold;"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Upload PDF</label>
+                            <input type="file" class="form-control-file" name="pdf" accept="application/pdf"
+                                onchange="previewPDF(event)">
+                            <div class="invalid-feedback"></div>
+                        </div>
                         <div class="row col-md-12">
                             <div class="form-group col-md-4">
                                 <label>Product Short Name<span class="text-danger">*</span></label>
@@ -106,8 +122,8 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Sub Category</label>
-                                <select name="sub_category_id[]" class="form-control select2 sub_category" id="sub_category"
-                                    multiple style="width: 100%">
+                                <select name="sub_category_id[]" class="form-control select2 sub_category"
+                                    id="sub_category" multiple style="width: 100%">
                                     <option value="">Select Sub Category</option>
                                 </select>
                             </div>
@@ -766,6 +782,21 @@
                     } else {
                         $('.admin-img').hide();
                     }
+                    var pdfUrl = response.pdf;
+                    var baseUrlPDF = 'https://macromed.com.pk/admin/';
+                    var responsePDF = baseUrlPDF + response.pdf;
+
+                    if (pdfUrl) {
+                        // Extract the file name from the full path
+                        var fileName = pdfUrl.split('/').pop();
+
+                        $('#pdf-preview').show(); // Show the PDF preview container
+                        $('#pdf-name').text(fileName); // Set the PDF file name
+                    } else {
+                        $('#pdf-preview').hide(); // Hide the PDF preview container if no PDF
+                        $('#pdf-name').text("No file selected"); // Reset the PDF name
+                    }
+
                     $('#editModels .short_name').val(response.short_name);
                     $('#editModels .banner_image').val(response.banner_image);
                     $('#editModels .product_name').val(response.product_name);
