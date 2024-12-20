@@ -74,7 +74,7 @@
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $item->variant_number }}</td>
-                                                <td class="text-center">RS {{ number_format($item->price, 2) }}</td>
+                                                <td class="text-center">Rs{{ number_format($item->price, 2) }}</td>
 
                                                 <td class="text-center">
                                                     @if ($item->product_discount != 0.0)
@@ -109,7 +109,7 @@
                                                 <!-- Check if discounted_price is not null -->
                                                 <td class="text-center">
                                                     @if ($item->discounted_price != 0.0)
-                                                       RS {{ number_format($item->discounted_price, 2) }}
+                                                       Rs {{ number_format($item->discounted_price, 2) }}
                                                     @else
                                                         -
                                                     @endif
@@ -117,7 +117,7 @@
 
                                                 <td class="text-center">{{ $item->quantity }}</td>
                                                 <td class="text-right">
-                                                   RS  {{ number_format($item->subtotal, 2) }}
+                                                   Rs {{ number_format($item->subtotal, 2) }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -142,7 +142,7 @@
                                         <div class="invoice-detail-item">
                                             <div class="invoice-detail-name">Subtotal</div>
                                             <div class="invoice-detail-value">
-                                                RS {{ number_format(
+                                                Rs {{ number_format(
                                                     $subtotal = $orders->orderItem->sum(function ($item) {
                                                         return $item->subtotal;
                                                     }),
@@ -156,7 +156,7 @@
                                                 <div class="invoice-detail-name">Coupon Code Discount
                                                     ({{ $orders->dicount_code_percentage }}%)</div>
                                                 <div class="invoice-detail-value">
-                                                    -RS
+                                                    -Rs
                                                     {{ number_format($subtotal * ($orders->dicount_code_percentage / 100), 2) }}
                                                 </div>
                                             </div>
@@ -179,7 +179,7 @@
                                         <div class="invoice-detail-item">
                                             <div class="invoice-detail-name">Shipping</div>
                                             <div class="invoice-detail-value">
-                                                RS {{ number_format($orders->shipping_amount ?? 0, 2) }}
+                                                Rs {{ number_format($orders->shipping_amount ?? 0, 2) }}
                                             </div>
                                         </div>
 
@@ -188,7 +188,7 @@
                                         <div class="invoice-detail-item">
                                             <div class="invoice-detail-name">Total</div>
                                             <div class="invoice-detail-value invoice-detail-value-lg">
-                                                RS
+                                                Rs
                                                 {{ number_format(
                                                     ($orders->discounted_total != 0 ? $orders->discounted_total : $orders->total) + ($orders->shipping_amount ?? 0),
                                                     2,

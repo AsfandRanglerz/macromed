@@ -98,7 +98,7 @@
                     {
                         "data": "product_commission",
                         "render": function(data, type, row) {
-                            return '$' + data;
+                            return 'Rs ' + data;
                         }
                     },
 

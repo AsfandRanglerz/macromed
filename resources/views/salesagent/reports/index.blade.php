@@ -95,7 +95,7 @@
                         d.product = $('#productSelect').val();
                     },
                     "dataSrc": function(json) {
-                        $('#totalAmount').text('Total Amount: $' + (json.totalAmount || 0).toFixed(
+                        $('#totalAmount').text('Total Amount: Rs ' + (json.totalAmount || 0).toFixed(
                             2));
                         return json.salesData;
                     }
@@ -127,7 +127,7 @@
                     {
                         "data": "product_commission",
                         "render": function(data, type, row) {
-                            return '$' + data;
+                            return 'Rs ' + data;
                         }
                     },
 
