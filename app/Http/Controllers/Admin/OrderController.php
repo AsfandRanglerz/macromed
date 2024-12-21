@@ -127,8 +127,13 @@ class OrderController extends Controller
     public function getInVoiceDetails($id)
     {
         try {
-            $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem')->where('id', $id)->findOrFail($id);
-
+            $orders = Order::with([
+                'users:id,name,phone,email',
+                'salesAgent:id,name,email',
+                'orderItem.productVariant:id,product_id', // Fetch only `id` and `product_id` from productVariants
+                'orderItem.productVariant.products:id,product_name' // Fetch only `id` and `product_name` from products
+            ])->where('id', $id)->firstOrFail();
+            // return $order;
             return view('admin.order.invoice', compact('orders'));
         } catch (\Exception $e) {
             return response()->json([

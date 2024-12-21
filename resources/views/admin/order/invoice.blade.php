@@ -60,6 +60,7 @@
                                         <tr>
                                             <th data-width="40">#</th>
                                             <th>Item</th>
+                                            <th>Discription</th>
                                             <th class="text-center">Actual Price</th>
                                             <th class="text-center">Product Disc.</th>
                                             <th class="text-center">Category Disc.</th>
@@ -74,6 +75,19 @@
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $item->variant_number }}</td>
+                                                <td>
+                                                    @php
+                                                        $productName =
+                                                            $item->productVariant->products->product_name ?? 'N/A';
+                                                        $productWords = explode(' ', $productName); // Split the string into words
+                                                        $shortenedProductName =
+                                                            count($productWords) > 3
+                                                                ? implode(' ', array_slice($productWords, 0, 3)) . '...'
+                                                                : $productName;
+                                                    @endphp
+                                                    {{ $shortenedProductName }}
+                                                </td>
+
                                                 <td class="text-center">Rs{{ number_format($item->price, 2) }}</td>
 
                                                 <td class="text-center">
@@ -109,7 +123,7 @@
                                                 <!-- Check if discounted_price is not null -->
                                                 <td class="text-center">
                                                     @if ($item->discounted_price != 0.0)
-                                                       Rs {{ number_format($item->discounted_price, 2) }}
+                                                        Rs {{ number_format($item->discounted_price, 2) }}
                                                     @else
                                                         -
                                                     @endif
@@ -117,7 +131,7 @@
 
                                                 <td class="text-center">{{ $item->quantity }}</td>
                                                 <td class="text-right">
-                                                   Rs {{ number_format($item->subtotal, 2) }}
+                                                    Rs {{ number_format($item->subtotal, 2) }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -142,7 +156,8 @@
                                         <div class="invoice-detail-item">
                                             <div class="invoice-detail-name">Subtotal</div>
                                             <div class="invoice-detail-value">
-                                                Rs {{ number_format(
+                                                Rs
+                                                {{ number_format(
                                                     $subtotal = $orders->orderItem->sum(function ($item) {
                                                         return $item->subtotal;
                                                     }),
