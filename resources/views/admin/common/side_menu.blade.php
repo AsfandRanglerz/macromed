@@ -443,6 +443,12 @@
                     </a>
                 </li>
             @endif
+            {{-- Blogs --}}
+            <li class="{{ request()->is('admin/blogs*') ? 'active' : '' }}">
+                <a href="{{ route('blogs.index') }}"
+                    class="nav-link {{ request()->is('admin/blogs*') ? 'text-white' : '' }}"><i
+                        data-feather="edit-3"></i><span>Blogs</span></a>
+            </li>
             {{-- About Us --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('About Us'))
                 <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">

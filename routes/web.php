@@ -32,7 +32,9 @@ use App\Http\Controllers\Admin\WithDrawLimitController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\WithDrawRequestController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\BlogsController;
 use App\Http\Controllers\Admin\BrandDiscountController;
+use App\Http\Controllers\Admin\CareerSectionController;
 use App\Http\Controllers\Admin\CategoryDiscountController;
 use App\Http\Controllers\Admin\DiscountCodeController;
 use App\Http\Controllers\Admin\ProductDiscountController;
@@ -413,6 +415,18 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::post('/faqUpdate/{id}',  'updateFaq')->name('faq.update')->middleware('permission:FAQ`s');
         Route::get('/faq/delete/{id}',  'deleteFaq')->name('faq.delete')->middleware('permission:FAQ`s');
         Route::post('/faq/reorder',  'faqReorder')->name('faq.updateOrder')->middleware('permission:FAQ`s');
+    });
+    // ############## Blogs ############
+    Route::controller(BlogsController::class)->group(function () {
+        Route::get('/blogs',  'blogIndex')->name('blogs.index');
+        Route::get('/blogs-edit/{id}', 'editIndex')->name('blogs.edit');
+        Route::put('/blogs-save/{id}', 'blogSave')->name('blogs.save');
+    });
+    // ############## Career Section ###########
+    Route::controller(CareerSectionController::class)->group(function () {
+        Route::get('/career-section',  'sectionIndex')->name('section.index');
+        Route::get('/career-section-edit/{id}', 'sectionIndex')->name('section.edit');
+        Route::put('/career-section-save/{id}', 'sectionSave')->name('section.save');
     });
 });
 
