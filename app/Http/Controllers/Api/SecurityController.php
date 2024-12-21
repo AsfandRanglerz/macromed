@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Mail\adminContactUs;
 use App\Models\admin;
+use App\Models\Blogs;
+use App\Models\CareerSection;
 use Illuminate\Support\Facades\Mail;
 
 class SecurityController extends Controller
@@ -101,6 +103,36 @@ class SecurityController extends Controller
                 'status' => 'error',
                 'message' => 'Failed to send message. Please try again later.' . $e->getMessage(),
             ], 500);
+        }
+    }
+    public function blogs()
+    {
+        $blogs = Blogs::all();
+        if ($blogs) {
+            return response()->json([
+                'status' => 'success',
+                'blogs' => $blogs,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Not Found!',
+            ], 404);
+        }
+    }
+    public function careerSection()
+    {
+        $careerSection = CareerSection::all();
+        if ($careerSection) {
+            return response()->json([
+                'status' => 'success',
+                'careerSections' => $careerSection,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Not Found!',
+            ], 404);
         }
     }
 }

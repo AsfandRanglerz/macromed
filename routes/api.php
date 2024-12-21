@@ -75,6 +75,8 @@ Route::get('about-us', [SecurityController::class, 'getAboutUs']);
 Route::get('privacy-policy', [SecurityController::class, 'getPrivacyPolicy']);
 Route::get('terms-condations', [SecurityController::class, 'getTermsCondation']);
 Route::get('/faqs', [SecurityController::class, 'faqs']);
+Route::get('/blogs', [SecurityController::class, 'blogs']);
+Route::get('/career-sections', [SecurityController::class, 'careerSection']);
 Route::post('/sendContactMessage', [SecurityController::class, 'sendContactMessage']);
 // ############### TaraxShipping #########
 Route::post('/tarax/pickup-address', [TaraxShippingServiceController::class, 'addAddress']);
