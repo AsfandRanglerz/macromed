@@ -449,6 +449,12 @@
                     class="nav-link {{ request()->is('admin/blogs*') ? 'text-white' : '' }}"><i
                         data-feather="edit-3"></i><span>Blogs</span></a>
             </li>
+            {{-- Career Section --}}
+            <li class="{{ request()->is('admin/career-section*') ? 'active' : '' }}">
+                <a href="{{ route('careersection.index') }}"
+                    class="nav-link {{ request()->is('admin/career-section*') ? 'text-white' : '' }}"><i
+                        data-feather="briefcase"></i><span>Career Section</span></a>
+            </li>
             {{-- About Us --}}
             @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('About Us'))
                 <li class="dropdown {{ request()->is('admin/about*') ? 'active' : '' }}">

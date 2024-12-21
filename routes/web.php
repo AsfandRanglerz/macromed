@@ -424,9 +424,9 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     });
     // ############## Career Section ###########
     Route::controller(CareerSectionController::class)->group(function () {
-        Route::get('/career-section',  'sectionIndex')->name('section.index');
-        Route::get('/career-section-edit/{id}', 'sectionIndex')->name('section.edit');
-        Route::put('/career-section-save/{id}', 'sectionSave')->name('section.save');
+        Route::get('/career-section',  'sectionIndex')->name('careersection.index');
+        Route::get('/career-section-edit/{id}', 'sectionEditIndex')->name('careersection.edit');
+        Route::put('/career-section-save/{id}', 'sectionSave')->name('careersection.save');
     });
 });
 
