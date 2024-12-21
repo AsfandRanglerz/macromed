@@ -107,7 +107,7 @@ class SecurityController extends Controller
     }
     public function blogs()
     {
-        $blogs = Blogs::all();
+        $blogs = Blogs::first();
         if ($blogs) {
             return response()->json([
                 'status' => 'success',
@@ -122,7 +122,7 @@ class SecurityController extends Controller
     }
     public function careerSection()
     {
-        $careerSection = CareerSection::all();
+        $careerSection = CareerSection::first();
         if ($careerSection) {
             return response()->json([
                 'status' => 'success',
