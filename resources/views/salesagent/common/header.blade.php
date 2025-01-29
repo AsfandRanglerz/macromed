@@ -38,7 +38,7 @@
         <li class="dropdown"><a href="#" data-toggle="dropdown"
                 class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <img alt="image"
-                    src="{{ asset(isset(Auth::guard('sales_agent')->user()->image) ? Auth::guard('sales_agent')->user()->image : 'public/admin/assets/images/admin-image.jpg') }}"
+                    src="{{ asset(isset(Auth::guard('sales_agent')->user()->image) ? 'public/' . Auth::guard('sales_agent')->user()->image : 'public/admin/assets/images/admin-image.jpg') }}"
                     class="user-img-radious-style"> <span class="d-sm-none d-lg-inline-block"></span></a>
             <div class="dropdown-menu dropdown-menu-right pullDown">
                 <div class="dropdown-title">{{ Auth::guard('sales_agent')->user()->name }}</div>

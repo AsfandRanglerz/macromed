@@ -101,7 +101,47 @@
                     }
                 },
                 "dom": 'Bfrtip',
-                "buttons": ['excel', 'print'],
+                // "buttons": ['excel', 'print'],
+                "buttons": [
+                    'excel',
+                    {
+                        extend: 'print',
+                        text: 'Print',
+                        title: 'Sales Report', // Title for the print view
+                        customize: function(win) {
+                            $(win.document.body).prepend(`
+                                <div style="text-align: center; margin-bottom: 20px;">
+                                    <img src="{{ asset('public/admin/assets/images/logo-macromed.png') }}" alt="Logo" style="height: 100px">
+                                    <h3 class="mt-3 mb-2">Macromed PVT.LTD.</h3>
+                                    <p class="mb-0"><b>Contact:</b> +92 (310) 760 8641</p>
+                                    <p class="mb-0"><b>Email:</b> info@macromed.com.pk</p>
+                                    <p class="mb-0"><b>Address:</b> FF 130, Defence Shopping Mall, DHA Main Boulevard, Lahore Cantt,. Lahore-Pakistan</p>
+                                </div>
+                            `);
+
+                            // Optional: Add custom styles for better formatting
+                            $(win.document.head).append(`
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 20px;
+                            }
+                            h3, p {
+                                margin: 5px 0;
+                            }
+                            table {
+                                margin-top: 20px;
+                                border-collapse: collapse;
+                                width: 100%;
+                            }
+                            table, th, td {
+                                border: 1px solid #ddd;
+                            }
+                        </style>
+                    `);
+                        }
+                    }
+                ],
                 "columns": [{
                         "data": null,
                         "render": function(data, type, row, meta) {

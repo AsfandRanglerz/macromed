@@ -113,8 +113,8 @@
                                     <thead>
                                         <tr>
                                             <th>Sr.</th>
-                                            <th>Name</th>
-                                            <th>Status</th>
+                                            <th>Title</th>
+                                            <th>Description</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -140,56 +140,120 @@
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();
         }
+        // $(document).ready(function() {
+        //     // Initialize DataTable with options
+        //     var dataTable = $('#example').DataTable({
+        //         "ajax": {
+        //             "url": "{{ route('privateNotes.get') }}",
+        //             "type": "GET",
+        //             "data": {
+        //                 "_token": "{{ csrf_token() }}"
+        //             }
+        //         },
+        //         "columns": [{
+        //                 "data": null,
+        //                 "render": function(data, type, row, meta) {
+        //                     return meta.row + 1;
+        //                 }
+        //             },
+        //             {
+        //                 "data": "title"
+        //             },
+        //             {
+        //                 "data": "description",
+        //                 "render": function(data, type, row) {
+        //                     var words = data.split(" ");
+        //                     if (words.length > 15) {
+        //                         return words.slice(0, 10).join(" ") + '...';
+        //                     } else {
+        //                         return data;
+        //                     }
+        //                 }
+        //             },
+        //             {
+        //                 "data": null,
+        //                 "render": function(data, type, row) {
+        //                     return '<button class="btn btn-success mr-2 text-white editSubadminBtn" data-id="' +
+        //                         row.id + '"><i class="fas fa-edit"></i></button>' +
+        //                         '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
+        //                         row.id + '"><i class="fas fa-trash-alt"></i></button>';
+        //                 }
+        //             }
+        //         ]
+        //     });
+        //     $('#example').on('click', '.editSubadminBtn', function() {
+        //         var id = $(this).data('id');
+        //         editPrivateNotesModal(id);
+        //     });
+        //     $('#example').on('click', '.deleteSubadminBtn', function() {
+        //         var id = $(this).data('id');
+        //         deletePrivateNotesModal(id);
+        //     });
+        // });
+
         $(document).ready(function() {
-            // Initialize DataTable with options
-            var dataTable = $('#example').DataTable({
-                "ajax": {
-                    "url": "{{ route('privateNotes.get') }}",
-                    "type": "GET",
-                    "data": {
-                        "_token": "{{ csrf_token() }}"
+    // Initialize DataTable with options
+    var dataTable = $('#example').DataTable({
+        "ajax": {
+            "url": "{{ route('privateNotes.get') }}",
+            "type": "GET",
+            "data": {
+                "_token": "{{ csrf_token() }}"
+            }
+        },
+        "columns": [
+            {
+                "data": null,
+                "render": function(data, type, row, meta) {
+                    return meta.row + 1; // Serial number
+                }
+            },
+            {
+                "data": "title" // Title column
+            },
+            {
+                "data": "description",
+                "render": function(data, type, row) {
+                    if (data) {
+                        // Limit description to 10 words and append '...' if it exceeds
+                        var words = $('<div>').html(data).text().split(" ");
+                        return words.length > 10
+                            ? words.slice(0, 10).join(" ") + '...'
+                            : $('<div>').html(data).text();
                     }
-                },
-                "columns": [{
-                        "data": null,
-                        "render": function(data, type, row, meta) {
-                            return meta.row + 1;
-                        }
-                    },
-                    {
-                        "data": "title"
-                    },
-                    {
-                        "data": "description",
-                        "render": function(data, type, row) {
-                            var words = data.split(" ");
-                            if (words.length > 15) {
-                                return words.slice(0, 10).join(" ") + '...';
-                            } else {
-                                return data;
-                            }
-                        }
-                    },
-                    {
-                        "data": null,
-                        "render": function(data, type, row) {
-                            return '<button class="btn btn-success mr-2 text-white editSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-edit"></i></button>' +
-                                '<button class="btn btn-danger  mr-2 text-white deleteSubadminBtn" data-id="' +
-                                row.id + '"><i class="fas fa-trash-alt"></i></button>';
-                        }
-                    }
-                ]
-            });
-            $('#example').on('click', '.editSubadminBtn', function() {
-                var id = $(this).data('id');
-                editPrivateNotesModal(id);
-            });
-            $('#example').on('click', '.deleteSubadminBtn', function() {
-                var id = $(this).data('id');
-                deletePrivateNotesModal(id);
-            });
-        });
+                    return 'No description'; // Handle null descriptions
+                }
+            },
+            {
+                "data": null,
+                "render": function(data, type, row) {
+                    // Add buttons for editing and deleting
+                    return `
+                        <button class="btn btn-success mr-2 text-white editSubadminBtn" data-id="${row.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger mr-2 text-white deleteSubadminBtn" data-id="${row.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    `;
+                }
+            }
+        ]
+    });
+
+    // Event listener for Edit button
+    $('#example').on('click', '.editSubadminBtn', function() {
+        var id = $(this).data('id');
+        editPrivateNotesModal(id);
+    });
+
+    // Event listener for Delete button
+    $('#example').on('click', '.deleteSubadminBtn', function() {
+        var id = $(this).data('id');
+        deletePrivateNotesModal(id);
+    });
+});
+
 
         // ##############Create Sub admin################
         $(document).ready(function() {

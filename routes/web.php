@@ -281,6 +281,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 
     // ############## Product ############
     Route::controller(ProductController::class)->group(function () {
+        Route::get('/productsData',  'productsData')->name('products.get')->middleware('permission:Products');
         Route::get('/productData',  'productData')->name('product.get')->middleware('permission:Products');
         Route::get('/product',  'productIndex')->name('product.index')->middleware('permission:Products');
         Route::get('/product-create',  'productCreateIndex')->name('product.create')->middleware('permission:Products');
@@ -307,6 +308,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/product-variants/{id}', 'productVariantIndex')->name('product_variant.index')->middleware('permission:Products');
         Route::post('products/autosave-variants', 'variantAutoStore')->name('product-variant.autostore')->middleware('permission:Products');
         Route::post('/products/{product}/variants', 'productVariantStore')->name('product-variant.store')->middleware('permission:Products');
+        Route::post('/products/{product}/variants/auto', 'productVariantAutoStore')->name('product-variant-auto.store')->middleware('permission:Products');
         Route::post('/variantUpdate/{id}',  'updateVariant')->name('variants.update')->middleware('permission:Products');
         Route::get('/variants/{id}',  'showVariants')->name('variants.show')->middleware('permission:Products');
         Route::get('/variants/delete/{id}',  'deleteProductVariant')->name('variant.delete')->middleware('permission:Products');
@@ -369,6 +371,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::controller(ReportsController::class)->group(function () {
         Route::get('/reports',  'reportsIndex')->name('reports.index')->middleware('permission:Reports');
         Route::get('reports/data/', 'getReportsData')->name('admin.reports.data')->middleware('permission:Reports');
+        Route::get('reports/data/products/', 'getProductsData')->name('admin.products.data')->middleware('permission:Reports');
         ### InVoice ####
         Route::get('/reports/invoice/{id}',  'getReportInVoiceDetails')->name('reportsinvoice.index')->middleware('permission:Reports');
     });

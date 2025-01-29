@@ -68,6 +68,14 @@ class ProductController extends Controller
         return json_encode($json_data);
     }
 
+    public function productSData(Request $request)
+    {
+        $is_draft = $request->query('is_draft', '1');
+        $products = Product::with('productBrands.brands', 'productCertifications.certification', 'productCategory.categories', 'productSubCategory.subCategories')->where('is_draft', $is_draft)->latest()->get();
+        $json_data["data"] = $products;
+        return json_encode($json_data);
+    }
+
     public function productIndex()
     {
         $countries = $this->fetchApiData('https://api.countrystatecity.in/v1/countries');

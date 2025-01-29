@@ -98,7 +98,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Country<span class="text-danger">*</span></label>
-                                <select name="country" class="form-control select2 country" id="country"
+                                <select name="country" class="form-control country" id="country"
                                     style="width: 100%" onchange="autosaveCategory()">
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach ($countries as $country)
@@ -115,7 +115,7 @@
                         <div class="row col-md-12 col-lg-12">
                             <div class="form-group col-md-6">
                                 <label for="state">State<span class="text-danger">*</span></label>
-                                <select class="form-control select2 state" id="state" name="state"
+                                <select class="form-control state" id="state" name="state"
                                     style="width: 100%" onchange="autosaveCategory()" required
                                     oninput="autosaveCategory()">
                                     <option value="" selected disabled>Select State</option>
@@ -124,7 +124,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="city">City<span class="text-danger">*</span></label>
-                                <select class="form-control select2 city" id="city" name="city"
+                                <select class="form-control city" id="city" name="city"
                                     style="width: 100%" onchange="autosaveCategory()" required
                                     oninput="autosaveCategory()">
                                     <option value="" selected disabled>Select City</option>

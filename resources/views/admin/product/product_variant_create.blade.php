@@ -18,7 +18,7 @@
                                 </div>
                                 <div class="card-body">
                                     <form action="{{ route('product-variant.store', ['product' => $data->id]) }}"
-                                        method="POST" enctype="multipart/form-data">
+                                       id="variantForm" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         {{-- Variants Section --}}
                                         <div id="variantFields">
@@ -387,6 +387,16 @@
             saveTimeout = setTimeout(() => {
                 saveFormDataToLocalStorage();
                 toastr.success('Data saved successfully');
+
+                // let formDataObj = new FormData($('#variantForm')[0]);
+                        // const draftId = $('#draft_id').val();
+                        // if (draftId) {
+                        //     formDataObj.append('draft_id', draftId);
+                        // }
+                        // formDataObj.append('_token', "{{ csrf_token() }}");
+
+                        
+                // toastr.success('Data saved successfully');
                 // Clear previous error messages
                 $('.error-message').remove();
             }, 1000);
@@ -419,25 +429,30 @@
                     }
                 },
                 error: function(xhr) {
-                    if (xhr.status === 422) {
-                        let errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            let matches = key.match(/variants\.(\d+)\.(\w+)/);
-                            if (matches) {
-                                let variantIndex = matches[1];
-                                let fieldName = matches[2];
-                                let inputField = $(
-                                    `[name="variants[${variantIndex}][${fieldName}]"]`);
-                                if (inputField.length > 0) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        let matches = key.match(/variants\.(\d+)\.(\w+)/);
+                        if (matches) {
+                            let variantIndex = matches[1];
+                            let fieldName = matches[2];
+                            let inputField = $(`[name="variants[${variantIndex}][${fieldName}]"]`);
+
+                            if (inputField.length > 0) {
+                                let formGroup = inputField.closest('.form-group');
+
+                                // Check if the error message is already present
+                                if (formGroup.find('.error-message').length === 0) {
                                     let errorMessage =
                                         `<div class="error-message text-danger">${value[0]}</div>`;
-                                    inputField.closest('.form-group').append(errorMessage);
+                                    formGroup.append(errorMessage);
                                 }
                             }
-                        });
-                    } else {
-                        toastr.error('Failed to save product. Try again later.');
-                    }
+                        }
+                    });
+                } else {
+                    toastr.error('Failed to save product. Try again later.');
+                }
                 },
             });
         });

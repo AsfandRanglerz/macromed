@@ -42,8 +42,8 @@
         "closeButton": false,
         "progressBar": true,
         "positionClass": "toast-top-right",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000"
+        "timeOut": 1000,
+        "extendedTimeOut": 1000
     };
 
     @if (session('message'))

@@ -26,7 +26,7 @@ class TaraxShippingService
             $url = "{$this->baseUrl}/{$endpoint}";
             // return $url;
             $response = Http::withHeaders([
-                'Authorization' => $this->apiKey,
+                'Authorization' => $this->apiKey, 
                 'Accept' => 'application/json',
             ])->$method($url, $data);
 

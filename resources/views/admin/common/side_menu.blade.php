@@ -307,7 +307,7 @@
                     <a href="{{ route('order.index') }}" class="nav-link padding" style="padding-left: 23px">
                         <span><i data-feather="shopping-cart"></i>
                             Orders</span>
-                        <div id="orderCounter"
+                        <div id="orderCounter" 
                             class="badge {{ request()->is('admin/order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
                         </div>
                     </a>

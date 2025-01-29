@@ -10,6 +10,13 @@
                     <div class="invoice-print">
                         <div class="row">
                             <div class="col-lg-12">
+                                <div style="text-align: center; margin-bottom: 20px;">
+                                    <img src="{{ asset('public/admin/assets/images/logo-macromed.png') }}" alt="Logo" style="height: 100px">
+                                    <h3 class="mt-3 mb-2">Macromed PVT.LTD.</h3>
+                                    <p class="mb-0"><b>Contact:</b> +92 (310) 760 8641</p>
+                                    <p class="mb-0"><b>Email:</b> info@macromed.com.pk</p>
+                                    <p class="mb-0"><b>Address:</b> FF 130, Defence Shopping Mall, DHA Main Boulevard, Lahore Cantt,. Lahore-Pakistan</p>
+                                </div>
                                 <div class="invoice-title">
                                     <h2>Invoice</h2>
                                     <div class="invoice-number">Order #{{ $orders->order_id }}</div>

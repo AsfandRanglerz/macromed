@@ -108,7 +108,7 @@
                                 <div class="form-group">
                                     <label for="account_name">Bank Name</label>
                                     {{-- <input type="text" class="form-control account_name" name="account_name"> --}}
-                                    <select class="form-control account_name select2" name="account_name">
+                                    <select class="form-control account_name" name="account_name">
                                         <option value="" disabled selected>Select Bank</option>
                                         <option value="HBL">Habib Bank Limited (HBL)</option>
                                         <option value="UBL">United Bank Limited (UBL)</option>

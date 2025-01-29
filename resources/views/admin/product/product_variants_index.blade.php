@@ -142,6 +142,14 @@
                                     </div>
                                 </div>
                                 <div class="card-body table-responsive">
+                                    {{-- <div class="form-group col-sm-3 mb-3 px-0">
+                                        <label for="periodSelect">Visibility Status</label>
+                                        <select id="periodSelect" class="form-control" onchange="loadData()">
+                                            <option value="1" selected><span class="text-danger">Published Data</span>
+                                            </option>
+                                            <option value="0">Draft Data</option>
+                                        </select>
+                                    </div> --}}
                                     <table class="responsive table table-striped table-bordered" id="example">
                                         <thead>
                                             <tr>
@@ -185,6 +193,11 @@
 
 @section('js')
     <script>
+        function loadData() {
+            var status = $('#periodSelect').val(); // Get the selected status
+            var dataTable = $('#example').DataTable();
+            dataTable.ajax.url("{{ route('product.variants', ['id' => $id]) }}?is_draft=" + status).load();
+        }
         function reloadDataTable() {
             var dataTable = $('#example').DataTable();
             dataTable.ajax.reload();

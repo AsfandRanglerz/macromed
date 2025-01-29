@@ -1,9 +1,9 @@
 ﻿/*
  * Toastr
  * Version 2.0.1
- * Copyright 2012 John Papa and Hans Fjällemark.  
- * All Rights Reserved.  
- * Use, reproduction, distribution, and modification of this code is subject to the terms and 
+ * Copyright 2012 John Papa and Hans Fjällemark.
+ * All Rights Reserved.
+ * Use, reproduction, distribution, and modification of this code is subject to the terms and
  * conditions of the MIT license, available at http://www.opensource.org/licenses/mit-license.php
  *
  * Author: John Papa and Hans Fjällemark
@@ -130,7 +130,7 @@
 					},
 					iconClass: 'toast-info',
 					positionClass: 'toast-top-right',
-					timeOut: 5000, // Set timeOut and extendedTimeout to 0 to make it sticky
+					timeOut: 1500, // Set timeOut and extendedTimeout to 0 to make it sticky
 					titleClass: 'toast-title',
 					messageClass: 'toast-message',
 					target: 'body',

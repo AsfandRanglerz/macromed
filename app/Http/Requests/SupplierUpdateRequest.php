@@ -62,10 +62,14 @@ class SupplierUpdateRequest extends FormRequest
                 'regex:/^\+[1-9]{1}[0-9]{1,14}$/', // E.164 format: + followed by 1-15 digits
                 Rule::unique('suppliers')->ignore($supplierId),
             ],
+            // 'poc' => [
+            //     'required',
+            //     'numeric',
+            //     Rule::unique('suppliers')->ignore($supplierId),
+            // ],
             'poc' => [
                 'required',
-                'numeric',
-                Rule::unique('suppliers')->ignore($supplierId),
+                'regex:/^[a-zA-Z\s]+$/',
             ],
             'address' => 'required',
             'country' => 'required',

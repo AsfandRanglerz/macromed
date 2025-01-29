@@ -8,7 +8,7 @@
                 @if (Auth::guard('admin')->check())
                     <!-- Admin View: Show Dashboard Statistics -->
                     <div class="col-xl-3 mb-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                        <a href="{{ route('customer.index') }}">
+                        <a style="text-decoration: none;" href="{{ route('customer.index') }}">
                             <div class="card">
                                 <div class="card-statistic-4">
                                     <div class="align-items-center justify-content-between">
@@ -19,12 +19,12 @@
                                                     <h2 class="mb-3 font-18">{{ $customerCount }}</h2>
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
                                             <div class="banner-img">
-                                                <img src="{{ asset('public/admin/assets/images/banner/1.png') }}"
+                                                <img src="{{ asset('public/admin/assets/panel/customers.png') }}"
                                                     alt="">
                                             </div>
-                                        </div> --}}
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="col-xl-3 col-lg-6 mb-3 col-md-6 col-sm-6 col-xs-12">
-                        <a href="{{ route('salesagent.index') }}">
+                        <a style="text-decoration: none;" href="{{ route('salesagent.index') }}">
                             <div class="card">
                                 <div class="card-statistic-4">
                                     <div class="align-items-center justify-content-between">
@@ -44,12 +44,12 @@
                                                     <h2 class="mb-3 font-18">{{ $salesAgentCount }}</h2>
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
                                             <div class="banner-img">
-                                                <img src="{{ asset('public/admin/assets/images/banner/2.png') }}"
+                                                <img src="{{ asset('public/admin/assets/panel/sales-agents.png') }}"
                                                     alt="">
                                             </div>
-                                        </div> --}}
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="col-xl-3 col-lg-6 mb-3 col-md-6 col-sm-6 col-xs-12">
-                        <a href="{{ route('subadmin.index') }}">
+                        <a style="text-decoration: none;" href="{{ route('subadmin.index') }}">
                             <div class="card">
                                 <div class="card-statistic-4">
                                     <div class="align-items-center justify-content-between">
@@ -69,12 +69,12 @@
                                                     <h2 class="mb-3 font-18">{{ $subAdminCount }}</h2>
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
                                             <div class="banner-img">
-                                                <img src="{{ asset('public/admin/assets/images/banner/3.png') }}"
+                                                <img src="{{ asset('public/admin/assets/panel/sub-admins.png') }}"
                                                     alt="">
                                             </div>
-                                        </div> --}}
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -83,7 +83,7 @@
                     </div>
 
                     <div class="col-xl-3 col-lg-6 mb-3 col-md-6 col-sm-6 col-xs-12">
-                        <a href="{{ route('product.index') }}">
+                        <a style="text-decoration: none;" href="{{ route('product.index') }}">
                             <div class="card">
                                 <div class="card-statistic-4">
                                     <div class="align-items-center justify-content-between">
@@ -94,12 +94,12 @@
                                                     <h2 class="mb-3 font-18">{{ $productCount }}</h2>
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
                                             <div class="banner-img">
-                                                <img src="{{ asset('public/admin/assets/images/banner/4.png') }}"
+                                                <img src="{{ asset('public/admin/assets/panel/products.png') }}"
                                                     alt="">
                                             </div>
-                                        </div> --}}
+                                        </div>
                                         </div>
                                     </div>
                                 </div>

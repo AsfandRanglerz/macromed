@@ -16,7 +16,7 @@ class TaraxShippingServiceController extends Controller
     public function __construct(TaraxShippingService $taraxApi)
     {
         $this->taraxApi = $taraxApi;
-    }
+    } 
 
     public function addAddress(Request $request)
     {

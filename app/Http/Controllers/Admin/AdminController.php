@@ -26,7 +26,7 @@ class AdminController extends Controller
             $customerCount = User::where('user_type', 'customer')->count();
             $subAdminCount   = User::where('user_type', 'subadmin')->count();
             $salesAgentCount = SalesAgent::count();
-            $productCount = Product::count();
+            $productCount = Product::where('is_draft','1')->count();
 
             return view('admin.index', compact('customerCount', 'salesAgentCount', 'subAdminCount', 'productCount'));
         } elseif (auth()->guard('web')->check()) {

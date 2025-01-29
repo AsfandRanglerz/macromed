@@ -5,6 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+     <!-- Developed By Ranglerz -->
+     <link rel="stylesheet"
+     href="https://www.ranglerz.com/cost-to-make-a-web-ios-or-android-app-and-how-long-does-it-take.php">
     <title>Macromed | @yield('title')</title>
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('public/admin/assets/css/app.min.css') }}">
@@ -85,7 +88,10 @@
                 url: "{{ route('orders.count') }}",
                 type: 'GET',
                 success: function(response) {
-                    $('#orderCounter').text(response.count);
+                     // Ensure response.count exists and handle counts over 99
+                    let count = response.count || 0; // Default to 0 if no count is returned
+                    $('#orderCounter').text(count > 99 ? '99+' : count);
+                    // $('#orderCounter').text(response.count);
                 },
                 error: function(xhr, status, error) {
                     console.log(error);
@@ -100,8 +106,9 @@
                 url: "{{ route('paymentRequest.count') }}",
                 type: 'GET',
                 success: function(response) {
-
-                    $('.paymentRequestCounter').text(response.paymentRequest);
+                    let count = response.paymentRequest || 0;
+                    // let count = 100;
+                    $('.paymentRequestCounter').text(count > 99 ? '99+' : count);
                 },
                 error: function(xhr, status, error) {
                     console.log("error", xhr);
@@ -111,7 +118,7 @@
         updatePaymentRequestCounter();
         setInterval(updatePaymentRequestCounter, 1000);
     </script>
-    <script>
+    {{-- <script>
         document.getElementById('printInvoice').addEventListener('click', function() {
             // Create a new window for printing
             var printWindow = window.open('', '_blank', 'width=900,height=600');
@@ -147,17 +154,60 @@
             // Close the document for rendering
             printWindow.document.close();
         });
+    </script> --}}
+
+
+
+    <script>
+        document.getElementById('printInvoice').addEventListener('click', function() {
+            // Get the invoice content
+            var invoiceContent = document.querySelector('.invoice').innerHTML;
+
+            // Open a new window for printing
+            var printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Invoice Print</title>
+                        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                        <style>
+                            body {
+                                margin: 20px;
+                                font-family: Arial, sans-serif;
+                            }
+                            @media print {
+                                button {
+                                    display: none;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="invoice">${invoiceContent}</div>
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 100); // Delay to allow print dialog to load
+                            }
+                        <\/script>
+                    </body>
+                </html>
+            `);
+
+            printWindow.document.close(); // Close the document stream
+        });
+
     </script>
-
-
 
     <script>
         toastr.options = {
             "closeButton": false,
             "progressBar": true,
             "positionClass": "toast-top-right",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000"
+            "timeOut": 1000,
+            "extendedTimeOut": 1000
         };
 
         @if (session('message'))

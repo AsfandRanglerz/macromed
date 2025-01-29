@@ -76,7 +76,7 @@
                                     <h4>Category</h4>
                                 </div>
                             </div>
-
+ 
                             <div class="card-body table-responsive">
                                 <div class="form-group col-sm-3 mb-3 px-0">
                                     <label for="periodSelect">Visibility Status</label>
@@ -279,7 +279,7 @@
                     },
                     error: function(xhr) {
                         // console.error('Autosave error:', xhr.responseText);
-                  
+
                     },
                 });
             }, 1000);

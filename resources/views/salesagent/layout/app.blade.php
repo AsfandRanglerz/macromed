@@ -5,6 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+     <!-- Developed By Ranglerz -->
+     <link rel="stylesheet"
+     href="https://www.ranglerz.com/cost-to-make-a-web-ios-or-android-app-and-how-long-does-it-take.php">
     <title>Macromed | @yield('title')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- General CSS Files -->
@@ -167,8 +170,8 @@
             "closeButton": false,
             "progressBar": true,
             "positionClass": "toast-top-right",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000"
+            "timeOut": 1000,
+            "extendedTimeOut": 1000
         };
 
         @if (session('message'))
@@ -193,7 +196,9 @@
                 url: "{{ route('user-orders.count') }}",
                 type: 'GET',
                 success: function(response) {
-                    $('#orderUserCounter').text(response.count);
+                    let count = response.count || 0; // Default to 0 if no count is returned
+                    $('#orderUserCounter').text(count > 99 ? '99+' : count);
+                    // $('#orderUserCounter').text(response.count);
                 },
                 error: function(xhr, status, error) {
                     console.log(error);

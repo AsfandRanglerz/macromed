@@ -48,7 +48,7 @@ class SalesAgentAuthController extends Controller
             'email' => 'required|email|unique:sales_agents,email,' . $salesAgentId,
             'phone' => 'required',
             'location' => 'required',
-            'account_number' => 'required|numeric|unique:agent_accounts,account_number,' . $salesAgentId . ',agent_id|min:16',
+            'account_number' => 'required|string|unique:agent_accounts,account_number,' . $salesAgentId . ',agent_id|min:16',
             'account_name' => 'required|string|max:255',
             'account_holder_name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
