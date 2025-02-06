@@ -590,7 +590,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 text-center">
-                                            <button type="button" class="btn btn-success"
+                                            <button type="button" class="btn btn-success submit-product"
                                                 onclick="saveProduct()">Save</button>
                                         </div>
                                     </div>
@@ -608,6 +608,28 @@
 @section('js')
 
     <script>
+        $(document).ready(function() {
+            // Function to jump to the first error message
+            function jumpToError() {
+                // Find the first error message
+                var firstError = $('.invalid-feedback').filter(':visible').first()
+
+                if (firstError.length) {
+                    // Scroll to the first error message
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 150 // Adjust offset as needed
+                    }, 1000); // Animation duration in milliseconds
+                }
+            }
+
+            // Call the function with a delay of 1000ms (1 second) on button click
+            $('.submit-product').on('click', function() {
+                setTimeout(function() {
+                    jumpToError();
+                    ckEditorValidation();
+                }, 1000); // Delay of 1000 milliseconds
+            });
+        });
         $(document).ready(function() {
             function ckEditor() {
                 // Collect CKEditor content and set it to respective textareas
@@ -768,7 +790,6 @@
             // Final product save (no autosave)
             window.saveProduct = function saveProduct() {
                 ckEditor(); // Ensure CKEditor content is collected
-
                 // Create FormData and send the final save request
                 let formDataObj = new FormData($('#productForm')[0]);
                 const draftId = $('#draft_id').val();
@@ -1207,5 +1228,28 @@
         $('#addTaxBtn').click(function() {
             addTax();
         });
+
+        function ckEditorValidation() {
+                // Collect CKEditor content and set it to respective textareas
+                editors.forEach((editor, index) => {
+                    let textarea = document.querySelectorAll('[name="long_description"]')[index];
+                    textarea.value = editor.getData();
+
+                    // Find the feedback element (span) related to this textarea
+                    let feedback = textarea.closest('.form-group').querySelector('.invalid-feedback');
+
+                    // Check if the field is empty
+                    if (!textarea.value.trim()) {
+                        textarea.classList.add('is-invalid'); // Add invalid class
+                        feedback.textContent =
+                        'The long description field is required.'; // Set error message
+                        feedback.style.display = 'block';
+                    } else {
+                        textarea.classList.remove('is-invalid'); // Remove invalid class
+                        feedback.textContent = ''; // Clear error message
+                        feedback.style.display = 'none';
+                    }
+                });
+            }
     </script>
 @endsection
