@@ -31,13 +31,37 @@ class ProductVariantStore extends FormRequest
             'variants.*.tooltip_information' => 'required|string',
             'variants.*.quantity' => 'required|integer',
             'variants.*.price_per_unit' => 'required|numeric',
-            'variants.*.selling_price_per_unit' => 'required|numeric',
+            'variants.*.selling_price_per_unit' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    $index = explode('.', $attribute)[1]; // Get the variant index
+                    $pricePerUnit = request()->input("variants.$index.price_per_unit");
+
+                    if ($value <= $pricePerUnit) {
+                        $fail("Selling Price/Unit must be greater than Actual Price/Unit.");
+                    }
+                },
+            ],
             'variants.*.actual_weight' => 'required|numeric',
-            'variants.*.shipping_weight' => 'required|numeric',
-            'variants.*.shipping_chargeable_weight' => 'required|numeric',
+            'variants.*.volumetric_weight' => 'required|numeric',
+            'variants.*.shipping_chargeable_weight' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    $index = explode('.', $attribute)[1]; // Get the variant index
+                    $actualWeight = request()->input("variants.$index.actual_weight");
+                    $shippingWeight = request()->input("variants.$index.volumetric_weight");
+
+                    if ($value <= $actualWeight || $value <= $shippingWeight) {
+                        $fail("Shipping Chargeable Weight must be greater than Actual Weight and Volumetric Weight.");
+                    }
+                },
+            ],
             'variants.*.description' => 'required|string',
         ];
     }
+
     public function messages()
 
     {
@@ -69,8 +93,8 @@ class ProductVariantStore extends FormRequest
             'variants.*.actual_weight.required' => 'Actual Weight is required.',
             'variants.*.actual_weight.numeric' => 'Actual Weight must be a number.',
 
-            'variants.*.shipping_weight.required' => 'Shipping Weight is required.',
-            'variants.*.shipping_weight.numeric' => 'Shipping Weight must be a number.',
+            'variants.*.volumetric_weight.required' => 'Volumetric Weight is required.',
+            'variants.*.volumetric_weight.numeric' => 'Volumetric Weight must be a number.',
 
             'variants.*.shipping_chargeable_weight.required' => 'Shipping Chargeable Weight is required.',
             'variants.*.shipping_chargeable_weight.numeric' => 'Shipping Chargeable Weight must be a number.',

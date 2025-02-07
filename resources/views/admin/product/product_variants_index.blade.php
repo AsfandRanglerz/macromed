@@ -95,8 +95,8 @@
                                 <input type="text" class="form-control actual_weight" name="actual_weight">
                             </div>
                             <div class="form-group col-md-6">
-                                <label>Shipping Weight</label>
-                                <input type="text" class="form-control shipping_weight" name="shipping_weight">
+                                <label>Volumetric Weight</label>
+                                <input type="text" class="form-control volumetric_weight" name="volumetric_weight">
                             </div>
                         </div>
                         <div class="row col-md-12">
@@ -263,7 +263,7 @@
                         "data": "actual_weight"
                     },
                     {
-                        "data": "shipping_weight"
+                        "data": "volumetric_weight"
                     },
                     {
                         "data": "shipping_chargeable_weight"
@@ -320,7 +320,7 @@
                     $('#editVariants .price_per_unit').val(response.price_per_unit);
                     $('#editVariants .selling_price_per_unit').val(response.selling_price_per_unit);
                     $('#editVariants .actual_weight').val(response.actual_weight);
-                    $('#editVariants .shipping_weight').val(response.shipping_weight);
+                    $('#editVariants .volumetric_weight').val(response.volumetric_weight);
                     $('#editVariants .remaining_quantity').val(response.remaining_quantity);
                     $('#editVariants .shipping_chargeable_weight').val(response
                         .shipping_chargeable_weight);
@@ -362,7 +362,7 @@
             var price_per_unit = form["price_per_unit"].value;
             var selling_price_per_unit = form["selling_price_per_unit"].value;
             var actual_weight = form["actual_weight"].value;
-            var shipping_weight = form["shipping_weight"].value;
+            var volumetric_weight = form["volumetric_weight"].value;
             var shipping_chargeable_weight = form["shipping_chargeable_weight"].value;
             var status = form["status"].value;
             var description = geteditor.getData();
@@ -378,7 +378,7 @@
             formData.append('selling_price_per_unit', selling_price_per_unit);
             formData.append('actual_weight', actual_weight);
             formData.append('shipping_chargeable_weight', shipping_chargeable_weight);
-            formData.append('shipping_weight', shipping_weight);
+            formData.append('volumetric_weight', volumetric_weight);
             formData.append('status', status);
             formData.append('description', description);
 

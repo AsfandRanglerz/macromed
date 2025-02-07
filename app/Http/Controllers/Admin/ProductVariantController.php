@@ -52,7 +52,7 @@ class ProductVariantController extends Controller
                         'price_per_unit' => $variant['price_per_unit'],
                         'selling_price_per_unit' => $variant['selling_price_per_unit'],
                         'actual_weight' => $variant['actual_weight'],
-                        'shipping_weight' => $variant['shipping_weight'],
+                        'volumetric_weight' => $variant['volumetric_weight'],
                         'shipping_chargeable_weight' => $variant['shipping_chargeable_weight'],
                         'status' => $variant['status'],
                         'description' => $variant['description'],
@@ -99,7 +99,7 @@ class ProductVariantController extends Controller
     //                     'price_per_unit' => $variant['price_per_unit'],
     //                     'selling_price_per_unit' => $variant['selling_price_per_unit'],
     //                     'actual_weight' => $variant['actual_weight'],
-    //                     'shipping_weight' => $variant['shipping_weight'],
+    //                     'volumetric_weight' => $variant['volumetric_weight'],
     //                     'shipping_chargeable_weight' => $variant['shipping_chargeable_weight'],
     //                     'status' => $variant['status'],
     //                     'description' => $variant['description'],
@@ -162,10 +162,31 @@ class ProductVariantController extends Controller
                         }
                     ],
                     'price_per_unit' => 'required|numeric',
-                    'selling_price_per_unit' => 'required|numeric',
+                    // 'selling_price_per_unit' => 'required|numeric',
                     'actual_weight' => 'required|numeric',
-                    'shipping_weight' => 'required|numeric',
-                    'shipping_chargeable_weight' => 'required|numeric',
+                    'volumetric_weight' => 'required|numeric',
+                    'selling_price_per_unit' => [
+                        'required',
+                        'numeric',
+                        function ($attribute, $value, $fail) use ($request) {
+                            if ($value <= $request->input('price_per_unit')) {
+                                $fail('The Selling Price/Unit must be greater than the Actual Price/Unit.');
+                            }
+                        },
+                    ],
+                    'shipping_chargeable_weight' => [
+                        'required',
+                        'numeric',
+                        function ($attribute, $value, $fail) use ($request) {
+                            $actualWeight = $request->input('actual_weight');
+                            $volumetricWeight = $request->input('volumetric_weight');
+
+                            if ($value <= $actualWeight || $value <= $volumetricWeight) {
+                                $fail('The Shipping Chargeable Weight must be greater than the Actual Weight and Volumetric Weight.');
+                            }
+                        },
+                    ],
+
                 ],
                 [
                     'm_p_n.required' => 'MPN is required.',
@@ -190,7 +211,7 @@ class ProductVariantController extends Controller
                 'price_per_unit',
                 'selling_price_per_unit',
                 'actual_weight',
-                'shipping_weight',
+                'volumetric_weight',
                 'shipping_chargeable_weight',
                 'status',
                 'description',

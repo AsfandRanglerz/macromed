@@ -74,10 +74,11 @@
                                                             value="{{ old('variants.0.actual_weight') }}">
                                                     </div>
                                                     <div class="form-group col-md-6">
-                                                        <label>Shipping Weight<span class="text-danger">*</span></label>
+                                                        {{-- <label>Shipping Weight<span class="text-danger">*</span></label> --}}
+                                                        <label>Volumetric Weight<span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control"
-                                                            name="variants[0][shipping_weight]"
-                                                            value="{{ old('variants.0.shipping_weight') }}">
+                                                            name="variants[0][volumetric_weight]"
+                                                            value="{{ old('variants.0.volumetric_weight') }}">
                                                     </div>
                                                 </div>
 
@@ -291,7 +292,7 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label>Shipping Weight<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][shipping_weight]" value="{{ old('variants.${variantCount}.shipping_weight') }}">
+                    <input type="text" class="form-control" name="variants[${variantCount}][volumetric_weight]" value="{{ old('variants.${variantCount}.volumetric_weight') }}">
                 </div>
             </div>
 
@@ -395,7 +396,7 @@
                         // }
                         // formDataObj.append('_token', "{{ csrf_token() }}");
 
-                        
+
                 // toastr.success('Data saved successfully');
                 // Clear previous error messages
                 $('.error-message').remove();
