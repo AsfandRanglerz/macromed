@@ -1230,6 +1230,9 @@
         });
 
         function ckEditorValidation() {
+
+            
+
                 // Collect CKEditor content and set it to respective textareas
                 editors.forEach((editor, index) => {
                     let textarea = document.querySelectorAll('[name="long_description"]')[index];
