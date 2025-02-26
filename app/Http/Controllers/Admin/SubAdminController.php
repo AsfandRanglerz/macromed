@@ -49,6 +49,13 @@ class SubAdminController extends Controller
             $subAdmin = $request->draft_id
                 ? User::find($request->draft_id)
                 : new User();
+                if (!$subAdmin->id_number) {
+                do {
+                    $randomNumber = mt_rand(100, 999);
+                    $newId = 'E' . $randomNumber;
+                } while (User::where('id_number', $newId)->exists());
+            }
+                $subAdmin->id_number = $newId;
             $subAdmin->fill($request->only(['name', 'email', 'phone']));
             $subAdmin->user_type = 'subadmin';
             $subAdmin->is_draft = 0;
@@ -82,6 +89,14 @@ class SubAdminController extends Controller
             $subAdmin = $request->draft_id
                 ? User::findOrFail($request->draft_id)
                 : new User();
+                if (!$subAdmin->id_number) {
+                do {
+                    $randomNumber = mt_rand(100, 999);
+                    $newId = 'E' . $randomNumber;
+                } while (User::where('id_number', $newId)->exists());
+
+                $subAdmin->id_number = $newId;
+            }
             $subAdmin->fill($request->only(['name', 'email', 'phone']));
             $subAdmin->user_type = 'subadmin';
             $subAdmin->is_draft = 1;

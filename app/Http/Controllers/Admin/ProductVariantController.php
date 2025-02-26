@@ -17,7 +17,7 @@ class ProductVariantController extends Controller
     public function getProductVariants(Request $request, $id)
     {
         $is_draft = $request->query('is_draft', '1');
-        $variants = ProductVaraint::where('product_id', $id)->where('is_draft',$is_draft)->get();
+        $variants = ProductVaraint::where('product_id', $id)->where('is_draft', $is_draft)->get();
         $json_data["data"] = $variants;
         return json_encode($json_data);
     }
@@ -39,7 +39,18 @@ class ProductVariantController extends Controller
     {
         try {
             foreach ($request->variants as $variant) {
-                ProductVaraint::updateOrCreate(
+
+                if (isset($variant['image']) && $variant['image']->isValid()) {
+                    $filename = time() . '_' . uniqid() . '.' . $variant['image']->getClientOriginalExtension();
+
+                    // Move the file to the correct directory
+                    $variant['image']->move(public_path('admin/assets/images/products'), $filename);
+
+                    // Store only the filename, not the full path
+                    // $productVariant->update(['image' => $filename]);
+                }
+
+                $productVariant = ProductVaraint::updateOrCreate(
                     ['id' => $variant['id'] ?? null],
                     [
                         'product_id' => $productId,
@@ -57,10 +68,47 @@ class ProductVariantController extends Controller
                         'status' => $variant['status'],
                         'description' => $variant['description'],
                         'tooltip_information' => $variant['tooltip_information'],
+                        'image' => $filename,
                         'is_draft' => 1,
                     ]
                 );
+                // if ($request->hasFile('image')) {
+                //     $imageFiles = $request->file('image');
+
+                //     // If there's only one image, convert it to an array
+                //     if (!is_array($imageFiles)) {
+                //         $imageFiles = [$imageFiles];
+                //     }
+
+                //     // $image->move(public_path('admin/assets/images/products'), $filename);
+
+                //     // // Update the existing product variant with the image path
+                //     // $productVariant->update([
+                //     //     'image' => 'admin/assets/images/products/' . $filename, // Remove 'public/' prefix
+                //     // ]);
+                //     foreach ($imageFiles as $image) {
+                //         $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                //         $image->move(public_path('admin/assets/images/products'), $filename);
+                //         $relativePath = 'admin/assets/images/products/' . $filename;
+                //         $productVariant->update(['image' => $filename,]);
+                //     }
+                // }
+
+
+
+
             }
+            // foreach ($request->variants as  $variant) {
+            //     if (isset($variant['image']) && $variant['image']->isValid()) {
+            //         $filename = time() . '_' . uniqid() . '.' . $variant['image']->getClientOriginalExtension();
+
+            //         // Move the file to the correct directory
+            //         $variant['image']->move(public_path('admin/assets/images/products'), $filename);
+
+            //         // Store only the filename, not the full path
+            //         $productVariant->update(['image' => $filename]);
+            //     }
+            // }
             return response()->json([
                 'success' => true,
                 'message' => 'Product variants saved successfully!',
@@ -149,7 +197,17 @@ class ProductVariantController extends Controller
                         'max:255',
                         Rule::unique('product_varaints')->ignore($id)
                     ],
-                    'tooltip_information' => 'required',
+                    // 'tooltip_information' => 'required',
+                    'tooltip_information' => [
+                        'required',
+                        function ($attribute, $value, $fail) {
+                            // Count words (split by spaces, tabs, and newlines)
+                            $wordCount = count(preg_split('/\s+/', trim($value), -1, PREG_SPLIT_NO_EMPTY));
+                            if ($wordCount > 150) {
+                                $fail('The variant information cannot exceed 150 words.');
+                            }
+                        }
+                    ],
                     'packing' => 'required',
                     'unit' => 'required',
                     'quantity' => [
@@ -186,22 +244,38 @@ class ProductVariantController extends Controller
                             }
                         },
                     ],
-
+                    'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 ],
+                [
+                    'image.required' => 'Tool Tip image is required.',
+                    'image.max' => 'Tool Tip image size should not be more than 2MB .'
+                ],
+
                 [
                     'm_p_n.required' => 'MPN is required.',
                 ]
+
             );
 
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
             $quantityDifference = 0;
-            if($request->quantity ==  $product->quantity){
+            if ($request->quantity ==  $product->quantity) {
                 $quantityDifference = 0;
             }
             $quantityDifference = $request->quantity - $product->quantity;
             $product->remaining_quantity += $quantityDifference;
+            // Image upload logic
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('admin/assets/images/products'), $filename);
+
+                // Store only the filename in the database
+                $product->image = $filename;
+            }
+
             $product->fill($request->only([
                 'm_p_n',
                 's_k_u',
@@ -215,7 +289,7 @@ class ProductVariantController extends Controller
                 'shipping_chargeable_weight',
                 'status',
                 'description',
-                'tooltip_information'
+                'tooltip_information',
             ]));
 
             $product->save();

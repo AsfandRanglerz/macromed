@@ -41,7 +41,29 @@
                                 <input type="text" class="form-control tooltip_information" name="tooltip_information">
                             </div>
                         </div>
+                        <div class="row col-6 d-flex col-md-6">
+                            <!-- Input to Upload New Image -->
+                            <div class="flex-grow-1">
+                                <div class="form-group col-md-12">
+                                    <label>Tool Tip Image</label>
+                                    <input type="file" name="image" id="image" class="form-control">
+                                    <small text-muted>(Image should be of size 2MB)</small>
+                                    @error('image')
+                                        <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
 
+                            <!-- Display Existing Image -->
+
+                                <div class="ms-3">
+                                    <img src=""
+                                         alt="image"
+                                         class="image-preview"
+                                         style="width: 80px; height: 80px; margin-left:20px;border: 1px solid #ddd;">
+                                </div>
+
+                        </div>
                         <div class="row col-12">
                             <div class="form-group col-md-4">
                                 <label>MPN</label>
@@ -166,6 +188,7 @@
                                                 <th>Actual Weight</th>
                                                 <th>Shipping Weight</th>
                                                 <th>Shipping Chargeable Weight</th>
+                                                <th>Tool Tip Image</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                                 {{-- <th>Description</th> --}}
@@ -269,6 +292,15 @@
                         "data": "shipping_chargeable_weight"
                     },
                     {
+    "data": "image",
+    "render": function(data, type, row) {
+        return '<img src="{{ asset("/public/admin/assets/images/products") }}/' + data +
+               '" alt="Tool_Tip Image" style="width: 50px; height: 50px;">';
+    }
+}
+,
+                    {
+
                         "data": null,
                         "render": function(data, type, row) {
                             var buttonClass = row.status == '1' ? 'btn-success' : 'btn-danger';
@@ -330,6 +362,12 @@
                     } else {
                         geteditor.setData(''); // Or set it to an empty string
                     }
+                    if (response.image) {
+                let imagePath = '{{ asset("/public/admin/assets/images/products") }}/' + response.image;
+                $('#editVariants .image-preview').attr('src', imagePath).show();
+            } else {
+                $('#editVariants .image-preview').hide();
+            }
                     $('#editVariantsModal').modal('show');
                     $('#editVariantsModal').data('id', id);
                 },
@@ -382,6 +420,10 @@
             formData.append('status', status);
             formData.append('description', description);
 
+            var imageFile = form["image"].files[0];
+if (imageFile) {
+    formData.append('image', imageFile);
+}
             $.ajax({
                 url: updateVariants.replace(':id', id),
                 type: 'POST',

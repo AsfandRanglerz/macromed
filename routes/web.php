@@ -1,11 +1,13 @@
 <?php
 
+use App\Models\PackingValue;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BlogsController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\ModalsController;
@@ -24,20 +26,20 @@ use App\Http\Controllers\Admin\PivateNoteController;
 use App\Http\Controllers\Admin\SalesAgentController;
 use App\Http\Controllers\Admin\NumberOfUseController;
 use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\DiscountCodeController;
 use App\Http\Controllers\Admin\MainMaterialController;
+use App\Http\Controllers\Admin\PackingValueController;
+use App\Http\Controllers\Admin\BrandDiscountController;
+use App\Http\Controllers\Admin\CareerSectionController;
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\SterilizationController;
 use App\Http\Controllers\Admin\TermConditionController;
 use App\Http\Controllers\Admin\WithDrawLimitController;
 use App\Http\Controllers\Admin\ProductVariantController;
-use App\Http\Controllers\Admin\WithDrawRequestController;
-use App\Http\Controllers\Admin\AdminNotificationController;
-use App\Http\Controllers\Admin\BlogsController;
-use App\Http\Controllers\Admin\BrandDiscountController;
-use App\Http\Controllers\Admin\CareerSectionController;
-use App\Http\Controllers\Admin\CategoryDiscountController;
-use App\Http\Controllers\Admin\DiscountCodeController;
 use App\Http\Controllers\Admin\ProductDiscountController;
+use App\Http\Controllers\Admin\WithDrawRequestController;
+use App\Http\Controllers\Admin\CategoryDiscountController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -232,7 +234,16 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/units/delete/{id}',  'deleteEntity')->name('units.delete')->middleware('permission:Units');
         Route::post('/update-units-status/{id}',  'updateStatus')->name('unitsBlock.update')->middleware('permission:Units');
     });
-
+    // ############## PackingValues ##########
+    Route::controller(PackingValueController::class)->group(function () {
+        Route::get('/PackingValues',  'PackingValuesIndex')->name('PackingValue.index')->middleware('permission:PackingValues');
+        Route::post('/PackingValues/autosave', 'autosave')->name('PackingValue.autosave');
+        Route::post('/PackingValues-create',  'createEntity')->name('PackingValue.create')->middleware('permission:PackingValues');
+        Route::get('/PackingValuesData',  'PackingValueData')->name('PackingValue.get')->middleware('permission:PackingValues');
+        Route::get('/PackingValues/{id}',  'showPackingValue')->name('PackingValue.show')->middleware('permission:PackingValues');
+        Route::get('/PackingValues/delete/{id}',  'deleteEntity')->name('PackingValue.delete')->middleware('permission:PackingValues');
+        Route::post('/update-PackingValues-status/{id}',  'updateStatus')->name('PackingValueBlock.update')->middleware('permission:PackingValues');
+    });
     // ############## Units ############
     Route::controller(SterilizationController::class)->group(function () {
         Route::get('/sterilization',  'sterilizationIndex')->name('sterilization.index')->middleware('permission:Sterilization');

@@ -354,6 +354,14 @@
                                                 value="{{ old('delivery_period') }}">
                                             <div class="invalid-feedback"></div>
                                         </div>
+
+                                        <div class="form-group col-md-4">
+                                            <label>Warranty Period<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="warranty_period"
+                                                value="{{ old('warranty_period') }}">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+
                                     </div>
 
                                     <div class="row col-md-12">
@@ -1231,7 +1239,7 @@
 
         function ckEditorValidation() {
 
-            
+
 
                 // Collect CKEditor content and set it to respective textareas
                 editors.forEach((editor, index) => {

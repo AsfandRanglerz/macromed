@@ -229,6 +229,11 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
+                                <label>Warranty Period<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control warranty_period" name="warranty_period"
+                                    value="{{ old('warranty_period') }}">
+                            </div>
+                            <div class="form-group col-md-4">
                                 <label>Sterilizations <span class="text-danger">*</span></label>
                                 <select name="sterilizations" class="form-control select2 sterilizations"
                                     id="sterilizations" style="width: 100%">
@@ -484,6 +489,7 @@
                                             <th>Country</th>
                                             <th>Supplier Name</th>
                                             <th>Number Of Use</th>
+                                            <th>Warranty Period</th>
                                             <th>Product Status</th>
                                             <th>Status</th>
                                             <th>Variants</th>
@@ -636,6 +642,10 @@
                     {
                         "data": "product_use_status"
                     },
+                    {
+                        "data": "warranty_period"
+                    },
+
                     {
                         "data": null,
                         "render": function(data, type, row) {
@@ -824,6 +834,7 @@
                     $('#editModels .product_hts').val(response.product_hts);
                     $('#editModels .sterilizations').val(response.sterilizations).trigger('change');
                     $('#editModels .product_use_status').val(response.product_use_status).trigger('change');
+                    $('#editModels .warranty_period').val(response.warranty_period);
                     $('#editModels .buyer_type').val(response.buyer_type).trigger('change');
                     $('#editModels .product_class').val(response.product_class).trigger('change');
                     $('#editModels .supplier_name').val(response.supplier_name).trigger('change');

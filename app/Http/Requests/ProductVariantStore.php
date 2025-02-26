@@ -29,6 +29,7 @@ class ProductVariantStore extends FormRequest
             'variants.*.packing' => 'required|string',
             'variants.*.unit' => 'required|string',
             'variants.*.tooltip_information' => 'required|string',
+            'variants.*.image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'variants.*.quantity' => 'required|integer',
             'variants.*.price_per_unit' => 'required|numeric',
             'variants.*.selling_price_per_unit' => [
@@ -101,6 +102,11 @@ class ProductVariantStore extends FormRequest
 
             'variants.*.description.required' => 'Description is required.',
             'variants.*.description.string' => 'Description must be a string.',
+
+            'variants.*.image.required' => 'Tool Tip image is required.',
+            'variants.*.image.image' => 'Tool Tip image must be an image.',
+            'variants.*.image.mimes' => 'Tool Tip image must be a file of type: jpeg, png, jpg, gif, svg.',
+            'variants.*.image.max' => 'Tool Tip image must not be greater than 2MB.',
         ];
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -51,12 +52,24 @@ class SalesAgentAuthController extends Controller
             'account_number' => 'required|string|unique:agent_accounts,account_number,' . $salesAgentId . ',agent_id|min:16',
             'account_name' => 'required|string|max:255',
             'account_holder_name' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'old_password' => 'nullable|required_with:new_password',
+            'new_password' => 'nullable|min:8',
         ]);
         if (auth()->guard('sales_agent')->check()) {
             $salesAgent = SalesAgent::find($salesAgentId);
             if (!$salesAgent) {
                 return back()->with(['alert' => 'error', 'error' => 'Sales Agent not found.']);
+            }
+
+             if ($request->filled('old_password') && $request->filled('new_password')) {
+                if (!Hash::check($request->old_password, $salesAgent->password)) {
+                    return back()->with(['alert' => 'error', 'error' => 'Old password does not match.']);
+                }
+
+                // Update password
+                $salesAgent->password = Hash::make($request->new_password);
+
             }
 
             // Update sales agent details
@@ -68,7 +81,8 @@ class SalesAgentAuthController extends Controller
                 'country',
                 'state',
                 'city',
-                'location'
+                'location',
+                'password',
             ]));
 
             // Handle image upload

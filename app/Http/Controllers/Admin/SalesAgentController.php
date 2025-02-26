@@ -121,6 +121,14 @@ class SalesAgentController extends Controller
             $salesManager = $request->draft_id
                 ? SalesAgent::find($request->draft_id)
                 : new SalesAgent();
+                if (!$salesManager->id_number) {
+                    do {
+                        $randomNumber = mt_rand(100, 999);
+                        $newId = 'S' . $randomNumber;
+                    } while (SalesAgent::where('id_number', $newId)->exists());
+
+                    $salesManager->id_number = $newId;
+                }
             $salesManager->fill($request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location']));
             $salesManager->user_type = 'salesmanager';
             $salesManager->is_draft = 0;
@@ -161,6 +169,23 @@ class SalesAgentController extends Controller
             $salesManager = $request->draft_id
                 ? SalesAgent::find($request->draft_id)
                 : new SalesAgent();
+
+                // if (!$salesManager->exists) {
+                    // do {
+                    //     $randomNumber = mt_rand(100, 999);
+                    //     $newId = 'S' . $randomNumber;
+                    // } while (SalesAgent::where('id_number', $newId)->exists());
+
+                    // $salesManager->id_number = $newId;
+                // }
+                if (!$salesManager->id_number) {
+                    do {
+                        $randomNumber = mt_rand(100, 999);
+                        $newId = 'S' . $randomNumber;
+                    } while (SalesAgent::where('id_number', $newId)->exists());
+
+                    $salesManager->id_number = $newId;
+                }
             $salesManager->fill($request->only(['name', 'email', 'phone', 'status', 'country', 'state', 'city', 'location']));
             $salesManager->user_type = 'salesmanager';
             $salesManager->is_draft = 1;
@@ -202,7 +227,7 @@ class SalesAgentController extends Controller
                     'account_holder_name' => $request->account_holder_name,
                     'account_number' => $request->account_number,
                 ];
-                Mail::to($salesManager->email)->send(new SalesAgentRegistration($data));
+                // Mail::to($salesManager->email)->send(new SalesAgentRegistration($data));
                 DB::commit();
                 return response()->json(['alert' => 'success', 'message' => 'Sales Manager Created Successfully!']);
             } else {

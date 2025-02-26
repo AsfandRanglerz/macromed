@@ -27,7 +27,8 @@
                                                         <ul class="text-danger">
                                                             <li>You must upload at least 3 images at a time.</li>
                                                             <li>You can upload multiple images.</li>
-                                                            <li>Maximum file size: 1MB.</li>
+                                                            <li>Maximum file size: 2MB.</li>
+                                                            <li>Dimensions must be 502 x 502.</li>
                                                             <li>Allowed formats: JPEG, PNG, GIF.</li>
                                                         </ul>
                                                     </small>

@@ -21,7 +21,7 @@ class OrderController extends Controller
     public function orderData(Request $request)
     {
         $status = $request->query('status', 'pending');
-        $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,name,email', 'orderItem')->where('status', $status)->latest()->get();
+        $orders = Order::with('users:id,name,phone,email', 'salesAgent:id,id_number,name,email', 'orderItem')->where('status', $status)->latest()->get();
         $json_data["data"] = $orders;
         return json_encode($json_data);
     }
@@ -133,7 +133,7 @@ class OrderController extends Controller
                 'orderItem.productVariant:id,product_id', // Fetch only `id` and `product_id` from productVariants
                 'orderItem.productVariant.products:id,product_name' // Fetch only `id` and `product_name` from products
             ])->where('id', $id)->firstOrFail();
-            return $orders;
+            // return $orders;
             return view('admin.order.invoice', compact('orders'));
         } catch (\Exception $e) {
             return response()->json([

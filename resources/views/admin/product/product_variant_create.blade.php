@@ -35,6 +35,14 @@
                                                 </div>
                                                 <div class="row col-md-12">
                                                     <div class="form-group col-md-6">
+                                                        <label>Tool Tip Image<span class="text-danger">*</span></label>
+                                                        <input type="file" name="variants[0][image]"
+                                                        value="{{ old('variants.0.image') }}"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="row col-md-12">
+                                                    <div class="form-group col-md-6">
                                                         <label>MPN<span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control" name="variants[0][m_p_n]"
                                                             value="{{ old('variants.0.m_p_n') }}">
@@ -262,6 +270,12 @@
                     value="{{ old('variants.${variantCount}.tooltip_information') }}">
                     </div>
                 </div>
+                <div class="row col-md-12">
+            <div class="form-group col-md-6">
+                <label>Tool Tip Image <span class="text-danger">*</span></label>
+                <input type="file" name="variants[${variantCount}][image]" class="form-control">
+            </div>
+        </div>
             <div class="row col-md-12">
                 <div class="form-group col-md-6">
                     <label>MPN<span class="text-danger">*</span></label>

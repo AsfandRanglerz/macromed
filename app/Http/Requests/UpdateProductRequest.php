@@ -86,6 +86,7 @@ class UpdateProductRequest extends FormRequest
                 'string',
                 'url'
             ],
+            'warranty_period' => 'required',
         ];
     }
     public function messages()
@@ -106,6 +107,7 @@ class UpdateProductRequest extends FormRequest
             'taxes.*.tax_per_city.required' => 'Tax per city is required.',
             'taxes.*.local_tax.required' => 'local Tax is required.',
             'taxes.*.local_tax.regex' => 'The local tax must be either a percentage (up to 3 digits with a % sign) or a number (up to 6 digits).',
+            'warranty_period.required' => 'Warranty period is required.',
         ];
     }
 }

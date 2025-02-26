@@ -243,6 +243,7 @@
                                     <thead>
                                         <tr>
                                             <th>Sr.</th>
+                                            <th>ID Number</th>
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Visibility Status</th>
@@ -290,6 +291,9 @@
                         "render": function(data, type, row, meta) {
                             return meta.row + 1;
                         }
+                    },
+                    {
+                        "data": "id_number",
                     },
                     {
                         "data": "name"

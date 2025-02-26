@@ -1,6 +1,7 @@
 @extends('salesagent.layout.app')
 @section('title', 'Profile')
 @section('content')
+
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -61,6 +62,7 @@
                                                             class="form-control">
 
                                                     </div>
+
                                                 </div>
                                                 <div class="row">
                                                     <div class="form-group col-md-6 col-12">
@@ -140,6 +142,31 @@
                                                         </div>
                                                     @endforeach
                                                 @endif
+                                                <h4>Change Password</h4>
+
+
+                                                        <div class="row">
+                                                            <div class="form-group col-md-4 col-12">
+                                                                <label>Old Password</label>
+                                                                <input type="password" id="old_password" name="old_password"
+
+                                                                    class="form-control">
+                                                                    <span class="fa fa-eye-slash position-absolute toggle-password" data-target="old_password"
+                                                                    style="top: 3.18rem; right: 1.4rem; cursor: pointer;"></span>
+                                                                </div>
+
+                                                                <div class="form-group col-md-4 col-12">
+                                                                    <label>New Password</label>
+                                                                    <input type="password" id="new_password" name="new_password"
+
+                                                                    class="form-control">
+                                                                    <span class="fa fa-eye-slash position-absolute toggle-password" data-target="new_password"
+                                                                    style="top: 3.18rem; right: 1.4rem; cursor: pointer;"></span>
+                                                            </div>
+
+
+                                                        </div>
+
                                             </div>
                                             <div class="card-footer text-center">
                                                 <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -158,12 +185,26 @@
 @endsection
 
 @section('js')
-    <script>
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                toastr.error('{{ $error }}');
-            @endforeach
-        @endif
+
+<script>
+    @if ($errors->any())
+    @foreach ($errors->all() as $error)
+    toastr.error('{{ $error }}');
+    @endforeach
+    @endif
     </script>
 
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.addEventListener('click', function () {
+                const passwordField = document.getElementById(this.getAttribute('data-target'));
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+
+                // Toggle eye icon
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+            });
+        });
+    </script>
 @endsection

@@ -130,7 +130,7 @@ class ReportsController extends Controller
         // Initialize the query with relations
         $query = Order::with([
             'users:id,name,phone,email',
-            'salesAgent:id,name,email',
+            'salesAgent:id,id_number,name,email',
             'orderItem.productVariant.products.productCategory.categories'
         ])->where('status', 'completed')
           ->latest();

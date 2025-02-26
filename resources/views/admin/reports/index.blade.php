@@ -127,7 +127,7 @@
                                             <th>Sr.</th>
                                             <th>Order Code</th>
                                             <th>User Name</th>
-                                            <th>Agent Name</th>
+                                            <th>Agent ID</th>
                                             <th>Country</th>
                                             <th>State</th>
                                             <th>City</th>
@@ -428,7 +428,7 @@
                     },
                     {
                         "data": null,
-                        "render": (data) => data.sales_agent.name
+                        "render": (data) => data.sales_agent.id_number
                     },
                     {
                         "data": "country"

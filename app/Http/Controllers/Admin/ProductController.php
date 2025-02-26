@@ -177,6 +177,7 @@ class ProductController extends Controller
                 'tab_4_heading',
                 'tab_4_text',
                 'product_condition',
+                'warranty_period'
             ]));
 
             // Handle thumbnail image upload
@@ -268,7 +269,8 @@ class ProductController extends Controller
                 'tab_3_text',
                 'tab_4_heading',
                 'tab_4_text',
-                'product_condition'
+                'product_condition',
+                'warranty_period'
             ]));
             if ($request->hasFile('thumbnail_image')) {
                 // Delete old image if exists
@@ -417,31 +419,65 @@ class ProductController extends Controller
         return view('admin.product.product_images_index', compact('product', 'productImages'));
     }
 
+    // public function uploadImages(Request $request, $id)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048|dimensions:min_width=502,min_height=502,max_width=502,max_height=502', // Maximum file size in kilobytes
+    //         ], [
+    //             'image.*.image' => 'The file must be an image.',
+    //             'image.*.mimes' => 'Only JPEG, PNG, JPG, and GIF formats are allowed.',
+    //             'image.*.max' => 'Maximum file size allowed is 2MB.',
+    //             'image.*.dimensions' => 'Each image must be exactly 502x502 pixels.',
+
+    //         ]);
+
+    //         if ($request->hasFile('image')) {
+    //             foreach ($request->file('image') as $image) {
+    //                 $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+    //                 $image->move(public_path('admin/assets/images/products'), $filename);
+    //                 ProductImages::create([
+    //                     'product_id' => $id,
+    //                     'image' => 'public/admin/assets/images/products/' . $filename,
+    //                 ]);
+    //             }
+    //         }
+    //         return redirect()->back()->with(['alert' => 'success', 'message' => 'Images added successfully!']);
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->with('error', 'An error occurred while uploading images.');
+    //     }
+    // }
     public function uploadImages(Request $request, $id)
-    {
-        try {
-            $request->validate([
-                'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:1024', // Maximum file size in kilobytes
-            ], [
-                'image.*.image' => 'The file must be an image.',
-                'image.*.mimes' => 'Only JPEG, PNG, JPG, and GIF formats are allowed.',
-                'image.*.max' => 'Maximum file size allowed is 1MB.',
-            ]);
-            if ($request->hasFile('image')) {
-                foreach ($request->file('image') as $image) {
-                    $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('admin/assets/images/products'), $filename);
-                    ProductImages::create([
-                        'product_id' => $id,
-                        'image' => 'public/admin/assets/images/products/' . $filename,
-                    ]);
-                }
+{
+    try {
+        $request->validate([
+            'image' => 'required|array|min:3',
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048|dimensions:min_width=502,min_height=502,max_width=502,max_height=502',
+        ], [
+            'image.required' => 'You must upload at least 3 images.',
+            'image.min' => 'You must upload at least 3 images.',
+            'image.*.image' => 'The file must be an image.',
+            'image.*.mimes' => 'Only JPEG, PNG, JPG, and GIF formats are allowed.',
+            'image.*.max' => 'Maximum file size allowed is 2MB.',
+            'image.*.dimensions' => 'Each image must be exactly 502x502 pixels.',
+        ]);
+
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $image) {
+                $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('admin/assets/images/products'), $filename);
+                ProductImages::create([
+                    'product_id' => $id,
+                    'image' => 'public/admin/assets/images/products/' . $filename,
+                ]);
             }
-            return redirect()->back()->with(['alert' => 'success', 'message' => 'Image Add Successfully!']);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'An error occurred while uploading images.');
         }
+        return redirect()->back()->with(['alert' => 'success', 'message' => 'Images added successfully!']);
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred while uploading images.');
     }
+}
+
     public function updateCoverStatus(Request $request, $productId, $imageId)
     {
         try {

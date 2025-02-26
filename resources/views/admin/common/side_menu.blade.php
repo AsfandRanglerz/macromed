@@ -33,6 +33,7 @@
                         auth()->guard('web')->user()->can('Company') ||
                         auth()->guard('web')->user()->can('Models') ||
                         auth()->guard('web')->user()->can('Units') ||
+                        auth()->guard('web')->user()->can('PackingValues') ||
                         auth()->guard('web')->user()->can('Sterilization') ||
                         auth()->guard('web')->user()->can('Number Of Use') ||
                         auth()->guard('web')->user()->can('Supplier') ||
@@ -45,7 +46,7 @@
                             data-feather="layout"></i><span>Inventory
                             Managment</span></a>
                     <ul
-                        class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*') || request()->is('admin/sterilization*') || request()->is('admin/supplier*') || request()->is('admin/mainMaterial*') ? 'show' : '' }}">
+                        class="dropdown-menu {{ request()->is('admin/number-of-use*') || request()->is('admin/category*') || request()->is('admin/subCategory*') || request()->is('admin/brands*') || request()->is('admin/product*') || request()->is('admin/company*') || request()->is('admin/models*') || request()->is('admin/certification*') || request()->is('admin/units*')|| request()->is('admin/PackingValues*') || request()->is('admin/sterilization*') || request()->is('admin/supplier*') || request()->is('admin/mainMaterial*') ? 'show' : '' }}">
                         {{-- Category --}}
                         @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('Category'))
                             <li class="dropdown {{ request()->is('admin/category*') ? 'active' : '' }}">
@@ -155,6 +156,22 @@
                                 <a href="{{ route('units.index') }}"
                                     class="nav-link {{ request()->is('admin/units*') ? 'text-white' : '' }}">
                                     <i data-feather="layers"></i><span>Units</span>
+                                </a>
+                            </li>
+                        @endif
+                        {{-- PackingValue --}}
+                        @if (auth()->guard('web')->check() && auth()->guard('web')->user()->can('PackingValue'))
+                            <li class="dropdown {{ request()->is('admin/PackingValue*') ? 'active' : '' }}">
+                                <a href="{{ route('PackingValue.index') }}"
+                                    class="nav-link {{ request()->is('admin/PackingValue*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>PackingValues</span>
+                                </a>
+                            </li>
+                        @elseif (auth()->guard('admin')->check())
+                            <li class="dropdown {{ request()->is('admin/PackingValue*') ? 'active' : '' }}">
+                                <a href="{{ route('PackingValue.index') }}"
+                                    class="nav-link {{ request()->is('admin/PackingValue*') ? 'text-white' : '' }}">
+                                    <i data-feather="layers"></i><span>PackingValues</span>
                                 </a>
                             </li>
                         @endif
@@ -307,7 +324,7 @@
                     <a href="{{ route('order.index') }}" class="nav-link padding" style="padding-left: 23px">
                         <span><i data-feather="shopping-cart"></i>
                             Orders</span>
-                        <div id="orderCounter" 
+                        <div id="orderCounter"
                             class="badge {{ request()->is('admin/order*') ? 'bg-white text-dark' : 'bg-primary text-white' }} rounded-circle ">
                         </div>
                     </a>

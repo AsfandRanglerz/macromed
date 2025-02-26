@@ -30,7 +30,7 @@
                                             <th>Sr.</th>
                                             <th>Order Id</th>
                                             <th>User Name</th>
-                                            <th>Sales Agent Name</th>
+                                            <th>Sales Agent ID</th>
                                             <th>Country</th>
                                             <th>State</th>
                                             <th>City</th>
@@ -173,8 +173,8 @@
                     {
                         "data": null,
                         "render": function(data, type, row) {
-                            if (data.sales_agent) {
-                                return data.sales_agent.name;
+                            if (data.sales_agent  && data.sales_agent.id_number) {
+                                return data.sales_agent.id_number;
                             } else {
                                 return '<span class="text-danger">No Agent Found!</span>';
                             }
