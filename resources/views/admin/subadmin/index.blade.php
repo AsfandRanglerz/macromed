@@ -225,7 +225,13 @@
                         }
                     },
                     {
-                        "data": "id_number"
+                        "data": "id_number",
+                        "render": function(data, type, row) {
+                            if (!data) {
+                                return '<span class="badge bg-danger text-white">no record found</span>';
+                            }
+                            return data;
+                        }
                     },
                     {
                         "data": "name"

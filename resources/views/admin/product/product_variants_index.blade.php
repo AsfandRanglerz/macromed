@@ -75,7 +75,15 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Packing</label>
-                                <input type="text" class="form-control packing" name="packing">
+                                {{-- <input type="text" class="form-control packing" name="packing"> --}}
+                                <select class="form-control packing" name="packing">
+                                    <option value="" disabled selected>Select Packings</option>
+                                    @foreach ($packinges as $data)
+                                        <option value="{{ $data->name }}">
+                                            {{ ucfirst($data->name) }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="row col-md-12">

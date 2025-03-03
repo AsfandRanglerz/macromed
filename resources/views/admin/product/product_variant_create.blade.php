@@ -54,11 +54,23 @@
                                                     </div>
                                                 </div>
                                                 <div class="row col-md-12">
-                                                    <div class="form-group col-md-6">
+                                                    {{-- <div class="form-group col-md-6">
                                                         <label>Packing<span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control"
                                                             name="variants[0][packing]"
                                                             value="{{ old('variants.0.packing') }}">
+                                                    </div> --}}
+                                                    <div class="form-group col-md-6">
+                                                        <label>Packing<span class="text-danger">*</span></label>
+                                                        <select class="form-control" name="variants[0][packing]">
+                                                            <option value="" disabled selected>Select Packing</option>
+                                                            @foreach ($packinges as $data)
+                                                                <option value="{{ $data->name }}"
+                                                                    {{ old('variants.0.unit') == $data->name ? 'selected' : '' }}>
+                                                                    {{ ucfirst($data->name) }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label>Unit<span class="text-danger">*</span></label>
@@ -255,6 +267,12 @@
             <option value="{{ $unit->name }}">{{ ucfirst($unit->name) }}</option>
         @endforeach
         `;
+        let packingsOptions = `
+        <option value="" disabled selected>Select Pakings</option>
+        @foreach ($packinges as $data)
+            <option value="{{ $data->name }}">{{ ucfirst($data->name) }}</option>
+        @endforeach
+        `;
             let variantFieldHTML = `
         <div class="variant-field border border-1 mt-2">
             <div class="col-md-12 col-sm-12 col-lg-12 mt-2 mb-0 d-flex justify-content-end">
@@ -287,9 +305,12 @@
                 </div>
             </div>
             <div class="row col-md-12">
+
                 <div class="form-group col-md-6">
-                    <label>Packing<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="variants[${variantCount}][packing]" value="{{ old('variants.${variantCount}.packing') }}">
+                    <label>Packings<span class="text-danger">*</span></label>
+                    <select class="form-control" name="variants[${variantCount}][packing]">
+                        ${packingsOptions}
+                    </select>
                 </div>
                 <div class="form-group col-md-6">
                     <label>Unit<span class="text-danger">*</span></label>

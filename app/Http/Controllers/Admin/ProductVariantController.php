@@ -9,6 +9,7 @@ use App\Models\ProductVaraint;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductVariantStore;
+use App\Models\PackingValue;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -24,20 +25,22 @@ class ProductVariantController extends Controller
     public function productVariantViewIndex($id)
     {
         $units = Unit::activeAndNonDraft()->get();
+        $packinges = PackingValue::activeAndNonDraft()->get();
         $productVariant = ProductVaraint::where('product_id', $id)->get();
         $product = Product::findOrFail($id);
-        return view('admin.product.product_variants_index', compact('productVariant', 'id', 'units', 'product'));
+        return view('admin.product.product_variants_index', compact('productVariant','packinges', 'id', 'units', 'product'));
     }
     public function productVariantIndex($id)
     {
         $units = Unit::activeAndNonDraft()->get();
+        $packinges = PackingValue::activeAndNonDraft()->get();
         $data = Product::activeAndNonDraft()->with('productVaraint')->find($id);
-        return view('admin.product.product_variant_create', compact('data', 'units'));
+        return view('admin.product.product_variant_create', compact('data', 'units','packinges'));
     }
 
     public function productVariantStore(ProductVariantStore $request, $productId)
     {
-        try {
+        try { 
             foreach ($request->variants as $variant) {
 
                 if (isset($variant['image']) && $variant['image']->isValid()) {
@@ -244,13 +247,12 @@ class ProductVariantController extends Controller
                             }
                         },
                     ],
-                    'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                    // 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 ],
-                [
-                    'image.required' => 'Tool Tip image is required.',
-                    'image.max' => 'Tool Tip image size should not be more than 2MB .'
-                ],
-
+                // [
+                //     'image.required' => 'Tool Tip image is required.',
+                //     'image.max' => 'Tool Tip image size should not be more than 2MB .'
+                // ],
                 [
                     'm_p_n.required' => 'MPN is required.',
                 ]

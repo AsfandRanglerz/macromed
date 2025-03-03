@@ -84,7 +84,7 @@ class ProductController extends Controller
             $productVariants = ProductVaraint::where('product_id', $productId)
                 ->where('status', '1')
                 ->where('is_draft', '1')
-                ->select('id', 's_k_u', 'description', 'packing', 'unit', 'remaining_quantity', 'selling_price_per_unit', 'tooltip_information')
+                ->select('id', 's_k_u', 'description', 'packing', 'unit', 'remaining_quantity', 'selling_price_per_unit', 'tooltip_information','image')
                 ->get()
                 ->map(function ($variant) use ($pkrAmount) {
                     $variant->selling_price_per_unit_pkr = $variant->selling_price_per_unit * $pkrAmount;
