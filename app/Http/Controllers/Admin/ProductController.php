@@ -192,6 +192,9 @@ class ProductController extends Controller
                 $thumbnail_image->move(public_path('admin/assets/images/products'), $thumbnail_name);
                 $product->thumbnail_image = $thumbnail_path;
             }
+            else{
+                $product->thumbnail_image = 'public/admin/assets/images/product.png';
+            }
             // Handle PDF upload
             if ($request->hasFile('pdf')) {
                 $oldPdfPath = $product->product_pdf;

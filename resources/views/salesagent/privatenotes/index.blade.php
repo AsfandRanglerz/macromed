@@ -101,7 +101,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="col-12">
-                                    <h4>PrivateNotes</h4>
+                                    <h4>Private Notes</h4>
                                 </div>
                             </div>
                             <div class="card-body table-responsive">

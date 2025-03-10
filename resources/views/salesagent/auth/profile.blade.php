@@ -73,7 +73,7 @@
                                                             <label class="custom-file-label" for="customFile">Choose
                                                                 file</label>
                                                         </div>
-                                                        <img src="{{ asset($data->image) }}" alt="Profile Image"
+                                                        <img src="{{ asset('public/' . $data->image) }}" alt="Profile Image"
                                                             width="100" class="mt-2">
                                                         <div class="invalid-feedback"></div>
                                                     </div>

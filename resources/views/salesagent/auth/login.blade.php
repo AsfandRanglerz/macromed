@@ -49,7 +49,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group mb-0">
-                                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block btn-login" tabindex="4">
                                         Login
                                     </button>
                                 </div>
@@ -65,6 +65,9 @@
 @section('script')
 <script>
     $(document).ready(function () {
+        $('.btn-login').on('click', function () {
+           $('.eye-icon-set').addClass('d-none');
+        });
         feather.replace();
 
         $('.eye-icon-set').on('click', function () {

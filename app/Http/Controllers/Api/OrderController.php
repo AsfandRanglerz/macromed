@@ -271,7 +271,7 @@ class OrderController extends Controller
     {
         try {
             $getUserOrders = Order::where('user_id', $userId)
-                ->select('id', 'user_id', 'order_id', 'billing_address', 'total', 'discounted_total', 'address', 'payment_type', 'card_number', 'dicount_code_percentage', 'discount_code', 'created_at', 'status')
+                ->select('id', 'user_id', 'order_id', 'billing_address', 'total', 'discounted_total', 'address', 'payment_type', 'card_number', 'dicount_code_percentage','city','state', 'discount_code', 'created_at', 'status')
                 ->with([
                     'users:id,name,phone,email',
                     'orderItem.productVariant:id,product_id', // Fetch only `id` and `product_id` from productVariants

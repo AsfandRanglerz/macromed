@@ -40,7 +40,7 @@ class ProductVariantController extends Controller
 
     public function productVariantStore(ProductVariantStore $request, $productId)
     {
-        try { 
+        try {
             foreach ($request->variants as $variant) {
 
                 if (isset($variant['image']) && $variant['image']->isValid()) {
@@ -51,6 +51,8 @@ class ProductVariantController extends Controller
 
                     // Store only the filename, not the full path
                     // $productVariant->update(['image' => $filename]);
+                }else{
+                    $filename = 'product.png';
                 }
 
                 $productVariant = ProductVaraint::updateOrCreate(
