@@ -92,7 +92,8 @@ class HomeController extends Controller
                 'min_price', 'max_price', 'company', 'brand_id', 'category_id',
                 'certification_id', 'country', 'user_id', 'product_id',
                 'key_words', 'available_product', 'suggested_word', 'price_order',
-                'product_class','product_condition','warranty_period','product_use_status'
+                'product_class','product_condition','warranty_period','product_use_status',
+                'search'
             ];
 
             $hasFilters = false;
@@ -278,6 +279,11 @@ class HomeController extends Controller
     $query = Product::where('status', '1')->where('is_draft', 1);
 
     // Apply filters dynamically
+    if ($request->has('key_words')) {
+        $search = $request->input('key_words');
+        $query->where('short_name', 'like', '%' . $search . '%');
+    }
+
     if ($request->has('min_price') && $request->has('max_price')) {
         $query->whereBetween('price', [$request->input('min_price'), $request->input('max_price')]);
     }
