@@ -273,6 +273,7 @@ class HomeController extends Controller
                 ->pluck('count', 'company')
                 ->toArray(),
         ];
+        
     }
     private function getFilterCountsReq($request)
 {
