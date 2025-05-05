@@ -13,20 +13,25 @@ class PermissionMiddleware
     {
         $authGuard = app('auth')->guard($guard);
         if (auth()->guard('admin')->check() || auth()->guard('web')->check()) {
-            $type = auth()->user()->user_type ?? ' ';
-            if ($type == 'subadmin') {
-                $permissions = is_array($permission)
-                    ? $permission
-                    : explode('|', $permission);
+            if(auth()->guard('web')->check()){
+                $type = auth()->user()->user_type ?? ' ';
+                if ($type == 'subadmin') {
+                    $permissions = is_array($permission)
+                        ? $permission
+                        : explode('|', $permission);
 
-                foreach ($permissions as $permission) {
-                    if ($authGuard->user()->can($permission)) {
-                        return $next($request);
+                    foreach ($permissions as $permission) {
+                        if ($authGuard->user()->can($permission)) {
+                            return $next($request);
+                        }
                     }
-                }
 
-                throw UnauthorizedException::forPermissions($permissions);
-            } else {
+                    throw UnauthorizedException::forPermissions($permissions);
+                } else {
+                    return $next($request);
+                }
+            }
+            else{
                 return $next($request);
             }
         }
